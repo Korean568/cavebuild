@@ -1,5 +1,10 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
 <title>CAVEBUILD</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
 html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malgun Gothic','Apple SD Gothic Neo','Segoe UI',sans-serif;user-select:none;color:#fff}
@@ -127,7 +132,8 @@ body.mobile #toasts{top:72px}
 #debug{position:fixed;left:6px;top:6px;font:12px monospace;text-shadow:1px 1px #000;display:none;white-space:pre;background:rgba(0,0,0,.3);padding:4px}
 #loading{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#222;font-size:22px;z-index:15}
 </style>
-
+</head>
+<body>
 
 <canvas id="game"></canvas>
 <div id="crosshair"></div>
@@ -427,7 +433,7 @@ const DX6=[1,-1,0,0,0,0],DY6=[0,0,1,-1,0,0],DZ6=[0,0,0,0,1,-1];
 // 청크 하나의 메시 배열을 계산 (메인 스레드와 워커가 함께 씀)
 // datas/hms: 주변 3×3 청크의 블록·높이맵 (없으면 null, 가운데가 [4]), lamps: 주변 광원 좌표
 function meshCore(cx,cz,datas,hms,lamps,caveB){
-  const P=[],U=[],C=[],I=[],WP=[],WU=[],WC=[],WI=[];
+  const P=[],U=[],C=[],I=[],WP=[],WU=[],WC=[],WI=[],LP=[],LU=[],LC=[],LI=[];
   const d=datas[4],ox=cx*16,oz=cz*16;
   // 등불 빛: 주변 3×3 청크 범위에서 BFS로 한 번만 퍼뜨림 (불투명 블록은 통과 못함)
   let LV=null;const LM=9,LW=16+2*LM,lox=ox-LM,loz=oz-LM;
@@ -498,6 +504,9 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
         WI.push(base,base+1,base+2,base+2,base+1,base+3);
         continue;
       }
+      if(isL){const base=LP.length/3; // 용암: 흐르는 무늬는 셰이더에서 계산
+        for(const c of f.c){LP.push(x+c[0],y+(c[1]?wTop:0),z+c[2]);LU.push(c[3],c[4]);LC.push(sl,1,f.shade);}
+        LI.push(base,base+1,base+2,base+2,base+1,base+3);continue;}
       const base=P.length/3;
       for(let k=0;k<4;k++){
         const c=f.c[k],ao=f.ao[k];
@@ -515,7 +524,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
     }
   }
   const F=a=>new Float32Array(a),U32=a=>new Uint32Array(a);
-  return {P:F(P),U:F(U),C:F(C),I:U32(I),WP:F(WP),WU:F(WU),WC:F(WC),WI:U32(WI)};
+  return {P:F(P),U:F(U),C:F(C),I:U32(I),WP:F(WP),WU:F(WU),WC:F(WC),WI:U32(WI),LP:F(LP),LU:F(LU),LC:F(LC),LI:U32(LI)};
 }
 
 function putW(data,cx,cz,x,y,z,id){ // 월드 좌표 블록을 이 청크 데이터에 (범위 안이면) 기록
@@ -1396,10 +1405,12 @@ function applyMesh(ch,r){
   const geo=(P,U,C,I)=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('uv',new THREE.BufferAttribute(U,2));g.setAttribute('color',new THREE.BufferAttribute(C,3));g.setIndex(new THREE.BufferAttribute(I,1));return g;};
   if(r.I.length){ch.mesh=new THREE.Mesh(geo(r.P,r.U,r.C,r.I),terrainMat);ch.mesh.position.set(ox,0,oz);scene.add(ch.mesh);}
   if(r.WI.length){ch.wmesh=new THREE.Mesh(geo(r.WP,r.WU,r.WC,r.WI),waterMat);ch.wmesh.position.set(ox,0,oz);ch.wmesh.renderOrder=1;scene.add(ch.wmesh);}
+  if(r.LI&&r.LI.length){ch.lmesh=new THREE.Mesh(geo(r.LP,r.LU,r.LC,r.LI),lavaMat);ch.lmesh.position.set(ox,0,oz);scene.add(ch.lmesh);}
 }
 function disposeMesh(ch){
   if(ch.mesh){scene.remove(ch.mesh);ch.mesh.geometry.dispose();ch.mesh=null;}
   if(ch.wmesh){scene.remove(ch.wmesh);ch.wmesh.geometry.dispose();ch.wmesh=null;}
+  if(ch.lmesh){scene.remove(ch.lmesh);ch.lmesh.geometry.dispose();ch.lmesh=null;}
 }
 const hasNeighbors=(cx,cz)=>getChunk(cx+1,cz)&&getChunk(cx-1,cz)&&getChunk(cx,cz+1)&&getChunk(cx,cz-1);
 function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx,cz))buildMesh(c);else c.needsMesh=true;}
@@ -1435,7 +1446,7 @@ onmessage=e=>{const j=e.data;
   const hk=JSON.stringify(j.hv||null);if(hk!==hvKey){hvKey=hk;world.homeVillage=j.hv||null;VCACHE.clear();}
   world.dim=j.dim;
   if(j.t==='gen'){const data=new Uint8Array(16*16*CH);GEN[j.dim](data,j.cx,j.cz);postMessage({id:j.id,data},[data.buffer]);}
-  else{const r=meshCore(j.cx,j.cz,j.datas,j.hms,j.lamps,j.caveB);postMessage({id:j.id,r},[r.P.buffer,r.U.buffer,r.C.buffer,r.I.buffer,r.WP.buffer,r.WU.buffer,r.WC.buffer,r.WI.buffer]);}
+  else{const r=meshCore(j.cx,j.cz,j.datas,j.hms,j.lamps,j.caveB);postMessage({id:j.id,r},[r.P.buffer,r.U.buffer,r.C.buffer,r.I.buffer,r.WP.buffer,r.WU.buffer,r.WC.buffer,r.WI.buffer,r.LP.buffer,r.LU.buffer,r.LC.buffer,r.LI.buffer]);}
 };`;
     const url=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
     WK=new Worker(url);WK.onmessage=onWorkerMsg;WK.onerror=e=>{console.warn('워커를 쓸 수 없어 메인 스레드로 처리합니다',e.message);stopWorker();};
@@ -1609,8 +1620,66 @@ const skyDome=(()=>{const m=new THREE.ShaderMaterial({uniforms:{top:{value:new T
 scene.fog=new THREE.Fog(0x88bbff,RD*16*.55,RD*16-4);
 const atlasTex=new THREE.CanvasTexture(atlas);atlasTex.magFilter=THREE.NearestFilter;atlasTex.minFilter=THREE.NearestMipmapLinearFilter;atlasTex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
 terrainMat=new THREE.MeshBasicMaterial({map:atlasTex,vertexColors:true,alphaTest:.5});
-waterMat=new THREE.MeshBasicMaterial({map:atlasTex,vertexColors:true,transparent:true,opacity:.72,depthWrite:false,side:THREE.DoubleSide});
-lightPatch(terrainMat);lightPatch(waterMat);
+lightPatch(terrainMat);
+// ---------- 진짜 같은 물 · 용암 (셰이더) ----------
+const timeU={value:0},sunDirU={value:new THREE.Vector3(0,1,0)},skyU={value:skyColor};
+const NOISE_GLSL=`
+float h21(vec2 p){p=mod(p,289.);return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float vn2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h21(i),h21(i+vec2(1.,0.)),f.x),mix(h21(i+vec2(0.,1.)),h21(i+vec2(1.,1.)),f.x),f.y);}
+float h31(vec3 p){p=mod(p,289.);return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);}
+float vn3(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(mix(h31(i),h31(i+vec3(1.,0.,0.)),f.x),mix(h31(i+vec3(0.,1.,0.)),h31(i+vec3(1.,1.,0.)),f.x),f.y),
+             mix(mix(h31(i+vec3(0.,0.,1.)),h31(i+vec3(1.,0.,1.)),f.x),mix(h31(i+vec3(0.,1.,1.)),h31(i+vec3(1.,1.,1.)),f.x),f.y),f.z);}`;
+const LIQ_VERT=(amp,speed)=>`
+uniform float uTime;varying vec3 vW;varying vec3 vC;
+#include <fog_pars_vertex>
+void main(){
+  vec4 wp=modelMatrix*vec4(position,1.);
+  if(abs(fract(position.y+.0001)-.88)<.02)wp.y+=(sin(wp.x*1.7+uTime*${speed})+sin(wp.z*2.1-uTime*${speed}*.8))*${amp}-${amp}; // 표면이 출렁임
+  vW=wp.xyz;vC=color;
+  vec4 mvPosition=viewMatrix*wp;gl_Position=projectionMatrix*mvPosition;
+  #include <fog_vertex>
+}`;
+function liquidMat(frag,amp,speed,opts){
+  return new THREE.ShaderMaterial(Object.assign({vertexColors:true,fog:true,extensions:{derivatives:true},
+    uniforms:Object.assign(THREE.UniformsUtils.clone(THREE.UniformsLib.fog),{uTime:timeU,uDay:dayU,uSun:sunDirU,uSky:skyU}),
+    vertexShader:LIQ_VERT(amp,speed),fragmentShader:`precision highp float;
+uniform float uTime;uniform float uDay;uniform vec3 uSun;uniform vec3 uSky;varying vec3 vW;varying vec3 vC;
+#include <fog_pars_fragment>
+${NOISE_GLSL}
+${frag}`},opts));
+}
+// 물: 잔물결로 흔들리는 표면 · 비스듬히 볼수록 하늘이 비침(프레넬) · 햇빛 반짝임 · 깊은 청록색 · 위에서 보면 투명
+waterMat=liquidMat(`
+float wh(vec2 p){return vn2(p*1.3+vec2(uTime*.35,uTime*.2))*.6+vn2(p*3.1-vec2(uTime*.5,-uTime*.3))*.3+vn2(p*7.-uTime*.8)*.1;}
+void main(){
+  vec3 V=normalize(cameraPosition-vW),N=normalize(cross(dFdx(vW),dFdy(vW)));if(dot(N,V)<0.)N=-N;
+  float lit=max(max(vC.r*uDay,vC.g),.07);bool top=abs(N.y)>.6;
+  if(top){float e=.07,h0=wh(vW.xz),hx=wh(vW.xz+vec2(e,0.)),hz=wh(vW.xz+vec2(0.,e));
+    vec3 n2=normalize(vec3(-(hx-h0)/e*.32,1.,-(hz-h0)/e*.32));N=N.y>0.?n2:vec3(n2.x,-n2.y,n2.z);}
+  float ndv=clamp(dot(N,V),0.,1.),F=.03+.97*pow(1.-ndv,5.);
+  vec3 body=mix(vec3(.02,.13,.22),vec3(.09,.36,.42),.3+.45*wh(vW.xz*.45))*lit;
+  vec3 sky=uSky*(.7+.3*lit)*clamp(vC.r+.12,0.,1.);
+  vec3 col=mix(body,sky,F*.88);
+  vec3 R=reflect(-V,N);col+=vec3(1.,.95,.82)*pow(max(dot(R,normalize(uSun)),0.),160.)*uDay*vC.r*1.8; // 햇빛 반짝임
+  if(top)col+=vec3(.55,.8,.85)*pow(vn2(vW.xz*4.+uTime*.6)*vn2(vW.xz*3.3-uTime*.5),3.)*lit*.5; // 물결 빛 무늬
+  gl_FragColor=vec4(col,top?mix(.6,.95,F):.8);
+  #include <fog_fragment>
+}`,.016,1.6,{transparent:true,depthWrite:false,side:THREE.DoubleSide});
+// 용암: 천천히 흐르며 뒤틀리는 무늬 · 검붉게 굳은 껍질 · 밝게 빛나는 틈 · 스스로 빛남
+const lavaMat=liquidMat(`
+float fb(vec3 p){return vn3(p)*.55+vn3(p*2.1)*.28+vn3(p*4.3)*.17;}
+void main(){
+  float t=uTime;vec3 p=vW*.85+vec3(t*.05,t*.015,t*.04);
+  vec2 q=vec2(fb(p+vec3(0.,t*.04,0.)),fb(p+vec3(5.2,1.3,t*.03)));
+  float n=fb(p*1.25+vec3(q*1.7,0.)),cr=pow(1.-abs(n*2.-1.),7.); // 밝게 갈라진 틈
+  float crust=smoothstep(.36,.56,fb(p*.65+vec3(-t*.025,0.,t*.02))); // 식어서 굳은 껍질
+  float heat=clamp(mix(.7,.06,crust)+cr*.8+.1*sin(t*1.2+n*7.),0.,1.);
+  vec3 c=mix(vec3(.09,.022,.012),vec3(.72,.1,.02),smoothstep(.04,.45,heat));
+  c=mix(c,vec3(1.,.46,.05),smoothstep(.45,.75,heat));c=mix(c,vec3(1.,.86,.45),smoothstep(.88,1.,heat));
+  gl_FragColor=vec4(c*(.9+.15*vC.b)*1.1,1.);
+  #include <fog_fragment>
+}`,.012,.7,{});
 const amb=new THREE.AmbientLight(0xffffff,.6),sunL=new THREE.DirectionalLight(0xffffff,.6);scene.add(amb,sunL,sunL.target);
 function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
   $('hud').style.transform=`translateX(-50%) scale(${Math.max(.5,Math.min(1,(innerWidth-(MOBILE?340:12))/474))})`;$('hud').style.transformOrigin='50% 100%';}
@@ -3248,7 +3317,7 @@ function updateSky(dt){
   scene.fog.color.copy(skyColor);
   dayU.value=light;
   amb.intensity=.3+.55*d;sunL.intensity=.6*d;
-  const sd=new THREE.Vector3(Math.cos(a),s,.25).normalize();
+  const sd=new THREE.Vector3(Math.cos(a),s,.25).normalize();sunDirU.value.copy(sd);
   const cp=camera.position;
   sunMesh.position.copy(cp).addScaledVector(sd,400);sunMesh.lookAt(cp);
   moonMesh.position.copy(cp).addScaledVector(sd,-400);moonMesh.lookAt(cp);
@@ -3649,7 +3718,7 @@ initWorker();
 let last=performance.now(),saveT=0,fpsA=0,fpsN=0,fps=0;
 function frame(now){
   requestAnimationFrame(frame);
-  const dt=Math.min(.05,(now-last)/1000);last=now;
+  const dt=Math.min(.05,(now-last)/1000);last=now;timeU.value=now/1000%3600; // 물·용암 움직임
   fpsA+=dt;fpsN++;if(fpsA>.5){fps=Math.round(fpsN/fpsA);fpsA=0;fpsN=0;}
   if(!running){renderer.render(scene,camera);return;}
   const active=!paused&&!endingOpen&&!player.dead; // 쓰러져 있으면 세계가 멈춤 (hp 0으로 저장되지 않게)
@@ -3676,5 +3745,5 @@ function frame(now){
 requestAnimationFrame(frame);
 </script>
 
-
-</body></html>
+</body>
+</html>
