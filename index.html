@@ -878,11 +878,20 @@ function sideBand(u,v,x,y,top,dark,s,dirtS){ // 윗부분이 풀/눈으로 덮�
   return dirtC(u,v,x,y,dirtS);}
 function woodGrain(u,v,x,y,s,c1,c2,f=6){ // 가로 나뭇결
   const g=Math.sin((v*f+fbm(u,v,s,2,4,6)*2.2)*Math.PI*2);return mulc(mixc(c1,c2,.5+.5*g),grain(x,y,s,.08));}
-function bricks(u,v,x,y,rows,cols,c1,c2,mortar,s,mw=2){ // 줄눈이 있는 벽돌 (가장자리에 그늘)
-  const rh=TS/rows,row=Math.floor(y/rh),bw=TS/cols,off=(row%2)*bw/2,lx=(x+off)%bw,ly=y%rh,bx=Math.floor((x+off)/bw);
-  if(lx<mw||ly<mw)return mulc(mortar,grain(x,y,s,.2));
-  const e=Math.min(lx-mw,ly-mw,bw-1-lx,rh-1-ly),sh=e<2?(lx-mw<2||ly-mw<2?1.12:.8):1;
-  return mulc(mixc(c1,c2,h2(bx,row,s)),sh*(.86+.26*fbm(u,v,s+1,4,4))*grain(x,y,s+2,.1));}
+function bricks(u,v,x,y,rows,cols,c1,c2,mortar,s,mw=2,stone=false){ // 벽돌: 쑥 들어간 거친 줄눈 · 모서리가 둥글게 닳은 벽돌 · 벽돌마다 다른 색 · 이 빠진 모서리 · 잔금
+  const rh=TS/rows,row=Math.floor(y/rh),bw=TS/cols,off=(row%2)*bw/2,lx=(x+off)%bw,ly=y%rh,bx=Math.floor((x+off)/bw)%cols;
+  const jit=vn(u,v,16,s+9)*.9; // 줄눈 폭이 조금씩 들쭉날쭉
+  const dl=lx-mw-jit*.5,dt=ly-mw-jit*.5,dr=bw-1-lx-jit*.4,db=rh-1-ly-jit*.4,e=Math.min(dl,dt,dr,db);
+  const corner=Math.min(Math.hypot(Math.min(dl,dr),Math.min(dt,db)),99),chip=h2(bx,row,s+5)>.8&&Math.min(dl,dr)+Math.min(dt,db)<2+3*h2(bx+1,row,s+6)*h2(x,y,s+14);
+  if(e<0||chip){ // 줄눈: 거칠고 어두우며, 위쪽 벽돌 바로 아래는 그늘
+    let c=mulc(mortar,(.78+.3*h2(x,y,s+1))*(.85+.2*fbm(u,v,s+2,8,2)));if(ly<mw+2&&!chip)c=mulc(c,.72);
+    if(stone&&fbm(u,v,s+3,4,3)>.7)c=mixc(c,[70,96,52],.45); // 줄눈에 낀 이끼
+    return c;}
+  const k=h2(bx,row,s);let c=stone?stoneC(u,v,x,y,s+11,mixc(c1,c2,k)):mulc(mixc(c1,c2,k),(.82+.3*fbm(u,v,s+4,6,3))*(1+(h2(x,y,s+7)-.5)*.22)); // 벽돌 표면
+  if(!stone&&h2(x>>1,y>>1,s+8)>.93)c=mulc(c,.8); // 구운 벽돌의 작은 구멍
+  if(e<2.2)c=mulc(c,(dt<2.2||dl<2.2)?1.14:.74); // 닳은 모서리: 위·왼쪽은 밝고 아래·오른쪽은 그늘
+  if(Math.abs(fbm(u+bx*.37,v+row*.21,s+12,4,3)-.5)<.007&&h2(bx,row,s+13)>.5)c=mulc(c,.6); // 잔금
+  return c;}
 function windowT(on){return (u,v,x,y)=>{const b=8,f=x<b/2||y<b/2||x>TS-1-b/2||y>TS-1-b/2||Math.abs(x-TS/2+.5)<3||Math.abs(y-TS/2+.5)<3;
   if(f)return mulc([40,38,48],grain(x,y,401,.2));const g=fr((x+y)/TS*1.5);
   return on?mixc([255,228,255],[176,104,236],g*.8):mixc([62,62,88],[34,34,52],g);};}
@@ -985,7 +994,7 @@ T(TILE.kiln_front,(u,v,x,y)=>{const dx=Math.abs(u-.5),inA=r=>v>.42-(r-.24)&&v<.8
 T(TILE.glass,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if(e<3)return [96,150,140,.9-e*.12]; // 초록빛 유리 가장자리
   const d=u+v,st=Math.exp(-(((d-.72)*16)**2))*.6+Math.exp(-(((d-.92)*34)**2))*.4;
   return [190+60*st,228+27*st,226+29*st,.22+.5*st];});
-T(TILE.brick,(u,v,x,y)=>bricks(u,v,x,y,2,2,[116,116,120],[140,138,140],[78,76,74],101,3)); // 다듬은 돌벽돌
+T(TILE.brick,(u,v,x,y)=>bricks(u,v,x,y,2,2,[112,112,116],[146,142,138],[92,88,82],101,2,true)); // 다듬은 돌벽돌 (돌 질감 · 이끼 낀 줄눈)
 T(TILE.snow_top,(u,v,x,y)=>{const c=mixc([214,224,240],[246,250,255],fbm(u,v,111,4,4));return h2(x,y,112)>.99?[255,255,255]:c;});
 T(TILE.snow_side,(u,v,x,y)=>sideBand(u,v,x,y,[244,248,255],[200,212,232],113,7));
 T(TILE.bed_top,(u,v,x,y)=>{const weave=((x>>1)+(y>>1))%2?1.03:.97;
