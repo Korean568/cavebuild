@@ -452,19 +452,9 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
   const leafRound=(vx,vy,vz,o)=>{let sx=0,sy=0,sz=0,n=0; // 꼭짓점을 둘러싼 8칸 중 잎·원목 칸의 중심 쪽으로 이동
     for(let a=-1;a<=0;a++)for(let b=-1;b<=0;b++)for(let c=-1;c<=0;c++){const t=get(vx+a,vy+b,vz+c);if(t===LEAVES||t===LOG){sx+=a+.5;sy+=b+.5;sz+=c+.5;n++;}}
     const k=n?.95/n:0;o[0]=sx*k;o[1]=sy*k;o[2]=sz*k;},_lo=[0,0,0];
-  // 둥근 나무: 원목 꼭대기(위가 잎)를 중심으로 생성된 잎 공이 85% 이상 남아 있으면, 그 잎 블록 대신 매끈한 둥근 잎 덩어리를 그림
-  const TREE_RX=2.57,TREE_RY=2.28,trees=[],covered=new Set();
-  for(let z=2;z<14;z++)for(let x=2;x<14;x++)for(let y=2;y<CH-4;y++){ // y: 줄기 꼭대기, 잎 공 중심은 y+1
-    if(d[(y*16+z)*16+x]!==LOG||d[((y+1)*16+z)*16+x]!==LEAVES||d[((y-1)*16+z)*16+x]!==LOG)continue;
-    let want=0,have=0;const cells=[],cy=y+1;
-    for(let dy=-2;dy<=2;dy++)for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){
-      if((dx*dx+dz*dz)/6.6+dy*dy/5.2>1)continue;const t=d[((cy+dy)*16+z+dz)*16+x+dx];if(t===LOG)continue;want++;if(t===LEAVES){have++;cells.push(((cy+dy)*16+z+dz)*16+x+dx);}}
-    if(want&&have>=want*.85){trees.push([x+.5,cy+.5,z+.5]);for(const c of cells)covered.add(c);}
-  }
   for(let y=0;y<CH;y++)for(let z=0;z<16;z++)for(let x=0;x<16;x++){
     const id=d[(y*16+z)*16+x];if(!id)continue;
     const B=BL[id],isW=id===WATER,isL=id===LAVA;
-    if(id===LEAVES&&covered.has((y*16+z)*16+x))continue; // 둥근 잎 덩어리에 포함된 잎
     if(LADDER_OF[id]){const f=FACES[LADDER_OF[id]-1],t=B.tiles[0],tx=t%ATW,ty=Math.floor(t/ATW),base=P.length/3;
       const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0;
       for(const c of f.c){P.push(x+c[0]-f.dir[0]*.06,y+c[1],z+c[2]-f.dir[2]*.06);U.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);C.push(sl,bl,.9);}
@@ -536,17 +526,6 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       else I.push(base,base+1,base+2,base+2,base+1,base+3);
     }
   }
-  // 둥근 잎 덩어리: 울퉁불퉁한 타원체 2겹 (바깥 잎 + 안쪽 그늘진 잎), 칸마다 잎 텍스처 한 장
-  if(trees.length){const SEG=18,RING=11;
-    for(const [cx,cy,cz] of trees){const hh=Math.imul((cx+ox)*8|0,73856093)^Math.imul((cz+oz)*8|0,83492791),sl=cy>=hms[4][Math.floor(cz)*16+Math.floor(cx)]?1:caveB,bl=LV?Math.min(1,lightAt(Math.floor(cx),Math.floor(cy),Math.floor(cz))/LM*1.25):0;
-      for(const [sc,dark,lt] of [[1,1,TILE.leaves],[.9,.5,TILE.grass_top]]){const tx=lt%ATW,ty=Math.floor(lt/ATW); // 바깥: 잎 · 안쪽: 빽빽하고 어두운 잎 (틈으로 하늘이 안 보이게)
-        const R=(i,j)=>{const a=Math.imul(i+hh,374761393)^Math.imul(j+7,668265263);return ((a>>>8)%1000)/1000;}; // 울퉁불퉁한 표면
-        const vtx=(i,j)=>{const th=j/RING*Math.PI,ph=(i%SEG)/SEG*Math.PI*2,bump=1+(R(i%SEG,j)-.5)*.16*(j>0&&j<RING?1:0),sy=Math.cos(th),sr=Math.sin(th);
-          return [cx+sr*Math.cos(ph)*TREE_RX*sc*bump,cy+.15+sy*TREE_RY*sc*bump,cz+sr*Math.sin(ph)*TREE_RX*sc*bump,sy];};
-        for(let j=0;j<RING;j++)for(let i=0;i<SEG;i++){const q=[vtx(i,j),vtx(i+1,j),vtx(i,j+1),vtx(i+1,j+1)],base=P.length/3;
-          for(const [v,u,w] of [[q[0],0,1],[q[1],1,1],[q[2],0,0],[q[3],1,0]]){P.push(v[0],v[1],v[2]);U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+w*.996))/ATH);
-            const tint=.9+.2*R(i+31,j+17);C.push(sl,bl,(.6+.4*(v[3]*.5+.5))*dark*tint);}
-          I.push(base,base+1,base+2,base+1,base+3,base+2);}}}}
   const F=a=>new Float32Array(a),U32=a=>new Uint32Array(a);
   return {P:F(P),U:F(U),C:F(C),I:U32(I),WP:F(WP),WU:F(WU),WC:F(WC),WI:U32(WI),LP:F(LP),LU:F(LU),LC:F(LC),LI:U32(LI),GP:F(GP),GU:F(GU),GC:F(GC),GI:U32(GI)};
 }
