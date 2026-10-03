@@ -390,12 +390,12 @@ function genOver(data,cx,cz){
   const tries=f>.25?8:f>-.15?3:1;
   for(let i=0;i<tries;i++){
     const x=2+(rng()*12|0),z=2+(rng()*12|0),h=heights[z*16+x];
-    if(des[z*16+x]||h<=SEA+1||h>CH-10||data[I(x,h,z)]!==GRASS||rng()<.25)continue;
-    const th=4+(rng()*3|0);data[I(x,h,z)]=DIRT;
+    if(des[z*16+x]||h<=SEA+1||h>CH-13||data[I(x,h,z)]!==GRASS||rng()<.25)continue;
+    const th=5+(rng()*3|0);data[I(x,h,z)]=DIRT; // 줄기가 잘 보이게 조금 높게
     for(let y=1;y<=th;y++)data[I(x,h+y,z)]=LOG;
     for(let dy=-2;dy<=2;dy++)for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){ // 잘 다듬은 나무처럼 둥근 잎 덩어리
       if((dx*dx+dz*dz)/6.6+dy*dy/5.2>1)continue;
-      const idx=I(x+dx,h+th+dy,z+dz);if(data[idx]===AIR)data[idx]=LEAVES;}
+      const idx=I(x+dx,h+th+1+dy,z+dz);if(data[idx]===AIR)data[idx]=LEAVES;} // 잎 공은 줄기 꼭대기보다 한 칸 위가 중심
   }
   buildPortalSites(data,cx,cz);
   buildVillages(data,cx,cz);
@@ -433,7 +433,7 @@ const DX6=[1,-1,0,0,0,0],DY6=[0,0,1,-1,0,0],DZ6=[0,0,0,0,1,-1];
 // 청크 하나의 메시 배열을 계산 (메인 스레드와 워커가 함께 씀)
 // datas/hms: 주변 3×3 청크의 블록·높이맵 (없으면 null, 가운데가 [4]), lamps: 주변 광원 좌표
 function meshCore(cx,cz,datas,hms,lamps,caveB){
-  const P=[],U=[],C=[],I=[],WP=[],WU=[],WC=[],WI=[],LP=[],LU=[],LC=[],LI=[];
+  const P=[],U=[],C=[],I=[],WP=[],WU=[],WC=[],WI=[],LP=[],LU=[],LC=[],LI=[],GP=[],GU=[],GC=[],GI=[];
   const d=datas[4],ox=cx*16,oz=cz*16;
   // 등불 빛: 주변 3×3 청크 범위에서 BFS로 한 번만 퍼뜨림 (불투명 블록은 통과 못함)
   let LV=null;const LM=9,LW=16+2*LM,lox=ox-LM,loz=oz-LM;
@@ -454,12 +454,12 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
     const k=n?.95/n:0;o[0]=sx*k;o[1]=sy*k;o[2]=sz*k;},_lo=[0,0,0];
   // 둥근 나무: 원목 꼭대기(위가 잎)를 중심으로 생성된 잎 공이 85% 이상 남아 있으면, 그 잎 블록 대신 매끈한 둥근 잎 덩어리를 그림
   const TREE_RX=2.57,TREE_RY=2.28,trees=[],covered=new Set();
-  for(let z=2;z<14;z++)for(let x=2;x<14;x++)for(let y=2;y<CH-3;y++){
+  for(let z=2;z<14;z++)for(let x=2;x<14;x++)for(let y=2;y<CH-4;y++){ // y: 줄기 꼭대기, 잎 공 중심은 y+1
     if(d[(y*16+z)*16+x]!==LOG||d[((y+1)*16+z)*16+x]!==LEAVES||d[((y-1)*16+z)*16+x]!==LOG)continue;
-    let want=0,have=0;const cells=[];
+    let want=0,have=0;const cells=[],cy=y+1;
     for(let dy=-2;dy<=2;dy++)for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){
-      if((dx*dx+dz*dz)/6.6+dy*dy/5.2>1)continue;const t=d[((y+dy)*16+z+dz)*16+x+dx];if(t===LOG)continue;want++;if(t===LEAVES){have++;cells.push(((y+dy)*16+z+dz)*16+x+dx);}}
-    if(want&&have>=want*.85){trees.push([x+.5,y+.5,z+.5]);for(const c of cells)covered.add(c);}
+      if((dx*dx+dz*dz)/6.6+dy*dy/5.2>1)continue;const t=d[((cy+dy)*16+z+dz)*16+x+dx];if(t===LOG)continue;want++;if(t===LEAVES){have++;cells.push(((cy+dy)*16+z+dz)*16+x+dx);}}
+    if(want&&have>=want*.85){trees.push([x+.5,cy+.5,z+.5]);for(const c of cells)covered.add(c);}
   }
   for(let y=0;y<CH;y++)for(let z=0;z<16;z++)for(let x=0;x<16;x++){
     const id=d[(y*16+z)*16+x];if(!id)continue;
@@ -517,6 +517,9 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       if(isL){const base=LP.length/3; // 용암: 흐르는 무늬는 셰이더에서 계산
         for(const c of f.c){LP.push(x+c[0],y+(c[1]?wTop:0),z+c[2]);LU.push(c[3],c[4]);LC.push(sl,1,f.shade);}
         LI.push(base,base+1,base+2,base+2,base+1,base+3);continue;}
+      if(id===GLASS){const base=GP.length/3,gl=LV?Math.min(1,lightAt(x+f.dir[0],y+f.dir[1],z+f.dir[2])/LM*1.25):0; // 유리: 투명·반사는 셰이더에서
+        for(const c of f.c){GP.push(x+c[0],y+c[1],z+c[2]);GU.push(c[3],c[4]);GC.push(sl,gl,f.shade);}
+        GI.push(base,base+1,base+2,base+2,base+1,base+3);continue;}
       const base=P.length/3;
       for(let k=0;k<4;k++){
         const c=f.c[k],ao=f.ao[k];
@@ -536,7 +539,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
   // 둥근 잎 덩어리: 울퉁불퉁한 타원체 2겹 (바깥 잎 + 안쪽 그늘진 잎), 칸마다 잎 텍스처 한 장
   if(trees.length){const SEG=18,RING=11;
     for(const [cx,cy,cz] of trees){const hh=Math.imul((cx+ox)*8|0,73856093)^Math.imul((cz+oz)*8|0,83492791),sl=cy>=hms[4][Math.floor(cz)*16+Math.floor(cx)]?1:caveB,bl=LV?Math.min(1,lightAt(Math.floor(cx),Math.floor(cy),Math.floor(cz))/LM*1.25):0;
-      for(const [sc,dark,lt] of [[1,1,TILE.leaves],[.86,.5,TILE.grass_top]]){const tx=lt%ATW,ty=Math.floor(lt/ATW); // 바깥: 잎 · 안쪽: 빽빽하고 어두운 잎 (틈으로 하늘이 안 보이게)
+      for(const [sc,dark,lt] of [[1,1,TILE.leaves],[.9,.5,TILE.grass_top]]){const tx=lt%ATW,ty=Math.floor(lt/ATW); // 바깥: 잎 · 안쪽: 빽빽하고 어두운 잎 (틈으로 하늘이 안 보이게)
         const R=(i,j)=>{const a=Math.imul(i+hh,374761393)^Math.imul(j+7,668265263);return ((a>>>8)%1000)/1000;}; // 울퉁불퉁한 표면
         const vtx=(i,j)=>{const th=j/RING*Math.PI,ph=(i%SEG)/SEG*Math.PI*2,bump=1+(R(i%SEG,j)-.5)*.16*(j>0&&j<RING?1:0),sy=Math.cos(th),sr=Math.sin(th);
           return [cx+sr*Math.cos(ph)*TREE_RX*sc*bump,cy+.15+sy*TREE_RY*sc*bump,cz+sr*Math.sin(ph)*TREE_RX*sc*bump,sy];};
@@ -545,7 +548,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
             const tint=.9+.2*R(i+31,j+17);C.push(sl,bl,(.6+.4*(v[3]*.5+.5))*dark*tint);}
           I.push(base,base+1,base+2,base+1,base+3,base+2);}}}}
   const F=a=>new Float32Array(a),U32=a=>new Uint32Array(a);
-  return {P:F(P),U:F(U),C:F(C),I:U32(I),WP:F(WP),WU:F(WU),WC:F(WC),WI:U32(WI),LP:F(LP),LU:F(LU),LC:F(LC),LI:U32(LI)};
+  return {P:F(P),U:F(U),C:F(C),I:U32(I),WP:F(WP),WU:F(WU),WC:F(WC),WI:U32(WI),LP:F(LP),LU:F(LU),LC:F(LC),LI:U32(LI),GP:F(GP),GU:F(GU),GC:F(GC),GI:U32(GI)};
 }
 
 function putW(data,cx,cz,x,y,z,id){ // 월드 좌표 블록을 이 청크 데이터에 (범위 안이면) 기록
@@ -979,8 +982,9 @@ T(TILE.kiln_front,(u,v,x,y)=>{const dx=Math.abs(u-.5),inA=r=>v>.42-(r-.24)&&v<.8
   if(inA(.24)){const g=Math.max(0,(v-.42)/.46),f=fbm(u,v,103,6,3);return mixc([50,20,14],[255,170,60],Math.min(1,Math.pow(g,1.4)*(.7+f*.6)));} // 일렁이는 불빛
   if(inA(.29))return mulc([90,58,44],grain(x,y,104,.2));
   return kilnSide(u,v,x,y);});
-T(TILE.glass,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if(e<3)return mulc([168,196,206],e<1?.8:1.05);
-  const s=(x+y)/TS;if((s>.35&&s<.42)||(s>.5&&s<.53))return [236,248,255,.6];return null;});
+T(TILE.glass,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if(e<3)return [96,150,140,.9-e*.12]; // 초록빛 유리 가장자리
+  const d=u+v,st=Math.exp(-(((d-.72)*16)**2))*.6+Math.exp(-(((d-.92)*34)**2))*.4;
+  return [190+60*st,228+27*st,226+29*st,.22+.5*st];});
 T(TILE.brick,(u,v,x,y)=>bricks(u,v,x,y,2,2,[116,116,120],[140,138,140],[78,76,74],101,3)); // 다듬은 돌벽돌
 T(TILE.snow_top,(u,v,x,y)=>{const c=mixc([214,224,240],[246,250,255],fbm(u,v,111,4,4));return h2(x,y,112)>.99?[255,255,255]:c;});
 T(TILE.snow_side,(u,v,x,y)=>sideBand(u,v,x,y,[244,248,255],[200,212,232],113,7));
@@ -1427,11 +1431,13 @@ function applyMesh(ch,r){
   if(r.I.length){ch.mesh=new THREE.Mesh(geo(r.P,r.U,r.C,r.I),terrainMat);ch.mesh.position.set(ox,0,oz);scene.add(ch.mesh);}
   if(r.WI.length){ch.wmesh=new THREE.Mesh(geo(r.WP,r.WU,r.WC,r.WI),waterMat);ch.wmesh.position.set(ox,0,oz);ch.wmesh.renderOrder=1;scene.add(ch.wmesh);}
   if(r.LI&&r.LI.length){ch.lmesh=new THREE.Mesh(geo(r.LP,r.LU,r.LC,r.LI),lavaMat);ch.lmesh.position.set(ox,0,oz);scene.add(ch.lmesh);}
+  if(r.GI&&r.GI.length){ch.gmesh=new THREE.Mesh(geo(r.GP,r.GU,r.GC,r.GI),glassMat);ch.gmesh.position.set(ox,0,oz);ch.gmesh.renderOrder=2;scene.add(ch.gmesh);}
 }
 function disposeMesh(ch){
   if(ch.mesh){scene.remove(ch.mesh);ch.mesh.geometry.dispose();ch.mesh=null;}
   if(ch.wmesh){scene.remove(ch.wmesh);ch.wmesh.geometry.dispose();ch.wmesh=null;}
   if(ch.lmesh){scene.remove(ch.lmesh);ch.lmesh.geometry.dispose();ch.lmesh=null;}
+  if(ch.gmesh){scene.remove(ch.gmesh);ch.gmesh.geometry.dispose();ch.gmesh=null;}
 }
 const hasNeighbors=(cx,cz)=>getChunk(cx+1,cz)&&getChunk(cx-1,cz)&&getChunk(cx,cz+1)&&getChunk(cx,cz-1);
 function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx,cz))buildMesh(c);else c.needsMesh=true;}
@@ -1467,7 +1473,7 @@ onmessage=e=>{const j=e.data;
   const hk=JSON.stringify(j.hv||null);if(hk!==hvKey){hvKey=hk;world.homeVillage=j.hv||null;VCACHE.clear();}
   world.dim=j.dim;
   if(j.t==='gen'){const data=new Uint8Array(16*16*CH);GEN[j.dim](data,j.cx,j.cz);postMessage({id:j.id,data},[data.buffer]);}
-  else{const r=meshCore(j.cx,j.cz,j.datas,j.hms,j.lamps,j.caveB);postMessage({id:j.id,r},[r.P.buffer,r.U.buffer,r.C.buffer,r.I.buffer,r.WP.buffer,r.WU.buffer,r.WC.buffer,r.WI.buffer,r.LP.buffer,r.LU.buffer,r.LC.buffer,r.LI.buffer]);}
+  else{const r=meshCore(j.cx,j.cz,j.datas,j.hms,j.lamps,j.caveB);postMessage({id:j.id,r},[r.P.buffer,r.U.buffer,r.C.buffer,r.I.buffer,r.WP.buffer,r.WU.buffer,r.WC.buffer,r.WI.buffer,r.LP.buffer,r.LU.buffer,r.LC.buffer,r.LI.buffer,r.GP.buffer,r.GU.buffer,r.GC.buffer,r.GI.buffer]);}
 };`;
     const url=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
     WK=new Worker(url);WK.onmessage=onWorkerMsg;WK.onerror=e=>{console.warn('워커를 쓸 수 없어 메인 스레드로 처리합니다',e.message);stopWorker();};
@@ -1701,6 +1707,26 @@ void main(){
   gl_FragColor=vec4(c*(.9+.15*vC.b)*1.1,1.);
   #include <fog_fragment>
 }`,.012,.7,{});
+const glassMat=new THREE.ShaderMaterial({vertexColors:true,fog:true,transparent:true,depthWrite:false,side:THREE.DoubleSide,extensions:{derivatives:true},
+  uniforms:Object.assign(THREE.UniformsUtils.clone(THREE.UniformsLib.fog),{uDay:dayU,uSun:sunDirU,uSky:skyU}),
+  vertexShader:`varying vec3 vW;varying vec3 vC;varying vec2 vUv;
+#include <fog_pars_vertex>
+void main(){vec4 wp=modelMatrix*vec4(position,1.);vW=wp.xyz;vC=color;vUv=uv;vec4 mvPosition=viewMatrix*wp;gl_Position=projectionMatrix*mvPosition;
+#include <fog_vertex>
+}`,
+  fragmentShader:`precision highp float;uniform float uDay;uniform vec3 uSun;uniform vec3 uSky;varying vec3 vW;varying vec3 vC;varying vec2 vUv;
+#include <fog_pars_fragment>
+void main(){
+  vec3 V=normalize(cameraPosition-vW),N=normalize(cross(dFdx(vW),dFdy(vW)));if(dot(N,V)<0.)N=-N;
+  float lit=max(max(vC.r*uDay,vC.g),.08),F=.05+.95*pow(1.-clamp(dot(N,V),0.,1.),5.);
+  float e=min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)),edge=1.-smoothstep(0.,.05,e); // 유리 두께가 보이는 가장자리
+  float d=vUv.x+vUv.y,streak=exp(-pow((d-.72)*16.,2.))*.6+exp(-pow((d-.92)*34.,2.))*.4; // 비스듬한 빛줄기
+  vec3 tint=vec3(.74,.9,.88),sky=uSky*(.75+.25*lit)*clamp(vC.r+.15,0.,1.);
+  vec3 col=mix(tint*lit,sky,F);col=mix(col,vec3(.38,.6,.55)*lit,edge*.75);col+=vec3(1.)*streak*lit*.35;
+  vec3 R=reflect(-V,N);col+=vec3(1.,.96,.85)*pow(max(dot(R,normalize(uSun)),0.),220.)*uDay*vC.r*2.;
+  gl_FragColor=vec4(col,clamp(.1+F*.65+edge*.6+streak*.18,0.,.95));
+  #include <fog_fragment>
+}`});
 const amb=new THREE.AmbientLight(0xffffff,.6),sunL=new THREE.DirectionalLight(0xffffff,.6);scene.add(amb,sunL,sunL.target);
 function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
   $('hud').style.transform=`translateX(-50%) scale(${Math.max(.5,Math.min(1,(innerWidth-(MOBILE?340:12))/474))})`;$('hud').style.transformOrigin='50% 100%';}
@@ -1917,7 +1943,7 @@ function blockCube(id,s){ // 실제 블록 텍스처를 입힌 작은 큐브
   for(let f=0;f<6;f++){const t=B.tiles[order[f]],tx=t%ATW,ty=Math.floor(t/ATW);
     for(let k=0;k<4;k++){const i=f*4+k,u=uv.getX(i),v=uv.getY(i);uv.setXY(i,(tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);}}
   const key='blk'+id;let m=IMAT[key];
-  if(!m){m=IMAT[key]=new THREE.MeshStandardMaterial({map:atlasTex,roughness:.85,alphaTest:.5,transparent:!OPAQUE[id]&&id!==LEAVES});
+  if(!m){m=IMAT[key]=new THREE.MeshStandardMaterial({map:atlasTex,roughness:id===GLASS?.1:.85,alphaTest:id===GLASS?.02:.5,transparent:!OPAQUE[id]&&id!==LEAVES,depthWrite:id!==GLASS});
     if(EMIT[id]){m.emissive=new THREE.Color(0xffffff);m.emissiveMap=atlasTex;m.emissiveIntensity=.7;}}
   const grp=new THREE.Group();grp.add(new THREE.Mesh(g,m));return grp;
 }
