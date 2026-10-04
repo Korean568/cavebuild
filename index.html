@@ -43,7 +43,7 @@ body.mobile #logoImg{width:min(80vw,440px)}
 .btn{font:inherit;font-size:18px;min-width:260px;padding:10px 18px;margin:5px;background:#6d6d6d;color:#fff;border:3px solid #222;box-shadow:inset -3px -3px 0 #4a4a4a,inset 3px 3px 0 #9a9a9a;cursor:pointer;text-shadow:2px 2px 0 #333}
 .btn:hover{background:#7d86c4}
 .btn:disabled{opacity:.45;cursor:default;background:#6d6d6d}
-.help{margin-top:22px;background:rgba(0,0,0,.45);padding:12px 18px;font-size:14px;line-height:1.7;border:2px solid rgba(0,0,0,.4)}
+.help{margin-top:22px;background:rgba(0,0,0,.62);padding:12px 18px;font-size:14px;line-height:1.7;border:2px solid rgba(0,0,0,.4)}
 .help b{color:#ffe066}
 .help{text-align:left;max-width:760px}
 .help h4{margin:10px 0 3px;color:#9fe0ff;font-size:15px;border-bottom:1px solid rgba(255,255,255,.18);padding-bottom:2px}
@@ -112,8 +112,9 @@ body.mobile.playing .tbtn{display:flex}
 #bView{right:194px;top:12px;width:52px;height:52px;border-radius:12px;font-size:22px}
 #bCrouch{right:190px;bottom:154px;width:54px;height:54px;font-size:22px}
 #title .help{display:none}
-#title.helpopen .help{display:block}
-#title.helpopen{justify-content:flex-start;overflow-y:auto;padding:24px 0 30px;box-sizing:border-box}
+#title.helpopen .help:not(.upd),#title.updopen .upd{display:block}
+#title.helpopen,#title.updopen{justify-content:flex-start;overflow-y:auto;padding:24px 0 30px;box-sizing:border-box}
+#titleBg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
 body.mobile #title{justify-content:flex-start;overflow-y:auto;touch-action:pan-y;padding:12px 0 30px;box-sizing:border-box}
 body.mobile #title h1{font-size:52px}
 body.mobile #title .en{margin-top:4px}
@@ -159,6 +160,7 @@ body.mobile #toasts{top:72px}
   <button class="btn" id="btnCont">이어하기</button>
   <button class="btn" id="btnImport">저장 파일 불러오기</button><input type="file" id="fileImport" accept=".json,application/json" hidden>
   <button class="btn" id="btnHelp">❓ 도움말 보기</button>
+  <button class="btn" id="btnUpd">📜 업데이트 목록</button>
   <div class="help">
     <div class="deskonly"><h4>🖥 PC 조작법</h4>
       <span class="k">이동</span><b>WASD</b> 이동 · <b>스페이스</b> 점프/수영 · <b>Shift</b> 달리기 · <b>C</b> 웅크리기 (모서리에서 안 떨어짐)<br>
@@ -183,12 +185,41 @@ body.mobile #toasts{top:72px}
     • 밤엔 <b>좀비</b>와 활을 쏘는 <b>명사수 해골</b>, 깊은 동굴엔 <b>불씨방울</b>이 숨어 있습니다. <b>갑옷</b>과 활, <b>방패</b>(판자 6 + 철 주괴 1)로 대비하세요.<br>
     • <b>차원 나침반</b>(철 주괴 3 + <b>스톤</b> 1)으로 프론티어의 차원문을 찾아 <b>어비스</b>(깊은 곳에 판데모니움) · <b>호라이즌</b> · <b>네크로폴리스</b>의 보스에 도전하세요.<br>
     &nbsp;&nbsp;호라이즌 차원문은 지하의 <b>표식 돌</b> 방에 있고, 텔레포터가 떨어뜨리는 <b>포탈 열쇠</b> 12개를 꽂아야 열려요. 네크로폴리스 차원문은 지하 깊은 곳 감염된 폐허 마을에 있어요.<br>
-    • <b>흑요석</b>(물과 용암을 맞닿게 하면 생김) 10~14개로 4×5 틀을 세우면 <b>어비스 차원문</b>이 열립니다.<br>
+    • 물과 용암은 <b>흐릅니다</b>. 흐르지 않는 물과 흐르지 않는 용암이 닿으면 <b>흑요석</b>, 어느 한쪽이라도 흐르는 중이면 <b>조약돌</b>이 생겨요. 흑요석은 <b>철 곡괭이</b> 이상으로 캘 수 있어요.<br>
+    • 마을 <b>대장장이 집</b> 바닥에는 차원문 하나를 만들 만큼(10칸)의 용암이 있어요. <b>흑요석</b> 10~14개로 4×5 틀을 세우면 <b>어비스 차원문</b>이 열립니다.<br>
     • <b>철 블록</b>을 T자로 쌓고 위에 <b>나무 판자</b>를 올리면 <b>빌리저 가디언</b>이 깨어납니다.<br>
     • 곳곳의 <b>마을</b>에서 주민과 <b>동전</b>으로 거래할 수 있어요. 주민을 괴롭히면 가디언이 마을을 떠날 때까지 쫓아옵니다!<br>
     • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>스톤</b>은 이 세계의 전기이며, 깊은 동굴의 스톤 광석에서 캘 수 있어요.
+  </div>
+  <div class="help upd">
+    <div style="opacity:.75;font-size:12px">버전 = v연도.대규모 업데이트 순서.소규모 업데이트 순서</div>
+    <h4>🆕 v26.3.0 — 흐르는 물과 용암</h4>
+    • 물과 용암이 <b>흐릅니다</b>. 물은 7칸, 용암은 3칸(어비스에선 7칸)까지 퍼지고 아래로 떨어져요.<br>
+    • 흐르지 않는 물 + 흐르지 않는 용암 = <b>흑요석</b>, 어느 한쪽이라도 흐르면 <b>조약돌</b>.<br>
+    • 흑요석을 <b>철 곡괭이</b>로도 캘 수 있어요.<br>
+    • 마을에 <b>대장장이 집</b>이 생겼어요. 바닥에 차원문 하나 만들 만큼의 용암(10칸)과 가마·작업대가 있어요.<br>
+    • <b>문</b>이 진짜 나무 문처럼 바뀌었어요 (도톰한 판, 네 칸 유리창, 쇠 경첩, 놋쇠 손잡이).<br>
+    • 타이틀 화면 아래가 <b>땅속 단면</b>으로 바뀌고, 이 <b>업데이트 목록</b>이 생겼어요.
+    <h4>v26.2.2 — 문과 묘목</h4>
+    • <b>문</b>(판자 6 → 3개)과 <b>묘목</b> 추가. 나무 원목을 모두 캐면 묘목이 떨어지고, 심으면 몇 분 뒤 나무로 자라요.<br>
+    • 원목을 캐도 둥근 잎 덩어리가 그대로 남아요.
+    <h4>v26.2.1 — 둥근 나무 · 유리 · 벽돌</h4>
+    • 나뭇잎이 잘 다듬어진 나무처럼 <b>동글동글한 덩어리</b>가 되고, 줄기가 잘 보이게 바뀌었어요.<br>
+    • 투명하게 하늘이 비치는 <b>유리</b>, 줄눈이 쑥 들어간 <b>벽돌</b>.
+    <h4>v26.2.0 — 진짜 같은 세상</h4>
+    • 출렁이며 반짝이는 <b>물</b>, 갈라진 틈이 빛나는 <b>용암</b>.<br>
+    • 풀이 자라는 <b>잔디</b>, <b>흙 · 모래 · 돌 · 광석 · 나뭇잎</b>이 진짜처럼 바뀌고 <b>원목</b>이 둥근 기둥이 되었어요.<br>
+    • 잔디 블록·눈 덮인 흙을 캐면 그 블록이 그대로 나와요.
+    <h4>v26.1.2 — 움직임과 시점</h4>
+    • <b>C</b> 웅크리기 (모서리에서 안 떨어짐), <b>P</b> 시점 변경 (3인칭 앞 → 3인칭 뒤 → 1인칭), 3인칭에서 <b>갑옷</b>이 보여요.<br>
+    • 화면을 가로지르는 큰 <b>칼 휘두르기</b>, 위로 들었다 내리찍는 <b>곡괭이질</b>, 마디 있는 손, 앞을 막는 <b>방패</b>.
+    <h4>v26.1.1 — 3D 아이템</h4>
+    • 인벤토리·핫바·제작법 아이콘이 <b>3D</b>로 바뀌었어요. <b>호퍼</b>가 깔때기 모양이 되었어요.<br>
+    • 도움말을 <b>도움말 보기</b> 버튼으로 옮기고 PC·모바일 조작법을 나눴어요.
+    <h4>v26.1.0 — 첫 공개</h4>
+    • 파일 하나로 돌아가는 3D 복셀 생존 게임 <b>CAVEBUILD</b>. 프론티어 · 어비스 · 판데모니움 · 네크로폴리스 · 호라이즌, 마을과 거래, 보스까지!
   </div>
 </div>
 <div id="pause" class="overlay">
@@ -327,7 +358,7 @@ defB(END_FRAME_ON,'열쇠가 꽂힌 틀',{top:TILE.kframe_on,bottom:TILE.kframe_
 defB(VOIDMOSS,'심연 균사',TILE.voidmoss,{hard:.8,tool:'shovel'});
 defB(VOIDLAMP,'심연 등불',TILE.voidlamp,{hard:.5});
 defB(MARKER,'표식 돌',TILE.marker,{hard:2,tool:'pick',tier:1});
-defB(OBSIDIAN,'흑요석',TILE.obsidian,{hard:15,tool:'pick',tier:4}); // 수정 곡괭이 이상, 폭발에 견딤
+defB(OBSIDIAN,'흑요석',TILE.obsidian,{hard:15,tool:'pick',tier:3}); // 철 곡괭이 이상 (현실처럼), 폭발에 견딤
 defB(IRON_BLOCK,'철 블록',TILE.iron_block,{hard:5,tool:'pick',tier:2});
 defB(HS_ORE,'블레이즈스톤 광석',TILE.hs_ore,{hard:10,tool:'pick',tier:4}); // 수정 곡괭이 필요
 LADDER_IDS.forEach((id,k)=>defB(id,'사다리',TILE.ladder,{hard:.4,tool:'axe',opaque:false,solid:false,drop:LADDER,base:LADDER,face:DIR_FACES[k]}));
@@ -339,6 +370,9 @@ const DOOR=53,SAPLING=69,DOOR_IDS=[];
 for(let k=0;k<4;k++)for(let o=0;o<2;o++)for(let t=0;t<2;t++){const id=DOOR+k*4+o*2+t;DOOR_IDS.push(id);
   defB(id,'문',t?TILE.door_top:TILE.door_bottom,{hard:2,tool:'axe',opaque:false,solid:!o,drop:DOOR,base:DOOR,face:DIR_FACES[k],door:{k,o,t}});}
 defB(SAPLING,'묘목',TILE.sapling,{hard:.05,opaque:false,solid:false});
+// 흐르는 물: 70~76, 흐르는 용암: 77~83 (단계 1~7, 숫자가 클수록 얕음)
+const WATER_F=70,LAVA_F=77;
+for(let L=1;L<=7;L++){defB(WATER_F+L-1,'흐르는 물',TILE.water,{hard:-1,opaque:false,solid:false,flow:L});defB(LAVA_F+L-1,'흐르는 용암',TILE.lava,{hard:-1,opaque:false,solid:false,flow:L});}
 const OPAQUE=new Uint8Array(256),SOLID=new Uint8Array(256);
 BL.forEach((b,i)=>{if(b){OPAQUE[i]=b.opaque?1:0;SOLID[i]=b.solid?1:0;}});
 const LIQUID=new Uint8Array(256),EMIT=new Uint8Array(256),LIGHT_SRC=new Uint8Array(256),PORTAL=new Uint8Array(256);
@@ -349,6 +383,9 @@ const DOOR_OF=new Uint8Array(256);DOOR_IDS.forEach(id=>DOOR_OF[id]=1);
 const LADDER_OF=new Uint8Array(256),CONTAINER=new Uint8Array(256); // 사다리: 붙은 벽 면 번호+1, 보관함: 칸 수
 LADDER_IDS.forEach(id=>LADDER_OF[id]=BL[id].face+1);BL.forEach((b,i)=>{if(b&&b.cont)CONTAINER[i]=b.cont;});
 for(const b of [P_HELL,P_CASTLE,P_CITY,P_END])PORTAL[b]=1;
+const LIQ_KIND=new Uint8Array(256),LIQ_LV=new Uint8Array(256); // 액체 종류 (1 물, 2 용암) · 흐르는 단계 (0 = 흐르지 않는 샘)
+LIQ_KIND[WATER]=1;LIQ_KIND[LAVA]=2;
+for(let L=1;L<=7;L++){const w=WATER_F+L-1,l=LAVA_F+L-1;LIQ_KIND[w]=1;LIQ_KIND[l]=2;LIQ_LV[w]=LIQ_LV[l]=L;LIQUID[w]=LIQUID[l]=1;EMIT[l]=1;}
 
 const CS=16,CH=64,SEA=28;
 let seed=1,N1,N2,N3;
@@ -468,6 +505,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
   const TREE_RX=2.57,TREE_RY=2.28,trees=[],covered=new Set();
   // 줄기와 상관없이 잎 모양으로 찾음: 잎 칸을 중심으로 한 타원체가 85% 이상 잎이면 둥근 잎 공 (원목을 다 캐도 그대로 둥긂)
   const ckk=(x,y,z)=>(x>=0&&x<16&&z>=0&&z<16)?(y*16+z)*16+x:x+','+y+','+z; // 청크 밖 칸은 문자열 키
+  const liqH=(X,Y,Z,k)=>{const b=get(X,Y,Z);if(LIQ_KIND[b]!==k)return 0;if(LIQ_KIND[get(X,Y+1,Z)]===k)return 1;return LIQ_LV[b]?.88*(8-LIQ_LV[b])/8:.88;}; // 액체 칸의 높이
   for(let cy=2;cy<CH-2;cy++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){
     if(get(x,cy,z)!==LEAVES||covered.has(ckk(x,cy,z)))continue;
     let want=0,have=0;const cells=[];
@@ -477,7 +515,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
   }
   for(let y=0;y<CH;y++)for(let z=0;z<16;z++)for(let x=0;x<16;x++){
     const id=d[(y*16+z)*16+x];if(!id)continue;
-    const B=BL[id],isW=id===WATER,isL=id===LAVA;
+    const B=BL[id],isW=LIQ_KIND[id]===1,isL=LIQ_KIND[id]===2;
     if(id===LEAVES&&covered.has((y*16+z)*16+x))continue; // 둥근 잎 덩어리에 포함된 잎
     if(LADDER_OF[id]){const f=FACES[LADDER_OF[id]-1],t=B.tiles[0],tx=t%ATW,ty=Math.floor(t/ATW),base=P.length/3;
       const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0;
@@ -525,10 +563,12 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
           quad([cx-dx,y0,cz-dz],[cx+dx,y0,cz+dz],[cx-dx,y1,cz-dz],[cx+dx,y1,cz+dz],.82);}
         const ym=y+.5+((hr>>>12)%30-15)/100,ex=Math.cos(a0+.8)*W,ez=Math.sin(a0+.8)*W; // 가운데를 가로지르는 비스듬한 판
         quad([x+.5-ex,ym-.15,z+.5-ez],[x+.5+ez,ym+.15,z+.5-ex],[x+.5-ez,ym+.15,z+.5+ex],[x+.5+ex,ym-.15,z+.5+ez],.95);}}
-    let wTop=1;if((isW||isL)&&get(x,y+1,z)!==id)wTop=.88;
+    let wq=null; // 액체 윗면 네 모서리 높이: 모서리를 함께 쓰는 네 칸 중 가장 높은 값 → 이웃끼리 이어진 비탈
+    if(isW||isL){const k=LIQ_KIND[id];wq=[0,0,0,0];
+      for(let a=0;a<2;a++)for(let c2=0;c2<2;c2++){let m=0;for(let i=a-1;i<=a;i++)for(let j=c2-1;j<=c2;j++)m=Math.max(m,liqH(x+i,y,z+j,k));wq[a*2+c2]=m;}}
     for(let fi=0;fi<6;fi++){
       const f=FACES[fi],n=get(x+f.dir[0],y+f.dir[1],z+f.dir[2]);
-      if(isW||isL){if(n===id||OPAQUE[n])continue;}
+      if(isW||isL){if(LIQ_KIND[n]===LIQ_KIND[id]||OPAQUE[n])continue;}
       else{if(OPAQUE[n])continue;if(n===id)continue;}
       const t=B.tiles[fi],tx=t%ATW,ty=Math.floor(t/ATW);
       const nx=x+f.dir[0],ny=y+f.dir[1],nz=z+f.dir[2];
@@ -536,13 +576,13 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       const sl=sky?1:caveB;
       if(isW){
         const base=WP.length/3;
-        for(const c of f.c){WP.push(x+c[0],y+(c[1]?wTop:0),z+c[2]);WU.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);
+        for(const c of f.c){WP.push(x+c[0],y+(c[1]?wq[c[0]*2+c[2]]:0),z+c[2]);WU.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);
           WC.push(sl,LV?Math.min(1,lightAt(x+f.dir[0],y+f.dir[1],z+f.dir[2])/LM*1.25):0,f.shade);}
         WI.push(base,base+1,base+2,base+2,base+1,base+3);
         continue;
       }
       if(isL){const base=LP.length/3; // 용암: 흐르는 무늬는 셰이더에서 계산
-        for(const c of f.c){LP.push(x+c[0],y+(c[1]?wTop:0),z+c[2]);LU.push(c[3],c[4]);LC.push(sl,1,f.shade);}
+        for(const c of f.c){LP.push(x+c[0],y+(c[1]?wq[c[0]*2+c[2]]:0),z+c[2]);LU.push(c[3],c[4]);LC.push(sl,1,f.shade);}
         LI.push(base,base+1,base+2,base+2,base+1,base+3);continue;}
       if(id===GLASS){const base=GP.length/3,gl=LV?Math.min(1,lightAt(x+f.dir[0],y+f.dir[1],z+f.dir[2])/LM*1.25):0; // 유리: 투명·반사는 셰이더에서
         for(const c of f.c){GP.push(x+c[0],y+c[1],z+c[2]);GU.push(c[3],c[4]);GC.push(sl,gl,f.shade);}
@@ -557,7 +597,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
           for(const o of ao){if(!OPAQUE[get(x+o[0],y+o[1],z+o[2])]){sum+=lightAt(x+o[0],y+o[1],z+o[2]);cnt++;}}
           bl=Math.min(1,sum/cnt/LM*1.25);}
         if(id===LEAVES){leafRound(x+c[0],y+c[1],z+c[2],_lo);P.push(x+c[0]+_lo[0],y+c[1]+_lo[1],z+c[2]+_lo[2]);}
-        else P.push(x+c[0],y+(isL?(c[1]?wTop:0):c[1]),z+c[2]);U.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);C.push(sl,bl,AO_B[a]*f.shade*tint);
+        else P.push(x+c[0],y+(isL?(c[1]?wq[c[0]*2+c[2]]:0):c[1]),z+c[2]);U.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);C.push(sl,bl,AO_B[a]*f.shade*tint);
       }
       if(aoc[0]+aoc[3]>aoc[1]+aoc[2])I.push(base,base+1,base+3,base,base+3,base+2);
       else I.push(base,base+1,base+2,base+2,base+1,base+3);
@@ -751,10 +791,11 @@ function villageSiteOK(x,z,tol){
 }
 function makeVillage(id,x,z,r){
   const houses=[],n=4+(r()*3|0);
-  for(let k=0;k<n;k++){const a=k/n*Math.PI*2+r()*.5,rad=12+r()*6,hx=Math.round(x+Math.cos(a)*rad)-2,hz=Math.round(z+Math.sin(a)*rad)-2,base=terrainAt(hx+2,hz+2).h;
-    const dx=x-(hx+2),dz=z-(hz+2);let door;
-    if(Math.abs(dx)>Math.abs(dz))door=dx>0?[4,2]:[0,2];else door=dz>0?[2,4]:[2,0];
-    houses.push({x:hx,z:hz,base,door});}
+  for(let k=0;k<n;k++){const w=k?4:6,hw=w/2; // 첫 집은 대장장이 집 (7×7)
+    const a=k/n*Math.PI*2+r()*.5,rad=12+r()*6+(k?0:1),hx=Math.round(x+Math.cos(a)*rad)-hw,hz=Math.round(z+Math.sin(a)*rad)-hw,base=terrainAt(hx+hw,hz+hw).h;
+    const dx=x-(hx+hw),dz=z-(hz+hw);let door;
+    if(Math.abs(dx)>Math.abs(dz))door=dx>0?[w,hw]:[0,hw];else door=dz>0?[hw,w]:[hw,0];
+    houses.push({x:hx,z:hz,base,door,w,smith:!k});}
   return {id,x,z,h:terrainAt(x,z).h,houses};
 }
 function villageCell(i,j){
@@ -800,21 +841,26 @@ function buildVillages(data,cx,cz){
     for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++)P(v.x+dx,wy+4,v.z+dz,PLANKS);
     }
     // 집
-    for(const h of v.houses){const b=h.base;
-      if(!near(h.x-1,h.z-1,h.x+5,h.z+5))continue;
-      for(let dz=-1;dz<=5;dz++)for(let dx=-1;dx<=5;dx++){const X=h.x+dx,Z=h.z+dz,inside=dx>=0&&dx<=4&&dz>=0&&dz<=4;
+    for(const h of v.houses){const b=h.base,w=h.w||4,hw=w/2;
+      if(!near(h.x-1,h.z-1,h.x+w+1,h.z+w+1))continue;
+      for(let dz=-1;dz<=w+1;dz++)for(let dx=-1;dx<=w+1;dx++){const X=h.x+dx,Z=h.z+dz,inside=dx>=0&&dx<=w&&dz>=0&&dz<=w;
         for(let y=b+1;y<=b+7;y++)P(X,y,Z,AIR);
         if(inside){for(let y=b-3;y<b;y++)P(X,y,Z,COBBLE);P(X,b,Z,PLANKS);}}
-      for(let dz=0;dz<=4;dz++)for(let dx=0;dx<=4;dx++){
-        const edgeX=dx===0||dx===4,edgeZ=dz===0||dz===4;if(!edgeX&&!edgeZ)continue;
+      for(let dz=0;dz<=w;dz++)for(let dx=0;dx<=w;dx++){
+        const edgeX=dx===0||dx===w,edgeZ=dz===0||dz===w;if(!edgeX&&!edgeZ)continue;
         for(let y=b+1;y<=b+3;y++){let id=(edgeX&&edgeZ)?LOG:PLANKS;
-          if(!(edgeX&&edgeZ)&&y===b+2&&((edgeX&&dz===2)||(edgeZ&&dx===2)))id=GLASS;
+          if(!(edgeX&&edgeZ)&&y===b+2&&((edgeX&&dz===hw)||(edgeZ&&dx===hw)))id=GLASS;
           if(dx===h.door[0]&&dz===h.door[1]&&y<=b+2)id=AIR;
           P(h.x+dx,y,h.z+dz,id);}}
-      for(let dz=-1;dz<=5;dz++)for(let dx=-1;dx<=5;dx++)P(h.x+dx,b+4,h.z+dz,BRICK);
-      for(let dz=0;dz<=4;dz++)for(let dx=0;dx<=4;dx++)P(h.x+dx,b+5,h.z+dz,BRICK);
-      for(let dz=1;dz<=3;dz++)for(let dx=1;dx<=3;dx++)P(h.x+dx,b+6,h.z+dz,BRICK);
-      P(h.x+2,b+3,h.z+2,LAMP);
+      for(let dz=-1;dz<=w+1;dz++)for(let dx=-1;dx<=w+1;dx++)P(h.x+dx,b+4,h.z+dz,BRICK);
+      for(let dz=0;dz<=w;dz++)for(let dx=0;dx<=w;dx++)P(h.x+dx,b+5,h.z+dz,BRICK);
+      for(let dz=1;dz<w;dz++)for(let dx=1;dx<w;dx++)P(h.x+dx,b+6,h.z+dz,BRICK);
+      for(let dz=2;dz<w-1;dz++)for(let dx=2;dx<w-1;dx++)P(h.x+dx,b+7,h.z+dz,BRICK);
+      P(h.x+hw,b+3,h.z+hw,LAMP);
+      if(h.smith){ // 대장장이 집: 바닥에 용암 10칸 (모서리 없는 흑요석 차원문 틀 하나를 딱 만들 만큼) + 가마·작업대
+        const alongX=h.door[0]===0||h.door[0]===w;
+        for(let i=1;i<=5;i++)for(let j=1;j<=2;j++){const [dx,dz]=alongX?[i,j]:[j,i];P(h.x+dx,b,h.z+dz,LAVA);}
+        P(h.x+5,b+1,h.z+5,KILN);P(h.x+(alongX?4:5),b+1,h.z+(alongX?5:4),BENCH);}
     }
   }
 }
@@ -1074,15 +1120,49 @@ T(TILE.hopper_top,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if(e<9)return 
   const d=Math.max(Math.abs(u-.5),Math.abs(v-.5));return mulc([30,30,34],.6+d*1.2);}); // 깔때기 구멍
 T(TILE.hopper_side,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if((x===6||x===TS-7)&&(y===6||y===TS-7))return [150,152,160];
   let c=hopperMetal(u,v,x,y,282);if(e<2)c=mulc(c,.65);if(y>TS*.55&&(x<TS*.2||x>TS*.8))c=mulc(c,.7);return c;});
-{const dw=(u,v,x,y,s)=>woodGrain(v,u,y,x,s,[122,84,48],[150,108,64],5); // 세로 나뭇결 문짝
-  const panel=(x,y,x0,y0,x1,y1)=>{if(x<x0||x>x1||y<y0||y>y1)return 0;const e=Math.min(x-x0,y-y0,x1-x,y1-y);return e<2?((x-x0<2||y-y0<2)?.72:1.18):.9;}; // 들어간 판: 위·왼쪽 그늘, 아래·오른쪽 밝음
-  T(TILE.door_bottom,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);let c=dw(u,v,x,y,291);if(e<5)return mulc(c,e<1?.55:.8); // 문틀
-    if(Math.hypot(x-(TS-11),y-7)<3.2)return mulc([186,186,194],Math.hypot(x-(TS-12),y-6)<1.5?1.25:.85); // 손잡이
-    const k=panel(x,y,10,6,29,TS-9)||panel(x,y,35,6,53,TS-9);return k?mulc(c,k):c;});
-  T(TILE.door_top,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);let c=dw(u,v,x,y,292);if(e<5)return mulc(c,e<1?.55:.8);
-    if(x>=10&&x<=53&&y>=8&&y<=42){if(Math.abs(x-31.5)<2||Math.abs(y-25)<2||x<12||x>51||y<10||y>40)return mulc(c,.85); // 창살
-      const d=(u+v);return mixc([132,176,194],[214,236,244],Math.exp(-(((d-.62)*14)**2))*.8+.15*(1-v));} // 유리창 (빛줄기)
-    const k=panel(x,y,10,47,53,TS-6);return k?mulc(c,k):c;});
+{const OAK1=[110,72,38],OAK2=[152,106,60];
+  const vw=(u,v,x,y,s)=>mulc(woodGrain(v,u,y,x,s,OAK1,OAK2,3.5),.9+.2*fbm(u*.5,v*3,s+7,3,3)); // 세로 나뭇결 (세로 틀·판)
+  const hw=(u,v,x,y,s)=>mulc(woodGrain(u,v,x,y,s,OAK1,OAK2,3.5),.9+.2*fbm(u*3,v*.5,s+8,3,3)); // 가로 나뭇결 (가로대)
+  const pane=(x,y,x0,y0,x1,y1)=>{ // 홈을 두르고 가운데가 도톰하게 솟은 판 → 밝기 (0 = 판 밖)
+    if(x<x0||x>x1||y<y0||y>y1)return 0;const l=x-x0,t=y-y0,r=x1-x,b=y1-y,e=Math.min(l,t,r,b);
+    if(e<1)return .42; // 판과 틀 사이의 그늘진 홈
+    if(e<6)return (e===l||e===t)?1.1+.03*(6-e):.66+.05*e; // 비스듬한 경사: 위·왼쪽은 빛, 아래·오른쪽은 그늘
+    return 1.05;};
+  const hinge=(x,y,y0)=>{ // 왼쪽 틀의 쇠 경첩
+    if(x>8||y<y0||y>y0+11)return null;const ly=y-y0;
+    if(x<=2)return mulc([112,112,120],(ly%4===0?.55:1)*(x===1?1.25:1)); // 경첩 축 마디
+    const e=Math.min(x-3,ly,8-x,11-ly);let c=mulc([56,56,62],.85+.3*h2(x,y,y0+5));if(e<1)c=mulc(c,.6);
+    if(Math.hypot(x-5.5,ly-3)<1.3||Math.hypot(x-5.5,ly-8)<1.3)c=[156,156,164]; // 나사
+    return c;};
+  const glass=(u,v,x,y,x0,y0,y1)=>{const d=u+v*.8; // 창유리: 하늘이 비치고 위·왼쪽 창살 그늘
+    let c=mixc([92,134,158],[196,224,238],.3+.55*(1-(y-y0)/(y1-y0)));
+    c=mixc(c,[244,250,255],Math.exp(-(((d-.7)*12)**2))*.7+Math.exp(-(((d-.92)*30)**2))*.45);
+    return (x-x0<2||y-y0<2)?mulc(c,.6):c;};
+  const finish=(c,x,y,s)=>{ // 잔 긁힘 · 문 가장자리 어둡게
+    if(h2(x>>1,y*3,s)>.986)c=mulc(c,1.18);const e=Math.min(x,y,TS-1-x,TS-1-y);
+    return e<1?mulc(c,.5):e<2?mulc(c,.8):c;};
+  T(TILE.door_top,(u,v,x,y)=>{let c;
+    const hg=hinge(x,y,9);if(hg)return finish(hg,x,y,293);
+    if(x>=10&&x<=53&&y>=7&&y<=37){ // 네 칸 유리창 + 십자 창살
+      const mx=x>=30&&x<=33,my=y>=21&&y<=23;
+      if(mx||my)c=mulc(mx?vw(u,v,x,y,294):hw(u,v,x,y,294),(mx&&x>=32)||(my&&y>=23)?.75:1.1);
+      else c=glass(u,v,x,y,x<30?10:34,y<21?7:24,y<21?20:37);}
+    else if(x>=10&&x<=53&&y>=44&&y<=58){const k=pane(x,y,10,44,29,58)||pane(x,y,34,44,53,58);c=k?mulc(vw(u,v,x,y,295),k):vw(u,v,x,y,296);}
+    else c=x>=10&&x<=53?hw(u,v,x,y,297):vw(u,v,x,y,298); // 가로대 / 세로 틀
+    if(x>=10&&x<=53&&(y===6||y===38))c=mulc(c,y===6?.6:1.2); // 창틀 턱
+    return finish(c,x,y,299);});
+  T(TILE.door_bottom,(u,v,x,y)=>{let c;
+    const hg=hinge(x,y,44);if(hg)return finish(hg,x,y,301);
+    if(x>=55&&x<=61&&y>=2&&y<=21){ // 놋쇠 손잡이 판 · 둥근 손잡이 · 열쇠 구멍
+      const kd=Math.hypot(x-58,y-8);
+      if(kd<3.6)return mulc([204,162,72],Math.hypot(x-57,y-7)<1.3?1.5:1.25-kd*.12);
+      if(Math.hypot(x-58,y-15)<1.4||(x===58&&y>=15&&y<=18))return [26,20,14];
+      const e=Math.min(x-55,y-2,61-x,21-y);return mulc([172,130,54],(e<1?.6:1)*(1.1-(y-2)*.014)*grain(x,y,302,.12));}
+    if(x>=10&&x<=53&&y>=4&&y<=51){const k=pane(x,y,10,4,29,51)||pane(x,y,34,4,53,51);c=k?mulc(vw(u,v,x,y,303),k):vw(u,v,x,y,304);}
+    else c=x>=10&&x<=53?hw(u,v,x,y,305):vw(u,v,x,y,306);
+    if(y>54)c=mulc(c,.8+.12*fbm(u,v,307,3,6)); // 발에 차여 닳고 거뭇한 아래쪽
+    if(x>47&&y<26)c=mulc(c,.92); // 손잡이 주변 손때
+    return finish(c,x,y,308);});
   const R=mulberry32(6161),lv=[];for(let i=0;i<9;i++)lv.push({x:.5+(R()-.5)*.5,y:.18+R()*.42,a:R()*Math.PI*2,l:.09+R()*.05,h:R()});
   T(TILE.sapling,(u,v,x,y)=>{
     for(const L of lv){const dx=u-L.x,dy=v-L.y,ca=Math.cos(L.a),sa=Math.sin(L.a),sx=(dx*ca+dy*sa)/L.l,t=(-dx*sa+dy*ca)/L.l;
@@ -1310,7 +1390,7 @@ function itemIcon(id){
   return pixelIcon(()=>'#f0f');
 }
 function buildIcons(){
-  for(let i=1;i<BL.length;i++)if(BL[i]&&i!==WATER&&i!==LAVA){ICON_CANVAS[i]=blockIcon(i);ICON[i]=ICON_CANVAS[i].toDataURL();}
+  for(let i=1;i<BL.length;i++)if(BL[i]&&!LIQUID[i]){ICON_CANVAS[i]=blockIcon(i);ICON[i]=ICON_CANVAS[i].toDataURL();}
   for(let i=100;i<IT.length;i++)if(IT[i]){ICON_CANVAS[i]=itemIcon(i);ICON[i]=ICON_CANVAS[i].toDataURL();}
   for(const i of LADDER_IDS){const c=makeCanvas(48,48),g=c.getContext('2d'),t=TILE.ladder;g.drawImage(atlas,(t%ATW)*TS,Math.floor(t/ATW)*TS,TS,TS,4,4,40,40);ICON_CANVAS[i]=c;ICON[i]=c.toDataURL();} // 사다리는 납작하게
   ICON_CANVAS[CHEST]=ICON_CANVAS[CHEST_IDS[3]];ICON[CHEST]=ICON[CHEST_IDS[3]]; // 상자 아이콘은 앞면(걸쇠)이 보이게
@@ -1385,6 +1465,41 @@ function makeFavicon(S=64){ // 잔디 덮인 돌에 뚫린 동굴 입구 + 등�
     const l=document.createElement('link');l.rel='icon';l.type='image/png';l.href=makeFavicon(64).toDataURL();document.head.appendChild(l);
   }catch(e){console.warn('로고를 그리지 못했습니다',e);}
 })();
+// 타이틀 배경: 하늘 아래 땅속 단면 — 잔디 · 흙 · 돌(석탄·수정) · 돌(철) · 어비스 · 판데모니움 · 네크로폴리스 · 호라이즌
+function drawTitleBg(){
+  const el=$('title');let c=$('titleBg');if(!c){c=document.createElement('canvas');c.id='titleBg';el.prepend(c);}
+  const dpr=Math.min(2,devicePixelRatio||1),W=c.width=Math.round(innerWidth*dpr),H=c.height=Math.round(innerHeight*dpr); // 실제 화소 단위로 그려야 블록 사이에 틈이 안 생김
+  const g=c.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
+  const r=mulberry32(4242),R=()=>r();
+  const LAYERS=[ // [이름, 줄 수, 칸 고르기(열, 줄, 무작위), 어둡게]
+    ['프론티어',1,()=>TILE.grass_side,0],
+    [null,2,()=>R()<.06?TILE.stone:TILE.dirt,.04],
+    [null,3,()=>{const q=R();return q<.1?TILE.coal:q<.15?TILE.crystal:TILE.stone;},.1],
+    [null,3,()=>{const q=R();return q<.13?TILE.iron:TILE.stone;},.18],
+    ['어비스',2,(cx,i)=>{const w=Math.sin(cx*.55+1.3)+Math.sin(cx*.21)*.6;return (i===1?w>-.1:w>.75)?TILE.lava:R()<.05?TILE.hs_ore:TILE.hellstone;},.06],
+    ['판데모니움',5,(cx,i)=>i===2&&cx%7>0&&cx%7<6?TILE.lava:(i===1||i===3)&&R()<.07?TILE.hellglow:TILE.demonbrick,.1],
+    ['네크로폴리스',3,(cx,i)=>i===0?TILE.asphalt:i===1&&cx%4===2?(R()<.55?TILE.window:TILE.window_off):R()<.3?TILE.voidmoss:TILE.darkstone,.12],
+    ['호라이즌',3,()=>R()<.06?TILE.obsidian:TILE.endstone,.08],
+  ];
+  const rows=LAYERS.reduce((a,l)=>a+l[1],0),s=Math.max(Math.round(14*dpr),Math.ceil(H*.56/rows)),top=H-rows*s,cols=Math.ceil(W/s)+1;
+  const sky=g.createLinearGradient(0,0,0,top);sky.addColorStop(0,'#3a7bd5');sky.addColorStop(1,'#9fd0ff');g.fillStyle=sky;g.fillRect(0,0,W,top+1);
+  g.fillStyle='rgba(255,255,255,.85)'; // 네모난 구름
+  for(let i=0;i<Math.ceil(W/dpr/260);i++){const cx=R()*W,cy=top*(.08+R()*.3),u=s*.9;for(let k=0;k<4;k++)g.fillRect(cx+(k-1.5)*u*1.4,cy-(k%3===1?u*.6:0),u*1.6,u*(k%3===1?1.4:.8));}
+  const tile=(t,x,y,sz)=>g.drawImage(atlas,(t%ATW)*TS+.5,Math.floor(t/ATW)*TS+.5,TS-1,TS-1,x,y,sz,sz); // 옆 타일 색이 번지지 않게 안쪽만
+  for(let cx=0;cx<cols;cx++)if(R()<.55)tile(TILE.tuft,cx*s,top-Math.round(s*.8),Math.round(s*.8)); // 잔디 위 풀
+  let row=0;
+  for(const [name,n,pick,dark] of LAYERS){
+    for(let i=0;i<n;i++,row++)for(let cx=0;cx<cols;cx++){tile(pick(cx,i),cx*s,top+row*s,s);}
+    const y0=top+(row-n)*s;
+    if(dark){g.fillStyle=`rgba(0,0,0,${dark})`;g.fillRect(0,y0,W,n*s);}
+    if(name&&row>n){g.fillStyle='rgba(0,0,0,.55)';g.fillRect(0,y0-dpr,W,2*dpr);} // 차원 경계선
+    if(name){g.font=`bold ${Math.max(11,Math.min(15,s/dpr*.5))*dpr|0}px 'Malgun Gothic',sans-serif`;g.textAlign='right';g.textBaseline='top';
+      g.fillStyle='rgba(0,0,0,.6)';g.fillText(name,W-9*dpr,y0+5*dpr);g.fillStyle='rgba(255,246,208,.9)';g.fillText(name,W-10*dpr,y0+4*dpr);}
+  }
+}
+try{drawTitleBg();let tbT=0;addEventListener('resize',()=>{clearTimeout(tbT);tbT=setTimeout(()=>{if($('title').classList.contains('show'))drawTitleBg();},150);});
+  new MutationObserver(()=>{const c=$('titleBg');if($('title').classList.contains('show')&&c&&(c.width!==Math.round(innerWidth*Math.min(2,devicePixelRatio||1))))drawTitleBg();}).observe($('title'),{attributes:true,attributeFilter:['class']});
+}catch(e){console.warn('타이틀 배경을 그리지 못했습니다',e);}
 // HUD 아이콘
 function artIcon(rows,pal){const c=makeCanvas(9,9),g=c.getContext('2d');rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(pal[ch]){g.fillStyle=pal[ch];g.fillRect(x,y,1,1);}}));return c;}
 function halfIcon(full,empty){const c=makeCanvas(9,9),g=c.getContext('2d');g.drawImage(empty,0,0);g.drawImage(full,0,0,5,9,0,0,5,9);return c;}
@@ -1407,13 +1522,31 @@ function audio(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioConte
   return AC;}
 function noise(dur,freq,vol,delay=0){const a=audio();if(!a)return;const t=a.currentTime+delay;const s=a.createBufferSource();s.buffer=NB;const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=freq;const g=a.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f).connect(g).connect(a.destination);s.start(t,Math.random()*.5);s.stop(t+dur+.02);}
 function tone(f0,f1,dur,vol,type='sine',delay=0){const a=audio();if(!a)return;const t=a.currentTime+delay;const o=a.createOscillator();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);const g=a.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(a.destination);o.start(t);o.stop(t+dur+.02);}
+function bnoise(dur,freq,q,vol,delay=0,att=.005,type='bandpass',f1=0){ // 걸러낸 잡음 (부드럽게 시작, 주파수가 미끄러질 수 있음)
+  const a=audio();if(!a)return;const t=a.currentTime+delay,s=a.createBufferSource();s.buffer=NB;const f=a.createBiquadFilter();f.type=type;f.frequency.setValueAtTime(freq,t);if(f1)f.frequency.exponentialRampToValueAtTime(f1,t+dur);f.Q.value=q;
+  const g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+att);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f).connect(g).connect(a.destination);s.start(t,Math.random()*.5);s.stop(t+dur+.02);}
+function bubble(f0,dur,vol,delay=0){ // 물방울 '퐁': 짧게 올라가는 사인파
+  const a=audio();if(!a)return;const t=a.currentTime+delay,o=a.createOscillator();o.type='sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f0*2.2,t+dur);
+  const g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.006);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(a.destination);o.start(t);o.stop(t+dur+.02);}
+function creak(f0,dur,vol,delay=0){ // 경첩 삐걱: 느리게 떨리는 톱니파를 나무 울림 대역으로 걸러 '끼이익'
+  const a=audio();if(!a)return;const t=a.currentTime+delay,o=a.createOscillator();o.type='sawtooth';
+  const n=28,cv=new Float32Array(n);for(let i=0;i<n;i++)cv[i]=f0*(.7+.6*Math.random())*(1+.7*i/n);o.frequency.setValueCurveAtTime(cv,t,dur);
+  const g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+dur*.15);g.gain.setValueAtTime(vol,t+dur*.65);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  for(const [fq,q] of [[820,6],[1650,7],[2900,5]]){const b=a.createBiquadFilter();b.type='bandpass';b.frequency.value=fq;b.Q.value=q;o.connect(b).connect(g);}
+  g.connect(a.destination);o.start(t);o.stop(t+dur+.02);}
 const SFX={
+  // 물에 풍덩: 물 튀는 소리 → 낮게 출렁 → 보글보글 물방울
+  splash:()=>{bnoise(.45,2600,.6,.32,0,.012,'bandpass',700);bnoise(.8,700,.4,.22,.02,.05,'lowpass',180);
+    for(let i=0;i<9;i++)bubble(320+Math.random()*760,.05+Math.random()*.09,.05+Math.random()*.04,.1+Math.random()*.55);},
+  // 나무 문: 열 때 '끼이익', 닫을 때 짧은 삐걱 + '쿵' + 걸쇠 '딸깍'
+  door:open=>{if(open){creak(46,.5,.32);bnoise(.09,1100,1.2,.12,0,.004);}
+    else{creak(60,.22,.25);bnoise(.16,260,.7,.4,.2,.003,'lowpass');tone(115,58,.18,.2,'sine',.2);bnoise(.035,4200,3,.14,.21,.002);}},
   break:()=>noise(.2,1300,.35),dig:()=>noise(.06,900,.14),place:()=>noise(.1,480,.45),
   step:()=>noise(.05,300+Math.random()*150,.07),hurt:()=>tone(320,110,.22,.18,'square'),
   pop:()=>tone(520,1040,.08,.12),eat:()=>{for(let i=0;i<3;i++)noise(.07,1900,.22,i*.13);},
   craft:()=>{tone(660,660,.08,.1,'triangle');tone(990,990,.14,.1,'triangle',.08);},
   mobhit:()=>tone(240,90,.16,.2,'sawtooth'),bleat:()=>tone(430+Math.random()*80,300,.35,.07,'triangle'),
-  gloom:()=>tone(95,55,.35,.1,'sawtooth'),splash:()=>noise(.35,1000,.22),
+  gloom:()=>tone(95,55,.35,.1,'sawtooth'),
   ach:()=>{[523,659,784,1046].forEach((f,i)=>tone(f,f,.18,.1,'triangle',i*.09));},
   toolbreak:()=>{noise(.25,3000,.3);tone(800,200,.25,.1,'square');},
   cluck:()=>{tone(1200,850,.07,.06,'square');tone(1250,900,.07,.06,'square',.12);},
@@ -1493,6 +1626,49 @@ function disposeMesh(ch){
 }
 const hasNeighbors=(cx,cz)=>getChunk(cx+1,cz)&&getChunk(cx-1,cz)&&getChunk(cx,cz+1)&&getChunk(cx,cz-1);
 function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx,cz))buildMesh(c);else c.needsMesh=true;}
+// ---------- 흐르는 물·용암 ----------
+// 물은 0.25초, 용암은 1.5초(어비스·판데모니움은 0.5초)마다 한 칸씩 흐름. 물은 7칸, 용암은 3칸(어비스에선 7칸)까지 퍼짐
+// 물과 용암이 닿으면 용암 쪽이 굳음: 둘 다 흐르지 않는 샘이면 흑요석, 하나라도 흐르는 중이면 조약돌
+const H4=[[1,0],[-1,0],[0,1],[0,-1]],D6=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+const LQ=[null,new Set(),new Set()],lqT=[0,0,0];
+function liqTouch(x,y,z){ // 바뀐 칸과 그 이웃의 액체를 다음 흐름 차례에 다시 계산
+  for(let i=-1;i<6;i++){const X=i<0?x:x+D6[i][0],Y=i<0?y:y+D6[i][1],Z=i<0?z:z+D6[i][2],k=LIQ_KIND[getBlock(X,Y,Z)];if(k)LQ[k].add(X+','+Y+','+Z);}}
+function liqFizz(x,y,z,res){SFX.fizz();spawnParticles(x+.5,y+1,z+.5,new THREE.Color(0xdddddd),16,.6,4);if(res===OBSIDIAN)achieve('obsidian');}
+function liqReact(x,y,z,b,k,batch){
+  for(const [dx,dy,dz] of D6){const X=x+dx,Y=y+dy,Z=z+dz,n=getBlock(X,Y,Z),nk=LIQ_KIND[n];if(!nk||nk===k)continue;
+    const res=(!LIQ_LV[b]&&!LIQ_LV[n])?OBSIDIAN:COBBLE;
+    if(k===2){setBlock(x,y,z,res,batch);liqFizz(x,y,z,res);return true;} // 내가 용암이면 내가 굳음
+    setBlock(X,Y,Z,res,batch);liqFizz(X,Y,Z,res);}
+  return false;}
+function liqFeeds(n,X,Y,Z,k){if(!LIQ_LV[n])return true;const b=getBlock(X,Y-1,Z);return b!==AIR&&LIQ_KIND[b]!==k;} // 옆으로 퍼지고 있는 칸인지
+function liqUpdate(x,y,z,batch){
+  const b=getBlock(x,y,z),k=LIQ_KIND[b];if(!k)return;
+  if(liqReact(x,y,z,b,k,batch))return;
+  const L=LIQ_LV[b],hot=world.dim==='hell'||world.dim==='castle',step=k===2&&!hot?2:1,fl=(k===1?WATER_F:LAVA_F)-1;
+  if(L){ // 흐르는 칸: 물줄기를 따라 단계를 다시 셈 (샘이 사라지면 점점 마름)
+    let want=99,srcN=0;
+    if(LIQ_KIND[getBlock(x,y+1,z)]===k)want=1; // 위에서 떨어지는 물줄기
+    for(const [dx,dz] of H4){const n=getBlock(x+dx,y,z+dz);if(LIQ_KIND[n]!==k)continue;if(!LIQ_LV[n])srcN++;if(liqFeeds(n,x+dx,y,z+dz,k))want=Math.min(want,LIQ_LV[n]+step);}
+    if(k===1&&srcN>=2){const dn=getBlock(x,y-1,z);if(SOLID[dn]||dn===WATER){setBlock(x,y,z,WATER,batch);return;}} // 샘 두 개 사이에 고인 물은 새 샘이 됨
+    if(want>7){setBlock(x,y,z,AIR,batch);return;}
+    if(want!==L){setBlock(x,y,z,fl+want,batch);return;}
+  }
+  const dn=getBlock(x,y-1,z);
+  if(dn===AIR){setBlock(x,y-1,z,fl+1,batch);if(L)return;} // 아래가 비면 먼저 떨어짐 (샘은 옆으로도 퍼짐)
+  else if(L&&LIQ_KIND[dn]===k)return; // 물 위에 떨어진 물줄기는 옆으로 안 퍼짐
+  const nl=L+step;if(nl>7)return;
+  for(const [dx,dz] of H4){const X=x+dx,Z=z+dz,n=getBlock(X,y,Z);
+    if(n===AIR||(LIQ_KIND[n]===k&&LIQ_LV[n]>nl))setBlock(X,y,Z,fl+nl,batch);}
+}
+function updateLiquids(dt){
+  for(let k=1;k<=2;k++){
+    if(!LQ[k].size){lqT[k]=0;continue;}
+    if((lqT[k]+=dt)<(k===1?.25:(world.dim==='hell'||world.dim==='castle')?.5:1.5))continue;lqT[k]=0;
+    const list=[];for(const q of LQ[k]){list.push(q);if(list.length>=600)break;}for(const q of list)LQ[k].delete(q);
+    const batch=new Set();for(const q of list){const a=q.split(',');liqUpdate(+a[0],+a[1],+a[2],batch);}
+    for(const kk of batch){const [cx,cz]=kk.split(',').map(Number);remeshAt(cx,cz);}
+  }
+}
 function setBlock(x,y,z,id,batch){
   if(y<0||y>=CH)return;const cx=x>>4,cz=z>>4,c=getChunk(cx,cz);if(!c)return;
   const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;calcHM(c,lx,lz);c.ver++;
@@ -1500,6 +1676,7 @@ function setBlock(x,y,z,id,batch){
   if(CONTAINER[id]&&!CONTAINER[old])getCont(x,y,z); // 새로 놓은 상자·호퍼를 등록 (호퍼가 바로 작동)
   if(id===SAPLING&&old!==SAPLING)(world.saplings||(world.saplings=[])).push({d:world.dim,x,y,z,t:world.stats.play+90+Math.random()*120}); // 1.5~3.5분 뒤 자람
   if(old===SAPLING&&id!==SAPLING&&world.saplings)world.saplings=world.saplings.filter(q=>!(q.d===world.dim&&q.x===x&&q.y===y&&q.z===z));
+  liqTouch(x,y,z); // 주변 물·용암이 흐르기 시작
   const k=ckey(cx,cz);let m=mods.get(k);if(!m){m=new Map();mods.set(k,m);}m.set(i,id);modDirty.add(world.dim+'|'+k);
   if(LIGHT_SRC[old])c.lamps=c.lamps.filter(l=>l[0]!==x||l[1]!==y||l[2]!==z);
   if(LIGHT_SRC[id])c.lamps.push([x,y,z]);
@@ -1627,7 +1804,7 @@ function moveAxis(e,ax,d){
   if((p[ax]-orig)*d<0||Math.abs(p[ax]-orig)>Math.abs(d)+.01||entHits(e))p[ax]=orig;
   return true;
 }
-function isWaterAt(x,y,z){return getBlock(Math.floor(x),Math.floor(y),Math.floor(z))===WATER;}
+function isWaterAt(x,y,z){return LIQ_KIND[getBlock(Math.floor(x),Math.floor(y),Math.floor(z))]===1;}
 function isLiquidAt(x,y,z){return LIQUID[getBlock(Math.floor(x),Math.floor(y),Math.floor(z))]===1;}
 function physics(e,dt){
   if(entHits(e)){e.pos.y+=Math.min(.25,8*dt);e.vel.y=Math.max(e.vel.y,0);} // 블록에 끼면 위로 밀어냄
@@ -2139,7 +2316,7 @@ function icon3D(id){
   r.render(sc,cam);sc.remove(o);return r.domElement.toDataURL();
 }
 function build3DIcons(){ // 시작을 막지 않게 조금씩 나눠서 그림
-  const ids=[];for(let i=1;i<BL.length;i++)if(BL[i]&&i!==WATER&&i!==LAVA&&!(BL[i].base&&BL[i].base!==i))ids.push(i);
+  const ids=[];for(let i=1;i<BL.length;i++)if(BL[i]&&!LIQUID[i]&&!(BL[i].base&&BL[i].base!==i))ids.push(i);
   for(let i=100;i<IT.length;i++)if(IT[i])ids.push(i);
   let k=0;
   const step=()=>{const t0=performance.now();
@@ -2233,7 +2410,10 @@ const rnd=n=>Math.random()*(n+1)|0; // 0..n
 function steer(m,vx,vz,dt,acc=8){const k=Math.min(1,(m.onGround||m.def.fly||m.inWater?acc:2)*dt);m.vel.x+=(vx-m.vel.x)*k;m.vel.z+=(vz-m.vel.z)*k;}
 function toward(m,c,sp,dt){const l=c.dist||1;steer(m,c.toX/l*sp,c.toZ/l*sp,dt);}
 function fleeFrom(m,c,sp,dt){const l=c.dist||1;steer(m,-c.toX/l*sp,-c.toZ/l*sp,dt);}
-function wander(m,sp,dt){m.aiT-=dt;if(m.aiT<=0){m.aiT=2+Math.random()*4;if(Math.random()<.4)m.wish.set(0,0,0);else{const a=Math.random()*6.28;m.wish.set(Math.sin(a)*sp,0,Math.cos(a)*sp);}}steer(m,m.wish.x,m.wish.z,dt);}
+function wander(m,sp,dt){m.aiT-=dt;if(m.aiT<=0){m.aiT=2+Math.random()*4;if(Math.random()<.4)m.wish.set(0,0,0);else{const a=Math.random()*6.28;m.wish.set(Math.sin(a)*sp,0,Math.cos(a)*sp);}}
+  const wl=Math.hypot(m.wish.x,m.wish.z);if(wl>0){const ax=Math.floor(m.pos.x+m.wish.x/wl*.8),az=Math.floor(m.pos.z+m.wish.z/wl*.8),fy=Math.floor(m.pos.y); // 앞에 용암이 있으면 돌아섬
+    if(LIQ_KIND[getBlock(ax,fy,az)]===2||LIQ_KIND[getBlock(ax,fy-1,az)]===2)m.wish.set(-m.wish.x,0,-m.wish.z);}
+  steer(m,m.wish.x,m.wish.z,dt);}
 function autoJump(m,v=8.4){if(m.hitH&&m.onGround)m.vel.y=v;}
 function melee(m,c,range,dmg,cd,cause){
   const v=m.victim&&!m.victim.dead?m.victim:null;
@@ -2404,7 +2584,7 @@ class Mob{
     d.ai(this,c,dt);if(this.dead)return;
     if(this.inWater&&!d.fly)this.vel.y=Math.max(this.vel.y,this.hitH?6.8:2.5);
     this.soundT-=dt;if(this.soundT<=0){this.soundT=5+Math.random()*9;if(dist<16)d.sound();}
-    if(d.burn&&light>.8){let covered=false;for(let y=Math.floor(this.pos.y+this.h);y<CH;y++){const b=getBlock(Math.floor(this.pos.x),y,Math.floor(this.pos.z));if(b>0&&b!==LEAVES&&b!==WATER&&b!==GLASS){covered=true;break;}}
+    if(d.burn&&light>.8){let covered=false;for(let y=Math.floor(this.pos.y+this.h);y<CH;y++){const b=getBlock(Math.floor(this.pos.x),y,Math.floor(this.pos.z));if(b>0&&b!==LEAVES&&LIQ_KIND[b]!==1&&b!==GLASS){covered=true;break;}}
       if(!covered){this.sunT+=dt;if(Math.random()<dt*4)spawnParticles(this.pos.x,this.pos.y+this.h*.8,this.pos.z,new THREE.Color(0x333333),1,.4,2);if(this.sunT>1.5){this.sunT=.5;this.hurt(2,0,0,true);if(this.dead)return;}}}
     if(this.thornT<=0&&touchingBlock(this,THORN)){this.thornT=.6;this.hurt(1,0,0);if(this.dead)return;}
     // 플레이어/다른 몹과 겹치지 않게 밀어냄
@@ -2413,7 +2593,7 @@ class Mob{
         moveAxis(this,'x',nx*push);moveAxis(this,'z',nz*push);const vin=this.vel.x*nx+this.vel.z*nz;if(vin<0){this.vel.x-=vin*nx;this.vel.z-=vin*nz;}}};
     if(!d.noclip&&!player.dead)sep(player.pos.x,player.pos.z,player.pos.y,player.h,player.w);
     if(!d.noclip)for(const o of mobs)if(o!==this&&Math.abs(o.pos.x-this.pos.x)<2&&Math.abs(o.pos.z-this.pos.z)<2)sep(o.pos.x,o.pos.z,o.pos.y,o.h,o.w);
-    if(!d.fireproof&&(this.lavaT=(this.lavaT||0)-dt)<=0&&overlapBlock(this,b=>b===LAVA)){this.lavaT=.5;this.hurt(3,0,0);if(this.dead)return;}
+    if(!d.fireproof&&(this.lavaT=(this.lavaT||0)-dt)<=0&&overlapBlock(this,b=>LIQ_KIND[b]===2)){this.lavaT=.5;this.hurt(3,0,0);if(this.dead)return;}
     if(d.noclip)this.pos.addScaledVector(this.vel,dt);
     else if(getChunk(Math.floor(this.pos.x)>>4,Math.floor(this.pos.z)>>4))physics(this,dt);else this.vel.set(0,0,0); // 땅이 아직 안 불러와졌으면 대기
     const hs=Math.hypot(this.vel.x,this.vel.z);
@@ -2494,7 +2674,7 @@ function explode(x,y,z,r,cause){
 
 // ---------- 스폰 ----------
 function surfaceAt(x,z){
-  for(let y=CH-1;y>0;y--){const b=getBlock(x,y,z);if(b<0)return null;if(b===AIR)continue;if(b===WATER||b===LEAVES)return null;return {y:y+1,b};}
+  for(let y=CH-1;y>0;y--){const b=getBlock(x,y,z);if(b<0)return null;if(b===AIR)continue;if(LIQ_KIND[b]===1||b===LEAVES)return null;return {y:y+1,b};}
   return null;
 }
 let spawnT=0;
@@ -2587,7 +2767,7 @@ function enterDim(dim,pos,fromLoad){
   for(const c of chunks.values())disposeMesh(c);chunks.clear();resetWorkerJobs();
   syncGolems();VSTATE={};for(const b of [...boats])removeBoat(b,false);player.boat=null;for(const m of [...mobs])m.remove();for(const p of projs)scene.remove(p.mesh);projs.length=0;clearBeams();
   for(const p of parts)scene.remove(p);parts.length=0;clearGroundItems();
-  world.dim=dim;if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
+  world.dim=dim;LQ[1].clear();LQ[2].clear();if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
   caveB=dim==='over'?.38:DIM[dim].caveB;
   player.pos.set(pos.x,pos.y,pos.z);player.vel.set(0,0,0);if(pos.yaw!==undefined)player.yaw=pos.yaw;
   loadNear(60);
@@ -2818,7 +2998,7 @@ function closeEnding(){
 function useBucket(s){
   const it=IT[s.id];
   if(s.id===BUCKET){ // 물/용암 뜨기
-    const h=raycast(camera.position,viewDir(),5,true);if(!h||!LIQUID[h.id])return;
+    const h=raycast(camera.position,viewDir(),5,true);if(!h||(h.id!==WATER&&h.id!==LAVA))return; // 흐르는 물·용암은 뜰 수 없음
     setBlock(h.x,h.y,h.z,AIR);const nid=h.id===WATER?WATER_BUCKET:LAVA_BUCKET;SFX.splash();swing=1;
     if(s.count>1){s.count--;dropAtPlayer(nid,addItem(nid,1));}else inv[sel]={id:nid,count:1};
     invChanged();return;
@@ -2828,21 +3008,14 @@ function useBucket(s){
   if(!(cur===AIR||LIQUID[cur])||y<1||y>=CH)return;
   if(it.liquid===WATER&&(world.dim==='hell'||world.dim==='castle')){ // 어비스에서는 물이 증발
     spawnParticles(x+.5,y+.5,z+.5,new THREE.Color(0xdddddd),14,.4,4);SFX.fizz();toast('물이 순식간에 증발했습니다');
-  }else if(LIQUID[cur]&&cur!==it.liquid){ // 용암에 물을(또는 물에 용암을) 직접 부으면 그 자리가 흑요석
-    setBlock(x,y,z,OBSIDIAN);SFX.fizz();spawnParticles(x+.5,y+1,z+.5,new THREE.Color(0xdddddd),16,.6,4);achieve('obsidian');
+  }else if(LIQ_KIND[cur]&&LIQ_KIND[cur]!==LIQ_KIND[it.liquid]){ // 다른 액체에 바로 부으면: 흐르지 않는 샘이면 흑요석, 흐르는 중이면 조약돌
+    const res=LIQ_LV[cur]?COBBLE:OBSIDIAN;setBlock(x,y,z,res);liqFizz(x,y,z,res);
   }else if(cur===it.liquid)return;
-  else{setBlock(x,y,z,it.liquid);SFX.splash();mixLiquids(x,y,z);}
+  else{setBlock(x,y,z,it.liquid);SFX.splash();} // 닿은 물·용암의 반응과 흐름은 다음 흐름 차례에
   inv[sel]={id:BUCKET,count:1};swing=1;invChanged();
 }
 
 // ---------- 흑요석으로 만드는 어비스 차원문 (4×5 틀, 모서리는 있어도 없어도 됨) ----------
-function mixLiquids(x,y,z){ // 물과 용암이 닿으면 용암이 흑요석으로 굳음
-  const me=getBlock(x,y,z),other=me===WATER?LAVA:me===LAVA?WATER:0;if(!other)return;let made=0;
-  for(const [dx,dy,dz] of [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]){
-    if(getBlock(x+dx,y+dy,z+dz)!==other)continue;
-    if(me===WATER){setBlock(x+dx,y+dy,z+dz,OBSIDIAN);made++;}else{setBlock(x,y,z,OBSIDIAN);made++;break;}}
-  if(made){SFX.fizz();spawnParticles(x+.5,y+1,z+.5,new THREE.Color(0xdddddd),16,.6,4);achieve('obsidian');}
-}
 const FRAME=b=>b===OBSIDIAN; // 차원문 틀: 흑요석
 function tryBuildPortal(x,y,z){
   if(world.dim!=='over'&&world.dim!=='hell')return false;
@@ -2934,7 +3107,7 @@ function updateVillages(){ // 마을 근처에 오면 주민과 가디언이 나
     const d=Math.hypot(player.pos.x-v.x,player.pos.z-v.z);
     if(d<70&&!VSTATE[v.id]){
       if(!getChunk(v.x>>4,v.z>>4))continue;VSTATE[v.id]=true;
-      for(const h of v.houses){const m=new Mob('villager',h.x+2.5,h.base+1,h.z+2.5);m.village=v.id;m.home={x:v.x+.5,z:v.z+.5};}
+      for(const h of v.houses){const c=(h.w||4)/2+.5;if(h.smith)VPROF=1;const m=new Mob('villager',h.x+c,h.base+1,h.z+c);m.village=v.id;m.home={x:v.x+.5,z:v.z+.5};}
       const s=surfaceAt(v.x+4,v.z)||{y:v.h+1};const g=new Mob('vguard',v.x+4.5,s.y,v.z+.5);g.village=v.id;g.home={x:v.x+.5,z:v.z+.5};
       if(!achDone.has('village'))toast('🏘 <b>마을</b>을 발견했습니다! 주민을 괴롭히면 빌리저 가디언이 화를 냅니다.','ach');achieve('village');
     }else if(d>120&&VSTATE[v.id]){VSTATE[v.id]=false;for(const m of [...mobs])if(m.village===v.id)m.remove();}
@@ -2948,7 +3121,7 @@ const PROFS=[
   {name:'현자',robe:0x7a4a9a,trades:[{give:[[CRYSTAL,1]],get:[COIN,3]},{give:[[COIN,5]],get:[HELL_COMPASS,1]},{give:[[COIN,7]],get:[END_COMPASS,1]},{give:[[COIN,7]],get:[CITY_COMPASS,1]}]},
 ];
 document.getElementById('recSearch').addEventListener('input',()=>{if(invOpen)renderInv();});
-let tradeWith=null,ZV_PROF=null;
+let tradeWith=null,ZV_PROF=null,VPROF=null; // VPROF: 다음에 태어날 주민의 직업 (대장장이 집 = 대장장이)
 Object.assign(MOBDEF,{
   zvillager:{name:'좀비 주민',w:.6,h:1.8,hp:20,hostile:true,burn:true,color:0x6a8a5a,
     sound:()=>SFX.groan(),drops:()=>[[ROTTEN,rnd(2)],[COIN,Math.random()<.25?1:0]],ach:'zombie',
@@ -2975,7 +3148,7 @@ function doTrade(i){
 Object.assign(MOBDEF,{
   villager:{name:'주민',w:.6,h:1.8,hp:20,flee:true,persist:true,color:0x9a7a5a,
     sound:()=>SFX.hmm(),drops:()=>[],
-    init(m){m.prof=rnd(PROFS.length-1);},
+    init(m){m.prof=VPROF??rnd(PROFS.length-1);VPROF=null;},
     build(g,m){const robe=lam(PROFS[m.prof].robe,0,'cloth'),apron=lam(0xe8dcc0,0,'cloth'),skin=lam(0xe0b08a,0,'skin'),hat=lam(0x6a4a2a,0,'cloth'),pants=lam(0x4a3a2a,0,'cloth'),eye=bas(0x1a1a1a),mouth=bas(0x8a4a3a);
       const legs=[-.12,.12].map(x=>{const p=pivot(g,x,.7,0);part(p,.2,.7,.22,pants,0,-.35,0);return p;});
       part(g,.56,.78,.34,robe,0,1.08,0);part(g,.4,.5,.02,apron,0,.95,-.18);
@@ -3099,7 +3272,7 @@ function updateGroundItems(dt){
   for(let i=groundItems.length-1;i>=0;i--){const g=groundItems[i];g.age+=dt;g.pickT-=dt;
     if(g.age>300||g.pos.y<-10){removeGroundItem(i);continue;} // 5분 뒤 사라짐
     const bx=Math.floor(g.pos.x),by=Math.floor(g.pos.y),bz=Math.floor(g.pos.z);
-    if(getBlock(bx,by,bz)===LAVA&&!g.fireproof){spawnParticles(g.pos.x,g.pos.y+.2,g.pos.z,new THREE.Color(0xff7a2a),6,.3,3);SFX.sizzle?SFX.sizzle():tone(300,120,.2,.05,'sawtooth');removeGroundItem(i);continue;}
+    if(LIQ_KIND[getBlock(bx,by,bz)]===2&&!g.fireproof){spawnParticles(g.pos.x,g.pos.y+.2,g.pos.z,new THREE.Color(0xff7a2a),6,.3,3);SFX.sizzle?SFX.sizzle():tone(300,120,.2,.05,'sawtooth');removeGroundItem(i);continue;}
     if(getChunk(bx>>4,bz>>4)){physics(g,dt);if(g.onGround){const k=1-Math.min(1,8*dt);g.vel.x*=k;g.vel.z*=k;}}
     g.bob+=dt*2.5;g.sp.position.set(g.pos.x,g.pos.y+.2+Math.sin(g.bob)*.05,g.pos.z);g.sp.rotation.y+=dt*1.4;
     const hp=hopperUnder(g);
@@ -3251,7 +3424,7 @@ function updatePlayer(dt){
   const p=player;p.attackCD=Math.max(0,p.attackCD-dt);p.hurtCD=Math.max(0,p.hurtCD-dt);p.bowCD=Math.max(0,(p.bowCD||0)-dt);
   p.thornT=Math.max(0,(p.thornT||0)-dt);if(p.thornT<=0&&touchingBlock(p,THORN)){p.thornT=.7;hurtPlayer(1,0,0,'가시 덤불에 찔렸습니다');}
   p.invulnT=Math.max(0,p.invulnT-dt);p.lavaT=Math.max(0,p.lavaT-dt);
-  if(p.lavaT<=0&&overlapBlock(p,b=>b===LAVA)){p.lavaT=.5;hurtPlayer(4,0,0,'용암에 빠졌습니다');}
+  if(p.lavaT<=0&&overlapBlock(p,b=>LIQ_KIND[b]===2)){p.lavaT=.5;hurtPlayer(4,0,0,'용암에 빠졌습니다');}
   const pb=overlapBlock(p,b=>PORTAL[b]===1); // 차원문 안에 잠시 서 있으면 이동
   if(pb){if(!portalLock&&!traveling){portalT+=dt;if(portalT>.2){portalT=0;usePortal(pb);}}}else{portalLock=false;portalT=0;}
   if(p.boat){ // 보트: 바라보는 방향으로 이동, 스페이스로 내리기
@@ -3315,10 +3488,10 @@ function updateSurvival(dt){
   if(p.hungerAcc>45){p.hungerAcc=0;if(p.food>0){p.food--;renderStats();}}
   if(p.food>=16&&p.hp<20){p.regenT+=dt;if(p.regenT>3){p.regenT=0;p.hp=Math.min(20,p.hp+1);p.hungerAcc+=8;renderStats();}}else p.regenT=0;
   if(p.food<=0){p.starveT+=dt;if(p.starveT>4){p.starveT=0;hurtPlayer(1,0,0,'굶주림으로 쓰러졌습니다',true);}}
-  const eye=camera.position;const under=getBlock(Math.floor(eye.x),Math.floor(eye.y-.05),Math.floor(eye.z))===WATER;
+  const eye=camera.position;const under=LIQ_KIND[getBlock(Math.floor(eye.x),Math.floor(eye.y-.05),Math.floor(eye.z))]===1;
   if(under){p.air=Math.max(0,p.air-dt*.8);if(p.air<=0){p.drownT+=dt;if(p.drownT>1){p.drownT=0;hurtPlayer(2,0,0,'물에 빠졌습니다',true);}}}
   else p.air=Math.min(10,p.air+dt*5);
-  const inLava=getBlock(Math.floor(eye.x),Math.floor(eye.y-.05),Math.floor(eye.z))===LAVA,E=DIM[world.dim],wt=$('wtint');
+  const inLava=LIQ_KIND[getBlock(Math.floor(eye.x),Math.floor(eye.y-.05),Math.floor(eye.z))]===2,E=DIM[world.dim],wt=$('wtint');
   wt.style.display=under||inLava||portalT>0?'block':'none';
   wt.style.background=portalT>0?`rgba(150,60,255,${portalT*.7})`:inLava?'rgba(255,90,0,.6)':'rgba(20,60,170,.38)';
   scene.fog.near=inLava?.2:under?1:E.fog?Math.min(E.fog[0],RD*16*.5):RD*16*.55;scene.fog.far=inLava?3:under?20:E.fog?Math.min(E.fog[1],RD*16-4):RD*16-4;
@@ -3354,12 +3527,10 @@ function blockColor(id){return TILE_COLOR[BL[id].tiles[0]].clone().multiplyScala
 function toggleDoor(x,y,z){ // 문 여닫기 (위·아래 칸 함께)
   const id=getBlock(x,y,z),dd=BL[id].door,flip=i=>BL[i].door.o?i-2:i+2,oy=dd.t?y-1:y+1,o=getBlock(x,oy,z);
   setBlock(x,y,z,flip(id));if(DOOR_OF[o])setBlock(x,oy,z,flip(o));
-  SFX.door?SFX.door():tone(dd.o?220:300,dd.o?160:220,.12,.1,'square');swing=1;}
+  SFX.door(!dd.o);swing=1;}
 function breakBlock(x,y,z,id){
   const B=BL[id];
-  let fill=AIR;
-  for(const [dx,dy,dz] of [[0,1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1]])if(getBlock(x+dx,y+dy,z+dz)===WATER&&y<=SEA){fill=WATER;break;}
-  setBlock(x,y,z,fill);if(id===OBSIDIAN)breakPortalNear(x,y,z);
+  setBlock(x,y,z,AIR);if(id===OBSIDIAN)breakPortalNear(x,y,z);
   if(DOOR_OF[id]){const oy=BL[id].door.t?y-1:y+1;if(DOOR_OF[getBlock(x,oy,z)])setBlock(x,oy,z,AIR);} // 문은 위·아래가 함께 부서짐
   if(id===LOG&&getBlock(x,y,z)!==LOG){ // 나무 원목을 모두 캐면 묘목이 떨어짐
     let log=false,leaf=false;for(let dy=-8;dy<=8&&!log;dy++)if(getBlock(x,y+dy,z)===LOG)log=true;
@@ -3628,8 +3799,10 @@ addEventListener('keydown',e=>{
   else if(e.code==='F3'||e.code==='Backquote'){debugOn=!debugOn;$('debug').style.display=debugOn?'block':'none';}
 });
 addEventListener('keyup',e=>{keys[e.code]=false;});
-$('btnHelp').addEventListener('click',()=>{const o=$('title').classList.toggle('helpopen');$('btnHelp').textContent=o?'✕ 도움말 닫기':'❓ 도움말 보기';
+$('btnHelp').addEventListener('click',()=>{$('title').classList.remove('updopen');$('btnUpd').textContent='📜 업데이트 목록';const o=$('title').classList.toggle('helpopen');$('btnHelp').textContent=o?'✕ 도움말 닫기':'❓ 도움말 보기';
   if(o)setTimeout(()=>$('title').querySelector('.help').scrollIntoView({behavior:'smooth',block:'start'}),30);});
+$('btnUpd').addEventListener('click',()=>{$('title').classList.remove('helpopen');$('btnHelp').textContent='❓ 도움말 보기';const o=$('title').classList.toggle('updopen');$('btnUpd').textContent=o?'✕ 업데이트 목록 닫기':'📜 업데이트 목록';
+  if(o)setTimeout(()=>$('title').querySelector('.upd').scrollIntoView({behavior:'smooth',block:'start'}),30);});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;mouseL=mouseR=false;});
 canvas.addEventListener('mousedown',e=>{
   if(MOBILE||!running||invOpen||player.dead)return;
@@ -3867,7 +4040,7 @@ function frame(now){
     updateTarget();updateMining(dt);
     if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}
     for(const m of [...mobs])m.update(dt);
-    spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);updateHoppers(dt);updateSaplings(dt);updateProjectiles(dt);updateBoats(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
+    spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);updateHoppers(dt);updateSaplings(dt);updateLiquids(dt);updateProjectiles(dt);updateBoats(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
   }
   updateSky(active?dt:0);
