@@ -186,6 +186,7 @@ body.mobile #toasts{top:72px}
     • <b>흑요석</b>(물과 용암을 맞닿게 하면 생김) 10~14개로 4×5 틀을 세우면 <b>어비스 차원문</b>이 열립니다.<br>
     • <b>철 블록</b>을 T자로 쌓고 위에 <b>나무 판자</b>를 올리면 <b>빌리저 가디언</b>이 깨어납니다.<br>
     • 곳곳의 <b>마을</b>에서 주민과 <b>동전</b>으로 거래할 수 있어요. 주민을 괴롭히면 가디언이 마을을 떠날 때까지 쫓아옵니다!<br>
+    • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>스톤</b>은 이 세계의 전기이며, 깊은 동굴의 스톤 광석에서 캘 수 있어요.
   </div>
@@ -272,7 +273,7 @@ function makeNoise(seed){
   return {n2,n3};
 }
 
-const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58};
+const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61};
 const ATW=8,ATH=8;
 
 // ---------- 블록 & 아이템 정의 ----------
@@ -333,12 +334,18 @@ LADDER_IDS.forEach((id,k)=>defB(id,'사다리',TILE.ladder,{hard:.4,tool:'axe',o
 CHEST_IDS.forEach((id,k)=>{const t=[TILE.chest_side,TILE.chest_side,TILE.chest_top,TILE.chest_top,TILE.chest_side,TILE.chest_side];t[DIR_FACES[k]]=TILE.chest_front;
   defB(id,'상자',t,{hard:2.5,tool:'axe',drop:CHEST,base:CHEST,face:DIR_FACES[k],cont:27});});
 defB(HOPPER,'호퍼',{top:TILE.hopper_top,bottom:TILE.hopper_bottom,side:TILE.hopper_side},{hard:3,tool:'pick',tier:1,cont:5,opaque:false}); // 깔때기 모양이라 옆 블록 면을 가리지 않음
+// 문: 방향 4 × 열림 2 × 아래/위 2 = 16칸 (53~68), 묘목: 69
+const DOOR=53,SAPLING=69,DOOR_IDS=[];
+for(let k=0;k<4;k++)for(let o=0;o<2;o++)for(let t=0;t<2;t++){const id=DOOR+k*4+o*2+t;DOOR_IDS.push(id);
+  defB(id,'문',t?TILE.door_top:TILE.door_bottom,{hard:2,tool:'axe',opaque:false,solid:!o,drop:DOOR,base:DOOR,face:DIR_FACES[k],door:{k,o,t}});}
+defB(SAPLING,'묘목',TILE.sapling,{hard:.05,opaque:false,solid:false});
 const OPAQUE=new Uint8Array(256),SOLID=new Uint8Array(256);
 BL.forEach((b,i)=>{if(b){OPAQUE[i]=b.opaque?1:0;SOLID[i]=b.solid?1:0;}});
 const LIQUID=new Uint8Array(256),EMIT=new Uint8Array(256),LIGHT_SRC=new Uint8Array(256),PORTAL=new Uint8Array(256);
 LIQUID[WATER]=LIQUID[LAVA]=1;
 for(const b of [LAMP,LAVA,WINDOW,HELLGLOW,P_HELL,P_CASTLE,P_CITY,P_END,END_FRAME_ON,VOIDLAMP])EMIT[b]=1; // 스스로 빛나는 블록
 LIGHT_SRC[LAMP]=LIGHT_SRC[HELLGLOW]=LIGHT_SRC[VOIDLAMP]=1; // 주변을 밝히는 블록
+const DOOR_OF=new Uint8Array(256);DOOR_IDS.forEach(id=>DOOR_OF[id]=1);
 const LADDER_OF=new Uint8Array(256),CONTAINER=new Uint8Array(256); // 사다리: 붙은 벽 면 번호+1, 보관함: 칸 수
 LADDER_IDS.forEach(id=>LADDER_OF[id]=BL[id].face+1);BL.forEach((b,i)=>{if(b&&b.cont)CONTAINER[i]=b.cont;});
 for(const b of [P_HELL,P_CASTLE,P_CITY,P_END])PORTAL[b]=1;
@@ -430,6 +437,7 @@ function logGeom(P,U,C,I,x,y,z,ts,tt,top,bot,sl,bl){ // 원목 기둥을 배열�
     for(let k=0;k<=LOG_S;k++){const [c,sn]=LOG_CS[k];P.push(x+.5+c*LOG_R,y+yy,z+.5+sn*LOG_R);U.push(...uv(tt,.5+c*.47,.5+sn*.47));C.push(sl,bl,sh);}
     for(let k=0;k<LOG_S;k++)if(yy)I.push(base,base+2+k,base+1+k);else I.push(base,base+1+k,base+2+k);}
 }
+const DOOR_T=.1875,DOOR_BOX={0:[0,0,0,DOOR_T,1,1],1:[1-DOOR_T,0,0,1,1,1],4:[0,0,0,1,1,DOOR_T],5:[0,0,1-DOOR_T,1,1,1]},DOOR_OPEN=[4,5,1,0]; // 닫힘: 앞쪽 면에 붙은 판 · 열림: 90도 돌아간 판
 const HOPPER_BOXES=[[0,.625,0,1,1,1],[.25,.25,.25,.75,.625,.75],[.375,0,.375,.625,.25,.625]]; // 호퍼 깔때기: 넓은 통 · 가운데 · 주둥이
 
 const DX6=[1,-1,0,0,0,0],DY6=[0,0,1,-1,0,0],DZ6=[0,0,0,0,1,-1];
@@ -458,12 +466,14 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
     const k=n?.95/n:0;o[0]=sx*k;o[1]=sy*k;o[2]=sz*k;},_lo=[0,0,0];
   // 둥근 나무: 원목 꼭대기(위가 잎)를 중심으로 생성된 잎 공이 85% 이상 남아 있으면, 그 잎 블록 대신 매끈한 둥근 잎 덩어리를 그림
   const TREE_RX=2.57,TREE_RY=2.28,trees=[],covered=new Set();
-  for(let z=2;z<14;z++)for(let x=2;x<14;x++)for(let y=2;y<CH-5;y++){ // y: 줄기 꼭대기, 잎 공 중심은 y+3 (줄기 바로 위)
-    if(d[(y*16+z)*16+x]!==LOG||d[((y+1)*16+z)*16+x]!==LEAVES||d[((y-1)*16+z)*16+x]!==LOG)continue;
-    let want=0,have=0;const cells=[],cy=y+3;
+  // 줄기와 상관없이 잎 모양으로 찾음: 잎 칸을 중심으로 한 타원체가 85% 이상 잎이면 둥근 잎 공 (원목을 다 캐도 그대로 둥긂)
+  const ckk=(x,y,z)=>(x>=0&&x<16&&z>=0&&z<16)?(y*16+z)*16+x:x+','+y+','+z; // 청크 밖 칸은 문자열 키
+  for(let cy=2;cy<CH-2;cy++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){
+    if(get(x,cy,z)!==LEAVES||covered.has(ckk(x,cy,z)))continue;
+    let want=0,have=0;const cells=[];
     for(let dy=-2;dy<=2;dy++)for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){
-      if((dx*dx+dz*dz)/6.6+dy*dy/5.2>1)continue;const t=d[((cy+dy)*16+z+dz)*16+x+dx];if(t===LOG)continue;want++;if(t===LEAVES){have++;cells.push(((cy+dy)*16+z+dz)*16+x+dx);}}
-    if(want&&have>=want*.85){trees.push([x+.5,cy+.5,z+.5]);for(const c of cells)covered.add(c);}
+      if((dx*dx+dz*dz)/6.6+dy*dy/5.2>1)continue;const X=x+dx,Y=cy+dy,Z=z+dz,k=ckk(X,Y,Z);want++;if(get(X,Y,Z)===LEAVES&&!covered.has(k)){have++;cells.push(k);}}
+    if(have>=want*.85){if(x>=0&&x<16&&z>=0&&z<16)trees.push([x+.5,cy+.5,z+.5]);for(const c of cells)covered.add(c);} // 공은 중심이 있는 청크가 그림
   }
   for(let y=0;y<CH;y++)for(let z=0;z<16;z++)for(let x=0;x<16;x++){
     const id=d[(y*16+z)*16+x];if(!id)continue;
@@ -475,6 +485,19 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       I.push(base,base+1,base+2,base+2,base+1,base+3,base,base+2,base+1,base+2,base+3,base+1);continue;}
     if(id===LOG){const sl=y>=hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,up=get(x,y+1,z),dn=get(x,y-1,z);
       logGeom(P,U,C,I,x,y,z,B.tiles[0],B.tiles[3],up!==LOG&&!OPAQUE[up],dn!==LOG&&!OPAQUE[dn],sl,bl);continue;}
+    if(DOOR_OF[id]||id===SAPLING){const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,t=B.tiles[0],tx=t%ATW,ty=Math.floor(t/ATW);
+      if(id===SAPLING){const W=.42,H=.9; // 묘목: 엇갈린 판 두 장 (양면)
+        for(const a of [Math.PI/4,-Math.PI/4]){const dx=Math.cos(a)*W,dz=Math.sin(a)*W,base=P.length/3;
+          for(const [qx,qy,qz,u,v] of [[x+.5-dx,y,z+.5-dz,0,0],[x+.5+dx,y,z+.5+dz,1,0],[x+.5-dx,y+H,z+.5-dz,0,1],[x+.5+dx,y+H,z+.5+dz,1,1]]){
+            P.push(qx,qy,qz);U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);C.push(sl,bl,.95);}
+          I.push(base,base+1,base+2,base+2,base+1,base+3,base,base+2,base+1,base+2,base+3,base+1);}
+        continue;}
+      const dd=B.door,b=DOOR_BOX[dd.o?DOOR_OPEN[dd.k]:DIR_FACES[dd.k]]; // 문: 두께 3/16의 판
+      for(let fi=0;fi<6;fi++){const f=FACES[fi],ua=FUV[fi],base=P.length/3;
+        for(const c of f.c){const q=[c[0]?b[3]:b[0],c[1]?b[4]:b[1],c[2]?b[5]:b[2]],u=ua[0][1]?1-q[ua[0][0]]:q[ua[0][0]],v=ua[1][1]?1-q[ua[1][0]]:q[ua[1][0]];
+          P.push(x+q[0],y+q[1],z+q[2]);U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);C.push(sl,bl,f.shade);}
+        I.push(base,base+1,base+2,base+2,base+1,base+3);}
+      continue;}
     if(id===HOPPER){const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0;
       for(const b of HOPPER_BOXES)for(let fi=0;fi<6;fi++){const f=FACES[fi],ua=FUV[fi];
         const onEdge=f.dir[0]?(f.dir[0]>0?b[3]===1:b[0]===0):f.dir[1]?(f.dir[1]>0?b[4]===1:b[1]===0):(f.dir[2]>0?b[5]===1:b[2]===0);
@@ -1051,6 +1074,21 @@ T(TILE.hopper_top,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if(e<9)return 
   const d=Math.max(Math.abs(u-.5),Math.abs(v-.5));return mulc([30,30,34],.6+d*1.2);}); // 깔때기 구멍
 T(TILE.hopper_side,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if((x===6||x===TS-7)&&(y===6||y===TS-7))return [150,152,160];
   let c=hopperMetal(u,v,x,y,282);if(e<2)c=mulc(c,.65);if(y>TS*.55&&(x<TS*.2||x>TS*.8))c=mulc(c,.7);return c;});
+{const dw=(u,v,x,y,s)=>woodGrain(v,u,y,x,s,[122,84,48],[150,108,64],5); // 세로 나뭇결 문짝
+  const panel=(x,y,x0,y0,x1,y1)=>{if(x<x0||x>x1||y<y0||y>y1)return 0;const e=Math.min(x-x0,y-y0,x1-x,y1-y);return e<2?((x-x0<2||y-y0<2)?.72:1.18):.9;}; // 들어간 판: 위·왼쪽 그늘, 아래·오른쪽 밝음
+  T(TILE.door_bottom,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);let c=dw(u,v,x,y,291);if(e<5)return mulc(c,e<1?.55:.8); // 문틀
+    if(Math.hypot(x-(TS-11),y-7)<3.2)return mulc([186,186,194],Math.hypot(x-(TS-12),y-6)<1.5?1.25:.85); // 손잡이
+    const k=panel(x,y,10,6,29,TS-9)||panel(x,y,35,6,53,TS-9);return k?mulc(c,k):c;});
+  T(TILE.door_top,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);let c=dw(u,v,x,y,292);if(e<5)return mulc(c,e<1?.55:.8);
+    if(x>=10&&x<=53&&y>=8&&y<=42){if(Math.abs(x-31.5)<2||Math.abs(y-25)<2||x<12||x>51||y<10||y>40)return mulc(c,.85); // 창살
+      const d=(u+v);return mixc([132,176,194],[214,236,244],Math.exp(-(((d-.62)*14)**2))*.8+.15*(1-v));} // 유리창 (빛줄기)
+    const k=panel(x,y,10,47,53,TS-6);return k?mulc(c,k):c;});
+  const R=mulberry32(6161),lv=[];for(let i=0;i<9;i++)lv.push({x:.5+(R()-.5)*.5,y:.18+R()*.42,a:R()*Math.PI*2,l:.09+R()*.05,h:R()});
+  T(TILE.sapling,(u,v,x,y)=>{
+    for(const L of lv){const dx=u-L.x,dy=v-L.y,ca=Math.cos(L.a),sa=Math.sin(L.a),sx=(dx*ca+dy*sa)/L.l,t=(-dx*sa+dy*ca)/L.l;
+      if(sx>-1&&sx<1&&Math.abs(t)<.5*Math.pow(1-sx*sx,.55))return mulc(mixc([46,104,34],[110,168,62],L.h),(Math.abs(t)<.06?1.2:t>0?1.05:.88)*grain(x,y,61,.1));}
+    if(Math.abs(u-.5+.04*Math.sin(v*6))<.025&&v>.3)return mulc([98,72,44],grain(x,y,62,.15)); // 가는 줄기
+    return null;});}
 T(TILE.hopper_bottom,(u,v,x,y)=>{const d=Math.max(Math.abs(u-.5),Math.abs(v-.5));return d<.14?[24,24,28]:d<.2?[70,72,78]:mulc(hopperMetal(u,v,x,y,283),Math.min(x,y,TS-1-x,TS-1-y)<2?.65:1);});
 actx.putImageData(AIMG,0,0);
 
@@ -1160,6 +1198,7 @@ RECIPES.push(
   {out:BOAT,n:1,in:[[PLANKS,5]],st:'bench'},
   {out:LADDER,n:3,in:[[STICK,7]],st:'bench'},
   {out:CHEST,n:1,in:[[PLANKS,8]],st:'bench'},
+  {out:DOOR,n:3,in:[[PLANKS,6]],st:'bench'},
   {out:HOPPER,n:1,in:[[IRON_INGOT,5],[CHEST,1]],st:'bench'},
   {out:IRON_BLOCK,n:1,in:[[IRON_INGOT,9]],st:'bench'},
   {out:IRON_INGOT,n:9,in:[[IRON_BLOCK,1]]},
@@ -1459,6 +1498,8 @@ function setBlock(x,y,z,id,batch){
   const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;calcHM(c,lx,lz);c.ver++;
   if(CONTAINER[old]&&CONTAINER[old]!==CONTAINER[id])dropContainer(x,y,z); // 상자·호퍼가 없어지면 안의 물건을 떨어뜨림
   if(CONTAINER[id]&&!CONTAINER[old])getCont(x,y,z); // 새로 놓은 상자·호퍼를 등록 (호퍼가 바로 작동)
+  if(id===SAPLING&&old!==SAPLING)(world.saplings||(world.saplings=[])).push({d:world.dim,x,y,z,t:world.stats.play+90+Math.random()*120}); // 1.5~3.5분 뒤 자람
+  if(old===SAPLING&&id!==SAPLING&&world.saplings)world.saplings=world.saplings.filter(q=>!(q.d===world.dim&&q.x===x&&q.y===y&&q.z===z));
   const k=ckey(cx,cz);let m=mods.get(k);if(!m){m=new Map();mods.set(k,m);}m.set(i,id);modDirty.add(world.dim+'|'+k);
   if(LIGHT_SRC[old])c.lamps=c.lamps.filter(l=>l[0]!==x||l[1]!==y||l[2]!==z);
   if(LIGHT_SRC[id])c.lamps.push([x,y,z]);
@@ -1966,6 +2007,11 @@ function logModel(s){ // 둥근 원목 (지형과 같은 모양 · 같은 텍스
   geo.setIndex(I);geo.computeVertexNormals();
   const m=IMAT.blkLog||(IMAT.blkLog=new THREE.MeshStandardMaterial({map:atlasTex,roughness:.85}));const grp=new THREE.Group();grp.add(new THREE.Mesh(geo,m));return grp;
 }
+function tileBox(w,h,d,tile,dbl){ // 모든 면에 타일 한 장을 입힌 상자 (문·묘목 아이템용)
+  const g=new THREE.BoxGeometry(w,h,d),uv=g.attributes.uv,tx=tile%ATW,ty=Math.floor(tile/ATW);
+  for(let i=0;i<uv.count;i++)uv.setXY(i,(tx+.002+uv.getX(i)*.996)/ATW,1-(ty+1-(.002+uv.getY(i)*.996))/ATH);
+  const k='tb'+(dbl?1:0);const m=IMAT[k]||(IMAT[k]=new THREE.MeshStandardMaterial({map:atlasTex,roughness:.8,alphaTest:.5,side:dbl?THREE.DoubleSide:THREE.FrontSide}));return new THREE.Mesh(g,m);}
+function doorModel(s){const g=new THREE.Group(),a=tileBox(s*.55,s*.55,s*.1,TILE.door_bottom),b=tileBox(s*.55,s*.55,s*.1,TILE.door_top);a.position.y=-s*.275;b.position.y=s*.275;g.add(a,b);return g;}
 function hopperModel(s){ // 깔때기 모양 호퍼 (블록 텍스처 일부를 각 상자에 입힘)
   const grp=new THREE.Group(),B=BL[HOPPER],m=IMAT.blkHop||(IMAT.blkHop=new THREE.MeshStandardMaterial({map:atlasTex,roughness:.6,metalness:.2})),order=[1,0,3,2,5,4];
   for(const b of HOPPER_BOXES){const cx=(b[0]+b[3])/2,cy=(b[1]+b[4])/2,cz=(b[2]+b[5])/2,geo=new THREE.BoxGeometry((b[3]-b[0])*s,(b[4]-b[1])*s,(b[5]-b[2])*s),uv=geo.attributes.uv,ps=geo.attributes.position;
@@ -1978,7 +2024,7 @@ function hopperModel(s){ // 깔때기 모양 호퍼 (블록 텍스처 일부를 
 function buildItemModel(id){
   const g=new THREE.Group();let grip=false;
   const it=IT[id];
-  if(id<100){g.add(id===HOPPER?hopperModel(.2):id===LOG?logModel(.2):blockCube(id,.2));return {g,grip};}
+  if(id<100){g.add(id===HOPPER?hopperModel(.2):id===LOG?logModel(.2):DOOR_OF[id]?doorModel(.2):id===SAPLING?tileBox(.2,.2,.001,TILE.sapling,true):blockCube(id,.2));return {g,grip};}
   if(it&&it.tool){
     const tl=it.tool,mi=tl.mat,dark=id===DARK_SWORD,H=dark?()=>imat('dkb',0x2a2238,'metal',.3,.7,0x3a1050,.3):TOOL_HEAD[mi],E=dark?()=>imat('dke',0xc060ff,'metal',.2,.5,0xc060ff,1):TOOL_EDGE[mi];
     grip=true;
@@ -2067,7 +2113,7 @@ function setHeldModel(id){
 // ---------- 3D 아이템 아이콘 (핫바 · 인벤토리 · 제작창) — 실제 3D 모델을 조명과 함께 렌더링 ----------
 function iconPose(id,g){ // 아이콘에서 보이는 각도
   const it=IT[id],w=new THREE.Group();w.add(g);
-  if(id<100){if(LADDER_OF[id])w.rotation.set(.12,.35,0);else w.rotation.set(.52,Math.PI/4,0);return w;} // 블록은 위·두 옆면이 보이게
+  if(id<100){if(LADDER_OF[id]||DOOR_OF[id]||id===SAPLING)w.rotation.set(.12,.35,0);else w.rotation.set(.52,Math.PI/4,0);return w;} // 블록은 위·두 옆면이 보이게
   if(it&&it.tool||[STICK,ARROW,FEATHER].includes(id)){g.rotation.y=.45;w.rotation.z=-Math.PI/4;return w;} // 손잡이 왼쪽 아래 → 머리 오른쪽 위
   switch(id){
     case BOW:g.rotation.y=Math.PI/2;w.rotation.z=-Math.PI/4;break;
@@ -2985,6 +3031,24 @@ function hopperUnder(g){ // 아이템이 호퍼 위에 있거나, 옆면에 닿�
     const ex=Math.max(bx-g.pos.x,0,g.pos.x-bx-1),ez=Math.max(bz-g.pos.z,0,g.pos.z-bz-1); // 호퍼 블록까지의 가로 거리
     if(ex<=.4&&ez<=.4&&g.pos.y>=by-.1&&g.pos.y<=by+1.7)return [bx,by,bz];}
   return null;}
+let sapT=0;
+function updateSaplings(dt){ // 1초마다: 때가 된 묘목을 나무로 키움 (자리가 없으면 30초 뒤 다시)
+  sapT-=dt;if(sapT>0)return;sapT=1;const L=world.saplings;if(!L||!L.length)return;
+  for(const q of [...L]){if(q.d!==world.dim||world.stats.play<q.t||!getChunk(q.x>>4,q.z>>4))continue;
+    if(getBlock(q.x,q.y,q.z)!==SAPLING){world.saplings=world.saplings.filter(o=>o!==q);continue;}
+    if(!growTree(q.x,q.y,q.z))q.t=world.stats.play+30;}
+}
+function growTree(x,y,z){ // 묘목 자리에서 줄기 4~6칸 + 그 위에 둥근 잎 공
+  const th=4+(Math.random()*3|0),cy=y+th+2,cells=[];
+  for(let k=1;k<th;k++)if(getBlock(x,y+k,z)!==AIR)return false;
+  for(let dy=-2;dy<=2;dy++)for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){if((dx*dx+dz*dz)/6.6+dy*dy/5.2>1)continue;
+    const b=getBlock(x+dx,cy+dy,z+dz);if(b!==AIR&&b!==LEAVES)return false;cells.push([x+dx,cy+dy,z+dz]);}
+  if(cy+2>=CH)return false;
+  const batch=new Set();for(let k=0;k<th;k++)setBlock(x,y+k,z,LOG,batch);for(const [a,b,c] of cells)setBlock(a,b,c,LEAVES,batch);
+  for(const kk of batch){const [cx,cz]=kk.split(',').map(Number);remeshAt(cx,cz);}
+  spawnParticles(x+.5,y+1,z+.5,new THREE.Color(0x6fbf4a),14,.6,3);
+  if(Math.hypot(player.pos.x-x,player.pos.z-z)<24)toast('🌳 묘목이 <b>나무</b>로 자랐어요!');return true;
+}
 let hopperT=0;
 function updateHoppers(dt){ // 0.4초마다: 위에 떨어진 아이템·위 보관함에서 끌어오고, 아래 보관함으로 1개씩 내려보냄
   hopperT-=dt;if(hopperT>0)return;hopperT=.4;const W=world.containers;if(!W)return;let changed=false;
@@ -3287,11 +3351,20 @@ function updateMining(dt){
   crack.visible=true;crack.position.set(target.x+.5,target.y+.5,target.z+.5);crack.material.map=crackTex[Math.min(7,Math.floor(mining.p*8))];
 }
 function blockColor(id){return TILE_COLOR[BL[id].tiles[0]].clone().multiplyScalar(Math.max(.3,light));}
+function toggleDoor(x,y,z){ // 문 여닫기 (위·아래 칸 함께)
+  const id=getBlock(x,y,z),dd=BL[id].door,flip=i=>BL[i].door.o?i-2:i+2,oy=dd.t?y-1:y+1,o=getBlock(x,oy,z);
+  setBlock(x,y,z,flip(id));if(DOOR_OF[o])setBlock(x,oy,z,flip(o));
+  SFX.door?SFX.door():tone(dd.o?220:300,dd.o?160:220,.12,.1,'square');swing=1;}
 function breakBlock(x,y,z,id){
   const B=BL[id];
   let fill=AIR;
   for(const [dx,dy,dz] of [[0,1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1]])if(getBlock(x+dx,y+dy,z+dz)===WATER&&y<=SEA){fill=WATER;break;}
   setBlock(x,y,z,fill);if(id===OBSIDIAN)breakPortalNear(x,y,z);
+  if(DOOR_OF[id]){const oy=BL[id].door.t?y-1:y+1;if(DOOR_OF[getBlock(x,oy,z)])setBlock(x,oy,z,AIR);} // 문은 위·아래가 함께 부서짐
+  if(id===LOG&&getBlock(x,y,z)!==LOG){ // 나무 원목을 모두 캐면 묘목이 떨어짐
+    let log=false,leaf=false;for(let dy=-8;dy<=8&&!log;dy++)if(getBlock(x,y+dy,z)===LOG)log=true;
+    for(let dy=1;dy<=10&&!leaf;dy++)if(getBlock(x,y+dy,z)===LEAVES)leaf=true;
+    if(!log&&leaf){dropItem(SAPLING,1,x+.5,y+.4,z+.5,{spread:1,up:3});toast('🌱 나무를 다 베었더니 <b>묘목</b>이 떨어졌어요!');}}
   SFX.break();spawnParticles(x+.5,y+.5,z+.5,blockColor(id),10);
   if(canHarvest(id)){let d=B.drop===undefined?id:typeof B.drop==='function'?B.drop():B.drop;if(d)dropItem(d,1,x+.5,y+.35,z+.5,{spread:1.4,up:3.5});}
   if(heldTool()&&B.hard>0)useDurability(1);
@@ -3306,6 +3379,7 @@ function useItem(){
   // 블록 상호작용
   if(target&&!keys.ShiftLeft){
     if(target.id===BENCH||target.id===KILN){openInv();return;}
+    if(DOOR_OF[target.id]){toggleDoor(target.x,target.y,target.z);return;}
     if(CONTAINER[target.id]){openContainer(target.x,target.y,target.z);return;}
     if(target.id===BED){sleep(target);return;}
   }
@@ -3331,6 +3405,11 @@ function useItem(){
       let wx=-target.n[0],wz=-target.n[2];if(target.n[1]){const d=viewDir();if(Math.abs(d.x)>Math.abs(d.z)){wx=Math.sign(d.x);wz=0;}else{wx=0;wz=Math.sign(d.z);}}
       const w=getBlock(x+wx,y,z+wz);if(!(w>0&&SOLID[w])){toast('사다리는 벽에 붙여야 해요');return;}
       pid=LADDER_IDS[DIR_FACES.indexOf(wx<0?0:wx>0?1:wz<0?4:5)];}
+    else if(s.id===DOOR){ // 문: 2칸 높이, 바라보는 쪽 면에 붙음
+      if(y+1>=CH||getBlock(x,y+1,z)!==AIR){toast('문을 놓으려면 위로 2칸이 비어 있어야 해요');return;}
+      const d=viewDir(),k=Math.abs(d.x)>Math.abs(d.z)?(d.x>0?1:0):(d.z>0?3:2);
+      setBlock(x,y,z,DOOR+k*4);setBlock(x,y+1,z,DOOR+k*4+1);s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();return;}
+    else if(s.id===SAPLING){const g=getBlock(x,y-1,z);if(g!==GRASS&&g!==DIRT&&g!==SNOW){toast('묘목은 잔디나 흙 위에 심어야 해요');return;}}
     else if(s.id===CHEST){const d=viewDir();const k=Math.abs(d.x)>Math.abs(d.z)?(d.x>0?0:1):(d.z>0?4:5);pid=CHEST_IDS[DIR_FACES.indexOf(k)];} // 앞면이 나를 보게
     setBlock(x,y,z,pid);s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();
     if(pid===PLANKS)tryBuildGuardian(x,y,z);if(pid===OBSIDIAN)tryBuildPortal(x,y,z);
@@ -3634,7 +3713,7 @@ function encodeMods(){
 }
 function saveSnapshot(){
   syncGolems();
-  return {v:2,t:Date.now(),seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,containers:world.containers||{},items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
+  return {v:2,t:Date.now(),seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,containers:world.containers||{},saplings:world.saplings||[],items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
     p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};
 }
 // 파일/localStorage용: 압축 배열을 base64 문자열로
@@ -3707,7 +3786,7 @@ function startWorld(save,onOk){
       save=fromPortable(save);modsByDim={};
       for(const d in save.md){const mm=new Map();for(const k in save.md[d]){const a=save.md[d][k],m=new Map();for(let i=0;i+1<a.length;i+=2)m.set(a[i],a[i+1]);mm.set(k,m);}modsByDim[d]=mm;}
       for(const k in modCache)delete modCache[k];Object.assign(modCache,save.md);modDirty.clear();
-      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.containers=save.containers||{};VCACHE.clear();
+      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.containers=save.containers||{};world.saplings=save.saplings||[];VCACHE.clear();
       world.stats=Object.assign({kills:0,deaths:0,play:0,days:0},save.stats||{});
       if(!modsByDim[world.dim])modsByDim[world.dim]=new Map();mods=modsByDim[world.dim];caveB=world.dim==='over'?.38:DIM[world.dim].caveB;
       Object.assign(player,{hp:save.p.hp,food:save.p.food,yaw:save.p.yaw,pitch:save.p.pitch});player.pos.set(save.p.x,save.p.y,save.p.z);
@@ -3719,7 +3798,7 @@ function startWorld(save,onOk){
       }
     }else{
       seed=(Math.random()*1e9)|0;initNoise();mods=new Map();modsByDim={over:mods};for(const k in modCache)delete modCache[k];modDirty.clear();armor=[null,null,null,null,null];
-      Object.assign(world,{dim:'over',golems:[],homeVillage:null,containers:{},flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
+      Object.assign(world,{dim:'over',golems:[],homeVillage:null,containers:{},saplings:[],flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
       const s=findSpawn();world.spawn={x:s.x,y:s.h+1,z:s.z};player.pos.set(s.x,s.h+1,s.z);
       VCACHE.clear();world.homeVillage=findHomeVillage(s.x,s.z);
     }
@@ -3788,7 +3867,7 @@ function frame(now){
     updateTarget();updateMining(dt);
     if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}
     for(const m of [...mobs])m.update(dt);
-    spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);updateHoppers(dt);updateProjectiles(dt);updateBoats(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
+    spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);updateHoppers(dt);updateSaplings(dt);updateProjectiles(dt);updateBoats(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
   }
   updateSky(active?dt:0);
