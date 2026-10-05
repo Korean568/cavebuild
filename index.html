@@ -199,7 +199,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.8 — 세계 코드</h4>
+    <h4>🆕 v26.9 — 숨 막히는 물속</h4>
+    • 동물·주민·몬스터도 머리가 물에 오래 잠기면 <b>익사</b>해요 (빌리저 가디언과 보스, 날아다니는 몹은 빼고).<br>
+    • 어비스 차원문 둘레에는 나무가 자라지 않아, 잎이 차원문을 덮지 않아요.
+    <h4>v26.8 — 세계 코드</h4>
     • 일시정지의 <b>🌱 세계 코드 복사</b>로 지금 세계의 코드를 꺼낼 수 있어요.<br>
     • 타이틀의 <b>세계 코드</b> 칸에 그 코드를 넣고 새 세계를 만들면 <b>똑같은 세계</b>가 나와요. 친구에게 코드를 보내 같은 마을에서 시작해 보세요!<br>
     • 숫자 대신 아무 글자나 넣어도 돼요 (같은 글자는 늘 같은 세계).
@@ -445,6 +448,7 @@ function genOver(data,cx,cz){
     const x=2+(rng()*12|0),z=2+(rng()*12|0),h=heights[z*16+x];
     if(des[z*16+x]||h<=SEA+1||h>CH-14||data[I(x,h,z)]!==GRASS||rng()<.25)continue;
     const th=4+(rng()*3|0); // 줄기 4~6칸 (잎 공 속에는 원목이 없음)
+    {const ps=portalSites().hell;if(Math.abs(cx*16+x-ps.x)<=8&&Math.abs(cz*16+z-ps.z)<=8)continue;} // 어비스 차원문 받침 근처엔 나무가 안 자람 (잎이 차원문을 덮지 않게)
     let free=true; // 다른 나무와 겹치면(줄기가 남의 잎 공을 뚫으면) 심지 않음
     for(let y=1;y<=th&&free;y++)if(data[I(x,h+y,z)]!==AIR)free=false;
     for(let dy=-2;dy<=2&&free;dy++)for(let dz=-2;dz<=2&&free;dz++)for(let dx=-2;dx<=2;dx++){if((dx*dx+dz*dz)/6.6+dy*dy/5.2>1)continue;if(data[I(x+dx,h+th+3+dy,z+dz)]!==AIR){free=false;break;}}
@@ -2603,6 +2607,12 @@ class Mob{
     if(!d.noclip&&!player.dead)sep(player.pos.x,player.pos.z,player.pos.y,player.h,player.w);
     if(!d.noclip)for(const o of mobs)if(o!==this&&Math.abs(o.pos.x-this.pos.x)<2&&Math.abs(o.pos.z-this.pos.z)<2)sep(o.pos.x,o.pos.z,o.pos.y,o.h,o.w);
     if(!d.fireproof&&(this.lavaT=(this.lavaT||0)-dt)<=0&&overlapBlock(this,b=>LIQ_KIND[b]===2)){this.lavaT=.5;this.hurt(3,0,0);if(this.dead)return;}
+    if(!d.fly&&!d.boss&&!d.noclip&&this.kind!=='vguard'){ // 익사: 머리가 물에 잠기면 숨(10)이 줄고, 다 떨어지면 1초마다 2 피해 (플레이어와 같음)
+      if(this.air===undefined)this.air=10;
+      if(isWaterAt(this.pos.x,this.pos.y+this.h*.85,this.pos.z)){this.air=Math.max(0,this.air-dt*.8);
+        if(Math.random()<dt*2)spawnParticles(this.pos.x,this.pos.y+this.h*.9,this.pos.z,new THREE.Color(0xcfeeff),1,.15,1.5); // 보글보글
+        if(this.air<=0&&(this.drownT=(this.drownT||0)+dt)>1){this.drownT=0;this.hurt(2,0,0,true);if(this.dead)return;}}
+      else{this.air=Math.min(10,this.air+dt*5);this.drownT=0;}}
     if(d.noclip)this.pos.addScaledVector(this.vel,dt);
     else if(getChunk(Math.floor(this.pos.x)>>4,Math.floor(this.pos.z)>>4))physics(this,dt);else this.vel.set(0,0,0); // 땅이 아직 안 불러와졌으면 대기
     const hs=Math.hypot(this.vel.x,this.vel.z);
