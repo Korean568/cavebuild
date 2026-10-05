@@ -195,12 +195,16 @@ body.mobile #toasts{top:72px}
     • 곳곳의 <b>마을</b>에서 주민과 <b>동전</b>으로 거래할 수 있어요. 주민을 괴롭히면 가디언이 마을을 떠날 때까지 쫓아옵니다!<br>
     • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
-    • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡아서 가마에 구우면 <b>구운 생선</b>이 돼요. 물 밖으로 나온 물고기는 숨이 막혀요.<br>
+    • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>스톤</b>은 이 세계의 전기이며, 깊은 동굴의 스톤 광석에서 캘 수 있어요.
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.11 — 물고기</h4>
+    <h4>🆕 v26.12 — 낚시</h4>
+    • <b>낚싯대</b>(막대기 3 + 끈적실 2, 작업대) 추가! 사냥꾼 주민에게 동전 2개로 살 수도 있어요.<br>
+    • 물에 찌를 던지고 기다리다 찌가 <b>쑥 잠기면</b> 다시 눌러 낚아 올려요. 근처에 물고기가 많으면 더 빨리 물어요.<br>
+    • 대부분 <b>생선</b>이지만 가끔 막대기 · 동전 · 깃털, 아주 드물게 <b>수정</b>도 걸려요. 첫 물고기를 낚으면 도전과제 <b>강태공</b>!
+    <h4>v26.11 — 물고기</h4>
     • 바다에 주황 · 파랑 · 은빛 <b>물고기</b>가 헤엄쳐요. 다가가면 꼬리를 흔들며 도망가요.<br>
     • 잡으면 <b>생선</b>이 나오고, 가마에 구우면 <b>구운 생선</b>(배고픔 6 회복)이 돼요. 물 밖에서는 파닥거리다 숨이 막혀요.
     <h4>v26.10 — 수영</h4>
@@ -330,7 +334,7 @@ const ATW=8,ATH=8;
 const AIR=0,GRASS=1,DIRT=2,STONE=3,COBBLE=4,LOG=5,LEAVES=6,PLANKS=7,SAND=8,WATER=9,COAL_ORE=10,IRON_ORE=11,CRYSTAL_ORE=12,CORE=13,BENCH=14,KILN=15,GLASS=16,BRICK=17,SNOW=18,BED=19,LAMP=20,THORN=21,HELLSTONE=22,LAVA=23,DEMON_BRICK=24,P_HELL=25,P_CASTLE=26,P_CITY=27,P_END=28,ENDSTONE=29,DARKSTONE=30,WINDOW=31,ASPHALT=32,HELLGLOW=33,WINDOW_OFF=34,ESTONE_ORE=35,HS_ORE=36,IRON_BLOCK=37,OBSIDIAN=38,END_FRAME=39,END_FRAME_ON=40,MARKER=41,VOIDMOSS=42,VOIDLAMP=43,LADDER=44,CHEST=48,HOPPER=52;
 // 방향이 있는 블록: 사다리(붙은 벽 쪽), 상자(앞면 쪽) — 면 번호 0:-x 1:+x 4:-z 5:+z
 const DIR_FACES=[0,1,4,5],LADDER_IDS=[44,45,46,47],CHEST_IDS=[48,49,50,51];
-const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171;
+const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172;
 const BL=[];
 function defB(id,name,t,p={}){
   let tiles;
@@ -1234,6 +1238,7 @@ IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
 IT[BOAT]={name:'보트',stack:1,use:true};
+IT[FISHING_ROD]={name:'낚싯대',stack:1,maxDur:64,use:true};
 IT[BUCKET]={name:'양동이',stack:16,bucket:true};
 IT[WATER_BUCKET]={name:'물 양동이',stack:1,bucket:true,liquid:WATER};
 IT[LAVA_BUCKET]={name:'용암 양동이',stack:1,bucket:true,liquid:LAVA};
@@ -1298,6 +1303,7 @@ RECIPES.push(
   {out:BZ_SHIELD,n:1,in:[[SHIELD,1],[HELLSTEEL,1]],st:'bench'},
   {out:BUCKET,n:1,in:[[IRON_INGOT,3]],st:'bench'},
   {out:BOAT,n:1,in:[[PLANKS,5]],st:'bench'},
+  {out:FISHING_ROD,n:1,in:[[STICK,3],[SILK,2]],st:'bench'},
   {out:LADDER,n:3,in:[[STICK,7]],st:'bench'},
   {out:CHEST,n:1,in:[[PLANKS,8]],st:'bench'},
   {out:DOOR,n:3,in:[[PLANKS,6]],st:'bench'},
@@ -1396,6 +1402,9 @@ function itemIcon(id){
     case HS_SCRAP:{const r=mulberry32(21);return pixelIcon((X,Y)=>{const d=Math.hypot(X-8,Y-8.5);if(d>5.2+(r()-.5)*1.4)return null;return r()<.18?'#e0603c':r()<.5?'#3a2a2e':'#54404a';});}
     case HELLSTEEL:return pixelIcon((X,Y,x,y)=>{if(y<6||y>11)return null;const inset=(11-y)*.7;if(X<1.5+inset||X>14.5-inset)return null;if((x+y)%7===0)return '#e0603c';return y<8?'#6a5458':y<11?'#4a3a3e':'#2a1e22';});
     case PORTAL_KEY:return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-5.5,Y-5.5);if(d<3.4)return d<1.5?null:(X+Y<11?'#9ffff0':'#2fd6c2');if(Y>7&&Y<9.2&&X>6.5&&X<14)return '#2fd6c2';if(X>11&&X<13&&Y>8&&Y<12)return '#1aa89a';if(X>8.5&&X<10.2&&Y>8&&Y<11)return '#1aa89a';return null;});
+    case FISHING_ROD:return pixelIcon((X,Y)=>{const dx=X-12.5,dy=Y-2.5,a=(dx-dy)*Math.SQRT1_2,b=(dx+dy)*Math.SQRT1_2; // 낚싯대 + 낚싯줄 + 찌
+      if(a>-14&&a<1&&Math.abs(b)<.62+(a<-10?.35:0))return a<-10?'#3a2618':b>0?HND_D:HND;
+      if(Math.abs(X-13.4)<.5&&Y>2.5&&Y<11)return '#e8e8e8';if(Math.hypot(X-13.4,Y-12)<1.4)return Y<12?'#e03030':'#f4f4f4';return null;});
     case BOAT:return pixelIcon((X,Y,x,y)=>{if(y<7||y>12)return null;const inset=(y-7)*.6;if(X<1.5+inset||X>14.5-inset)return null;if(y===7)return '#6a4526';return x%4===0?'#7a5230':'#a0703e';});
     case COIN:return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-8,Y-8);if(d>5.6)return null;if(d>4.6)return '#b8861a';if(Math.abs(X-8)<.8&&Math.abs(Y-8)<2.6||Math.abs(Y-8)<.8&&Math.abs(X-8)<2.6)return '#b8861a';return X+Y<14?'#ffe68a':'#f2c230';});
     case BUCKET:case WATER_BUCKET:case LAVA_BUCKET:{const fill=id===WATER_BUCKET?'#3a6ee0':id===LAVA_BUCKET?'#ff8a20':null;
@@ -1593,7 +1602,8 @@ const SFX={
   revive:()=>{[392,523,659,784,1046].forEach((f,i)=>tone(f,f*1.01,.25,.12,'triangle',i*.07));},
   laser:()=>{tone(1800,200,.35,.14,'sawtooth');noise(.3,4000,.15);},laserCharge:()=>tone(200,1400,1.5,.07,'sine'),
   mech:()=>{tone(70,55,.4,.12,'square');noise(.2,800,.1);},roar:()=>{tone(140,55,1.4,.18,'sawtooth');noise(1.2,600,.2);},
-  fireball:()=>noise(.35,900,.25),portal:()=>{tone(200,900,.6,.08,'sine');noise(.6,2000,.08);},
+  fireball:()=>noise(.35,900,.25),cast:()=>{bnoise(.25,1800,.8,.12,0,.01,'bandpass',4200);tone(900,500,.15,.03,'sine');},plop:()=>{bnoise(.18,900,.9,.18,0,.004,'bandpass',400);bubble(380,.08,.06,.03);},
+  reel:()=>{for(let i=0;i<6;i++)bnoise(.03,3200,4,.08,i*.05,.002);},portal:()=>{tone(200,900,.6,.08,'sine');noise(.6,2000,.08);},
   charge:()=>tone(90,160,.8,.12,'square'),equip:()=>{noise(.1,3000,.15);tone(600,800,.08,.06,'triangle');},
 };
 
@@ -1652,6 +1662,65 @@ function disposeMesh(ch){
 }
 const hasNeighbors=(cx,cz)=>getChunk(cx+1,cz)&&getChunk(cx-1,cz)&&getChunk(cx,cz+1)&&getChunk(cx,cz-1);
 function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx,cz))buildMesh(c);else c.needsMesh=true;}
+// ---------- 낚시 ----------
+// 우클릭으로 찌를 던지고, 물 위에 뜬 찌가 쑥 잠기면(입질) 다시 우클릭해 낚아 올림
+let bobber=null,rodLock=false;
+const FISH_LOOT=[[RAW_FISH,.74],[STICK,.08],[COIN,.07],[ROTTEN,.05],[FEATHER,.03],[CRYSTAL,.03]];
+function removeBobber(){if(!bobber)return;scene.remove(bobber.mesh,bobber.line);bobber.line.geometry.dispose();bobber=null;}
+function useRod(){
+  if(rodLock)return;rodLock=true; // 누르고 있어도 한 번만 (떼었다 다시 눌러야 함)
+  if(bobber){reelIn();return;}
+  const d=viewDir(),o=camera.position.clone().addScaledVector(d,.6);o.y-=.1;
+  const mesh=new THREE.Group(),red=new THREE.MeshLambertMaterial({color:0xe03030}),wh=new THREE.MeshLambertMaterial({color:0xf4f4f4});
+  const top=new THREE.Mesh(IGEO.sph,red);top.scale.set(.07,.06,.07);top.position.y=.04;const bot=new THREE.Mesh(IGEO.sph,wh);bot.scale.set(.07,.06,.07);bot.position.y=-.03;
+  const stick=new THREE.Mesh(IGEO.cyl,red);stick.scale.set(.012,.08,.012);stick.position.y=.11;mesh.add(top,bot,stick);mesh.position.copy(o);scene.add(mesh);
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(16*3),3));
+  const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xeeeeee,transparent:true,opacity:.75}));line.frustumCulled=false;scene.add(line);
+  bobber={mesh,line,pos:o,vel:d.clone().multiplyScalar(13).add(new THREE.Vector3(0,3,0)),state:'fly',t:0,bite:0};
+  SFX.cast();swing=1;
+}
+function reelIn(){
+  const b=bobber;if(!b)return;
+  if(b.state==='bite'){ // 낚았다!
+    let r=Math.random(),id=RAW_FISH;for(const [k,p] of FISH_LOOT){if(r<p){id=k;break;}r-=p;}
+    const P=player.pos,dx=P.x-b.pos.x,dy=P.y+1-b.pos.y,dz=P.z-b.pos.z,T=.8; // 내 쪽으로 포물선을 그리며 날아옴
+    const slot={id,count:1};if(IT[id]&&IT[id].maxDur)slot.dur=IT[id].maxDur;
+    spawnGroundItem(slot,b.pos.x,b.pos.y+.3,b.pos.z,dx/T,dy/T+14*T,dz/T,0);
+    spawnParticles(b.pos.x,b.pos.y+.2,b.pos.z,new THREE.Color(0xcfeeff),12,.3,4);SFX.splash();achieve('fisher');
+    if(id===CRYSTAL)toast('✨ 낚싯줄에 <b>수정</b>이 걸려 올라왔어요!');
+    useDurability(1);}
+  else SFX.reel();
+  removeBobber();swing=1;
+}
+function updateBobber(dt){
+  if(!mouseR)rodLock=false;
+  const b=bobber;if(!b)return;const s=held();
+  if(!s||s.id!==FISHING_ROD||player.dead||b.pos.distanceTo(player.pos)>36){removeBobber();return;}
+  const W=(x,y,z)=>LIQ_KIND[getBlock(Math.floor(x),Math.floor(y),Math.floor(z))]===1;
+  b.t+=dt;
+  if(b.state==='fly'){b.vel.y-=20*dt;
+    const n=b.pos.clone().addScaledVector(b.vel,dt),blk=getBlock(Math.floor(n.x),Math.floor(n.y),Math.floor(n.z));
+    if(W(n.x,n.y,n.z)){b.state='wait';b.surf=Math.floor(n.y);while(W(n.x,b.surf+1,n.z)&&b.surf<CH-1)b.surf++; // 수면에 뜸
+      b.pos.set(n.x,b.surf+.88,n.z);b.vel.set(0,0,0);SFX.plop();spawnParticles(n.x,b.surf+1,n.z,new THREE.Color(0xcfeeff),6,.15,2);
+      const fishNear=mobs.some(m=>m.kind==='fish'&&m.pos.distanceTo(b.pos)<8);b.wait=(5+Math.random()*13)*(fishNear?.55:1);} // 근처에 물고기가 있으면 더 빨리 물음
+    else if(blk<0||SOLID[blk]||b.t>4){b.state='ground';b.vel.set(0,0,0);}
+    else b.pos.copy(n);}
+  else if(b.state==='wait'){b.wait-=dt;b.mesh.position.y=b.pos.y+Math.sin(b.t*2.2)*.025;
+    if(!W(b.pos.x,b.pos.y-.5,b.pos.z)){b.state='ground';} // 물이 사라짐
+    else if(b.wait<1.2&&Math.random()<dt*6)spawnParticles(b.pos.x+(Math.random()-.5)*1.4,b.pos.y+.05,b.pos.z+(Math.random()-.5)*1.4,new THREE.Color(0xdff4ff),1,.05,.6); // 물고기가 다가오는 물결
+    if(b.wait<=0){b.state='bite';b.bite=.9+Math.random()*.4;SFX.plop();spawnParticles(b.pos.x,b.pos.y+.1,b.pos.z,new THREE.Color(0xdff4ff),10,.2,3);}}
+  else if(b.state==='bite'){b.bite-=dt;b.mesh.position.y=b.pos.y-.22+Math.sin(b.t*30)*.03; // 찌가 쑥 잠김
+    if(b.bite<=0){b.state='wait';b.wait=4+Math.random()*10;}}
+  if(b.state!=='wait'&&b.state!=='bite')b.mesh.position.copy(b.pos);else{b.mesh.position.x=b.pos.x;b.mesh.position.z=b.pos.z;}
+  // 낚싯줄: 낚싯대 끝 → 찌 (살짝 처짐)
+  const tip=new THREE.Vector3();let ok=false;
+  if(viewMode>0){const it=avatar.hand.children[0];if(it){avatar.g.updateMatrixWorld(true);it.localToWorld(tip.set(0,1.12,0));ok=true;}}
+  else if(heldModel){handGroup.position.copy(camera.position);handGroup.quaternion.copy(camera.quaternion);handGroup.updateMatrixWorld(true);heldModel.localToWorld(tip.set(0,1.12,0));ok=true;}
+  if(!ok)tip.copy(camera.position);
+  const end=b.mesh.position,a=b.line.geometry.attributes.position,L=tip.distanceTo(end),sag=b.state==='fly'?0:Math.min(1.2,L*.08);
+  for(let i=0;i<16;i++){const t=i/15;a.setXYZ(i,lerp(tip.x,end.x,t),lerp(tip.y,end.y+.1,t)-Math.sin(t*Math.PI)*sag,lerp(tip.z,end.z,t));}
+  a.needsUpdate=true;
+}
 // ---------- 흐르는 물·용암 ----------
 // 물은 0.25초, 용암은 1.5초(어비스·판데모니움은 0.5초)마다 한 칸씩 흐름. 물은 7칸, 용암은 3칸(어비스에선 7칸)까지 퍼짐
 // 물과 용암이 닿으면 용암 쪽이 굳음: 둘 다 흐르지 않는 샘이면 흑요석, 하나라도 흐르는 중이면 조약돌
@@ -1869,7 +1938,7 @@ function useDurability(n){
 }
 
 // ---------- 도전과제 ----------
-const ACH={wood:'나무꾼의 첫걸음',bench:'장인의 시작',pick:'광부 입문',stone:'석기 시대',kiln:'불의 발견',iron:'철기 시대',crystal:'반짝이는 보물',bed:'편안한 밤',hunt:'사냥꾼',endkey:'열린 문',obsidian:'물과 불',trade:'첫 거래',village:'마을 발견',vguard:'수호자 탄생',myportal:'차원문 건축가',hellsteel:'타오르는 돌',shield:'철벽 방어',estone:'⚡ 전기의 발견',gloom:'어둠 퇴치',cook:'요리사',zombie:'좀비 퇴치반',archer:'명사수',armor:'완전 무장',hell:'어비스 입성',city:'네크로폴리스 입성',end:'세계의 끝에 서다',demon:'불멸을 넘어서',guardian:'어둠의 기사 격파',dragon:'엔딩을 보다'};
+const ACH={wood:'나무꾼의 첫걸음',bench:'장인의 시작',pick:'광부 입문',stone:'석기 시대',kiln:'불의 발견',iron:'철기 시대',crystal:'반짝이는 보물',bed:'편안한 밤',hunt:'사냥꾼',endkey:'열린 문',obsidian:'물과 불',trade:'첫 거래',village:'마을 발견',vguard:'수호자 탄생',myportal:'차원문 건축가',hellsteel:'타오르는 돌',shield:'철벽 방어',estone:'⚡ 전기의 발견',gloom:'어둠 퇴치',cook:'요리사',zombie:'좀비 퇴치반',archer:'명사수',armor:'완전 무장',hell:'어비스 입성',city:'네크로폴리스 입성',end:'세계의 끝에 서다',demon:'불멸을 넘어서',guardian:'어둠의 기사 격파',dragon:'엔딩을 보다',fisher:'강태공'};
 let achDone=new Set();
 function achieve(k){if(achDone.has(k))return;achDone.add(k);SFX.ach();toast(`🏆 도전과제 달성: <b>${ACH[k]}</b>`,'ach');}
 function toast(html,cls=''){const d=document.createElement('div');d.className='toast '+cls;d.innerHTML=html;$('toasts').appendChild(d);setTimeout(()=>d.remove(),3500);while($('toasts').children.length>5)$('toasts').firstChild.remove();}
@@ -2297,6 +2366,11 @@ function buildItemModel(id){
       if(id!==BUCKET)iMesh(g,IGEO.cyl,id===WATER_BUCKET?imat('bw',0x3a6ee0,null,.1,0,0x0a2a70,.3,.85):imat('bl',0xff8a20,null,.4,0,0xff6010,1),0,.045,0,0,0,0,.07,.006,.07);break;}
     case COIN:iMesh(g,IGEO.cyl,imat('coin',0xf2c230,'metal',.25,.9),0,0,0,Math.PI/2,0,0,.05,.012,.05);iBox(g,.05,.012,.004,imat('coinD',0xb8861a,'metal',.3,.9),0,0,.007);iBox(g,.012,.05,.004,imat('coinD',0xb8861a,'metal',.3,.9),0,0,.007);break;
     case PORTAL_KEY:{const m=imat('key',0x2fd6c2,'metal',.25,.6,0x1aa89a,.4);iMesh(g,IGEO.torus,m,0,.07,0,0,0,0,.035,.035,.035);iBox(g,.016,.12,.016,m,0,-.03,0);iBox(g,.04,.014,.014,m,.02,-.07,0);iBox(g,.03,.014,.014,m,.015,-.04,0);break;}
+    case FISHING_ROD:{grip=true;const w=imat('rod',0x8a5a32,'wood',.7),cork=imat('cork',0xb08a5a,'rough',.9),mt=imat('reel',0x9a9aa6,'metal',.35,.6);
+      iBox(g,.04,.2,.04,cork,0,.02,0);iBox(g,.03,.5,.03,w,0,.36,0);iBox(g,.022,.38,.022,w,0,.8,0);iBox(g,.014,.16,.014,w,0,1.06,0); // 손잡이 · 점점 가늘어지는 대
+      iMesh(g,IGEO.cyl,mt,.045,.12,0,0,0,Math.PI/2,.035,.03,.035);iBox(g,.012,.04,.012,mt,.065,.12,.025); // 릴 · 손잡이
+      for(const y of [.4,.7,.95])iMesh(g,IGEO.torus,mt,.02,y,0,0,Math.PI/2,0,.012,.012,.012); // 줄 고리
+      break;}
     case BOAT:{const w=imat('boat',0x9a6a3a,'wood',.8),d=imat('boatD',0x6a4526,'wood',.8);iBox(g,.2,.025,.32,w);for(const s of [-1,1]){iBox(g,.02,.07,.32,d,s*.1,.045,0);iBox(g,.2,.07,.02,d,0,.045,s*.16);}break;}
     default:{const t=handTexCache[id]||(handTexCache[id]=(()=>{const x=new THREE.CanvasTexture(ICON_CANVAS[id]);x.magFilter=x.minFilter=THREE.NearestFilter;x.generateMipmaps=false;return x;})());
       iMesh(g,new THREE.BoxGeometry(.2,.2,.01),new THREE.MeshStandardMaterial({map:t,transparent:true,alphaTest:.1,roughness:.7}));}
@@ -2320,7 +2394,7 @@ function setHeldModel(id){
 function iconPose(id,g){ // 아이콘에서 보이는 각도
   const it=IT[id],w=new THREE.Group();w.add(g);
   if(id<100){if(LADDER_OF[id]||DOOR_OF[id]||id===SAPLING)w.rotation.set(.12,.35,0);else w.rotation.set(.52,Math.PI/4,0);return w;} // 블록은 위·두 옆면이 보이게
-  if(it&&it.tool||[STICK,ARROW,FEATHER].includes(id)){g.rotation.y=.45;w.rotation.z=-Math.PI/4;return w;} // 손잡이 왼쪽 아래 → 머리 오른쪽 위
+  if(it&&it.tool||[STICK,ARROW,FEATHER,FISHING_ROD].includes(id)){g.rotation.y=.45;w.rotation.z=-Math.PI/4;return w;} // 손잡이 왼쪽 아래 → 머리 오른쪽 위
   switch(id){
     case BOW:g.rotation.y=Math.PI/2;w.rotation.z=-Math.PI/4;break;
     case LASER:g.rotation.set(.25,-Math.PI/2+.35,0);break;
@@ -2340,7 +2414,7 @@ function icon3D(id){
     ICON3D={r,sc,cam};}
   const {r,sc,cam}=ICON3D,{g}=itemModel(id),w=iconPose(id,g),o=new THREE.Group();o.add(w);sc.add(o);
   o.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(o),c=b.getCenter(new THREE.Vector3()),sz=b.getSize(new THREE.Vector3());
-  const k=(id<100?1.78:(IT[id]&&IT[id].tool||[STICK,ARROW,FEATHER,BOW].includes(id))?1.9:1.7)/Math.max(sz.x,sz.y,.001);o.scale.setScalar(k); // 대각선 도구는 꽉 차게
+  const k=(id<100?1.78:(IT[id]&&IT[id].tool||[STICK,ARROW,FEATHER,BOW,FISHING_ROD].includes(id))?1.9:1.7)/Math.max(sz.x,sz.y,.001);o.scale.setScalar(k); // 대각선 도구는 꽉 차게
   o.position.copy(c).multiplyScalar(-k);
   r.render(sc,cam);sc.remove(o);return r.domElement.toDataURL();
 }
@@ -2839,7 +2913,7 @@ function enterDim(dim,pos,fromLoad){
   for(const c of chunks.values())disposeMesh(c);chunks.clear();resetWorkerJobs();
   syncGolems();VSTATE={};for(const b of [...boats])removeBoat(b,false);player.boat=null;for(const m of [...mobs])m.remove();for(const p of projs)scene.remove(p.mesh);projs.length=0;clearBeams();
   for(const p of parts)scene.remove(p);parts.length=0;clearGroundItems();
-  world.dim=dim;LQ[1].clear();LQ[2].clear();if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
+  world.dim=dim;LQ[1].clear();LQ[2].clear();removeBobber();if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
   caveB=dim==='over'?.38:DIM[dim].caveB;
   player.pos.set(pos.x,pos.y,pos.z);player.vel.set(0,0,0);if(pos.yaw!==undefined)player.yaw=pos.yaw;
   loadNear(60);
@@ -3188,7 +3262,7 @@ function updateVillages(){ // 마을 근처에 오면 주민과 가디언이 나
 const PROFS=[
   {name:'농부',robe:0x3a7a4a,trades:[{give:[[LOG,12]],get:[COIN,1]},{give:[[RAW_MEAT,5]],get:[COIN,1]},{give:[[COIN,1]],get:[APPLE,4]},{give:[[COIN,1]],get:[COOKED_MEAT,3]},{give:[[COIN,2]],get:[BED,1]}]},
   {name:'대장장이',robe:0xa0522d,trades:[{give:[[COAL,10]],get:[COIN,1]},{give:[[IRON_INGOT,4]],get:[COIN,1]},{give:[[COIN,3]],get:[toolId(2,0),1]},{give:[[COIN,4]],get:[toolId(2,3),1]},{give:[[COIN,6]],get:[armorId(1,1),1]},{give:[[COIN,3]],get:[SHIELD,1]}]},
-  {name:'사냥꾼',robe:0x2a5a9a,trades:[{give:[[FLUFF,6]],get:[COIN,1]},{give:[[FEATHER,6]],get:[COIN,1]},{give:[[SPIKE,4]],get:[COIN,1]},{give:[[COIN,3]],get:[BOW,1]},{give:[[COIN,1]],get:[ARROW,8]}]},
+  {name:'사냥꾼',robe:0x2a5a9a,trades:[{give:[[FLUFF,6]],get:[COIN,1]},{give:[[FEATHER,6]],get:[COIN,1]},{give:[[SPIKE,4]],get:[COIN,1]},{give:[[COIN,3]],get:[BOW,1]},{give:[[COIN,2]],get:[FISHING_ROD,1]},{give:[[COIN,1]],get:[ARROW,8]}]},
   {name:'광부',robe:0x9a8a3a,trades:[{give:[[COBBLE,32]],get:[COIN,1]},{give:[[COIN,1]],get:[LAMP,4]},{give:[[COIN,2]],get:[BUCKET,1]},{give:[[COIN,4]],get:[ESTONE,1]},{give:[[COIN,6]],get:[CRYSTAL,1]}]},
   {name:'현자',robe:0x7a4a9a,trades:[{give:[[CRYSTAL,1]],get:[COIN,3]},{give:[[COIN,5]],get:[HELL_COMPASS,1]},{give:[[COIN,7]],get:[END_COMPASS,1]},{give:[[COIN,7]],get:[CITY_COMPASS,1]}]},
 ];
@@ -3637,6 +3711,7 @@ function useItem(){
     if(target.id===BED){sleep(target);return;}
   }
   if(s&&s.id===BOW){shootBow();return;}
+  if(s&&s.id===FISHING_ROD){useRod();return;}
   if(s&&s.id===LASER){fireLaserItem();return;}
   if(s&&IT[s.id]&&IT[s.id].armor){inv[sel]=equipArmor(s);invChanged();return;}
   if(s&&IT[s.id]&&IT[s.id].bucket){useBucket(s);return;}
@@ -4148,7 +4223,7 @@ function frame(now){
   }
   updateSky(active?dt:0);
   if(active)updateSurvival(dt);
-  updateHand(dt);updateAvatar(dt);
+  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);
   updateChunks();
   if(debugOn){const p=player.pos;$('debug').textContent=`CAVEBUILD  ${fps} fps\nXYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}\n차원: ${DIM[world.dim].name}  청크: ${chunks.size}  몹: ${mobs.length}\n시간: ${(world.time*24+6)%24|0}시  시드: ${seed}\n바라보는 블록: ${target?BL[target.id].name:'-'}`;}
   const tp=thirdPersonCam();
