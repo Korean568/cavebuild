@@ -195,13 +195,17 @@ body.mobile #toasts{top:72px}
     • 곳곳의 <b>마을</b>에서 주민과 <b>동전</b>으로 거래할 수 있어요. 주민을 괴롭히면 가디언이 마을을 떠날 때까지 쫓아옵니다!<br>
     • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
+    • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>스톤</b>은 이 세계의 전기이며, 깊은 동굴의 스톤 광석에서 캘 수 있어요.
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.14 — 그물</h4>
+    <h4>🆕 v26.15 — 바다거북</h4>
+    • 바닷가 모래사장에 <b>바다거북</b>이 나타나요. 땅에선 느릿느릿 기어가고, 바다에선 지느러미발을 저으며 헤엄쳐요.<br>
+    • 잡으면 <b>거북 비늘</b>이 나오고, 5개를 모아 작업대에서 <b>거북 등딱지 투구</b>(방어 2)를 만들면 <b>물속에서 숨이 3배</b> 오래가요.
+    <h4>v26.14 — 그물</h4>
     • <b>그물</b>(막대기 2 + 끈적실 4, 작업대) 추가! 그물을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡아요.<br>
     • <b>오징어가 든 그물</b>을 물에 대고 누르면 오징어를 다시 풀어 줘요.
     <h4>v26.13 — 오징어</h4>
@@ -341,7 +345,7 @@ const ATW=8,ATH=8;
 const AIR=0,GRASS=1,DIRT=2,STONE=3,COBBLE=4,LOG=5,LEAVES=6,PLANKS=7,SAND=8,WATER=9,COAL_ORE=10,IRON_ORE=11,CRYSTAL_ORE=12,CORE=13,BENCH=14,KILN=15,GLASS=16,BRICK=17,SNOW=18,BED=19,LAMP=20,THORN=21,HELLSTONE=22,LAVA=23,DEMON_BRICK=24,P_HELL=25,P_CASTLE=26,P_CITY=27,P_END=28,ENDSTONE=29,DARKSTONE=30,WINDOW=31,ASPHALT=32,HELLGLOW=33,WINDOW_OFF=34,ESTONE_ORE=35,HS_ORE=36,IRON_BLOCK=37,OBSIDIAN=38,END_FRAME=39,END_FRAME_ON=40,MARKER=41,VOIDMOSS=42,VOIDLAMP=43,LADDER=44,CHEST=48,HOPPER=52;
 // 방향이 있는 블록: 사다리(붙은 벽 쪽), 상자(앞면 쪽) — 면 번호 0:-x 1:+x 4:-z 5:+z
 const DIR_FACES=[0,1,4,5],LADDER_IDS=[44,45,46,47],CHEST_IDS=[48,49,50,51];
-const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172,INK_SAC=173,NET=174,NET_SQUID=175;
+const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172,INK_SAC=173,NET=174,NET_SQUID=175,SCUTE=176,TURTLE_HELMET=177;
 const BL=[];
 function defB(id,name,t,p={}){
   let tiles;
@@ -1234,6 +1238,8 @@ IT[RAW_FISH]={name:'생선',stack:64,food:2};
 IT[INK_SAC]={name:'먹물 주머니',stack:64};
 IT[NET]={name:'그물',stack:1,use:true};
 IT[NET_SQUID]={name:'오징어가 든 그물',stack:1,use:true};
+IT[SCUTE]={name:'거북 비늘',stack:64};
+IT[TURTLE_HELMET]={name:'거북 등딱지 투구',stack:1,maxDur:275,armor:{part:0,pts:2,mat:4,tough:0,kb:0,water:true}}; // 물속에서 숨이 3배 오래감
 IT[COOKED_FISH]={name:'구운 생선',stack:64,food:6};
 IT[SPIKE]={name:'가시',stack:64};
 IT[SILK]={name:'끈적실',stack:64};
@@ -1278,9 +1284,10 @@ const ARMOR_MATS=[
   {ko:'철',item:IRON_INGOT,pts:[2,6,5,2],dur:180,c:'#d6d6d6',d:'#a2a2a2',l:'#f6f6f6'},
   {ko:'수정',item:CRYSTAL,pts:[3,8,6,3],dur:500,c:'#4fe0d8',d:'#26a3a6',l:'#b0fff8'},
   {ko:'블레이즈스톤',item:HELLSTEEL,pts:[3,8,6,3],dur:900,tough:.02,kb:.1,upgrade:2,c:'#4a3a3e',d:'#261a1e',l:'#e0603c'},
+  {ko:'거북',item:SCUTE,pts:[2,0,0,0],dur:275,only:true,c:'#4f9a55',d:'#2e6a36',l:'#9ad88e'}, // 거북 등딱지 투구 전용
 ];
 const armorId=(m,p)=>m<3?140+m*4+p:160+(m-3)*4+p; // 블레이즈스톤 갑옷 → 160~163
-ARMOR_MATS.forEach((m,mi)=>ARMOR_PARTS.forEach((pn,pi)=>{IT[armorId(mi,pi)]={name:`${m.ko} ${pn}`,stack:1,maxDur:m.dur,armor:{part:pi,pts:m.pts[pi],mat:mi,tough:m.tough||0,kb:m.kb||0}};}));
+ARMOR_MATS.forEach((m,mi)=>!m.only&&ARMOR_PARTS.forEach((pn,pi)=>{IT[armorId(mi,pi)]={name:`${m.ko} ${pn}`,stack:1,maxDur:m.dur,armor:{part:pi,pts:m.pts[pi],mat:mi,tough:m.tough||0,kb:m.kb||0}};}));
 const info=id=>id<100?BL[id]:IT[id];
 const maxStack=id=>info(id).stack;
 
@@ -1315,6 +1322,7 @@ RECIPES.push(
   {out:BOAT,n:1,in:[[PLANKS,5]],st:'bench'},
   {out:FISHING_ROD,n:1,in:[[STICK,3],[SILK,2]],st:'bench'},
   {out:NET,n:1,in:[[STICK,2],[SILK,4]],st:'bench'},
+  {out:TURTLE_HELMET,n:1,in:[[SCUTE,5]],st:'bench'},
   {out:LADDER,n:3,in:[[STICK,7]],st:'bench'},
   {out:CHEST,n:1,in:[[PLANKS,8]],st:'bench'},
   {out:DOOR,n:3,in:[[PLANKS,6]],st:'bench'},
@@ -1330,7 +1338,7 @@ RECIPES.push(
   {out:COAL,n:2,in:[[LOG,1]],st:'kiln',fuel:true}, // 연료로 석탄을 쓰더라도 남는 양이 늘어남
 );
 
-ARMOR_MATS.forEach((m,mi)=>[5,8,7,4].forEach((n,pi)=>RECIPES.push(m.upgrade!==undefined?{out:armorId(mi,pi),n:1,in:[[armorId(m.upgrade,pi),1],[HELLSTEEL,1]],st:'bench'}:{out:armorId(mi,pi),n:1,in:[[m.item,n]],st:'bench'})));
+ARMOR_MATS.forEach((m,mi)=>!m.only&&[5,8,7,4].forEach((n,pi)=>RECIPES.push(m.upgrade!==undefined?{out:armorId(mi,pi),n:1,in:[[armorId(m.upgrade,pi),1],[HELLSTEEL,1]],st:'bench'}:{out:armorId(mi,pi),n:1,in:[[m.item,n]],st:'bench'})));
 
 // ---------- 아이콘 ----------
 const ICON=[],ICON_CANVAS=[];
@@ -1427,6 +1435,8 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{if(y<1||y>14)return null;const half=y<9?6:6-(y-9)*1.15;if(Math.abs(X-8)>half)return null;
       if(Math.abs(X-8)>half-1.1||y===1)return rim;if(Math.hypot(X-8,Y-7)<1.7)return boss;if(bz&&(x+y*2)%9===0)return '#c8503c';return x%4===0?a:b;});}
     case DARK_SWORD:return toolIcon('sword',{c:'#2a2238',d:'#120c1c',l:'#c060ff'});
+    case SCUTE:return pixelIcon((X,Y)=>{const dx=X-8,dy=Y-8;if(Math.abs(dx)*.95+Math.abs(dy)*.7>5.4||Math.abs(dy)>5.2)return null; // 육각 비늘 한 장
+      const e=5.4-(Math.abs(dx)*.95+Math.abs(dy)*.7);return e<1?'#2e6a36':Math.hypot(dx+1.4,dy+1.6)<1.4?'#bfe8a8':'#5aa860';});
     case NET:case NET_SQUID:{const full=id===NET_SQUID;return pixelIcon((X,Y)=>{const dx=X-10,dy=Y-6,d=Math.hypot(dx,dy);
       if(Math.abs(d-4.6)<.6)return '#9a9aa6'; // 테
       if(d<4.6){if(full&&Math.hypot(dx,(dy-1)*.8)<2.6)return Math.hypot(dx+.8,dy)<.6?'#e8eef8':'#2c3f6e';return (Math.abs((X+Y)%2.2-1.1)<.32||Math.abs((X-Y+40)%2.2-1.1)<.32)?'#e8e4d6':null;} // 그물코
@@ -2363,6 +2373,8 @@ function buildItemModel(id){
     case RAW_MEAT:case COOKED_MEAT:case ROTTEN:{const c=id===RAW_MEAT?0xd65c5c:id===COOKED_MEAT?0x8a5228:0x7a8a4a,m=imat('meat'+id,c,'skin',id===COOKED_MEAT?.5:.7);
       iMesh(g,IGEO.sph,m,0,0,0,0,0,.3,.095,.06,.07);if(id===ROTTEN)iMesh(g,IGEO.sph,imat('rot2',0x5a6a32,'skin',.8),.05,.02,.02,0,0,0,.04,.035,.04);
       else{iMesh(g,IGEO.cyl,imat('bone',0xf0ece0,'bone',.6),.1,.02,0,0,0,Math.PI/2+.3,.012,.08,.012);iMesh(g,IGEO.sph,imat('bone',0xf0ece0,'bone',.6),.14,.035,0,0,0,0,.02,.02,.02);}break;}
+    case SCUTE:{const m=imat('scute',0x5aa860,'shell',.45,.1);iMesh(g,IGEO.cyl,m,0,0,0,Math.PI/2,0,0,.09,.02,.09).geometry=new THREE.CylinderGeometry(1,1,1,6);
+      iMesh(g,new THREE.CylinderGeometry(1,1,1,6),imat('scuteD',0x2e6a36,'shell',.5),0,0,-.004,Math.PI/2,0,0,.095,.016,.095);break;}
     case NET:case NET_SQUID:{grip=true;const w=HANDLE(),rim=imat('netR',0x9a9aa6,'metal',.4,.5),cord=imat('netC',0xe8e4d6,'cloth',.9);
       iBox(g,.03,.5,.03,w,0,.15,0);iMesh(g,IGEO.torus,rim,0,.55,0,0,0,0,.15,.15,.15); // 자루 · 둥근 테
       for(let i=-2;i<=2;i++){iBox(g,.006,.28,.006,cord,i*.055,.55,0);iBox(g,.28,.006,.006,cord,0,.55+i*.055,0);} // 그물코
@@ -2749,6 +2761,33 @@ const MOBDEF={
       m.u.b.rotation.set(w?clamp(-sp*.35,-.9,0)-clamp(v.y*.2,-.3,.3):0,0,w?0:Math.PI/2*.85); // 빨리 갈수록 앞으로 숙임 · 물 밖에선 쓰러짐
       m.u.b.scale.set(1+sq*.06,1-sq*.08,1+sq*.06);}},
 
+  seaturtle:{name:'바다거북',w:1,h:.5,hp:30,aquatic:true,flee:true,knock:.4,color:0x4f8a4a,
+    sound:()=>{},drops:()=>[[SCUTE,1+(Math.random()<.35?1:0)]],ach:'hunt',
+    build(g){const shell=lam(0x4a7a3c,0,'shell'),plate=lam(0x2f5a2a,0,'shell'),rim=lam(0x6a5a32,0,'shell'),belly=lam(0xd8cc8a,0,'shell'),skin=lam(0x7aa868,0,'scale'),eye=bas(0x101010);
+      const b=pivot(g,0,.24,0); // 몸 (헤엄칠 때 위아래로 기움)
+      part(b,1,.1,1.1,belly,0,-.1,0);part(b,1.04,.14,1.12,rim,0,-.01,0);part(b,.9,.16,1,shell,0,.1,0);part(b,.62,.1,.72,shell,0,.22,0); // 배딱지 · 가장자리 · 등딱지
+      for(const [x,z] of [[0,-.25],[0,.05],[0,.33],[-.26,-.12],[.26,-.12],[-.26,.2],[.26,.2]])part(b,.2,.03,.22,plate,x,x?.19:.28,z); // 등딱지 무늬 판
+      const head=pivot(b,0,.02,-.55);part(head,.2,.16,.22,skin,0,0,-.08);part(head,.24,.2,.2,skin,0,.02,-.25);
+      for(const sd of [-1,1])part(head,.03,.06,.06,eye,sd*.12,.06,-.28);part(head,.12,.03,.02,plate,0,-.03,-.35);
+      const fl=[[-1,-.32,.62,.5],[1,-.32,.62,.5],[-1,.42,.32,.3],[1,.42,.32,.3]].map(([sd,z,L,W])=>{const p=pivot(b,sd*.5,-.02,z);part(p,L,.05,W,skin,sd*L/2,0,0);return {p,sd,front:z<0};}); // 지느러미발 (앞 큰 것 2 · 뒤 작은 것 2)
+      part(b,.12,.06,.2,skin,0,-.02,.6); // 꼬리
+      return {b,head,fl,mats:[shell,plate,rim,belly,skin]};},
+    ai(m,c,dt){
+      if(m.flee>0)m.flee-=dt;
+      if(!m.inWater){wander(m,m.flee>0?1.6:.45,dt);autoJump(m,7);return;} // 땅 위: 느릿느릿 기어감 (모래사장에 올라와 쉼)
+      m.aiT-=dt;const water=(x,y,z)=>LIQ_KIND[getBlock(Math.floor(x),Math.floor(y),Math.floor(z))]===1,W=m.wish;
+      if(m.aiT<=0||m.hitH){m.aiT=3+Math.random()*4;const sp=m.flee>0?3.4:1.1+Math.random()*.6;W.set(0,0,0);
+        for(let k=0;k<8;k++){let dx,dz;if(m.flee>0&&k<4){const l=c.dist||1;dx=-c.toX/l+(Math.random()-.5)*.6;dz=-c.toZ/l+(Math.random()-.5)*.6;}else{const a=Math.random()*6.28;dx=Math.sin(a);dz=Math.cos(a);}
+          const dy=(Math.random()-.45)*.5,l=Math.hypot(dx,dy,dz)||1;
+          if(water(m.pos.x+dx/l*1.5,m.pos.y+.25+dy/l*1.5,m.pos.z+dz/l*1.5)||Math.random()<.15){W.set(dx/l*sp,dy/l*sp,dz/l*sp);break;}}} // 가끔은 물가 밖으로 올라감
+      const k=Math.min(1,2.5*dt);m.vel.x+=(W.x-m.vel.x)*k;m.vel.z+=(W.z-m.vel.z)*k;
+      const wy=W.y>0&&!water(m.pos.x,m.pos.y+m.h+.1,m.pos.z)?0:W.y;m.vel.y+=(wy-m.vel.y)*k+9*dt;
+      if(m.hitH)m.vel.y=Math.max(m.vel.y,4);}, // 물가에 닿으면 기어 올라감
+    anim(m,dt,hs){const t=performance.now()/1000,w=m.inWater;
+      for(const F of m.u.fl){if(w){const f=Math.sin(t*(2.2+hs)+(F.front?0:1.4))*(F.front?.55:.3);F.p.rotation.set(0,0,F.sd*f);} // 물속: 날갯짓하듯 지느러미발을 저음
+        else{const f=Math.sin(m.walk*2+(F.front?0:Math.PI))*.4*Math.min(1,hs*2);F.p.rotation.set(0,F.sd*f,0);}} // 땅: 앞뒤로 노 젓듯 기어감
+      m.u.b.rotation.x=w?clamp(m.vel.y*.25,-.4,.4):0;m.u.head.rotation.y=Math.sin(t*.7+m.pos.x)*.25;}},
+
 
 };
 class Mob{
@@ -2897,6 +2936,10 @@ function spawnMobs(dt){
   const passive=count(m=>m.def.passive),hostile=count(m=>m.def.hostile&&!m.def.boss);
   const pick=(minD,maxD)=>{const a=Math.random()*6.28,d=minD+Math.random()*(maxD-minD);const x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);const s=surfaceAt(x,z);return s?{x:x+.5,y:s.y,z:z+.5,b:s.b}:null;};
   // 온순: 잔디 위 뭉게/수풀꼬꼬
+  // 바다거북: 바닷가 모래사장 (물 가까이)에 1~2마리
+  if(count(m=>m.kind==='seaturtle')<4&&Math.random()<.12){const s=pick(18,40);
+    if(s&&s.b===SAND&&s.y<=SEA+3&&!terrainAt(Math.floor(s.x),Math.floor(s.z)).desert){let wet=false;for(let dx=-4;dx<=4&&!wet;dx++)for(let dz=-4;dz<=4;dz++)if(getBlock(Math.floor(s.x)+dx,SEA,Math.floor(s.z)+dz)===WATER){wet=true;break;}
+      if(wet){const n=1+rnd(1);for(let i=0;i<n;i++)new Mob('seaturtle',s.x+(Math.random()-.5)*2,s.y,s.z+(Math.random()-.5)*2);}}}
   // 오징어: 4칸 이상 깊은 물속에 1~2마리씩
   if(count(m=>m.kind==='squid')<5&&Math.random()<.18){const a=Math.random()*6.28,d=14+Math.random()*28,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);
     if(getBlock(x,SEA,z)===WATER&&getBlock(x,SEA-4,z)===WATER){const n=1+rnd(1);for(let i=0;i<n;i++)new Mob('squid',x+.5+(Math.random()-.5),SEA-3.2+Math.random(),z+.5+(Math.random()-.5));}}
@@ -3706,7 +3749,8 @@ function updateSurvival(dt){
   if(p.food>=16&&p.hp<20){p.regenT+=dt;if(p.regenT>3){p.regenT=0;p.hp=Math.min(20,p.hp+1);p.hungerAcc+=8;renderStats();}}else p.regenT=0;
   if(p.food<=0){p.starveT+=dt;if(p.starveT>4){p.starveT=0;hurtPlayer(1,0,0,'굶주림으로 쓰러졌습니다',true);}}
   const eye=camera.position;const under=LIQ_KIND[getBlock(Math.floor(eye.x),Math.floor(eye.y-.05),Math.floor(eye.z))]===1;
-  if(under){p.air=Math.max(0,p.air-dt*.8);if(p.air<=0){p.drownT+=dt;if(p.drownT>1){p.drownT=0;hurtPlayer(2,0,0,'물에 빠졌습니다',true);}}}
+  if(under){p.air=Math.max(0,p.air-dt*.8*(armor[0]&&IT[armor[0].id].armor.water?.33:1)); // 거북 등딱지 투구: 숨이 3배 오래감
+   if(p.air<=0){p.drownT+=dt;if(p.drownT>1){p.drownT=0;hurtPlayer(2,0,0,'물에 빠졌습니다',true);}}}
   else p.air=Math.min(10,p.air+dt*5);
   const inLava=LIQ_KIND[getBlock(Math.floor(eye.x),Math.floor(eye.y-.05),Math.floor(eye.z))]===2,E=DIM[world.dim],wt=$('wtint');
   wt.style.display=under||inLava||portalT>0?'block':'none';
