@@ -195,11 +195,15 @@ body.mobile #toasts{top:72px}
     • 곳곳의 <b>마을</b>에서 주민과 <b>동전</b>으로 거래할 수 있어요. 주민을 괴롭히면 가디언이 마을을 떠날 때까지 쫓아옵니다!<br>
     • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
+    • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡아서 가마에 구우면 <b>구운 생선</b>이 돼요. 물 밖으로 나온 물고기는 숨이 막혀요.<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>스톤</b>은 이 세계의 전기이며, 깊은 동굴의 스톤 광석에서 캘 수 있어요.
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.10 — 수영</h4>
+    <h4>🆕 v26.11 — 물고기</h4>
+    • 바다에 주황 · 파랑 · 은빛 <b>물고기</b>가 헤엄쳐요. 다가가면 꼬리를 흔들며 도망가요.<br>
+    • 잡으면 <b>생선</b>이 나오고, 가마에 구우면 <b>구운 생선</b>(배고픔 6 회복)이 돼요. 물 밖에서는 파닥거리다 숨이 막혀요.
+    <h4>v26.10 — 수영</h4>
     • 물속에서 <b>달리면 수영</b>해요. 몸을 눕혀 바라보는 방향(위·아래 포함)으로 빠르게 헤엄치고, 1칸 높이 물길도 지나갈 수 있어요.<br>
     • <b>얕은(흐르는) 물</b>도 양동이로 뜰 수 있어요.
     <h4>v26.9 — 숨 막히는 물속</h4>
@@ -326,7 +330,7 @@ const ATW=8,ATH=8;
 const AIR=0,GRASS=1,DIRT=2,STONE=3,COBBLE=4,LOG=5,LEAVES=6,PLANKS=7,SAND=8,WATER=9,COAL_ORE=10,IRON_ORE=11,CRYSTAL_ORE=12,CORE=13,BENCH=14,KILN=15,GLASS=16,BRICK=17,SNOW=18,BED=19,LAMP=20,THORN=21,HELLSTONE=22,LAVA=23,DEMON_BRICK=24,P_HELL=25,P_CASTLE=26,P_CITY=27,P_END=28,ENDSTONE=29,DARKSTONE=30,WINDOW=31,ASPHALT=32,HELLGLOW=33,WINDOW_OFF=34,ESTONE_ORE=35,HS_ORE=36,IRON_BLOCK=37,OBSIDIAN=38,END_FRAME=39,END_FRAME_ON=40,MARKER=41,VOIDMOSS=42,VOIDLAMP=43,LADDER=44,CHEST=48,HOPPER=52;
 // 방향이 있는 블록: 사다리(붙은 벽 쪽), 상자(앞면 쪽) — 면 번호 0:-x 1:+x 4:-z 5:+z
 const DIR_FACES=[0,1,4,5],LADDER_IDS=[44,45,46,47],CHEST_IDS=[48,49,50,51];
-const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169;
+const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171;
 const BL=[];
 function defB(id,name,t,p={}){
   let tiles;
@@ -1215,6 +1219,8 @@ IT[APPLE]={name:'사과',stack:64,food:4};
 IT[FLUFF]={name:'솜뭉치',stack:64};
 IT[FEATHER]={name:'깃털',stack:64};
 IT[EGG]={name:'알',stack:64,food:2};
+IT[RAW_FISH]={name:'생선',stack:64,food:2};
+IT[COOKED_FISH]={name:'구운 생선',stack:64,food:6};
 IT[SPIKE]={name:'가시',stack:64};
 IT[SILK]={name:'끈적실',stack:64};
 IT[ROTTEN]={name:'썩은 살점',stack:64,food:2,bad:true};
@@ -1300,6 +1306,7 @@ RECIPES.push(
   {out:IRON_INGOT,n:9,in:[[IRON_BLOCK,1]]},
   {out:HS_SCRAP,n:1,in:[[HS_ORE,1]],st:'kiln',fuel:true},
   {out:COOKED_MEAT,n:1,in:[[RAW_MEAT,1]],st:'kiln',fuel:true},
+  {out:COOKED_FISH,n:1,in:[[RAW_FISH,1]],st:'kiln',fuel:true},
   {out:IRON_INGOT,n:1,in:[[IRON_ORE,1]],st:'kiln',fuel:true},
   {out:GLASS,n:1,in:[[SAND,1]],st:'kiln',fuel:true},
   {out:STONE,n:1,in:[[COBBLE,1]],st:'kiln',fuel:true},
@@ -1400,6 +1407,9 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{if(y<1||y>14)return null;const half=y<9?6:6-(y-9)*1.15;if(Math.abs(X-8)>half)return null;
       if(Math.abs(X-8)>half-1.1||y===1)return rim;if(Math.hypot(X-8,Y-7)<1.7)return boss;if(bz&&(x+y*2)%9===0)return '#c8503c';return x%4===0?a:b;});}
     case DARK_SWORD:return toolIcon('sword',{c:'#2a2238',d:'#120c1c',l:'#c060ff'});
+    case RAW_FISH:case COOKED_FISH:{const ck=id===COOKED_FISH;return pixelIcon((X,Y)=>{const e=((X-7)/5.2)**2+((Y-8.5)/3.2)**2;
+      if(e<1){if(Math.hypot(X-3.6,Y-7.6)<.9)return '#111';return Y>9.6?(ck?'#d8a060':'#fff0e0'):(ck?'#9a5a28':'#e8823a');}
+      if(X>11&&X<15.2&&Math.abs(Y-8.5)<(X-11)*.9)return ck?'#7a4520':'#c86a2a';return null;});}
     case FLUFF:return pixelIcon((X,Y)=>{const c=[[5.5,9.5],[10.5,9.5],[8,6.5]];if(!c.some(([a,b])=>Math.hypot(X-a,Y-b)<3.6))return null;return Y>11?'#cfc8b8':'#f1ede2';});
   }
   const it=IT[id];if(it&&it.armor)return armorIcon(it.armor.part,ARMOR_MATS[it.armor.mat]);if(it&&it.tool)return toolIcon(it.tool.type,MATS[it.tool.mat]);
@@ -2267,6 +2277,9 @@ function buildItemModel(id){
     case RAW_MEAT:case COOKED_MEAT:case ROTTEN:{const c=id===RAW_MEAT?0xd65c5c:id===COOKED_MEAT?0x8a5228:0x7a8a4a,m=imat('meat'+id,c,'skin',id===COOKED_MEAT?.5:.7);
       iMesh(g,IGEO.sph,m,0,0,0,0,0,.3,.095,.06,.07);if(id===ROTTEN)iMesh(g,IGEO.sph,imat('rot2',0x5a6a32,'skin',.8),.05,.02,.02,0,0,0,.04,.035,.04);
       else{iMesh(g,IGEO.cyl,imat('bone',0xf0ece0,'bone',.6),.1,.02,0,0,0,Math.PI/2+.3,.012,.08,.012);iMesh(g,IGEO.sph,imat('bone',0xf0ece0,'bone',.6),.14,.035,0,0,0,0,.02,.02,.02);}break;}
+    case RAW_FISH:case COOKED_FISH:{const ck=id===COOKED_FISH,m=imat('fish'+id,ck?0x9a5a28:0xe8823a,'scale',ck?.6:.4),bl=imat('fishB'+id,ck?0xd8a060:0xfff0e0,'scale',.5);
+      iMesh(g,IGEO.sph,m,0,0,0,0,0,0,.11,.06,.035);iMesh(g,IGEO.sph,bl,0,-.022,0,0,0,0,.09,.032,.03);iBox(g,.07,.07,.008,m,.12,0,0,0,0,Math.PI/4); // 몸 · 배 · 꼬리
+      for(const sd of [-1,1])iMesh(g,IGEO.sph,imat('fishE',0x111111,null,.3),-.075,.014,sd*.03,0,0,0,.011,.011,.011);break;}
     case EGG:iMesh(g,IGEO.sph,imat('egg',0xece2c8,'rough',.5),0,0,0,0,0,0,.05,.065,.05);break;
     case FLUFF:for(const [x,y,r] of [[-.04,0,.05],[.04,0,.05],[0,.04,.055]])iMesh(g,IGEO.sph,imat('wool',0xf1ede2,'wool',.95),x,y,0,0,0,0,r,r,r);break;
     case FEATHER:grip=true;iBox(g,.006,.3,.006,imat('quill',0xf2f6e8,null,.5),0,.1,0);iMesh(g,IGEO.sph,imat('vane',0x88b058,'cloth',.8),0,.15,0,0,0,0,.035,.13,.006);break;
@@ -2574,6 +2587,36 @@ const MOBDEF={
     flash(m){return m.fuse>0&&((m.fuse*(4+m.fuse*6))|0)%2?1:0;},
     anim(m,dt){const s=1+(m.fuse>0?m.fuse*.25:Math.sin(performance.now()/250)*.03);m.u.body.scale.set(s,s,s);}},
 
+  fish:{name:'물고기',w:.5,h:.35,hp:3,aquatic:true,flee:true,color:0xe8823a,
+    sound:()=>{},drops:()=>[[RAW_FISH,1]],ach:'hunt',
+    init(m){m.variant=rnd(2);}, // 주황 · 파랑 · 은빛
+    build(g,m){const C=[[0xe8823a,0xfff0e0],[0x3f7fca,0xd8ecff],[0xaab4be,0xf4f6f8]][m.variant];
+      const body=lam(C[0],0,'scale'),belly=lam(C[1],0,'scale'),fin=lam(C[0],.85,'skin'),eye=bas(0x111111),white=bas(0xffffff);
+      const b=pivot(g,0,.18,0); // 몸 · 배 · 주둥이
+      part(b,.2,.24,.42,body,0,0,0);part(b,.16,.08,.34,belly,0,-.1,0);part(b,.15,.17,.1,body,0,-.01,-.25);
+      for(const sd of [-1,1]){part(b,.02,.07,.07,white,sd*.101,.04,-.17);part(b,.022,.04,.04,eye,sd*.104,.04,-.18);part(b,.02,.06,.1,fin,sd*.11,-.05,-.04).rotation.y=sd*.5;} // 눈 · 가슴지느러미
+      part(b,.02,.1,.2,fin,0,.16,.02); // 등지느러미
+      const tail=pivot(b,0,0,.21);part(tail,.02,.24,.17,fin,0,0,.085);
+      return {b,tail,mats:[body,belly,fin]};},
+    onHurt(m){m.aiT=0;}, // 맞으면 바로 방향을 틀어 달아남
+    ai(m,c,dt){
+      if(!m.inWater){m.dryT=(m.dryT||0)+dt; // 물 밖: 파닥파닥 뛰다가 숨이 막힘
+        if(m.onGround&&Math.random()<dt*2.5)m.vel.set((Math.random()-.5)*2.5,4.5,(Math.random()-.5)*2.5);
+        if(m.dryT>2.2){m.dryT=.5;m.hurt(1,0,0,true);}return;}
+      m.dryT=0;m.aiT-=dt;
+      const water=(x,y,z)=>LIQ_KIND[getBlock(Math.floor(x),Math.floor(y),Math.floor(z))]===1,W=m.wish;
+      if(m.aiT<=0||m.hitH||!water(m.pos.x+W.x*.5,m.pos.y+.15+W.y*.5,m.pos.z+W.z*.5)){ // 앞이 물이 아니면 다른 쪽으로
+        m.aiT=1.5+Math.random()*3;const sp=m.flee>0?4.2:1+Math.random()*.7;W.set(0,0,0);
+        for(let k=0;k<8;k++){let dx,dz;if(m.flee>0&&k<4){const l=c.dist||1;dx=-c.toX/l+(Math.random()-.5)*.8;dz=-c.toZ/l+(Math.random()-.5)*.8;}else{const a=Math.random()*6.28;dx=Math.sin(a);dz=Math.cos(a);}
+          const dy=(Math.random()-.5)*.7,l=Math.hypot(dx,dy,dz)||1;
+          if(water(m.pos.x+dx/l*1.2,m.pos.y+.15+dy/l*1.2,m.pos.z+dz/l*1.2)){W.set(dx/l*sp,dy/l*sp,dz/l*sp);break;}}}
+      const k=Math.min(1,3*dt);m.vel.x+=(W.x-m.vel.x)*k;m.vel.z+=(W.z-m.vel.z)*k;
+      const wy=W.y>0&&!water(m.pos.x,m.pos.y+m.h+.15,m.pos.z)?-.2:W.y; // 수면 밖으로는 안 나감
+      m.vel.y+=(wy-m.vel.y)*k+9*dt;}, // 물에 뜨지도 가라앉지도 않음
+    anim(m,dt,hs){const t=performance.now()/1000,w=m.inWater;
+      m.u.tail.rotation.y=Math.sin(t*(w?8+hs*5:24))*(w?.45:.75); // 꼬리를 흔들며 헤엄 · 물 밖에선 파닥파닥
+      m.u.b.rotation.set(w?clamp(m.vel.y*.3,-.5,.5):0,0,w?0:Math.PI/2*.9);}},
+
 
 };
 class Mob{
@@ -2602,7 +2645,7 @@ class Mob{
       else{this.pos.set(b.pos.x,b.pos.y+.2,b.pos.z);this.vel.set(0,0,0);this.g.position.copy(this.pos);this.g.rotation.y=this.yaw;if(d.anim)d.anim(this,dt,0);
         const e=this.hurtT>0?.6:0;for(const mm of this.u.mats)mm.emissive.setRGB(e,0,0);return;}}
     d.ai(this,c,dt);if(this.dead)return;
-    if(this.inWater&&!d.fly)this.vel.y=Math.max(this.vel.y,this.hitH?6.8:2.5);
+    if(this.inWater&&!d.fly&&!d.aquatic)this.vel.y=Math.max(this.vel.y,this.hitH?6.8:2.5);
     this.soundT-=dt;if(this.soundT<=0){this.soundT=5+Math.random()*9;if(dist<16)d.sound();}
     if(d.burn&&light>.8){let covered=false;for(let y=Math.floor(this.pos.y+this.h);y<CH;y++){const b=getBlock(Math.floor(this.pos.x),y,Math.floor(this.pos.z));if(b>0&&b!==LEAVES&&LIQ_KIND[b]!==1&&b!==GLASS){covered=true;break;}}
       if(!covered){this.sunT+=dt;if(Math.random()<dt*4)spawnParticles(this.pos.x,this.pos.y+this.h*.8,this.pos.z,new THREE.Color(0x333333),1,.4,2);if(this.sunT>1.5){this.sunT=.5;this.hurt(2,0,0,true);if(this.dead)return;}}}
@@ -2614,7 +2657,7 @@ class Mob{
     if(!d.noclip&&!player.dead)sep(player.pos.x,player.pos.z,player.pos.y,player.h,player.w);
     if(!d.noclip)for(const o of mobs)if(o!==this&&Math.abs(o.pos.x-this.pos.x)<2&&Math.abs(o.pos.z-this.pos.z)<2)sep(o.pos.x,o.pos.z,o.pos.y,o.h,o.w);
     if(!d.fireproof&&(this.lavaT=(this.lavaT||0)-dt)<=0&&overlapBlock(this,b=>LIQ_KIND[b]===2)){this.lavaT=.5;this.hurt(3,0,0);if(this.dead)return;}
-    if(!d.fly&&!d.boss&&!d.noclip&&this.kind!=='vguard'){ // 익사: 머리가 물에 잠기면 숨(10)이 줄고, 다 떨어지면 1초마다 2 피해 (플레이어와 같음)
+    if(!d.fly&&!d.boss&&!d.noclip&&!d.aquatic&&this.kind!=='vguard'){ // 익사: 머리가 물에 잠기면 숨(10)이 줄고, 다 떨어지면 1초마다 2 피해 (플레이어와 같음)
       if(this.air===undefined)this.air=10;
       if(isWaterAt(this.pos.x,this.pos.y+this.h*.85,this.pos.z)){this.air=Math.max(0,this.air-dt*.8);
         if(Math.random()<dt*2)spawnParticles(this.pos.x,this.pos.y+this.h*.9,this.pos.z,new THREE.Color(0xcfeeff),1,.15,1.5); // 보글보글
@@ -2722,6 +2765,9 @@ function spawnMobs(dt){
   const passive=count(m=>m.def.passive),hostile=count(m=>m.def.hostile&&!m.def.boss);
   const pick=(minD,maxD)=>{const a=Math.random()*6.28,d=minD+Math.random()*(maxD-minD);const x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);const s=surfaceAt(x,z);return s?{x:x+.5,y:s.y,z:z+.5,b:s.b}:null;};
   // 온순: 잔디 위 뭉게/수풀꼬꼬
+  // 물고기: 2칸 이상 깊은 물속에 1~3마리씩
+  if(count(m=>m.kind==='fish')<10&&Math.random()<.35){const a=Math.random()*6.28,d=12+Math.random()*28,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);
+    if(getBlock(x,SEA,z)===WATER&&getBlock(x,SEA-2,z)===WATER){const n=1+rnd(2);for(let i=0;i<n;i++)new Mob('fish',x+.5+(Math.random()-.5),SEA-1.2-Math.random(),z+.5+(Math.random()-.5));}}
   if(passive<10&&Math.random()<.3){const s=pick(20,44);if(s&&s.b===GRASS){const kind=Math.random()<.45?'cluck':'fluff';const n=1+rnd(2);for(let i=0;i<n;i++)new Mob(kind,s.x+(Math.random()-.5)*2,s.y,s.z+(Math.random()-.5)*2);}}
   // 중립: 산 위 돌거북
   if(count(m=>m.kind==='turtle')<3&&Math.random()<.15){const s=pick(20,44);if(s&&s.y>=42&&(s.b===GRASS||s.b===SNOW||s.b===STONE))new Mob('turtle',s.x,s.y,s.z);}
@@ -3339,7 +3385,7 @@ function updateBoats(dt){
     if(player.boat!==b){const fr=Math.max(0,1-(b.inWater?1.2:4)*dt);b.vel.x*=fr;b.vel.z*=fr;}
     const hs=Math.hypot(b.vel.x,b.vel.z);if(hs>.3){let dy=Math.atan2(-b.vel.x,-b.vel.z)-b.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));b.yaw+=dy*Math.min(1,4*dt);}
     if(!b.passenger)for(const m of mobs){ // 닿은 몹을 태움
-      if(m.boat||m.def.boss||m.def.noclip||m.w>1.5)continue;
+      if(m.boat||m.def.boss||m.def.noclip||m.def.aquatic||m.w>1.5)continue;
       if(Math.hypot(m.pos.x-b.pos.x,m.pos.z-b.pos.z)<.9&&Math.abs(m.pos.y-b.pos.y)<1){m.boat=b;b.passenger=m;SFX.place();break;}}
     b.g.position.copy(b.pos);b.g.rotation.y=b.yaw;b.mats[0].emissive.setRGB(b.hitT>0?.5:0,0,0);
     if(b.pos.y<-20)removeBoat(b,false);
@@ -3599,7 +3645,7 @@ function useItem(){
     if(player.food>=20){toast('배가 부릅니다');return;}
     if(IT[s.id].bad&&Math.random()<.5){player.hungerAcc+=35;toast('윽... 속이 좀 안 좋다');}
     player.food=Math.min(20,player.food+IT[s.id].food);s.count--;if(!s.count)inv[sel]=null;SFX.eat();swing=1;invChanged();renderStats();
-    if(s.id===COOKED_MEAT)achieve('cook');return;
+    if(s.id===COOKED_MEAT||s.id===COOKED_FISH)achieve('cook');return;
   }
   if(s&&s.id<100&&target){
     const x=target.x+target.n[0],y=target.y+target.n[1],z=target.z+target.n[2];
