@@ -167,7 +167,7 @@ body.mobile #toasts{top:72px}
   <button class="btn" id="btnUpd">📜 업데이트 목록</button>
   <div class="help">
     <div class="deskonly"><h4>🖥 PC 조작법</h4>
-      <span class="k">이동</span><b>WASD</b> 이동 · <b>스페이스</b> 점프/수영 · <b>Shift</b> 달리기 · <b>C</b> 웅크리기 (모서리에서 안 떨어짐)<br>
+      <span class="k">이동</span><b>WASD</b> 이동 · <b>스페이스</b> 점프/수영 · <b>Shift</b> 달리기 (물속에선 <b>수영</b>) · <b>C</b> 웅크리기 (모서리에서 안 떨어짐)<br>
       <span class="k">시점</span><b>마우스</b> 둘러보기 · <b>P</b> 시점 변경 (3인칭 앞 → 3인칭 뒤 → 1인칭)<br>
       <span class="k">공격 · 캐기</span><b>좌클릭</b> 공격 (한 번씩 누르기) · <b>좌클릭 누르고 있기</b> 블록 캐기<br>
       <span class="k">사용</span><b>우클릭</b> 설치 / 먹기 / 사용 / 거래 · 무기를 든 채 <b>우클릭 누르고 있기</b> 방패로 막기<br>
@@ -176,7 +176,7 @@ body.mobile #toasts{top:72px}
       <span class="k">기타</span><b>F3</b> 디버그 정보 · <b>Esc</b> 일시정지
     </div>
     <div class="mobonly"><h4>📱 모바일 조작법</h4>
-      <span class="k">이동</span><b>왼쪽 화면</b> 조이스틱 (끝까지 밀면 달리기) · <b>⤒</b> 점프/수영 · <b>🏃</b> 달리기 · <b>🧎</b> 웅크리기<br>
+      <span class="k">이동</span><b>왼쪽 화면</b> 조이스틱 (끝까지 밀면 달리기) · <b>⤒</b> 점프/수영 · <b>🏃</b> 달리기 (물속에선 <b>수영</b>) · <b>🧎</b> 웅크리기<br>
       <span class="k">시점</span><b>오른쪽 화면 드래그</b> 둘러보기 · <b>👁</b> 시점 변경<br>
       <span class="k">공격 · 캐기</span><b>⛏</b> 한 번씩 누르기 공격 · 누르고 있기 블록 캐기<br>
       <span class="k">사용</span><b>✋</b> 설치 / 먹기 / 사용 / 거래 · 무기를 든 채 <b>✋ 누르고 있기</b> 방패로 막기<br>
@@ -199,7 +199,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.9 — 숨 막히는 물속</h4>
+    <h4>🆕 v26.10 — 수영</h4>
+    • 물속에서 <b>달리면 수영</b>해요. 몸을 눕혀 바라보는 방향(위·아래 포함)으로 빠르게 헤엄치고, 1칸 높이 물길도 지나갈 수 있어요.<br>
+    • <b>얕은(흐르는) 물</b>도 양동이로 뜰 수 있어요.
+    <h4>v26.9 — 숨 막히는 물속</h4>
     • 동물·주민·몬스터도 머리가 물에 오래 잠기면 <b>익사</b>해요 (빌리저 가디언과 보스, 날아다니는 몹은 빼고).<br>
     • 어비스 차원문 둘레에는 나무가 자라지 않아, 잎이 차원문을 덮지 않아요.
     <h4>v26.8 — 세계 코드</h4>
@@ -2382,10 +2385,11 @@ function updateAvatar(dt){
   const hs=p.boat?0:Math.hypot(p.vel.x,p.vel.z),cr=p.crouchK||0;
   // 몸은 걸을 때 바라보는 쪽으로 돌고, 서 있을 땐 고개가 많이 돌아갈 때만 따라 돎
   let d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
-  if(hs>.5)A.yaw+=d*Math.min(1,10*dt);else if(Math.abs(d)>.75)A.yaw=p.yaw-Math.sign(d)*.75;
+  const sk=p.swimK||0;
+  if(sk>.5)A.yaw+=d*Math.min(1,10*dt);else if(hs>.5)A.yaw+=d*Math.min(1,10*dt);else if(Math.abs(d)>.75)A.yaw=p.yaw-Math.sign(d)*.75;
   d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
-  A.g.position.set(p.pos.x,p.pos.y-cr*.1,p.pos.z);A.g.rotation.y=A.yaw;
-  A.up.rotation.x=-.45*cr;A.head.rotation.set(p.pitch+.45*cr,d,0);
+  A.g.position.set(p.pos.x+Math.sin(A.yaw)*.9*sk,p.pos.y-cr*.1+.3*sk,p.pos.z+Math.cos(A.yaw)*.9*sk);A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0); // 수영: 엎드려 누움
+  A.up.rotation.x=-.45*cr;A.head.rotation.set(p.pitch+.45*cr+1.35*sk,d,0);
   if(p.onGround||p.boat)A.walk+=hs*dt*2.6;
   const amp=Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);
   if(p.boat){for(const l of A.legs){l.rotation.x=1.35;l.rotation.z=0;}}
@@ -2395,6 +2399,9 @@ function updateAvatar(dt){
   A.arms[0].rotation.order='YXZ';A.arms[0].rotation.set(lerp(-sw*amp*.8,1.38,bk),lerp(0,-.5,bk),lerp(-.05,0,bk));
   if(wasDigging)A.arms[1].rotation.set(.75+toolLift*1.7,-.15,.05); // 캐는 중: 들어 올렸다 내려찍기
   else A.arms[1].rotation.set((id?.3:0)+sw*amp*.8*(id?.5:1)+sa*1.5,sa*-.3,.05+sa*.15); // 공격하면 팔을 휘두름
+  if(sk>.05){const t=performance.now()/1000; // 수영: 팔을 번갈아 앞으로 저으며 발장구
+    A.arms.forEach((a,i)=>{a.rotation.order='XYZ';a.rotation.set(lerp(a.rotation.x,2.6+Math.sin(t*4.5+i*Math.PI)*.75,sk),0,lerp(a.rotation.z,(i?-1:1)*.25,sk));});
+    A.legs.forEach((l,i)=>{l.rotation.x=lerp(l.rotation.x,Math.sin(t*9+i*Math.PI)*.35,sk);});}
   // 오른손에 든 아이템
   if(id!==A.itemId){A.itemId=id;A.hand.clear();
     if(id){const it=itemModel(id);if(it.grip){it.g.rotation.set(-Math.PI/2,0,Math.PI/2,'ZXY');A.hand.add(it.g);} // 손잡이를 쥐고 앞을 향함
@@ -3017,8 +3024,8 @@ function closeEnding(){
 function useBucket(s){
   const it=IT[s.id];
   if(s.id===BUCKET){ // 물/용암 뜨기
-    const h=raycast(camera.position,viewDir(),5,true);if(!h||(h.id!==WATER&&h.id!==LAVA))return; // 흐르는 물·용암은 뜰 수 없음
-    setBlock(h.x,h.y,h.z,AIR);const nid=h.id===WATER?WATER_BUCKET:LAVA_BUCKET;SFX.splash();swing=1;
+    const h=raycast(camera.position,viewDir(),5,true);if(!h||(h.id!==LAVA&&LIQ_KIND[h.id]!==1))return; // 물은 얕은(흐르는) 물도 뜰 수 있음 · 용암은 흐르지 않는 것만
+    setBlock(h.x,h.y,h.z,AIR);const nid=LIQ_KIND[h.id]===1?WATER_BUCKET:LAVA_BUCKET;SFX.splash();swing=1;
     if(s.count>1){s.count--;dropAtPlayer(nid,addItem(nid,1));}else inv[sel]={id:nid,count:1};
     invChanged();return;
   }
@@ -3463,7 +3470,12 @@ function updatePlayer(dt){
   // 웅크리기 (C): 느리게 걷고, 눈높이·키가 낮아지고, 모서리에서 떨어지지 않음
   if(!invOpen&&(keys.KeyC||mobileCrouch))p.crouch=true;
   else if(p.crouch){const hw=p.w/2;if(!aabbSolid(p.pos.x-hw,p.pos.y,p.pos.z-hw,p.pos.x+hw,p.pos.y+1.8,p.pos.z+hw))p.crouch=false;} // 머리 위가 막혔으면 계속 웅크림
-  p.h=p.crouch?1.5:1.8;p.crouchK=(p.crouchK||0)+((p.crouch?1:0)-(p.crouchK||0))*Math.min(1,12*dt);
+  // 수영: 물속에서 달리면 몸을 눕혀 바라보는 방향으로 빠르게 헤엄침 (키 0.6칸 · 일어설 자리가 없으면 계속 엎드림)
+  const wantSwim=(keys.ShiftLeft||keys.ShiftRight||mobileSprint||(joy.active&&Math.hypot(joy.x,joy.y)>.97))&&fz>.3&&p.food>6&&!invOpen&&!p.crouch;
+  if(wantSwim&&isWaterAt(p.pos.x,p.pos.y+(p.swimming?.3:.9),p.pos.z))p.swimming=true;
+  else if(p.swimming){const hw=p.w/2;if(!aabbSolid(p.pos.x-hw,p.pos.y,p.pos.z-hw,p.pos.x+hw,p.pos.y+1.8,p.pos.z+hw))p.swimming=false;}
+  p.swimK=(p.swimK||0)+((p.swimming?1:0)-(p.swimK||0))*Math.min(1,8*dt);
+  p.h=p.swimming?.6:p.crouch?1.5:1.8;p.crouchK=(p.crouchK||0)+((p.crouch?1:0)-(p.crouchK||0))*Math.min(1,12*dt);
   const sprint=(keys.ShiftLeft||keys.ShiftRight||mobileSprint||(joy.active&&Math.hypot(joy.x,joy.y)>.97))&&fz>.3&&p.food>6&&!invOpen&&!p.crouch;
   // 방패 막기: 우클릭 기능이 없는 아이템(무기·도구·맨손)을 든 채 우클릭 유지
   const h0=held(),hi=h0&&IT[h0.id],hasUse=h0&&(h0.id<100||(hi&&(hi.food||hi.bow||hi.armor||hi.bucket||hi.use))||h0.id===LASER||h0.id===POTION);
@@ -3472,7 +3484,12 @@ function updatePlayer(dt){
   const s=Math.sin(p.yaw),c=Math.cos(p.yaw);
   let wx=-s*fz+c*fx,wz=-c*fz-s*fx;const l=Math.hypot(wx,wz);if(l>0){const q=Math.min(1,l)*sp/l;wx*=q;wz*=q;}
   const acc=p.onGround?14:p.inWater?6:3.5;const k=Math.min(1,acc*dt);
-  p.vel.x+=(wx-p.vel.x)*k;p.vel.z+=(wz-p.vel.z)*k;
+  if(p.swimming){ // 헤엄: 위·아래도 바라보는 방향으로 · 수면 위로 튀어 나가지 않음
+    const d=viewDir(),sw=wantSwim?5.6:2.4,tx=(d.x*fz+c*fx*.5)*sw,tz=(d.z*fz-s*fx*.5)*sw;let ty=d.y*fz*sw;
+    if(keys.Space&&!invOpen)ty=Math.max(ty,3);
+    if(ty>0&&!isWaterAt(p.pos.x,p.pos.y+.75,p.pos.z))ty=0;
+    const k2=Math.min(1,5*dt);p.vel.x+=(tx-p.vel.x)*k2;p.vel.z+=(tz-p.vel.z)*k2;p.vel.y+=(ty-p.vel.y)*k2+9*dt;}
+  else{p.vel.x+=(wx-p.vel.x)*k;p.vel.z+=(wz-p.vel.z)*k;}
   const feetW=isLiquidAt(p.pos.x,p.pos.y+.1,p.pos.z),eyeW=isLiquidAt(p.pos.x,p.pos.y+1.62,p.pos.z);
   const swim=p.inWater||feetW;
   if(keys.Space&&!invOpen){
@@ -3481,7 +3498,7 @@ function updatePlayer(dt){
   }
   // 물가 벽에 붙어 앞으로 가면(또는 스페이스) 뭍으로 올라감
   const nearW=swim||isLiquidAt(p.pos.x,p.pos.y-.6,p.pos.z);
-  if(nearW&&p.hitH&&(fx||fz)&&!invOpen&&(keys.Space||!eyeW||p.onGround))p.vel.y=Math.max(p.vel.y,6.5);
+  if(nearW&&!p.swimming&&p.hitH&&(fx||fz)&&!invOpen&&(keys.Space||!eyeW||p.onGround))p.vel.y=Math.max(p.vel.y,6.5);
   if(overlapBlock(p,b=>LADDER_OF[b]>0)){ // 사다리: W·스페이스로 오르고, 아니면 천천히 미끄러져 내려옴 (낙하 피해 없음)
     const up=!invOpen&&(keys.KeyW||keys.Space||(joy.active&&joy.y<-.3));
     p.vel.y=(up?3.4:p.crouch?0:Math.max(p.vel.y,-2.2))+28*dt;p.peakY=p.pos.y;} // 웅크리면 사다리에 매달려 멈춤
@@ -3498,7 +3515,7 @@ function updatePlayer(dt){
   if(p.onGround&&hs>1){p.stepD+=hs*dt;if(p.stepD>(sprint?2.6:2.2)){p.stepD=0;SFX.step();}}
   p.hungerAcc+=dt*(sprint?2.5:1);
   if(p.pos.y<-30&&!p.dead)die('세계 밖으로 떨어졌습니다'); // 물약으로 되살아나도 다시 떨어지므로 바로 처리
-  camera.position.set(p.pos.x,p.pos.y+1.62-.3*p.crouchK,p.pos.z);
+  camera.position.set(p.pos.x,p.pos.y+lerp(1.62-.3*p.crouchK,.42,p.swimK),p.pos.z);
   camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();
   const fov=sprint&&hs>4?82:75;if(Math.abs(camera.fov-fov)>.1){camera.fov+=(fov-camera.fov)*Math.min(1,10*dt);camera.updateProjectionMatrix();}
 }
