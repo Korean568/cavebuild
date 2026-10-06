@@ -195,6 +195,7 @@ body.mobile #toasts{top:72px}
     • 곳곳의 <b>마을</b>에서 주민과 <b>동전</b>으로 거래할 수 있어요. 주민을 괴롭히면 가디언이 마을을 떠날 때까지 쫓아옵니다!<br>
     • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
+    • <b>철퇴</b>(철 블록 1 + 막대기 2)는 느리지만 한 방에 <b>20</b>! <b>달리면서 머리</b>를 내려치면 1.5배인 <b>30</b>이 들어가요.<br>
     • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
@@ -202,7 +203,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.15 — 바다거북</h4>
+    <h4>🆕 v26.16 — 철퇴</h4>
+    • <b>철퇴</b>(철 블록 1 + 막대기 2, 작업대) 추가! 한 방에 <b>20</b>의 피해를 주지만 무거워서 천천히(1.1초마다) 휘둘러요. 맞은 적은 더 멀리 밀려나요.<br>
+    • 철퇴를 든 채 <b>달리면서 머리(헤드샷)</b>를 내려치면 <b>1.5배</b>인 <b>30</b>의 피해가 쾅! 들어가요.
+    <h4>v26.15 — 바다거북</h4>
     • 바닷가 모래사장에 <b>바다거북</b>이 나타나요. 땅에선 느릿느릿 기어가고, 바다에선 지느러미발을 저으며 헤엄쳐요.<br>
     • 잡으면 <b>거북 비늘</b>이 나오고, 5개를 모아 작업대에서 <b>거북 등딱지 투구</b>(방어 2)를 만들면 <b>물속에서 숨이 3배</b> 오래가요.
     <h4>v26.14 — 그물</h4>
@@ -345,7 +349,7 @@ const ATW=8,ATH=8;
 const AIR=0,GRASS=1,DIRT=2,STONE=3,COBBLE=4,LOG=5,LEAVES=6,PLANKS=7,SAND=8,WATER=9,COAL_ORE=10,IRON_ORE=11,CRYSTAL_ORE=12,CORE=13,BENCH=14,KILN=15,GLASS=16,BRICK=17,SNOW=18,BED=19,LAMP=20,THORN=21,HELLSTONE=22,LAVA=23,DEMON_BRICK=24,P_HELL=25,P_CASTLE=26,P_CITY=27,P_END=28,ENDSTONE=29,DARKSTONE=30,WINDOW=31,ASPHALT=32,HELLGLOW=33,WINDOW_OFF=34,ESTONE_ORE=35,HS_ORE=36,IRON_BLOCK=37,OBSIDIAN=38,END_FRAME=39,END_FRAME_ON=40,MARKER=41,VOIDMOSS=42,VOIDLAMP=43,LADDER=44,CHEST=48,HOPPER=52;
 // 방향이 있는 블록: 사다리(붙은 벽 쪽), 상자(앞면 쪽) — 면 번호 0:-x 1:+x 4:-z 5:+z
 const DIR_FACES=[0,1,4,5],LADDER_IDS=[44,45,46,47],CHEST_IDS=[48,49,50,51];
-const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172,INK_SAC=173,NET=174,NET_SQUID=175,SCUTE=176,TURTLE_HELMET=177;
+const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172,INK_SAC=173,NET=174,NET_SQUID=175,SCUTE=176,TURTLE_HELMET=177,MACE=178;
 const BL=[];
 function defB(id,name,t,p={}){
   let tiles;
@@ -1277,6 +1281,7 @@ MATS.forEach((m,mi)=>TOOL_TYPES.forEach((t,ti)=>{
   IT[toolId(mi,ti)]={name:`${m.ko} ${TOOL_KO[t]}`,stack:1,tool:{type:t,tier:m.tier,speed:m.speed,dmg,mat:mi},maxDur:m.dur};
 }));
 IT[DARK_SWORD]={name:'다크나이트 검',stack:1,maxDur:3000,tool:{type:'sword',tier:0,speed:1,dmg:99,mat:0}};
+IT[MACE]={name:'철퇴',stack:1,maxDur:500,tool:{type:'mace',tier:0,speed:1,dmg:20,mat:2}}; // 무겁고 느리지만 한 방이 셈 (달리며 머리를 치면 1.5배)
 const ARMOR_PARTS=['투구','흉갑','각반','장화'];
 const SLOT_LABELS=[...ARMOR_PARTS,'방패'];
 const ARMOR_MATS=[
@@ -1323,6 +1328,7 @@ RECIPES.push(
   {out:FISHING_ROD,n:1,in:[[STICK,3],[SILK,2]],st:'bench'},
   {out:NET,n:1,in:[[STICK,2],[SILK,4]],st:'bench'},
   {out:TURTLE_HELMET,n:1,in:[[SCUTE,5]],st:'bench'},
+  {out:MACE,n:1,in:[[IRON_BLOCK,1],[STICK,2]],st:'bench'},
   {out:LADDER,n:3,in:[[STICK,7]],st:'bench'},
   {out:CHEST,n:1,in:[[PLANKS,8]],st:'bench'},
   {out:DOOR,n:3,in:[[PLANKS,6]],st:'bench'},
@@ -1435,6 +1441,10 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{if(y<1||y>14)return null;const half=y<9?6:6-(y-9)*1.15;if(Math.abs(X-8)>half)return null;
       if(Math.abs(X-8)>half-1.1||y===1)return rim;if(Math.hypot(X-8,Y-7)<1.7)return boss;if(bz&&(x+y*2)%9===0)return '#c8503c';return x%4===0?a:b;});}
     case DARK_SWORD:return toolIcon('sword',{c:'#2a2238',d:'#120c1c',l:'#c060ff'});
+    case MACE:return pixelIcon((X,Y)=>{const dx=X-11,dy=Y-5,d=Math.hypot(dx,dy);
+      if(d<3.3)return d<1.2?'#f6f6f6':dx+dy<0?'#e0e0e6':'#9a9aa4'; // 쇠뭉치
+      if(d<4.9&&((Math.abs(dx)<.7||Math.abs(dy)<.7)||Math.abs(Math.abs(dx)-Math.abs(dy))<.6))return '#6a6a74'; // 가시
+      const a=(X-Y)*Math.SQRT1_2+4.2,b=(X+Y)*Math.SQRT1_2-11.3;if(a>-8.6&&a<-1.2&&Math.abs(b)<.8)return a<-6.6?'#3a2618':b>0?HND_D:HND;return null;});
     case SCUTE:return pixelIcon((X,Y)=>{const dx=X-8,dy=Y-8;if(Math.abs(dx)*.95+Math.abs(dy)*.7>5.4||Math.abs(dy)>5.2)return null; // 육각 비늘 한 장
       const e=5.4-(Math.abs(dx)*.95+Math.abs(dy)*.7);return e<1?'#2e6a36':Math.hypot(dx+1.4,dy+1.6)<1.4?'#bfe8a8':'#5aa860';});
     case NET:case NET_SQUID:{const full=id===NET_SQUID;return pixelIcon((X,Y)=>{const dx=X-10,dy=Y-6,d=Math.hypot(dx,dy);
@@ -1629,7 +1639,7 @@ const SFX={
   revive:()=>{[392,523,659,784,1046].forEach((f,i)=>tone(f,f*1.01,.25,.12,'triangle',i*.07));},
   laser:()=>{tone(1800,200,.35,.14,'sawtooth');noise(.3,4000,.15);},laserCharge:()=>tone(200,1400,1.5,.07,'sine'),
   mech:()=>{tone(70,55,.4,.12,'square');noise(.2,800,.1);},roar:()=>{tone(140,55,1.4,.18,'sawtooth');noise(1.2,600,.2);},
-  fireball:()=>noise(.35,900,.25),cast:()=>{bnoise(.25,1800,.8,.12,0,.01,'bandpass',4200);tone(900,500,.15,.03,'sine');},plop:()=>{bnoise(.18,900,.9,.18,0,.004,'bandpass',400);bubble(380,.08,.06,.03);},
+  fireball:()=>noise(.35,900,.25),smash:()=>{tone(130,45,.35,.35,'sine');bnoise(.3,700,.6,.4,0,.003,'lowpass',150);tone(1400,900,.12,.06,'triangle');},cast:()=>{bnoise(.25,1800,.8,.12,0,.01,'bandpass',4200);tone(900,500,.15,.03,'sine');},plop:()=>{bnoise(.18,900,.9,.18,0,.004,'bandpass',400);bubble(380,.08,.06,.03);},
   reel:()=>{for(let i=0;i<6;i++)bnoise(.03,3200,4,.08,i*.05,.002);},portal:()=>{tone(200,900,.6,.08,'sine');noise(.6,2000,.08);},
   charge:()=>tone(90,160,.8,.12,'square'),equip:()=>{noise(.1,3000,.15);tone(600,800,.08,.06,'triangle');},
 };
@@ -2325,6 +2335,12 @@ function buildItemModel(id){
   const it=IT[id];
   if(id<100){g.add(id===HOPPER?hopperModel(.2):id===LOG?logModel(.2):DOOR_OF[id]?doorModel(.2):id===SAPLING?tileBox(.2,.2,.001,TILE.sapling,true):blockCube(id,.2));return {g,grip};}
   if(it&&it.tool){
+    if(id===MACE){const st=imat('maceS',0x6a6a74,'metal',.4,.7),hd=imat('maceH',0xcfcfd6,'metal',.28,.85),gr=GRIP();
+      iBox(g,.04,.2,.04,gr,0,.02,0);iBox(g,.05,.03,.05,st,0,-.09,0);iBox(g,.034,.34,.034,st,0,.28,0); // 손잡이 · 끝마개 · 쇠 자루
+      iMesh(g,IGEO.sph,hd,0,.52,0,0,0,0,.085,.1,.085); // 묵직한 쇠뭉치
+      for(let i=0;i<6;i++){const a=i/6*Math.PI*2;iBox(g,.018,.17,.07,hd,Math.cos(a)*.075,.52,Math.sin(a)*.075,0,-a,0);} // 날개처럼 돋은 쇠판 6장
+      iMesh(g,IGEO.cone,st,0,.66,0,0,0,0,.03,.07,.03); // 꼭대기 뿔
+      return {g,grip:true};}
     const tl=it.tool,mi=tl.mat,dark=id===DARK_SWORD,H=dark?()=>imat('dkb',0x2a2238,'metal',.3,.7,0x3a1050,.3):TOOL_HEAD[mi],E=dark?()=>imat('dke',0xc060ff,'metal',.2,.5,0xc060ff,1):TOOL_EDGE[mi];
     grip=true;
     if(tl.type==='sword'){ // 손잡이 · 폼멜 · 코등이 · 날 · 홈 · 끝
@@ -3700,7 +3716,7 @@ function updatePlayer(dt){
   else if(p.swimming){const hw=p.w/2;if(!aabbSolid(p.pos.x-hw,p.pos.y,p.pos.z-hw,p.pos.x+hw,p.pos.y+1.8,p.pos.z+hw))p.swimming=false;}
   p.swimK=(p.swimK||0)+((p.swimming?1:0)-(p.swimK||0))*Math.min(1,8*dt);
   p.h=p.swimming?.6:p.crouch?1.5:1.8;p.crouchK=(p.crouchK||0)+((p.crouch?1:0)-(p.crouchK||0))*Math.min(1,12*dt);
-  const sprint=(keys.ShiftLeft||keys.ShiftRight||mobileSprint||(joy.active&&Math.hypot(joy.x,joy.y)>.97))&&fz>.3&&p.food>6&&!invOpen&&!p.crouch;
+  const sprint=(keys.ShiftLeft||keys.ShiftRight||mobileSprint||(joy.active&&Math.hypot(joy.x,joy.y)>.97))&&fz>.3&&p.food>6&&!invOpen&&!p.crouch;p.sprinting=sprint;
   // 방패 막기: 우클릭 기능이 없는 아이템(무기·도구·맨손)을 든 채 우클릭 유지
   const h0=held(),hi=h0&&IT[h0.id],hasUse=h0&&(h0.id<100||(hi&&(hi.food||hi.bow||hi.armor||hi.bucket||hi.use))||h0.id===LASER||h0.id===POTION);
   p.shieldCD=Math.max(0,(p.shieldCD||0)-dt);p.blocking=!!(mouseR&&armor[4]&&!invOpen&&!hasUse&&p.shieldCD<=0);
@@ -3874,11 +3890,16 @@ function sleep(t){
   setTimeout(()=>{world.time=.02;for(const m of [...mobs])if(m.def.hostile&&!m.def.boss)m.remove();$('fade').style.opacity=0;paused=!locked&&!invOpen;toast('상쾌한 아침입니다! 스폰 지점이 설정되었습니다.');achieve('bed');},1300);
 }
 function attack(){
-  if(!mobTarget||player.attackCD>0)return;player.attackCD=.4;
+  const mace=heldTool()&&heldTool().type==='mace';
+  if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?1.1:.4; // 철퇴는 무거워서 천천히 휘두름
   const t=heldTool();let dmg=t?t.dmg:HAND_DMG;
-  if(isHead(mobTarget,mobHitY)){dmg*=HEAD_MULT;headshotFx(mobTarget);} // 머리를 맞히면 1.5배
+  if(mace){ // 철퇴: 달리면서 머리를 내려치면 1.5배 (20 → 30)
+    if(isHead(mobTarget,mobHitY)&&player.sprinting){dmg*=1.5;headshotFx(mobTarget);SFX.smash();
+      spawnParticles(mobTarget.pos.x,mobTarget.pos.y+mobTarget.h,mobTarget.pos.z,new THREE.Color(0xd8d8e0),16,.5,5);}
+    else SFX.clank();}
+  else if(isHead(mobTarget,mobHitY)){dmg*=HEAD_MULT;headshotFx(mobTarget);} // 머리를 맞히면 1.5배
   const dx=mobTarget.pos.x-player.pos.x,dz=mobTarget.pos.z-player.pos.z,l=Math.hypot(dx,dz)||1;
-  mobTarget.byPlayer=performance.now();mobTarget.hurt(dmg,dx/l,dz/l);if(t)useDurability(t.type==='sword'?1:2);player.hungerAcc+=.5;
+  mobTarget.byPlayer=performance.now();mobTarget.hurt(dmg,dx/l*(mace?1.6:1),dz/l*(mace?1.6:1));if(t)useDurability(t.type==='sword'||mace?1:2);player.hungerAcc+=.5;
 }
 
 // ---------- 하늘/시간 ----------
