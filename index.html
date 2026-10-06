@@ -196,6 +196,7 @@ body.mobile #toasts{top:72px}
     • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
+    • 깊은 바다에는 <b>돌고래</b> 무리가 펄쩍펄쩍 뛰어올라요. 곁에서 헤엄치면 <b>돌고래의 은총</b>으로 수영이 빨라져요.<br>
     • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
@@ -203,7 +204,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.17 — 철퇴 내려찍기</h4>
+    <h4>🆕 v26.18 — 돌고래</h4>
+    • 깊은 바다에 <b>돌고래</b>가 2~3마리씩 무리 지어 다녀요. 빠르게 헤엄치다 수면 위로 <b>펄쩍</b> 뛰어올라요.<br>
+    • 물속의 플레이어를 따라와 곁에서 헤엄치고, 그동안 <b>돌고래의 은총</b>으로 수영이 1.6배 빨라져요.<br>
+    • <b>가시벌레</b>가 야생에서 더 자주 나와요 (밤에는 다른 몹 사이에 섞여서, 낮에는 풀숲에서 가끔).
+    <h4>v26.17 — 철퇴 내려찍기</h4>
     • 철퇴 만드는 법이 바뀌었어요: <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8) → <b>철퇴</b> (모두 작업대).<br>
     • <b>높은 곳에서 떨어지며</b> 철퇴로 치면 떨어진 높이만큼 더 세져요 (처음 3칸은 칸당 +4, 다음 5칸은 +2, 그 뒤로 +1). 내려찍으면 낙하 피해도 없어요.<br>
     • 철퇴는 이제 <b>2.5초</b>마다 휘두를 수 있어요.
@@ -2819,6 +2824,41 @@ const MOBDEF={
         else{const f=Math.sin(m.walk*2+(F.front?0:Math.PI))*.4*Math.min(1,hs*2);F.p.rotation.set(0,F.sd*f,0);}} // 땅: 앞뒤로 노 젓듯 기어감
       m.u.b.rotation.x=w?clamp(m.vel.y*.25,-.4,.4):0;m.u.head.rotation.y=Math.sin(t*.7+m.pos.x)*.25;}},
 
+  dolphin:{name:'돌고래',w:.9,h:.6,hp:10,aquatic:true,flee:true,color:0x7a8a9a,
+    sound:()=>{tone(1800,2600,.12,.04,'sine');tone(2200,1500,.1,.035,'sine',.13);},drops:()=>[[RAW_FISH,rnd(1)]],ach:'hunt', // 끽끽 우는 소리
+    build(g){const skin=lam(0x6f7f90,0,'skin'),dark=lam(0x55636f,0,'skin'),belly=lam(0xd8dde4,0,'skin'),eye=bas(0x0c0c10);
+      const b=pivot(g,0,.3,0); // 몸 (헤엄치는 방향으로 기울어짐)
+      part(b,.5,.48,1.1,skin,0,0,0);part(b,.42,.12,1,belly,0,-.22,0);part(b,.42,.42,.3,skin,0,-.02,-.66); // 몸통 · 하얀 배 · 머리
+      part(b,.16,.12,.26,belly,0,-.12,-.9);part(b,.12,.06,.04,dark,0,.2,-.6); // 주둥이 · 숨구멍
+      for(const sd of [-1,1])part(b,.03,.06,.06,eye,sd*.22,.04,-.7);
+      const dorsal=part(b,.06,.3,.26,dark,0,.34,.05);dorsal.rotation.x=-.5; // 등지느러미
+      const fins=[-1,1].map(sd=>{const p=pivot(b,sd*.26,-.12,-.3);part(p,.34,.04,.16,dark,sd*.17,0,0);return p;}); // 가슴지느러미
+      const tail=pivot(b,0,0,.55);part(tail,.3,.3,.5,skin,0,0,.25);const fl=pivot(tail,0,0,.5);part(fl,.7,.05,.22,dark,0,0,.1); // 꼬리자루 · 수평 꼬리지느러미
+      return {b,fins,tail,fl,mats:[skin,dark,belly]};},
+    ai(m,c,dt){
+      if(!m.inWater){m.outT=(m.outT||0)+dt;if(m.onGround&&m.outT>.5){if(Math.random()<dt*2)m.vel.set((Math.random()-.5)*2,4,(Math.random()-.5)*2);
+          if((m.dryT=(m.dryT||0)+dt)>3){m.dryT=1;m.hurt(1,0,0,true);}}return;} // 공중으로 뛰어오른 동안엔 그대로 날아감 · 땅에 오래 있으면 숨이 막힘
+      m.outT=0;m.dryT=0;m.aiT-=dt;if(m.flee>0)m.flee-=dt;
+      const water=(x,y,z)=>LIQ_KIND[getBlock(Math.floor(x),Math.floor(y),Math.floor(z))]===1,W=m.wish;
+      const pd=Math.hypot(player.pos.x-m.pos.x,player.pos.y-m.pos.y,player.pos.z-m.pos.z);
+      if(player.inWater&&pd<7&&!player.dead){player.graceT=2.5; // 같이 헤엄치면 '돌고래의 은총' (수영이 빨라짐)
+        if(!player.graceMsg){player.graceMsg=1;toast('🐬 <b>돌고래의 은총</b>! 돌고래 곁에서 헤엄치면 더 빨라져요');}}
+      if(m.aiT<=0||m.hitH||!water(m.pos.x+W.x*.35,m.pos.y+.3,m.pos.z+W.z*.35)){m.aiT=1.2+Math.random()*2.2;
+        const near=player.inWater&&pd<14&&m.flee<=0&&Math.random()<.6,sp=m.flee>0?6:near?Math.max(3,Math.hypot(player.vel.x,player.vel.z)+1):2.4+Math.random()*1.6;W.set(0,0,0);
+        for(let k=0;k<8;k++){let dx,dy,dz;
+          if(m.flee>0&&k<4){const l=c.dist||1;dx=-c.toX/l+(Math.random()-.5)*.6;dz=-c.toZ/l+(Math.random()-.5)*.6;dy=(Math.random()-.5)*.4;}
+          else if(near&&k<4){const a=Math.random()*6.28;dx=player.pos.x+Math.sin(a)*2-m.pos.x;dz=player.pos.z+Math.cos(a)*2-m.pos.z;dy=(player.pos.y-m.pos.y)*.5;} // 플레이어 곁으로
+          else{const a=Math.random()*6.28;dx=Math.sin(a);dz=Math.cos(a);dy=(Math.random()-.5)*.6+(water(m.pos.x,m.pos.y+m.h+1.5,m.pos.z)?.35:0);} // 수면 가까이를 좋아함
+          const l=Math.hypot(dx,dy,dz)||1;if(water(m.pos.x+dx/l*1.6,m.pos.y+.3+dy/l*1.6,m.pos.z+dz/l*1.6)){W.set(dx/l*sp,dy/l*sp,dz/l*sp);break;}}}
+      const k=Math.min(1,3*dt);m.vel.x+=(W.x-m.vel.x)*k;m.vel.z+=(W.z-m.vel.z)*k;
+      const nearTop=!water(m.pos.x,m.pos.y+m.h+.9,m.pos.z);
+      if(nearTop&&Math.hypot(m.vel.x,m.vel.z)>1.8&&Math.random()<dt*.9){m.vel.y=9;SFX.plop();spawnParticles(m.pos.x,m.pos.y+.6,m.pos.z,new THREE.Color(0xdff4ff),10,.3,3);} // 수면 위로 펄쩍!
+      else{const wy=W.y>0&&nearTop?0:W.y;m.vel.y+=(wy-m.vel.y)*k+9*dt;}},
+    anim(m,dt,hs){const t=performance.now()/1000,w=m.inWater,f=Math.sin(t*(4+hs*1.5));
+      m.u.tail.rotation.x=f*.3;m.u.fl.rotation.x=f*.35; // 꼬리를 위아래로 차며 헤엄
+      m.u.fins.forEach((p,i)=>p.rotation.z=(i?-1:1)*(.25+Math.sin(t*2)*.1));
+      m.u.b.rotation.set(w||!m.onGround?clamp(m.vel.y*.18,-.8,.8):0,0,!w&&m.onGround?Math.PI/2*.8:0);}}, // 뛰어오를 땐 머리를 들었다 숙임 · 땅에선 옆으로 누움
+
 
 };
 class Mob{
@@ -2967,6 +3007,9 @@ function spawnMobs(dt){
   const passive=count(m=>m.def.passive),hostile=count(m=>m.def.hostile&&!m.def.boss);
   const pick=(minD,maxD)=>{const a=Math.random()*6.28,d=minD+Math.random()*(maxD-minD);const x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);const s=surfaceAt(x,z);return s?{x:x+.5,y:s.y,z:z+.5,b:s.b}:null;};
   // 온순: 잔디 위 뭉게/수풀꼬꼬
+  // 돌고래: 4칸 이상 깊은 바다에 2~3마리 무리
+  if(count(m=>m.kind==='dolphin')<6&&Math.random()<.12){const a=Math.random()*6.28,d=16+Math.random()*28,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);
+    if(getBlock(x,SEA,z)===WATER&&getBlock(x,SEA-4,z)===WATER){const n=2+rnd(1);for(let i=0;i<n;i++)new Mob('dolphin',x+.5+(Math.random()-.5)*2,SEA-1.6-Math.random(),z+.5+(Math.random()-.5)*2);}}
   // 바다거북: 바닷가 모래사장 (물 가까이)에 1~2마리
   if(count(m=>m.kind==='seaturtle')<4&&Math.random()<.12){const s=pick(18,40);
     if(s&&s.b===SAND&&s.y<=SEA+3&&!terrainAt(Math.floor(s.x),Math.floor(s.z)).desert){let wet=false;for(let dx=-4;dx<=4&&!wet;dx++)for(let dz=-4;dz<=4;dz++)if(getBlock(Math.floor(s.x)+dx,SEA,Math.floor(s.z)+dz)===WATER){wet=true;break;}
@@ -2984,11 +3027,14 @@ function spawnMobs(dt){
   if(isNight()&&hostile<12&&Math.random()<.6){const s=pick(16,36);
     if(s&&s.b!==CORE&&!lampNear(Math.floor(s.x),s.y,Math.floor(s.z))){
       const desert=s.b===SAND&&terrainAt(Math.floor(s.x),Math.floor(s.z)).desert;
-      const q=Math.random(),kind=desert?(q<.5?'skeleton':'zombie'):(q<.45?'zombie':q<.7?'skeleton':'gloom');
+      const q=Math.random(),kind=desert?(q<.4?'skeleton':q<.75?'zombie':'spikebug'):(q<.33?'zombie':q<.53?'skeleton':q<.72?'gloom':'spikebug');
       new Mob(kind,s.x,s.y,s.z);}}
+  // 낮에도 풀숲·숲에 가시벌레가 돌아다님
+  if(!isNight()&&count(m=>m.kind==='spikebug')<4&&Math.random()<.14){const s=pick(20,40);
+    if(s&&(s.b===GRASS||s.b===DIRT)&&!lampNear(Math.floor(s.x),s.y,Math.floor(s.z)))new Mob('spikebug',s.x,s.y,s.z);}
   // 어두운 동굴 (등불 근처 제외): 깊을수록 위험
   if(hostile<12&&Math.random()<.35){const py=Math.floor(player.pos.y);const s=caveSpot(12,26,py-12,py+6);
-    if(s&&!nearRuins(s.x,s.y,s.z)){const r=Math.random();const kind=s.y<15?(r<.3?'ember':r<.55?'spikebug':r<.7?'gloom':r<.85?'skeleton':'zombie'):(r<.35?'spikebug':r<.6?'gloom':r<.8?'skeleton':'zombie');new Mob(kind,s.x,s.y,s.z);}}
+    if(s&&!nearRuins(s.x,s.y,s.z)){const r=Math.random();const kind=s.y<15?(r<.3?'ember':r<.55?'spikebug':r<.7?'gloom':r<.85?'skeleton':'zombie'):(r<.45?'spikebug':r<.65?'gloom':r<.83?'skeleton':'zombie');new Mob(kind,s.x,s.y,s.z);}}
 }
 function lampNear(x,y,z){
   for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const c=getChunk((x>>4)+dx,(z>>4)+dz);if(c)for(const l of c.lamps)if(Math.hypot(l[0]-x,l[1]-y,l[2]-z)<LAMP_R+1)return true;}
@@ -3704,7 +3750,7 @@ function respawn(){
 function updatePlayer(dt){
   const p=player;p.attackCD=Math.max(0,p.attackCD-dt);p.hurtCD=Math.max(0,p.hurtCD-dt);p.bowCD=Math.max(0,(p.bowCD||0)-dt);
   p.thornT=Math.max(0,(p.thornT||0)-dt);if(p.thornT<=0&&touchingBlock(p,THORN)){p.thornT=.7;hurtPlayer(1,0,0,'가시 덤불에 찔렸습니다');}
-  p.invulnT=Math.max(0,p.invulnT-dt);p.lavaT=Math.max(0,p.lavaT-dt);
+  p.invulnT=Math.max(0,p.invulnT-dt);p.graceT=Math.max(0,(p.graceT||0)-dt);p.lavaT=Math.max(0,p.lavaT-dt);
   if(p.lavaT<=0&&overlapBlock(p,b=>LIQ_KIND[b]===2)){p.lavaT=.5;hurtPlayer(4,0,0,'용암에 빠졌습니다');}
   const pb=overlapBlock(p,b=>PORTAL[b]===1); // 차원문 안에 잠시 서 있으면 이동
   if(pb){if(!portalLock&&!traveling){portalT+=dt;if(portalT>.2){portalT=0;usePortal(pb);}}}else{portalLock=false;portalT=0;}
@@ -3735,12 +3781,12 @@ function updatePlayer(dt){
   // 방패 막기: 우클릭 기능이 없는 아이템(무기·도구·맨손)을 든 채 우클릭 유지
   const h0=held(),hi=h0&&IT[h0.id],hasUse=h0&&(h0.id<100||(hi&&(hi.food||hi.bow||hi.armor||hi.bucket||hi.use))||h0.id===LASER||h0.id===POTION);
   p.shieldCD=Math.max(0,(p.shieldCD||0)-dt);p.blocking=!!(mouseR&&armor[4]&&!invOpen&&!hasUse&&p.shieldCD<=0);
-  let sp=sprint&&!p.blocking?5.8:4.3;if(p.inWater)sp*=.55;if(p.blocking)sp*=.4;if(p.crouch)sp*=.33;
+  let sp=sprint&&!p.blocking?5.8:4.3;if(p.inWater)sp*=p.graceT>0?.85:.55;if(p.blocking)sp*=.4;if(p.crouch)sp*=.33;
   const s=Math.sin(p.yaw),c=Math.cos(p.yaw);
   let wx=-s*fz+c*fx,wz=-c*fz-s*fx;const l=Math.hypot(wx,wz);if(l>0){const q=Math.min(1,l)*sp/l;wx*=q;wz*=q;}
   const acc=p.onGround?14:p.inWater?6:3.5;const k=Math.min(1,acc*dt);
   if(p.swimming){ // 헤엄: 위·아래도 바라보는 방향으로 · 수면 위로 튀어 나가지 않음
-    const d=viewDir(),sw=wantSwim?5.6:2.4,tx=(d.x*fz+c*fx*.5)*sw,tz=(d.z*fz-s*fx*.5)*sw;let ty=d.y*fz*sw;
+    const d=viewDir(),sw=(wantSwim?5.6:2.4)*(p.graceT>0?1.6:1),tx=(d.x*fz+c*fx*.5)*sw,tz=(d.z*fz-s*fx*.5)*sw;let ty=d.y*fz*sw;
     if(keys.Space&&!invOpen)ty=Math.max(ty,3);
     if(ty>0&&!isWaterAt(p.pos.x,p.pos.y+.75,p.pos.z))ty=0;
     const k2=Math.min(1,5*dt);p.vel.x+=(tx-p.vel.x)*k2;p.vel.z+=(tz-p.vel.z)*k2;p.vel.y+=(ty-p.vel.y)*k2+9*dt;}
