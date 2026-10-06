@@ -45,6 +45,15 @@ body.mobile #logoImg{width:min(80vw,440px)}
 .btn:disabled{opacity:.45;cursor:default;background:#6d6d6d}
 #seedIn{font:inherit;font-size:15px;width:260px;padding:8px 10px;margin:0 5px 6px;box-sizing:border-box;background:rgba(0,0,0,.4);color:#fff;border:3px solid #222;text-align:center;outline:none}
 #seedIn::placeholder{color:#b9c6d2}
+#modeSel,.modeRow{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin:0 5px 2px;max-width:360px}
+#settings h2{font-size:34px;margin:0 0 14px;text-shadow:3px 3px 0 #222}
+.modeDesc{font-size:13px;max-width:340px;text-align:center;margin:6px 5px 12px;text-shadow:1px 1px 0 #000;min-height:36px}
+body.spec #hud,body.spec #crosshair{display:none}
+#modeSel button,.modeRow button{font:inherit;font-size:14px;padding:6px 9px;background:#4a4a4a;color:#fff;border:3px solid #222;cursor:pointer;text-shadow:1px 1px 0 #222}
+#modeSel button.on,.modeRow button.on{background:#3c8d2f;box-shadow:inset 0 0 0 2px #9fe08a}
+#modeSel button[data-m=hardcore].on,.modeRow button[data-m=hardcore].on{background:#8a2020;box-shadow:inset 0 0 0 2px #ff9a9a}
+#modeDesc{font-size:12px;max-width:300px;text-align:center;margin:0 5px 6px;text-shadow:1px 1px 0 #000;min-height:32px}
+body.mobile #modeSel button{font-size:12px;padding:5px 7px}
 body.mobile #seedIn{width:240px;font-size:14px;padding:6px 8px}
 .help{margin-top:22px;background:rgba(0,0,0,.62);padding:12px 18px;font-size:14px;line-height:1.7;border:2px solid rgba(0,0,0,.4)}
 .help b{color:#ffe066}
@@ -161,6 +170,8 @@ body.mobile #toasts{top:72px}
   <div class="sub">캐고, 짓고, 살아남으세요</div>
   <button class="btn" id="btnNew">새 세계 만들기</button>
   <input id="seedIn" type="text" placeholder="🌱 세계 코드 (비우면 무작위)" autocomplete="off" maxlength="40">
+  <div id="modeSel"><button data-m="survival" class="on">⚔ 서바이벌</button><button data-m="creative">🛠 크리에이티브</button><button data-m="hardcore">💀 하드코어</button><button data-m="safe">🕊 세이프</button><button data-m="spectator">👁 관전</button></div>
+  <div id="modeDesc">배고픔·체력을 챙기며 살아남아요. 쓰러져도 스폰 지점에서 다시 시작해요.</div>
   <button class="btn" id="btnCont">이어하기</button>
   <button class="btn" id="btnImport">저장 파일 불러오기</button><input type="file" id="fileImport" accept=".json,application/json" hidden>
   <button class="btn" id="btnHelp">❓ 도움말 보기</button>
@@ -197,6 +208,7 @@ body.mobile #toasts{top:72px}
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
     • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 엔딩드래곤도 떨어뜨림)를 흉갑 칸에 입고 떨어지는 중에 <b>점프</b>를 다시 누르면 활공해요. 아래를 보면 빨라지고 위를 보면 올라가요. 날면서 <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 쓰면 앞으로 쭉 날아가요!<br>
+    • 새 세계를 만들 때 <b>서바이벌 · 크리에이티브 · 하드코어 · 세이프 · 관전</b> 중에 고를 수 있고, 일시정지의 <b>⚙ 서버 설정</b>에서 언제든 바꿀 수 있어요.<br>
     • 깊은 바다에는 <b>돌고래</b> 무리가 펄쩍펄쩍 뛰어올라요. 곁에서 헤엄치면 <b>돌고래의 은총</b>으로 수영이 빨라져요.<br>
     • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
@@ -205,7 +217,14 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.19 — 겉날개와 폭죽</h4>
+    <h4>🆕 v26.20 — 게임 모드</h4>
+    • 새 세계를 만들 때 <b>⚔ 서바이벌 · 🛠 크리에이티브 · 💀 하드코어 · 🕊 세이프 · 👁 관전</b> 다섯 가지 모드를 고를 수 있어요.<br>
+    • <b>크리에이티브</b>: 다치지 않고 배고프지 않아요. 인벤토리에서 <b>모든 아이템</b>을 꺼내 쓰고, 블록을 한 번에 부수고, 놓아도 줄지 않아요. <b>스페이스 두 번</b>이면 날아요 (C: 내려가기).<br>
+    • <b>하드코어</b>: 몹이 1.5배 아프게 때리고, 쓰러지면 <b>세계가 사라져요</b>.<br>
+    • <b>세이프</b>: 적대 몹이 나오지 않고, 배고프지 않으며, 체력이 저절로 차요.<br>
+    • <b>관전</b>: 다치지 않고 블록을 뚫고 날아다니며 구경해요 (스페이스: 위 · C: 아래).<br>
+    • 일시정지의 <b>⚙ 서버 설정</b>에서 언제든 모드를 바꿀 수 있어요 (하드코어 포함). 광부 주민이 <b>석탄</b>(동전 1 → 8개)도 팔아요.
+    <h4>v26.19 — 겉날개와 폭죽</h4>
     • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 작업대) 추가! <b>엔딩드래곤</b>을 쓰러뜨려도 하나 얻어요. 흉갑 칸에 입고, 떨어지는 중에 <b>점프</b>를 한 번 더 누르면 활공해요.<br>
     • 아래를 보면 빨라지고 위를 보면 속도를 써서 올라가요. 너무 빠르게 벽에 부딪히면 다쳐요. 날아다니는 1초마다 내구도가 1 줄어요.<br>
     • <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 땅에 대고 쓰면 하늘로 솟아올라 알록달록 터지고, <b>날면서 쓰면</b> 앞으로 쭉 날아가요!
@@ -278,8 +297,16 @@ body.mobile #toasts{top:72px}
   <button class="btn" id="btnResume">계속하기</button>
   <button class="btn" id="btnSave">저장하기</button>
   <button class="btn" id="btnSeed">🌱 세계 코드 복사</button>
+  <button class="btn" id="btnMode">⚙ 서버 설정</button>
   <button class="btn" id="btnExport">저장 파일 내보내기</button>
   <button class="btn" id="btnQuit">저장 후 타이틀로</button>
+</div>
+<div id="settings" class="overlay">
+  <h2>⚙ 서버 설정</h2>
+  <div style="margin-bottom:6px;text-shadow:2px 2px 0 #222">게임 모드</div>
+  <div id="setMode" class="modeRow"><button data-m="survival">⚔ 서바이벌</button><button data-m="creative">🛠 크리에이티브</button><button data-m="hardcore">💀 하드코어</button><button data-m="safe">🕊 세이프</button><button data-m="spectator">👁 관전</button></div>
+  <div id="setDesc" class="modeDesc"></div>
+  <button class="btn" id="btnSetClose">닫기</button>
 </div>
 <div id="dead" class="overlay">
   <h2>쓰러졌습니다!</h2>
@@ -2593,7 +2620,7 @@ function dressAvatar(A){ // 3인칭 몸에 갑옷 입히기 (몸보다 살짝 �
 }
 const _shRest=new THREE.Quaternion(),_shBlock=new THREE.Quaternion(),_shE=new THREE.Euler(),_shFwd=new THREE.Quaternion().setFromEuler(new THREE.Euler(0,Math.PI,0));
 function updateAvatar(dt){
-  const A=avatar,p=player,show=viewMode>0&&running&&!p.dead&&!endingOpen;A.g.visible=show;if(!show){A.shadow.visible=false;return;}
+  const A=avatar,p=player,show=viewMode>0&&running&&!p.dead&&!endingOpen&&!isSpec();A.g.visible=show;if(!show){A.shadow.visible=false;return;}
   const hs=p.boat?0:Math.hypot(p.vel.x,p.vel.z),cr=p.crouchK||0;
   // 몸은 걸을 때 바라보는 쪽으로 돌고, 서 있을 땐 고개가 많이 돌아갈 때만 따라 돎
   let d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
@@ -2921,7 +2948,8 @@ class Mob{
     soundT:3+Math.random()*8,dead:false});
     if(d.init)d.init(this);
     this.g=new THREE.Group();this.u=d.build(this.g,this);scene.add(this.g);mobs.push(this);
-    if(!d.noclip){this.shadow=new THREE.Mesh(SHADOW_GEO,SHADOW_MAT.clone());const r=Math.max(.5,d.w*1.25);this.shadow.scale.set(r,r,1);this.shadow.rotation.x=-Math.PI/2;scene.add(this.shadow);}}
+    if(!d.noclip){this.shadow=new THREE.Mesh(SHADOW_GEO,SHADOW_MAT.clone());const r=Math.max(.5,d.w*1.25);this.shadow.scale.set(r,r,1);this.shadow.rotation.x=-Math.PI/2;scene.add(this.shadow);}
+    if(d.hostile&&!d.boss&&world.mode==='safe')this.remove();} // 세이프 모드에선 적대 몹이 나오지 않음
   updShadow(){const s=this.shadow;if(!s)return;const x=Math.floor(this.pos.x),z=Math.floor(this.pos.z);let y=Math.floor(this.pos.y+.01),k=0; // 발밑 땅을 찾아 그림자를 깔고, 높이 뜰수록 옅게
     while(k<6){const b=getBlock(x,y-1,z);if(b<0||SOLID[b])break;y--;k++;}
     const h=this.pos.y-y;s.visible=k<6;s.position.set(this.pos.x,y+.02,this.pos.z);s.material.opacity=.42*Math.max(0,1-h/5)*Math.min(1,light+.3);}
@@ -3498,7 +3526,7 @@ const PROFS=[
   {name:'농부',robe:0x3a7a4a,trades:[{give:[[LOG,12]],get:[COIN,1]},{give:[[RAW_MEAT,5]],get:[COIN,1]},{give:[[COIN,1]],get:[APPLE,4]},{give:[[COIN,1]],get:[COOKED_MEAT,3]},{give:[[COIN,2]],get:[BED,1]}]},
   {name:'대장장이',robe:0xa0522d,trades:[{give:[[COAL,10]],get:[COIN,1]},{give:[[IRON_INGOT,4]],get:[COIN,1]},{give:[[COIN,3]],get:[toolId(2,0),1]},{give:[[COIN,4]],get:[toolId(2,3),1]},{give:[[COIN,6]],get:[armorId(1,1),1]},{give:[[COIN,3]],get:[SHIELD,1]}]},
   {name:'사냥꾼',robe:0x2a5a9a,trades:[{give:[[FLUFF,6]],get:[COIN,1]},{give:[[FEATHER,6]],get:[COIN,1]},{give:[[SPIKE,4]],get:[COIN,1]},{give:[[COIN,3]],get:[BOW,1]},{give:[[COIN,2]],get:[FISHING_ROD,1]},{give:[[COIN,1]],get:[ARROW,8]}]},
-  {name:'광부',robe:0x9a8a3a,trades:[{give:[[COBBLE,32]],get:[COIN,1]},{give:[[COIN,1]],get:[LAMP,4]},{give:[[COIN,2]],get:[BUCKET,1]},{give:[[COIN,4]],get:[ESTONE,1]},{give:[[COIN,6]],get:[CRYSTAL,1]}]},
+  {name:'광부',robe:0x9a8a3a,trades:[{give:[[COBBLE,32]],get:[COIN,1]},{give:[[COIN,1]],get:[COAL,8]},{give:[[COIN,1]],get:[LAMP,4]},{give:[[COIN,2]],get:[BUCKET,1]},{give:[[COIN,4]],get:[ESTONE,1]},{give:[[COIN,6]],get:[CRYSTAL,1]}]},
   {name:'현자',robe:0x7a4a9a,trades:[{give:[[INK_SAC,3]],get:[COIN,1]},{give:[[CRYSTAL,1]],get:[COIN,3]},{give:[[COIN,5]],get:[HELL_COMPASS,1]},{give:[[COIN,7]],get:[END_COMPASS,1]},{give:[[COIN,7]],get:[CITY_COMPASS,1]}]},
 ];
 document.getElementById('recSearch').addEventListener('input',()=>{if(invOpen)renderInv();});
@@ -3660,7 +3688,7 @@ function updateGroundItems(dt){
     if(hp){const H=getCont(hp[0],hp[1],hp[2]);if(H){const before=g.slot.count,left=contInsert(H.slots,g.slot);
       if(left<before&&invOpen&&openCont&&openCont.c===H)renderInv();if(left<=0){removeGroundItem(i);continue;}}
       continue;} // 호퍼 위의 아이템은 플레이어가 줍지 않음 (호퍼가 꽉 차도 그대로 둠)
-    if(g.pickT>0||player.dead)continue;
+    if(g.pickT>0||player.dead||isSpec())continue;
     const dx=player.pos.x-g.pos.x,dy=player.pos.y+.8-g.pos.y,dz=player.pos.z-g.pos.z,dist=Math.hypot(dx,dy,dz);
     if(dist<1.3){const before=g.slot.count,left=giveSlot(g.slot);
       if(left<before)SFX.pop();
@@ -3757,7 +3785,8 @@ Object.assign(MOBDEF,{
 
 // ---------- 플레이어 로직 ----------
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
-  if(player.dead||dmg<=0||player.invulnT>0)return;
+  if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec())return; // 크리에이티브·관전: 다치지 않음
+  if(isHardcore()&&!bypass)dmg*=1.5; // 하드코어: 몹이 1.5배 아프게 때림
   // 방패: 정면(약 ±70°)에서 오는 공격을 막음. 대미지 30 이상은 절반만 막고 5초간 막기 불가
   if(!bypass&&player.blocking&&armor[4]&&(kx||kz)){
     const l=Math.hypot(kx,kz),fx=-Math.sin(player.yaw),fz=-Math.cos(player.yaw);
@@ -3789,6 +3818,7 @@ function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
 }
 function die(cause){
   player.dead=true;world.stats.deaths++;invOpen&&closeInv(true);$('deadMsg').textContent=cause;$('dead').classList.add('show');
+  if(isHardcore()){$('deadMsg').innerHTML=cause+'<br><b style="color:#ff9a9a">💀 하드코어 세계는 다시 살아날 수 없어요</b>';$('btnRespawn').textContent='세계를 지우고 타이틀로';}
   if(document.pointerLockElement)document.exitPointerLock();
 }
 function respawn(){
@@ -3808,6 +3838,14 @@ function updatePlayer(dt){
   if(p.lavaT<=0&&overlapBlock(p,b=>LIQ_KIND[b]===2)){p.lavaT=.5;hurtPlayer(4,0,0,'용암에 빠졌습니다');}
   const pb=overlapBlock(p,b=>PORTAL[b]===1); // 차원문 안에 잠시 서 있으면 이동
   if(pb){if(!portalLock&&!traveling){portalT+=dt;if(portalT>.2){portalT=0;usePortal(pb);}}}else{portalLock=false;portalT=0;}
+  if(isSpec()){ // 관전: 블록을 뚫고 자유롭게 날아다님 (스페이스 위 · C 아래 · 달리면 2배)
+    let gx=0,gz=0;if(!invOpen){if(keys.KeyW)gz+=1;if(keys.KeyS)gz-=1;if(keys.KeyA)gx-=1;if(keys.KeyD)gx+=1;}if(joy.active&&!invOpen){gx=joy.x;gz=-joy.y;}
+    const sp=(keys.ShiftLeft||keys.ShiftRight||mobileSprint)?22:11,sn=Math.sin(p.yaw),cs=Math.cos(p.yaw),l=Math.hypot(gx,gz),q=l>0?Math.min(1,l)*sp/l:0,k=Math.min(1,8*dt);
+    const up=(keys.Space&&!invOpen?1:0)-((keys.KeyC||mobileCrouch)&&!invOpen?1:0);
+    p.vel.x+=((-sn*gz+cs*gx)*q-p.vel.x)*k;p.vel.z+=((-cs*gz-sn*gx)*q-p.vel.z)*k;p.vel.y+=(up*sp*.7-p.vel.y)*k;
+    p.pos.addScaledVector(p.vel,dt);p.pos.y=clamp(p.pos.y,-8,CH+24);
+    Object.assign(p,{onGround:false,inWater:false,peakY:p.pos.y,h:1.8,swimming:false,gliding:false,flying:false,crouch:false,swimK:0,glideK:0,crouchK:0,sprinting:false});
+    camera.position.set(p.pos.x,p.pos.y+1.62,p.pos.z);camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();return;}
   if(p.boat){ // 보트: 바라보는 방향으로 이동, 스페이스로 내리기
     const b=p.boat;
     if(b.dead||keys.Space){p.boat=null;if(!b.dead)b.passenger=null;p.pos.set(b.pos.x,b.pos.y+1.1,b.pos.z);p.vel.set(0,5,0);keys.Space=false;}
@@ -3830,6 +3868,7 @@ function updatePlayer(dt){
   if(wantSwim&&isWaterAt(p.pos.x,p.pos.y+(p.swimming?.3:.9),p.pos.z))p.swimming=true;
   else if(p.swimming){const hw=p.w/2;if(!aabbSolid(p.pos.x-hw,p.pos.y,p.pos.z-hw,p.pos.x+hw,p.pos.y+1.8,p.pos.z+hw))p.swimming=false;}
   p.swimK=(p.swimK||0)+((p.swimming?1:0)-(p.swimK||0))*Math.min(1,8*dt);
+  if(p.flying&&p.onGround&&!keys.Space)p.flying=false; // 땅에 내려앉으면 날기 끝
   p.h=p.swimming||p.gliding?.6:p.crouch?1.5:1.8;p.crouchK=(p.crouchK||0)+((p.crouch?1:0)-(p.crouchK||0))*Math.min(1,12*dt);
   const sprint=(keys.ShiftLeft||keys.ShiftRight||mobileSprint||(joy.active&&Math.hypot(joy.x,joy.y)>.97))&&fz>.3&&p.food>6&&!invOpen&&!p.crouch;p.sprinting=sprint;
   // 방패 막기: 우클릭 기능이 없는 아이템(무기·도구·맨손)을 든 채 우클릭 유지
@@ -3870,7 +3909,12 @@ function updatePlayer(dt){
     p.peakY=p.pos.y;glideSp=Math.hypot(p.vel.x,p.vel.z);
     p.glideT=(p.glideT||0)+dt;if(p.glideT>1){p.glideT=0;armor[1].dur--;if(armor[1].dur<=1)toast('겉날개가 너무 낡아서 더 이상 날 수 없어요');if(invOpen)renderInv();}}
   if(p.boostT>0)p.boostT-=dt;
-  const wasWater=p.inWater,ox=p.pos.x,oz=p.pos.z,edgeSafe=p.crouch&&p.onGround&&!swim;
+  if(p.flying&&(!isCreative()||p.gliding))p.flying=false;
+  if(p.flying){ // 크리에이티브 날기: 중력 없음 · 스페이스 위 · C 아래 · 달리면 더 빠름
+    const fsp=(keys.ShiftLeft||keys.ShiftRight||mobileSprint)?18:10.5,l2=Math.hypot(fx,fz),q=l2>0?Math.min(1,l2)*fsp/l2:0,fk=Math.min(1,8*dt);
+    p.vel.x+=((-s*fz+c*fx)*q-p.vel.x)*fk;p.vel.z+=((-c*fz-s*fx)*q-p.vel.z)*fk;
+    const up=(keys.Space&&!invOpen?1:0)-((keys.KeyC||mobileCrouch)&&!invOpen?1:0);p.vel.y+=(up*7.5-p.vel.y)*fk+28*dt;p.peakY=p.pos.y;p.crouch=false;}
+  const wasWater=p.inWater,ox=p.pos.x,oz=p.pos.z,edgeSafe=p.crouch&&p.onGround&&!swim&&!p.flying;
   physics(p,dt);
   if(p.gliding&&p.hitH&&glideSp>11){hurtPlayer(Math.round((glideSp-11)*.7),0,0,'날다가 벽에 부딪혔습니다',true);p.gliding=false;} // 빠르게 날다 벽에 부딪히면 다침
   if(edgeSafe&&p.vel.y<=0){const hw=p.w/2,y=p.pos.y,gr=(x,z)=>aabbSolid(x-hw,y-.6,z-hw,x+hw,y,z+hw); // 웅크리면 모서리 밖으로 밀려나지 않음
@@ -3890,6 +3934,8 @@ function updatePlayer(dt){
 }
 function updateSurvival(dt){
   const p=player;if(p.dead)return;
+  if(isCreative()||isSpec()){p.food=20;p.hungerAcc=0;p.air=10;}
+  if(isSafe()){p.food=20;p.hungerAcc=0;if(p.hp<20&&(p.safeT=(p.safeT||0)+dt)>1){p.safeT=0;p.hp=Math.min(20,p.hp+1);renderStats();}} // 세이프: 배고프지 않고 체력이 저절로 참
   if(p.hungerAcc>45){p.hungerAcc=0;if(p.food>0){p.food--;renderStats();}}
   if(p.food>=16&&p.hp<20){p.regenT+=dt;if(p.regenT>3){p.regenT=0;p.hp=Math.min(20,p.hp+1);p.hungerAcc+=8;renderStats();}}else p.regenT=0;
   if(p.food<=0){p.starveT+=dt;if(p.starveT>4){p.starveT=0;hurtPlayer(1,0,0,'굶주림으로 쓰러졌습니다',true);}}
@@ -3906,6 +3952,7 @@ function updateSurvival(dt){
   renderStats();
 }
 function updateTarget(){
+  if(isSpec()){target=mobTarget=boatTarget=null;hl.visible=false;return;} // 관전: 아무것도 고르지 않음
   const dir=new THREE.Vector3();camera.getWorldDirection(dir);const eye=camera.position;
   target=player.dead?null:raycast(eye,dir,5);
   mobTarget=null;let best=Math.min(target?target.dist:99,3.6);
@@ -3914,14 +3961,14 @@ function updateTarget(){
   if(target&&!mobTarget&&!boatTarget){hl.visible=true;hl.position.set(target.x+.5,target.y+.5,target.z+.5);}else hl.visible=false;
 }
 function breakTime(id){
-  const B=BL[id];if(B.hard<0)return Infinity;const t=heldTool();
+  const B=BL[id];if(isCreative())return LIQUID[id]?Infinity:.05;if(B.hard<0)return Infinity;const t=heldTool();
   const right=t&&t.type===B.tool;const speed=right?t.speed:1;
   const can=!B.tier||(right&&t.tier>=B.tier);
   return Math.max(.05,can?B.hard*1.5/speed:B.hard*5);
 }
 function canHarvest(id){const B=BL[id],t=heldTool();return !B.tier||(t&&t.type===B.tool&&t.tier>=B.tier);}
 function updateMining(dt){
-  if(!mouseL||!target||mobTarget||boatTarget||invOpen||player.dead){mining.active=false;mining.p=0;crack.visible=false;return;}
+  if(!mouseL||!target||mobTarget||boatTarget||invOpen||player.dead||isSpec()){mining.active=false;mining.p=0;crack.visible=false;return;}
   if(!mining.active||mining.x!==target.x||mining.y!==target.y||mining.z!==target.z){Object.assign(mining,{x:target.x,y:target.y,z:target.z,p:0,active:true,hitT:0});}
   const bt=breakTime(target.id);if(bt===Infinity){crack.visible=false;return;}
   mining.p+=dt/bt;mining.hitT-=dt;swing=Math.max(swing,.6);
@@ -3943,12 +3990,12 @@ function breakBlock(x,y,z,id){
     for(let dy=1;dy<=10&&!leaf;dy++)if(getBlock(x,y+dy,z)===LEAVES)leaf=true;
     if(!log&&leaf){dropItem(SAPLING,1,x+.5,y+.4,z+.5,{spread:1,up:3});toast('🌱 나무를 다 베었더니 <b>묘목</b>이 떨어졌어요!');}}
   SFX.break();spawnParticles(x+.5,y+.5,z+.5,blockColor(id),10);
-  if(canHarvest(id)){let d=B.drop===undefined?id:typeof B.drop==='function'?B.drop():B.drop;if(d)dropItem(d,1,x+.5,y+.35,z+.5,{spread:1.4,up:3.5});}
-  if(heldTool()&&B.hard>0)useDurability(1);
+  if(!isCreative()&&canHarvest(id)){let d=B.drop===undefined?id:typeof B.drop==='function'?B.drop():B.drop;if(d)dropItem(d,1,x+.5,y+.35,z+.5,{spread:1.4,up:3.5});}
+  if(heldTool()&&B.hard>0&&!isCreative())useDurability(1);
   player.hungerAcc+=.3;
 }
 function useItem(){
-  if(player.dead)return;const s=held();
+  if(player.dead||isSpec())return;const s=held();
   if(mobTarget&&mobTarget.kind==='villager'&&!mobTarget.dead){openTrade(mobTarget);return;}
   if(s&&s.id===NET&&mobTarget&&mobTarget.kind==='squid'&&!mobTarget.dead){ // 그물로 오징어를 산 채로 잡음
     const m=mobTarget;spawnParticles(m.pos.x,m.pos.y+.4,m.pos.z,new THREE.Color(0xcfeeff),12,.4,3);m.remove();
@@ -4000,10 +4047,10 @@ function useItem(){
     else if(s.id===DOOR){ // 문: 2칸 높이, 바라보는 쪽 면에 붙음
       if(y+1>=CH||getBlock(x,y+1,z)!==AIR){toast('문을 놓으려면 위로 2칸이 비어 있어야 해요');return;}
       const d=viewDir(),k=Math.abs(d.x)>Math.abs(d.z)?(d.x>0?1:0):(d.z>0?3:2);
-      setBlock(x,y,z,DOOR+k*4);setBlock(x,y+1,z,DOOR+k*4+1);s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();return;}
+      setBlock(x,y,z,DOOR+k*4);setBlock(x,y+1,z,DOOR+k*4+1);if(!isCreative())s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();return;}
     else if(s.id===SAPLING){const g=getBlock(x,y-1,z);if(g!==GRASS&&g!==DIRT&&g!==SNOW){toast('묘목은 잔디나 흙 위에 심어야 해요');return;}}
     else if(s.id===CHEST){const d=viewDir();const k=Math.abs(d.x)>Math.abs(d.z)?(d.x>0?0:1):(d.z>0?4:5);pid=CHEST_IDS[DIR_FACES.indexOf(k)];} // 앞면이 나를 보게
-    setBlock(x,y,z,pid);s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();
+    setBlock(x,y,z,pid);if(!isCreative())s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();
     if(pid===PLANKS)tryBuildGuardian(x,y,z);if(pid===OBSIDIAN)tryBuildPortal(x,y,z);
   }
 }
@@ -4024,6 +4071,7 @@ function sleep(t){
   setTimeout(()=>{world.time=.02;for(const m of [...mobs])if(m.def.hostile&&!m.def.boss)m.remove();$('fade').style.opacity=0;paused=!locked&&!invOpen;toast('상쾌한 아침입니다! 스폰 지점이 설정되었습니다.');achieve('bed');},1300);
 }
 function attack(){
+  if(isSpec())return;
   const mace=heldTool()&&heldTool().type==='mace';
   if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?2.5:.4; // 철퇴는 무거워서 2.5초마다 휘두름
   const t=heldTool();let dmg=t?t.dmg:HAND_DMG;
@@ -4128,6 +4176,14 @@ function renderInv(){
     const cu=$('cursor');if(cursor){cu.style.display='block';cu.innerHTML=`<img src="${ICON[cursor.id]}">${cursor.count>1?`<span>${cursor.count}</span>`:''}`;}else cu.style.display='none';
     return;
   }
+  if(isCreative()){ // 모든 아이템: 누르면 한 묶음을 받음 · 들고 있는 아이템을 여기 놓으면 버려짐
+    $('craftTitle').textContent='🛠 크리에이티브 아이템';$('recSearch').style.display='';
+    $('stations').innerHTML='<span class="on">누르면 한 묶음</span><span style="background:none;color:#444">들고 있는 아이템을 여기 놓으면 버려요</span>';
+    const q=$('recSearch').value.trim(),ids=[];
+    for(let i=1;i<BL.length;i++)if(BL[i]&&!LIQUID[i]&&!(BL[i].base&&BL[i].base!==i))ids.push(i);for(let i=100;i<IT.length;i++)if(IT[i])ids.push(i);
+    $('recipes').innerHTML=`<div class="grid" style="display:grid;grid-template-columns:repeat(7,48px);gap:2px">${ids.filter(i=>!q||info(i).name.includes(q)).map(i=>`<div class="slot" data-g="${i}" title="${info(i).name}"><img src="${ICON[i]}"></div>`).join('')}</div>`;
+    const cu=$('cursor');if(cursor){cu.style.display='block';cu.innerHTML=`<img src="${ICON[cursor.id]}">${cursor.count>1?`<span>${cursor.count}</span>`:''}`;}else cu.style.display='none';
+    return;}
   $('craftTitle').textContent='제작';
   $('stations').innerHTML=`<span class="${stBench?'on':''}">작업대 ${stBench?'✔':'✘'}</span><span class="${stKiln?'on':''}">가마 ${stKiln?'✔':'✘'}</span><span style="background:none;color:#444">근처(4칸)에 있어야 함</span>`;
   $('recSearch').style.display='';
@@ -4189,6 +4245,7 @@ function clickSlot(i,btn,shift){
 }
 $('inv').addEventListener('mousedown',e=>{
   const sl=e.target.closest('.slot');if(sl&&sl.dataset.a!==undefined){clickArmor(+sl.dataset.a);e.preventDefault();return;}
+  if(sl&&sl.dataset.g!==undefined){if(cursor)cursor=null;else{const id=+sl.dataset.g;dropAtPlayer(id,addItem(id,maxStack(id)));SFX.pop();}invChanged();e.preventDefault();return;} // 크리에이티브 아이템
   if(sl&&sl.dataset.c!==undefined&&openCont){clickCont(+sl.dataset.c,invMode==='split'?2:e.button,e.shiftKey||invMode==='quick');e.preventDefault();return;}if(sl){clickSlot(+sl.dataset.i,invMode==='split'?2:e.button,e.shiftKey||invMode==='quick');e.preventDefault();return;}
   const rc=e.target.closest('.rec');if(rc&&e.button===0){if(rc.dataset.t!==undefined)doTrade(+rc.dataset.t);else craft(+rc.dataset.r);}
 });
@@ -4220,6 +4277,7 @@ addEventListener('keydown',e=>{
   if(!running)return;
   if(e.target&&e.target.id==='recSearch'){if(e.code==='Escape'){e.target.blur();if(invOpen)closeInv();}return;}
   if(e.code==='Space'||e.code==='F3'||e.code==='Tab')e.preventDefault();
+  if(e.code==='Space'&&!e.repeat&&!invOpen)spaceTap();
   if(e.repeat&&e.code==='KeyE')return;
   keys[e.code]=true;
   if(e.code==='KeyE'){if(invOpen)closeInv();else if(locked)openInv();}
@@ -4281,7 +4339,7 @@ if(MOBILE){
     const u=e=>{e.preventDefault();el.classList.remove('on');up&&up();};el.addEventListener('touchend',u);el.addEventListener('touchcancel',u);};
   btn('bAttack',()=>{if(!running||invOpen||player.dead)return;mouseL=true;swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);},()=>{mouseL=false;});
   btn('bUse',()=>{if(!running||invOpen||player.dead)return;mouseR=true;useT=.28;useItem();},()=>{mouseR=false;});
-  btn('bJump',()=>{keys.Space=true;},()=>{keys.Space=false;});
+  btn('bJump',()=>{keys.Space=true;spaceTap();},()=>{keys.Space=false;});
   btn('bSprint',()=>{mobileSprint=!mobileSprint;},()=>{$('bSprint').classList.toggle('on',mobileSprint);});
   btn('bInv',()=>{if(running&&!player.dead)openInv();});
   btn('bCrouch',()=>{mobileCrouch=!mobileCrouch;},()=>{$('bCrouch').classList.toggle('on',mobileCrouch);});
@@ -4317,7 +4375,7 @@ function encodeMods(){
 }
 function saveSnapshot(){
   syncGolems();
-  return {v:2,t:Date.now(),seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,containers:world.containers||{},saplings:world.saplings||[],items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
+  return {v:2,t:Date.now(),seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,mode:world.mode||'survival',containers:world.containers||{},saplings:world.saplings||[],items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
     p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};
 }
 // 파일/localStorage용: 압축 배열을 base64 문자열로
@@ -4390,7 +4448,7 @@ function startWorld(save,onOk){
       save=fromPortable(save);modsByDim={};
       for(const d in save.md){const mm=new Map();for(const k in save.md[d]){const a=save.md[d][k],m=new Map();for(let i=0;i+1<a.length;i+=2)m.set(a[i],a[i+1]);mm.set(k,m);}modsByDim[d]=mm;}
       for(const k in modCache)delete modCache[k];Object.assign(modCache,save.md);modDirty.clear();
-      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.containers=save.containers||{};world.saplings=save.saplings||[];VCACHE.clear();
+      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.containers=save.containers||{};world.saplings=save.saplings||[];world.mode=save.mode||'survival';VCACHE.clear();
       world.stats=Object.assign({kills:0,deaths:0,play:0,days:0},save.stats||{});
       if(!modsByDim[world.dim])modsByDim[world.dim]=new Map();mods=modsByDim[world.dim];caveB=world.dim==='over'?.38:DIM[world.dim].caveB;
       Object.assign(player,{hp:save.p.hp,food:save.p.food,yaw:save.p.yaw,pitch:save.p.pitch});player.pos.set(save.p.x,save.p.y,save.p.z);
@@ -4402,7 +4460,7 @@ function startWorld(save,onOk){
       }
     }else{
       seed=(wantSeed!==null?wantSeed:(Math.random()*1e9)|0);wantSeed=null;initNoise();mods=new Map();modsByDim={over:mods};for(const k in modCache)delete modCache[k];modDirty.clear();armor=[null,null,null,null,null];
-      Object.assign(world,{dim:'over',golems:[],homeVillage:null,containers:{},saplings:[],flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
+      Object.assign(world,{dim:'over',mode:wantMode,golems:[],homeVillage:null,containers:{},saplings:[],flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
       const s=findSpawn();world.spawn={x:s.x,y:s.h+1,z:s.z};player.pos.set(s.x,s.h+1,s.z);
       VCACHE.clear();world.homeVillage=findHomeVillage(s.x,s.z);
     }
@@ -4421,6 +4479,9 @@ function startWorld(save,onOk){
     running=true;renderHotbar();setHand();renderStats();
     $('loading').style.display='none';$('title').classList.remove('show');
     camera.position.set(player.pos.x,player.pos.y+1.62,player.pos.z);
+    player.flying=false;updModeBtn();
+    if(world.mode==='creative')toast(MOBILE?'🛠 <b>크리에이티브</b>: 🎒에서 모든 아이템을 꺼낼 수 있어요 · ⤒ 두 번 → 날기':'🛠 <b>크리에이티브</b>: E에서 모든 아이템을 꺼낼 수 있어요 · 스페이스 두 번 → 날기 (C: 내려가기)');
+    else if(world.mode==='hardcore')toast('💀 <b>하드코어</b>: 목숨은 하나뿐이에요. 조심하세요!');
     if(!save)toast(MOBILE?'나무를 캐서 판자와 작업대를 만들어 보세요! (🎒: 인벤토리)':'나무를 캐서 판자와 작업대를 만들어 보세요! (E: 인벤토리)');
     if(MOBILE&&innerHeight>innerWidth)toast('📱 가로 모드로 돌리면 더 편하게 플레이할 수 있어요');
     lockPointer();
@@ -4448,6 +4509,28 @@ loadSaveAsync().then(sv=>{SAVED=sv;saveChecked=true;$('btnCont').disabled=!sv;$(
 $('btnImport').onclick=()=>{if(pendingImport){applyImport(pendingImport);return;}$('fileImport').click();};
 $('fileImport').onchange=e=>{const f=e.target.files[0];if(f)importSave(f);e.target.value='';};
 let wantSeed=null; // 새 세계에 쓸 세계 코드 (null이면 무작위)
+let wantMode='survival';
+const MODE_INFO={survival:['⚔ 서바이벌','배고픔·체력을 챙기며 살아남아요. 쓰러져도 스폰 지점에서 다시 시작해요.'],
+  creative:['🛠 크리에이티브','다치지 않고 배고프지 않아요. 모든 아이템을 마음대로 꺼내 쓰고, 블록을 한 번에 부수고, 스페이스를 두 번 눌러 날 수 있어요.'],
+  hardcore:['💀 하드코어','몹이 1.5배 아프게 때려요. 목숨은 단 하나! 쓰러지면 세계가 사라져요.'],
+  safe:['🕊 세이프','적대 몹이 나오지 않고, 배고프지 않으며, 체력이 저절로 차요. 마음 편히 짓고 탐험해요.'],
+  spectator:['👁 관전','다치지 않고 블록을 뚫고 자유롭게 날아다니며 구경만 해요 (스페이스: 위 · C: 아래). 블록·몹과 상호작용할 수 없어요.']};
+$('modeSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;wantMode=b.dataset.m;
+  for(const x of $('modeSel').children)x.classList.toggle('on',x===b);$('modeDesc').textContent=MODE_INFO[wantMode][1];});
+const isCreative=()=>world.mode==='creative',isHardcore=()=>world.mode==='hardcore',isSafe=()=>world.mode==='safe',isSpec=()=>world.mode==='spectator';
+function setMode(m){const was=world.mode;world.mode=m;player.flying=false;player.gliding=false;
+  if(m==='creative'||m==='spectator'||m==='safe'){player.hp=20;player.food=20;player.air=10;}
+  if(m==='spectator'){if(player.boat){player.boat.passenger=null;player.boat=null;}if(invOpen)closeInv(true);}
+  if(was==='spectator'&&m!=='spectator'){player.vel.set(0,0,0);while(entHits(player)&&player.pos.y<CH)player.pos.y+=1;player.peakY=player.pos.y;} // 블록 속에서 나오면 위로 올려 줌
+  if(m==='safe')for(const o of [...mobs])if(o.def.hostile&&!o.def.boss)o.remove(); // 세이프: 적대 몹이 사라짐
+  lastStats='';renderStats();updModeBtn();if(invOpen)renderInv();}
+function updModeBtn(){$('btnMode').textContent='⚙ 서버 설정 · '+MODE_INFO[world.mode||'survival'][0];document.body.classList.toggle('spec',isSpec());}
+// 서버 설정: 일시정지에서 언제든 5가지 모드 중 하나로 바꿈
+function renderSettings(){const m=world.mode||'survival';for(const b of $('setMode').children)b.classList.toggle('on',b.dataset.m===m);$('setDesc').textContent=MODE_INFO[m][1];}
+$('btnMode').onclick=()=>{renderSettings();$('pause').classList.remove('show');$('settings').classList.add('show');};
+$('btnSetClose').onclick=()=>{$('settings').classList.remove('show');$('pause').classList.add('show');};
+$('setMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.m===world.mode)return;setMode(b.dataset.m);renderSettings();toast('게임 모드: <b>'+MODE_INFO[world.mode][0]+'</b>');});
+let lastSpaceT=0;function spaceTap(){const n=performance.now();if(isCreative()&&n-lastSpaceT<300&&!player.boat){player.flying=!player.flying;if(player.flying)player.vel.y=Math.max(player.vel.y,5);toast(player.flying?'🕊 날기 시작 (스페이스: 위 · C: 아래)':'날기 그만');lastSpaceT=0;}else lastSpaceT=n;}
 function parseSeed(t){ // 숫자는 그대로, 글자는 같은 글자면 늘 같은 숫자로
   t=(t||'').trim();if(!t)return null;
   if(/^-?\d+$/.test(t)){const n=Number(t)|0;return n;}
@@ -4470,7 +4553,9 @@ $('btnExport').onclick=()=>exportSave();
 $('btnResume').onclick=()=>lockPointer();
 $('btnSave').onclick=()=>{saveGame().then(ok=>{if(ok)toast('저장되었습니다');});};
 $('btnQuit').onclick=()=>{saveGame().then(()=>location.reload());};
-$('btnRespawn').onclick=()=>respawn();
+$('btnRespawn').onclick=()=>{
+  if(isHardcore()){running=false;SAVED=null;idbPut('main',null).catch(()=>{}).finally(()=>{try{localStorage.removeItem(SAVE_KEY);}catch(e){}location.reload();});return;} // 하드코어: 세계 삭제
+  respawn();};
 $('btnEndCont').onclick=()=>closeEnding();
 addEventListener('beforeunload',()=>{if(running)saveGame();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)saveGame();});
@@ -4503,7 +4588,7 @@ function frame(now){
   const tp=thirdPersonCam();
   renderer.render(scene,camera);
   if(tp){camera.position.copy(camSave.pos);camera.quaternion.copy(camSave.q);camera.updateMatrixWorld();} // 3인칭: 손은 그리지 않음
-  else if(!player.dead&&!endingOpen){handGroup.position.copy(camera.position);handGroup.quaternion.copy(camera.quaternion);
+  else if(!player.dead&&!endingOpen&&!isSpec()){handGroup.position.copy(camera.position);handGroup.quaternion.copy(camera.quaternion);
     renderer.autoClear=false;renderer.clearDepth();renderer.render(handScene,camera);renderer.autoClear=true;}
 }
 requestAnimationFrame(frame);
