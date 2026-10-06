@@ -196,6 +196,7 @@ body.mobile #toasts{top:72px}
     • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
+    • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 엔딩드래곤도 떨어뜨림)를 흉갑 칸에 입고 떨어지는 중에 <b>점프</b>를 다시 누르면 활공해요. 아래를 보면 빨라지고 위를 보면 올라가요. 날면서 <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 쓰면 앞으로 쭉 날아가요!<br>
     • 깊은 바다에는 <b>돌고래</b> 무리가 펄쩍펄쩍 뛰어올라요. 곁에서 헤엄치면 <b>돌고래의 은총</b>으로 수영이 빨라져요.<br>
     • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
@@ -204,7 +205,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.18 — 돌고래</h4>
+    <h4>🆕 v26.19 — 겉날개와 폭죽</h4>
+    • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 작업대) 추가! <b>엔딩드래곤</b>을 쓰러뜨려도 하나 얻어요. 흉갑 칸에 입고, 떨어지는 중에 <b>점프</b>를 한 번 더 누르면 활공해요.<br>
+    • 아래를 보면 빨라지고 위를 보면 속도를 써서 올라가요. 너무 빠르게 벽에 부딪히면 다쳐요. 날아다니는 1초마다 내구도가 1 줄어요.<br>
+    • <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 땅에 대고 쓰면 하늘로 솟아올라 알록달록 터지고, <b>날면서 쓰면</b> 앞으로 쭉 날아가요!
+    <h4>v26.18 — 돌고래</h4>
     • 깊은 바다에 <b>돌고래</b>가 2~3마리씩 무리 지어 다녀요. 빠르게 헤엄치다 수면 위로 <b>펄쩍</b> 뛰어올라요.<br>
     • 물속의 플레이어를 따라와 곁에서 헤엄치고, 그동안 <b>돌고래의 은총</b>으로 수영이 1.6배 빨라져요.<br>
     • <b>가시벌레</b>가 야생에서 더 자주 나와요 (밤에는 다른 몹 사이에 섞여서, 낮에는 풀숲에서 가끔).
@@ -358,7 +363,7 @@ const ATW=8,ATH=8;
 const AIR=0,GRASS=1,DIRT=2,STONE=3,COBBLE=4,LOG=5,LEAVES=6,PLANKS=7,SAND=8,WATER=9,COAL_ORE=10,IRON_ORE=11,CRYSTAL_ORE=12,CORE=13,BENCH=14,KILN=15,GLASS=16,BRICK=17,SNOW=18,BED=19,LAMP=20,THORN=21,HELLSTONE=22,LAVA=23,DEMON_BRICK=24,P_HELL=25,P_CASTLE=26,P_CITY=27,P_END=28,ENDSTONE=29,DARKSTONE=30,WINDOW=31,ASPHALT=32,HELLGLOW=33,WINDOW_OFF=34,ESTONE_ORE=35,HS_ORE=36,IRON_BLOCK=37,OBSIDIAN=38,END_FRAME=39,END_FRAME_ON=40,MARKER=41,VOIDMOSS=42,VOIDLAMP=43,LADDER=44,CHEST=48,HOPPER=52;
 // 방향이 있는 블록: 사다리(붙은 벽 쪽), 상자(앞면 쪽) — 면 번호 0:-x 1:+x 4:-z 5:+z
 const DIR_FACES=[0,1,4,5],LADDER_IDS=[44,45,46,47],CHEST_IDS=[48,49,50,51];
-const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172,INK_SAC=173,NET=174,NET_SQUID=175,SCUTE=176,TURTLE_HELMET=177,MACE=178,IRON_ROD=179,MACE_HEAD=180;
+const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172,INK_SAC=173,NET=174,NET_SQUID=175,SCUTE=176,TURTLE_HELMET=177,MACE=178,IRON_ROD=179,MACE_HEAD=180,ELYTRA=181,FIREWORK=182;
 const BL=[];
 function defB(id,name,t,p={}){
   let tiles;
@@ -1293,6 +1298,8 @@ IT[DARK_SWORD]={name:'다크나이트 검',stack:1,maxDur:3000,tool:{type:'sword
 IT[MACE]={name:'철퇴',stack:1,maxDur:500,tool:{type:'mace',tier:0,speed:1,dmg:20,mat:2}}; // 무겁고 느리지만 한 방이 셈 (달리며 머리를 치면 1.5배 · 높은 데서 떨어지며 치면 더 셈)
 IT[IRON_ROD]={name:'철막대기',stack:16};
 IT[MACE_HEAD]={name:'메이스 헤드',stack:16};
+IT[ELYTRA]={name:'겉날개',stack:1,maxDur:432,armor:{part:1,pts:0,mat:1,tough:0,kb:0,elytra:true}}; // 흉갑 칸에 입고, 떨어지는 중에 점프로 활공
+IT[FIREWORK]={name:'폭죽',stack:64,use:true};
 const ARMOR_PARTS=['투구','흉갑','각반','장화'];
 const SLOT_LABELS=[...ARMOR_PARTS,'방패'];
 const ARMOR_MATS=[
@@ -1342,6 +1349,8 @@ RECIPES.push(
   {out:IRON_ROD,n:1,in:[[IRON_INGOT,8],[STICK,1]],st:'bench'},
   {out:MACE_HEAD,n:1,in:[[IRON_INGOT,1],[SPIKE,8]],st:'bench'},
   {out:MACE,n:1,in:[[IRON_ROD,1],[MACE_HEAD,1]],st:'bench'},
+  {out:ELYTRA,n:1,in:[[FEATHER,10],[SILK,4],[CRYSTAL,2]],st:'bench'},
+  {out:FIREWORK,n:3,in:[[COAL,1],[STICK,1]],st:'bench'},
   {out:LADDER,n:3,in:[[STICK,7]],st:'bench'},
   {out:CHEST,n:1,in:[[PLANKS,8]],st:'bench'},
   {out:DOOR,n:3,in:[[PLANKS,6]],st:'bench'},
@@ -1454,6 +1463,11 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{if(y<1||y>14)return null;const half=y<9?6:6-(y-9)*1.15;if(Math.abs(X-8)>half)return null;
       if(Math.abs(X-8)>half-1.1||y===1)return rim;if(Math.hypot(X-8,Y-7)<1.7)return boss;if(bz&&(x+y*2)%9===0)return '#c8503c';return x%4===0?a:b;});}
     case DARK_SWORD:return toolIcon('sword',{c:'#2a2238',d:'#120c1c',l:'#c060ff'});
+    case ELYTRA:return pixelIcon((X,Y)=>{const sd=X<8?-1:1,dx=Math.abs(X-8),y=Y-2; // 펼친 날개 한 쌍 (위는 넓고 아래로 갈수록 좁아짐)
+      if(dx<.6||y<0||y>12.5)return null;const w=6.6-y*.32;if(dx>w+.4)return null;if(dx>w-.6)return '#4a3e62';
+      return (Math.floor(y)%3===0)?'#7a6aa0':y<4?'#a898c8':'#8c7cb4';});
+    case FIREWORK:return pixelIcon((X,Y)=>{if(Math.abs(X-8)<2.2&&Y>4&&Y<12)return Y<6?'#f2f2f2':Math.floor(Y)%3===0?'#e8c040':'#d83a3a'; // 종이 통 + 띠
+      if(Y>1.4&&Y<=4&&Math.abs(X-8)<(Y-1.4)*.9)return '#f2f2f2';if(Math.abs(X-8)<.5&&Y>=12&&Y<15)return '#8a6a44';return null;});
     case IRON_ROD:return pixelIcon((X,Y)=>{const a=(X-Y)*Math.SQRT1_2,b=(X+Y)*Math.SQRT1_2-16;if(a>-9.5&&a<9.5&&Math.abs(b)<.9)return b>.2?'#8a8a94':b<-.3?'#f2f2f6':'#c8c8d0';return null;});
     case MACE_HEAD:return pixelIcon((X,Y)=>{const dx=X-8,dy=Y-8.5,d=Math.hypot(dx,dy);if(d<3.8)return d<1.4?'#f6f6f6':dx+dy<0?'#e0e0e6':'#9a9aa4';
       for(let i=0;i<8;i++){const a=i/8*Math.PI*2,px=Math.cos(a),py=Math.sin(a),t=dx*px+dy*py,q=Math.abs(-dx*py+dy*px);if(t>3.4&&t<6.4&&q<(6.4-t)*.35)return '#d8cca8';}return null;}); // 쇠뭉치 + 가시 8개
@@ -1655,7 +1669,8 @@ const SFX={
   revive:()=>{[392,523,659,784,1046].forEach((f,i)=>tone(f,f*1.01,.25,.12,'triangle',i*.07));},
   laser:()=>{tone(1800,200,.35,.14,'sawtooth');noise(.3,4000,.15);},laserCharge:()=>tone(200,1400,1.5,.07,'sine'),
   mech:()=>{tone(70,55,.4,.12,'square');noise(.2,800,.1);},roar:()=>{tone(140,55,1.4,.18,'sawtooth');noise(1.2,600,.2);},
-  fireball:()=>noise(.35,900,.25),smash:()=>{tone(130,45,.35,.35,'sine');bnoise(.3,700,.6,.4,0,.003,'lowpass',150);tone(1400,900,.12,.06,'triangle');},cast:()=>{bnoise(.25,1800,.8,.12,0,.01,'bandpass',4200);tone(900,500,.15,.03,'sine');},plop:()=>{bnoise(.18,900,.9,.18,0,.004,'bandpass',400);bubble(380,.08,.06,.03);},
+  fireball:()=>noise(.35,900,.25),wing:()=>bnoise(.5,900,.5,.12,0,.05,'bandpass',300),launch:()=>{bnoise(.9,3000,.6,.14,0,.02,'bandpass',900);},
+  fwBoom:()=>{bnoise(.6,500,.5,.5,0,.002,'lowpass',90);tone(90,40,.4,.25,'sine');for(let i=0;i<10;i++)bnoise(.05,5000,2,.08,.35+Math.random()*.8,.002);},smash:()=>{tone(130,45,.35,.35,'sine');bnoise(.3,700,.6,.4,0,.003,'lowpass',150);tone(1400,900,.12,.06,'triangle');},cast:()=>{bnoise(.25,1800,.8,.12,0,.01,'bandpass',4200);tone(900,500,.15,.03,'sine');},plop:()=>{bnoise(.18,900,.9,.18,0,.004,'bandpass',400);bubble(380,.08,.06,.03);},
   reel:()=>{for(let i=0;i<6;i++)bnoise(.03,3200,4,.08,i*.05,.002);},portal:()=>{tone(200,900,.6,.08,'sine');noise(.6,2000,.08);},
   charge:()=>tone(90,160,.8,.12,'square'),equip:()=>{noise(.1,3000,.15);tone(600,800,.08,.06,'triangle');},
 };
@@ -1715,6 +1730,34 @@ function disposeMesh(ch){
 }
 const hasNeighbors=(cx,cz)=>getChunk(cx+1,cz)&&getChunk(cx-1,cz)&&getChunk(cx,cz+1)&&getChunk(cx,cz-1);
 function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx,cz))buildMesh(c);else c.needsMesh=true;}
+// ---------- 폭죽 ----------
+// 로켓이 꼬리 불꽃을 남기며 솟아오르다 1~1.5초 뒤 하늘에서 두 가지 색으로 터짐
+const rockets=[],sparks=[],sparkGeo=new THREE.BoxGeometry(.1,.1,.1),sparkMats={};
+const FW_COLORS=[0xff4a4a,0xffa020,0xfff060,0x60ff80,0x40c8ff,0x8a6aff,0xff70d0,0xffffff];
+const sparkMat=c=>sparkMats[c]||(sparkMats[c]=new THREE.MeshBasicMaterial({color:c,fog:false}));
+function addSpark(x,y,z,vx,vy,vz,c,life,size=1){const m=new THREE.Mesh(sparkGeo,sparkMat(c));m.position.set(x,y,z);m.scale.setScalar(size);scene.add(m);sparks.push({m,v:new THREE.Vector3(vx,vy,vz),life,max:life,size});}
+function launchFirework(x,y,z){
+  const g=new THREE.Group(),r=new THREE.Mesh(IGEO.cyl,sparkMat(0xd83a3a));r.scale.set(.07,.3,.07);const c=new THREE.Mesh(IGEO.cone,sparkMat(0xf2f2f2));c.scale.set(.08,.12,.08);c.position.y=.21;g.add(r,c);
+  g.position.set(x,y,z);scene.add(g);const a=FW_COLORS[Math.random()*8|0],b=FW_COLORS[Math.random()*8|0];
+  rockets.push({g,pos:new THREE.Vector3(x,y,z),vel:new THREE.Vector3((Math.random()-.5)*1.2,12,(Math.random()-.5)*1.2),fuse:1+Math.random()*.5,cols:[a,b],ring:Math.random()<.35});SFX.launch();
+}
+function fwBurst(pos,cols,ring){
+  for(let i=0;i<80;i++){let v;if(ring&&i<40){const a=i/40*Math.PI*2;v=new THREE.Vector3(Math.cos(a),(Math.random()-.5)*.15,Math.sin(a));} // 고리 모양
+    else{v=new THREE.Vector3(Math.random()*2-1,Math.random()*2-1,Math.random()*2-1);if(v.lengthSq()>1||v.lengthSq()<.05){i--;continue;}v.normalize();} // 둥근 공 모양
+    const sp=9+Math.random()*3;addSpark(pos.x,pos.y,pos.z,v.x*sp,v.y*sp,v.z*sp,cols[i%2],1.2+Math.random()*.8,2.2);}
+  addSpark(pos.x,pos.y,pos.z,0,0,0,0xffffff,.15,12); // 번쩍
+  if(pos.distanceTo(player.pos)<80)SFX.fwBoom();
+}
+function clearFireworks(){for(const r of rockets)scene.remove(r.g);for(const s of sparks)scene.remove(s.m);rockets.length=sparks.length=0;}
+function updateFireworks(dt){
+  for(let i=rockets.length-1;i>=0;i--){const r=rockets[i];r.vel.y+=6*dt;r.pos.addScaledVector(r.vel,dt);r.g.position.copy(r.pos);r.fuse-=dt;
+    if(Math.random()<.9)addSpark(r.pos.x,r.pos.y-.3,r.pos.z,(Math.random()-.5),-1.5,(Math.random()-.5),Math.random()<.5?0xffd080:0xff8a30,.35+Math.random()*.2,.7); // 꼬리 불꽃
+    const b=getBlock(Math.floor(r.pos.x),Math.floor(r.pos.y+.3),Math.floor(r.pos.z));
+    if(r.fuse<=0||b<0||SOLID[b]){fwBurst(r.pos,r.cols,r.ring);scene.remove(r.g);rockets.splice(i,1);}}
+  if(player.boostT>0&&player.gliding)for(let k=0;k<2;k++)addSpark(player.pos.x,player.pos.y+.2,player.pos.z,(Math.random()-.5)*2,(Math.random()-.5)*2,(Math.random()-.5)*2,Math.random()<.5?0xffd080:0xffffff,.4,.8); // 날 때 쓰면 뒤로 불꽃
+  for(let i=sparks.length-1;i>=0;i--){const s=sparks[i];s.life-=dt;if(s.life<=0){scene.remove(s.m);sparks.splice(i,1);continue;}
+    s.v.multiplyScalar(Math.max(0,1-1.8*dt));s.v.y-=2.5*dt;s.m.position.addScaledVector(s.v,dt);s.m.scale.setScalar(Math.max(.05,s.life/s.max)*s.size);}
+}
 // ---------- 낚시 ----------
 // 우클릭으로 찌를 던지고, 물 위에 뜬 찌가 쑥 잠기면(입질) 다시 우클릭해 낚아 올림
 let bobber=null,rodLock=false;
@@ -2379,7 +2422,7 @@ function buildItemModel(id){
     }
     return {g,grip};
   }
-  if(it&&it.armor&&id!==SHIELD&&id!==BZ_SHIELD){ // 갑옷 조각
+  if(it&&it.armor&&id!==SHIELD&&id!==BZ_SHIELD&&id!==ELYTRA){ // 갑옷 조각
     const A=ARMOR_MATS[it.armor.mat],cloth=it.armor.mat===0,m=imat('arm'+it.armor.mat,new THREE.Color(A.c).getHex(),cloth?'cloth':'metal',cloth?.95:.35,cloth?0:.6),tr=imat('armT'+it.armor.mat,new THREE.Color(A.d).getHex(),cloth?'cloth':'metal',.5,cloth?0:.5);
     const p=it.armor.part;
     if(p===0){iBox(g,.2,.05,.2,m,0,.08,0);for(const s of [-1,1])iBox(g,.03,.13,.2,m,s*.085,0,0);iBox(g,.2,.13,.03,m,0,0,-.085);iBox(g,.2,.025,.025,tr,0,.0,.1);}
@@ -2406,6 +2449,13 @@ function buildItemModel(id){
     case RAW_MEAT:case COOKED_MEAT:case ROTTEN:{const c=id===RAW_MEAT?0xd65c5c:id===COOKED_MEAT?0x8a5228:0x7a8a4a,m=imat('meat'+id,c,'skin',id===COOKED_MEAT?.5:.7);
       iMesh(g,IGEO.sph,m,0,0,0,0,0,.3,.095,.06,.07);if(id===ROTTEN)iMesh(g,IGEO.sph,imat('rot2',0x5a6a32,'skin',.8),.05,.02,.02,0,0,0,.04,.035,.04);
       else{iMesh(g,IGEO.cyl,imat('bone',0xf0ece0,'bone',.6),.1,.02,0,0,0,Math.PI/2+.3,.012,.08,.012);iMesh(g,IGEO.sph,imat('bone',0xf0ece0,'bone',.6),.14,.035,0,0,0,0,.02,.02,.02);}break;}
+    case ELYTRA:{const m=imat('ely',0x8c7cb4,'feather',.7),e=imat('elyE',0x4a3e62,'feather',.7);
+      for(const sd of [-1,1]){const w=new THREE.Group();w.position.set(sd*.03,.08,0);w.rotation.z=sd*.25;g.add(w);
+        iBox(w,.14,.3,.02,m,sd*.07,-.13,0);iBox(w,.1,.14,.022,m,sd*.12,-.3,0);iBox(w,.02,.42,.025,e,sd*.145,-.18,0);} // 날개 두 장 · 바깥 테
+      break;}
+    case FIREWORK:{const r=imat('fwR',0xd83a3a,'cloth',.8),y=imat('fwY',0xe8c040,'cloth',.8),wt=imat('fwW',0xf2f2f2,'cloth',.8);
+      iMesh(g,IGEO.cyl,r,0,0,0,0,0,0,.035,.16,.035);iMesh(g,IGEO.cyl,y,0,.03,0,0,0,0,.037,.025,.037);iMesh(g,IGEO.cone,wt,0,.11,0,0,0,0,.04,.06,.04);
+      iBox(g,.008,.12,.008,HANDLE(),0,-.13,0);break;}
     case MACE_HEAD:{const hd=imat('maceH',0xcfcfd6,'metal',.28,.85),sp=imat('spk',0xe0d4b0,'bone',.5);iMesh(g,IGEO.sph,hd,0,0,0,0,0,0,.08,.08,.08);
       for(let i=0;i<8;i++){const a=i/8*Math.PI*2;iMesh(g,IGEO.cone,sp,Math.cos(a)*.1,0,Math.sin(a)*.1,0,0,0,.02,.06,.02).rotation.set(Math.PI/2,0,-a+Math.PI/2,'YXZ');}
       iMesh(g,IGEO.cone,sp,0,.1,0,0,0,0,.02,.06,.02);iMesh(g,IGEO.cone,sp,0,-.1,0,Math.PI,0,0,.02,.06,.02);break;}
@@ -2524,7 +2574,9 @@ const avatar=(()=>{const g=new THREE.Group(),skin=lam(0xd8a07c,0,'skin'),shirt=l
 function dressAvatar(A){ // 3인칭 몸에 갑옷 입히기 (몸보다 살짝 크게 덮음)
   for(const m of A.armorParts||[])m.parent&&m.parent.remove(m);A.armorParts=[];
   const add=(par,w,h,d,mat,x,y,z)=>A.armorParts.push(part(par,w,h,d,mat,x,y,z));
-  for(let pi=0;pi<4;pi++){const a=armor[pi],ar=a&&IT[a.id]&&IT[a.id].armor;if(!ar)continue;
+  A.wings=null;if(armor[1]&&armor[1].id===ELYTRA){const m=imat('ely',0x8c7cb4,'feather',.7),e=imat('elyE',0x4a3e62,'feather',.7);A.wings=[]; // 등에 접힌 겉날개
+    for(const sd of [-1,1]){const w=pivot(A.up,sd*.1,.6,.16);part(w,.36,.7,.04,m,sd*.18,-.33,0);part(w,.04,.8,.05,e,sd*.36,-.38,0);part(w,.24,.2,.045,m,sd*.12,-.75,0);A.wings.push(w);A.armorParts.push(w);}}
+  for(let pi=0;pi<4;pi++){const a=armor[pi],ar=a&&IT[a.id]&&IT[a.id].armor;if(!ar||ar.elytra)continue;
     const mi=ar.mat,M=ARMOR_MATS[mi],cloth=mi===0,
       m=imat('arm'+mi,new THREE.Color(M.c).getHex(),cloth?'cloth':'metal',cloth?.95:.35,cloth?0:.6),
       tr=M.upgrade?imat('armG'+mi,new THREE.Color(M.l).getHex(),'metal',.3,.5,new THREE.Color(M.l).getHex(),.6):imat('armT'+mi,new THREE.Color(M.d).getHex(),cloth?'cloth':'metal',.5,cloth?0:.5); // 블레이즈스톤은 빛나는 테두리
@@ -2545,7 +2597,7 @@ function updateAvatar(dt){
   const hs=p.boat?0:Math.hypot(p.vel.x,p.vel.z),cr=p.crouchK||0;
   // 몸은 걸을 때 바라보는 쪽으로 돌고, 서 있을 땐 고개가 많이 돌아갈 때만 따라 돎
   let d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
-  const sk=p.swimK||0;
+  const gk=p.glideK||0,sk=Math.max(p.swimK||0,gk);
   if(sk>.5)A.yaw+=d*Math.min(1,10*dt);else if(hs>.5)A.yaw+=d*Math.min(1,10*dt);else if(Math.abs(d)>.75)A.yaw=p.yaw-Math.sign(d)*.75;
   d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
   A.g.position.set(p.pos.x+Math.sin(A.yaw)*.9*sk,p.pos.y-cr*.1+.3*sk,p.pos.z+Math.cos(A.yaw)*.9*sk);A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0); // 수영: 엎드려 누움
@@ -2559,9 +2611,11 @@ function updateAvatar(dt){
   A.arms[0].rotation.order='YXZ';A.arms[0].rotation.set(lerp(-sw*amp*.8,1.38,bk),lerp(0,-.5,bk),lerp(-.05,0,bk));
   if(wasDigging)A.arms[1].rotation.set(.75+toolLift*1.7,-.15,.05); // 캐는 중: 들어 올렸다 내려찍기
   else A.arms[1].rotation.set((id?.3:0)+sw*amp*.8*(id?.5:1)+sa*1.5,sa*-.3,.05+sa*.15); // 공격하면 팔을 휘두름
-  if(sk>.05){const t=performance.now()/1000; // 수영: 팔을 번갈아 앞으로 저으며 발장구
+  if(gk>.05&&gk>=(p.swimK||0)){A.arms.forEach((a,i)=>{a.rotation.order='XYZ';a.rotation.set(lerp(a.rotation.x,.15,gk),0,lerp(a.rotation.z,(i?-1:1)*.35,gk));});A.legs.forEach(l=>{l.rotation.x=lerp(l.rotation.x,0,gk);});} // 활공: 팔을 뒤로 붙임
+  else if(sk>.05){const t=performance.now()/1000; // 수영: 팔을 번갈아 앞으로 저으며 발장구
     A.arms.forEach((a,i)=>{a.rotation.order='XYZ';a.rotation.set(lerp(a.rotation.x,2.6+Math.sin(t*4.5+i*Math.PI)*.75,sk),0,lerp(a.rotation.z,(i?-1:1)*.25,sk));});
     A.legs.forEach((l,i)=>{l.rotation.x=lerp(l.rotation.x,Math.sin(t*9+i*Math.PI)*.35,sk);});}
+  if(A.wings)A.wings.forEach((w,i)=>{const sd=i?1:-1;w.rotation.set(-.2-.25*gk,0,sd*(.12+1.15*gk));}); // 겉날개: 활공하면 활짝 펼침
   // 오른손에 든 아이템
   if(id!==A.itemId){A.itemId=id;A.hand.clear();
     if(id){const it=itemModel(id);if(it.grip){it.g.rotation.set(-Math.PI/2,0,Math.PI/2,'ZXY');A.hand.add(it.g);} // 손잡이를 쥐고 앞을 향함
@@ -3094,7 +3148,7 @@ function enterDim(dim,pos,fromLoad){
   for(const c of chunks.values())disposeMesh(c);chunks.clear();resetWorkerJobs();
   syncGolems();VSTATE={};for(const b of [...boats])removeBoat(b,false);player.boat=null;for(const m of [...mobs])m.remove();for(const p of projs)scene.remove(p.mesh);projs.length=0;clearBeams();
   for(const p of parts)scene.remove(p);parts.length=0;clearGroundItems();
-  world.dim=dim;LQ[1].clear();LQ[2].clear();removeBobber();if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
+  world.dim=dim;LQ[1].clear();LQ[2].clear();removeBobber();clearFireworks();player.gliding=false;if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
   caveB=dim==='over'?.38:DIM[dim].caveB;
   player.pos.set(pos.x,pos.y,pos.z);player.vel.set(0,0,0);if(pos.yaw!==undefined)player.yaw=pos.yaw;
   loadNear(60);
@@ -3237,7 +3291,7 @@ Object.assign(MOBDEF,{
     onDeath(m){SFX.boom();spawnParticles(m.pos.x,m.pos.y+.8,m.pos.z,new THREE.Color(0x1fe0cc),24,.8,6);
       const n=mobs.filter(o=>o.kind==='crystal'&&o!==m).length;toast(n?`엔딩 수정 파괴! 남은 수정 <b>${n}</b>개`:'모든 <b>엔딩 수정</b>을 부쉈습니다! 이제 드래곤이 회복할 수 없습니다.','ach');}},
   dragon:{name:'엔딩드래곤',w:4.5,h:2.4,hp:10000,hostile:true,boss:true,fly:true,noclip:true,fireproof:true,knock:0,color:0x16161a,
-    sound:()=>SFX.roar(),drops:()=>[],ach:'dragon',
+    sound:()=>SFX.roar(),drops:()=>[[ELYTRA,1]],ach:'dragon',
     build(g){const bone=lam(0x16161a,0,'scale'),dark=lam(0x0b0b0e,0,'scale'),mem=lam(0x101014,.92,'skin'),eye=bas(0x1fe0cc),horn=lam(0x1e1e24,0,'bone');
       const body=pivot(g,0,1.2,0);part(body,1.8,1.3,4.2,bone,0,0,0);for(let i=0;i<5;i++)part(body,.2,.45,.5,dark,0,.85,-1.6+i*.8);
       for(const [x,z] of [[-.7,-1.2],[.7,-1.2],[-.7,1.2],[.7,1.2]])part(body,.5,.8,.5,dark,x,-.9,z);
@@ -3776,7 +3830,7 @@ function updatePlayer(dt){
   if(wantSwim&&isWaterAt(p.pos.x,p.pos.y+(p.swimming?.3:.9),p.pos.z))p.swimming=true;
   else if(p.swimming){const hw=p.w/2;if(!aabbSolid(p.pos.x-hw,p.pos.y,p.pos.z-hw,p.pos.x+hw,p.pos.y+1.8,p.pos.z+hw))p.swimming=false;}
   p.swimK=(p.swimK||0)+((p.swimming?1:0)-(p.swimK||0))*Math.min(1,8*dt);
-  p.h=p.swimming?.6:p.crouch?1.5:1.8;p.crouchK=(p.crouchK||0)+((p.crouch?1:0)-(p.crouchK||0))*Math.min(1,12*dt);
+  p.h=p.swimming||p.gliding?.6:p.crouch?1.5:1.8;p.crouchK=(p.crouchK||0)+((p.crouch?1:0)-(p.crouchK||0))*Math.min(1,12*dt);
   const sprint=(keys.ShiftLeft||keys.ShiftRight||mobileSprint||(joy.active&&Math.hypot(joy.x,joy.y)>.97))&&fz>.3&&p.food>6&&!invOpen&&!p.crouch;p.sprinting=sprint;
   // 방패 막기: 우클릭 기능이 없는 아이템(무기·도구·맨손)을 든 채 우클릭 유지
   const h0=held(),hi=h0&&IT[h0.id],hasUse=h0&&(h0.id<100||(hi&&(hi.food||hi.bow||hi.armor||hi.bucket||hi.use))||h0.id===LASER||h0.id===POTION);
@@ -3790,7 +3844,7 @@ function updatePlayer(dt){
     if(keys.Space&&!invOpen)ty=Math.max(ty,3);
     if(ty>0&&!isWaterAt(p.pos.x,p.pos.y+.75,p.pos.z))ty=0;
     const k2=Math.min(1,5*dt);p.vel.x+=(tx-p.vel.x)*k2;p.vel.z+=(tz-p.vel.z)*k2;p.vel.y+=(ty-p.vel.y)*k2+9*dt;}
-  else{p.vel.x+=(wx-p.vel.x)*k;p.vel.z+=(wz-p.vel.z)*k;}
+  else if(!p.gliding){p.vel.x+=(wx-p.vel.x)*k;p.vel.z+=(wz-p.vel.z)*k;} // 활공 중에는 걷기 조작이 속도를 깎지 않음
   const feetW=isLiquidAt(p.pos.x,p.pos.y+.1,p.pos.z),eyeW=isLiquidAt(p.pos.x,p.pos.y+1.62,p.pos.z);
   const swim=p.inWater||feetW;
   if(keys.Space&&!invOpen){
@@ -3803,8 +3857,22 @@ function updatePlayer(dt){
   if(overlapBlock(p,b=>LADDER_OF[b]>0)){ // 사다리: W·스페이스로 오르고, 아니면 천천히 미끄러져 내려옴 (낙하 피해 없음)
     const up=!invOpen&&(keys.KeyW||keys.Space||(joy.active&&joy.y<-.3));
     p.vel.y=(up?3.4:p.crouch?0:Math.max(p.vel.y,-2.2))+28*dt;p.peakY=p.pos.y;} // 웅크리면 사다리에 매달려 멈춤
+  // 겉날개: 떨어지는 중에 점프(스페이스)를 다시 누르면 활공. 아래를 보면 빨라지고 위를 보면 느려지며 올라감
+  const ely=armor[1]&&armor[1].id===ELYTRA&&armor[1].dur>1,spaceNow=!!keys.Space&&!invOpen;
+  if(!p.gliding&&ely&&spaceNow&&!p.spacePrev&&!p.onGround&&!swim&&p.vel.y<2&&!overlapBlock(p,b=>LADDER_OF[b]>0)){p.gliding=true;SFX.wing();}
+  p.spacePrev=spaceNow;
+  if(p.gliding&&(!ely||p.onGround||swim))p.gliding=false;
+  p.glideK=(p.glideK||0)+((p.gliding?1:0)-(p.glideK||0))*Math.min(1,8*dt);
+  let glideSp=0;
+  if(p.gliding){const d=viewDir();let sp=p.vel.length();
+    sp+=(-d.y*28-.6)*dt;if(p.boostT>0)sp=Math.min(sp+40*dt,30);sp=clamp(sp,0,36); // 폭죽을 쓰면 앞으로 쭉
+    const k=Math.min(1,3*dt);p.vel.x+=(d.x*sp-p.vel.x)*k;p.vel.z+=(d.z*sp-p.vel.z)*k;p.vel.y+=(d.y*sp-1.1-p.vel.y)*k+28*dt;
+    p.peakY=p.pos.y;glideSp=Math.hypot(p.vel.x,p.vel.z);
+    p.glideT=(p.glideT||0)+dt;if(p.glideT>1){p.glideT=0;armor[1].dur--;if(armor[1].dur<=1)toast('겉날개가 너무 낡아서 더 이상 날 수 없어요');if(invOpen)renderInv();}}
+  if(p.boostT>0)p.boostT-=dt;
   const wasWater=p.inWater,ox=p.pos.x,oz=p.pos.z,edgeSafe=p.crouch&&p.onGround&&!swim;
   physics(p,dt);
+  if(p.gliding&&p.hitH&&glideSp>11){hurtPlayer(Math.round((glideSp-11)*.7),0,0,'날다가 벽에 부딪혔습니다',true);p.gliding=false;} // 빠르게 날다 벽에 부딪히면 다침
   if(edgeSafe&&p.vel.y<=0){const hw=p.w/2,y=p.pos.y,gr=(x,z)=>aabbSolid(x-hw,y-.6,z-hw,x+hw,y,z+hw); // 웅크리면 모서리 밖으로 밀려나지 않음
     if(!gr(p.pos.x,p.pos.z)){if(!gr(p.pos.x,oz)){p.pos.x=ox;p.vel.x=0;}if(!gr(p.pos.x,p.pos.z)){p.pos.z=oz;p.vel.z=0;}if(gr(p.pos.x,p.pos.z)){p.onGround=true;p.vel.y=0;}}}
   if(p.inWater&&!wasWater&&p.vel.y<-3)SFX.splash();
@@ -3816,7 +3884,7 @@ function updatePlayer(dt){
   if(p.onGround&&hs>1){p.stepD+=hs*dt;if(p.stepD>(sprint?2.6:2.2)){p.stepD=0;SFX.step();}}
   p.hungerAcc+=dt*(sprint?2.5:1);
   if(p.pos.y<-30&&!p.dead)die('세계 밖으로 떨어졌습니다'); // 물약으로 되살아나도 다시 떨어지므로 바로 처리
-  camera.position.set(p.pos.x,p.pos.y+lerp(1.62-.3*p.crouchK,.42,p.swimK),p.pos.z);
+  camera.position.set(p.pos.x,p.pos.y+lerp(1.62-.3*p.crouchK,.42,Math.max(p.swimK,p.glideK||0)),p.pos.z);
   camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();
   const fov=sprint&&hs>4?82:75;if(Math.abs(camera.fov-fov)>.1){camera.fov+=(fov-camera.fov)*Math.min(1,10*dt);camera.updateProjectionMatrix();}
 }
@@ -3903,6 +3971,11 @@ function useItem(){
   }
   if(s&&s.id===BOW){shootBow();return;}
   if(s&&s.id===FISHING_ROD){useRod();return;}
+  if(s&&s.id===FIREWORK){ // 날고 있으면 앞으로 쭉 밀어 줌 · 아니면 바라본 곳에서 쏘아 올림
+    if(player.gliding){player.boostT=1.3;SFX.launch();}
+    else if(target){launchFirework(target.x+.5+target.n[0]*.6,target.y+.5+target.n[1]*.6,target.z+.5+target.n[2]*.6);}
+    else return;
+    s.count--;if(!s.count)inv[sel]=null;swing=1;invChanged();return;}
   if(s&&s.id===LASER){fireLaserItem();return;}
   if(s&&IT[s.id]&&IT[s.id].armor){inv[sel]=equipArmor(s);invChanged();return;}
   if(s&&IT[s.id]&&IT[s.id].bucket){useBucket(s);return;}
@@ -4424,7 +4497,7 @@ function frame(now){
   }
   updateSky(active?dt:0);
   if(active)updateSurvival(dt);
-  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);
+  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);updateFireworks(dt);
   updateChunks();
   if(debugOn){const p=player.pos;$('debug').textContent=`CAVEBUILD  ${fps} fps\nXYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}\n차원: ${DIM[world.dim].name}  청크: ${chunks.size}  몹: ${mobs.length}\n시간: ${(world.time*24+6)%24|0}시  시드: ${seed}\n바라보는 블록: ${target?BL[target.id].name:'-'}`;}
   const tp=thirdPersonCam();
