@@ -195,7 +195,7 @@ body.mobile #toasts{top:72px}
     • 곳곳의 <b>마을</b>에서 주민과 <b>동전</b>으로 거래할 수 있어요. 주민을 괴롭히면 가디언이 마을을 떠날 때까지 쫓아옵니다!<br>
     • <b>문</b>(판자 6 → 3개)은 2칸 높이로 놓이고 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 여닫아요. 나무 원목을 모두 캐면 <b>묘목</b>이 떨어지고, 잔디·흙에 심으면 몇 분 뒤 나무로 자라요.<br>
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
-    • <b>철퇴</b>(철 블록 1 + 막대기 2)는 느리지만 한 방에 <b>20</b>! <b>달리면서 머리</b>를 내려치면 1.5배인 <b>30</b>이 들어가요.<br>
+    • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
     • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
@@ -203,7 +203,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.16 — 철퇴</h4>
+    <h4>🆕 v26.17 — 철퇴 내려찍기</h4>
+    • 철퇴 만드는 법이 바뀌었어요: <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8) → <b>철퇴</b> (모두 작업대).<br>
+    • <b>높은 곳에서 떨어지며</b> 철퇴로 치면 떨어진 높이만큼 더 세져요 (처음 3칸은 칸당 +4, 다음 5칸은 +2, 그 뒤로 +1). 내려찍으면 낙하 피해도 없어요.<br>
+    • 철퇴는 이제 <b>2.5초</b>마다 휘두를 수 있어요.
+    <h4>v26.16 — 철퇴</h4>
     • <b>철퇴</b>(철 블록 1 + 막대기 2, 작업대) 추가! 한 방에 <b>20</b>의 피해를 주지만 무거워서 천천히(1.1초마다) 휘둘러요. 맞은 적은 더 멀리 밀려나요.<br>
     • 철퇴를 든 채 <b>달리면서 머리(헤드샷)</b>를 내려치면 <b>1.5배</b>인 <b>30</b>의 피해가 쾅! 들어가요.
     <h4>v26.15 — 바다거북</h4>
@@ -349,7 +353,7 @@ const ATW=8,ATH=8;
 const AIR=0,GRASS=1,DIRT=2,STONE=3,COBBLE=4,LOG=5,LEAVES=6,PLANKS=7,SAND=8,WATER=9,COAL_ORE=10,IRON_ORE=11,CRYSTAL_ORE=12,CORE=13,BENCH=14,KILN=15,GLASS=16,BRICK=17,SNOW=18,BED=19,LAMP=20,THORN=21,HELLSTONE=22,LAVA=23,DEMON_BRICK=24,P_HELL=25,P_CASTLE=26,P_CITY=27,P_END=28,ENDSTONE=29,DARKSTONE=30,WINDOW=31,ASPHALT=32,HELLGLOW=33,WINDOW_OFF=34,ESTONE_ORE=35,HS_ORE=36,IRON_BLOCK=37,OBSIDIAN=38,END_FRAME=39,END_FRAME_ON=40,MARKER=41,VOIDMOSS=42,VOIDLAMP=43,LADDER=44,CHEST=48,HOPPER=52;
 // 방향이 있는 블록: 사다리(붙은 벽 쪽), 상자(앞면 쪽) — 면 번호 0:-x 1:+x 4:-z 5:+z
 const DIR_FACES=[0,1,4,5],LADDER_IDS=[44,45,46,47],CHEST_IDS=[48,49,50,51];
-const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172,INK_SAC=173,NET=174,NET_SQUID=175,SCUTE=176,TURTLE_HELMET=177,MACE=178;
+const STICK=100,COAL=101,IRON_INGOT=102,CRYSTAL=103,RAW_MEAT=104,COOKED_MEAT=105,APPLE=106,FLUFF=107,FEATHER=108,EGG=109,SPIKE=130,SILK=131,ROTTEN=132,BOW=133,ARROW=134,POTION=135,LASER=136,DARK_SWORD=137,HELL_COMPASS=138,END_COMPASS=139,CITY_COMPASS=153,ESTONE=154,SHIELD=155,HELLSTEEL=156,HS_SCRAP=157,BZ_SHIELD=158,BUCKET=164,WATER_BUCKET=165,LAVA_BUCKET=166,COIN=167,PORTAL_KEY=168,BOAT=169,RAW_FISH=170,COOKED_FISH=171,FISHING_ROD=172,INK_SAC=173,NET=174,NET_SQUID=175,SCUTE=176,TURTLE_HELMET=177,MACE=178,IRON_ROD=179,MACE_HEAD=180;
 const BL=[];
 function defB(id,name,t,p={}){
   let tiles;
@@ -1281,7 +1285,9 @@ MATS.forEach((m,mi)=>TOOL_TYPES.forEach((t,ti)=>{
   IT[toolId(mi,ti)]={name:`${m.ko} ${TOOL_KO[t]}`,stack:1,tool:{type:t,tier:m.tier,speed:m.speed,dmg,mat:mi},maxDur:m.dur};
 }));
 IT[DARK_SWORD]={name:'다크나이트 검',stack:1,maxDur:3000,tool:{type:'sword',tier:0,speed:1,dmg:99,mat:0}};
-IT[MACE]={name:'철퇴',stack:1,maxDur:500,tool:{type:'mace',tier:0,speed:1,dmg:20,mat:2}}; // 무겁고 느리지만 한 방이 셈 (달리며 머리를 치면 1.5배)
+IT[MACE]={name:'철퇴',stack:1,maxDur:500,tool:{type:'mace',tier:0,speed:1,dmg:20,mat:2}}; // 무겁고 느리지만 한 방이 셈 (달리며 머리를 치면 1.5배 · 높은 데서 떨어지며 치면 더 셈)
+IT[IRON_ROD]={name:'철막대기',stack:16};
+IT[MACE_HEAD]={name:'메이스 헤드',stack:16};
 const ARMOR_PARTS=['투구','흉갑','각반','장화'];
 const SLOT_LABELS=[...ARMOR_PARTS,'방패'];
 const ARMOR_MATS=[
@@ -1328,7 +1334,9 @@ RECIPES.push(
   {out:FISHING_ROD,n:1,in:[[STICK,3],[SILK,2]],st:'bench'},
   {out:NET,n:1,in:[[STICK,2],[SILK,4]],st:'bench'},
   {out:TURTLE_HELMET,n:1,in:[[SCUTE,5]],st:'bench'},
-  {out:MACE,n:1,in:[[IRON_BLOCK,1],[STICK,2]],st:'bench'},
+  {out:IRON_ROD,n:1,in:[[IRON_INGOT,8],[STICK,1]],st:'bench'},
+  {out:MACE_HEAD,n:1,in:[[IRON_INGOT,1],[SPIKE,8]],st:'bench'},
+  {out:MACE,n:1,in:[[IRON_ROD,1],[MACE_HEAD,1]],st:'bench'},
   {out:LADDER,n:3,in:[[STICK,7]],st:'bench'},
   {out:CHEST,n:1,in:[[PLANKS,8]],st:'bench'},
   {out:DOOR,n:3,in:[[PLANKS,6]],st:'bench'},
@@ -1441,6 +1449,9 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{if(y<1||y>14)return null;const half=y<9?6:6-(y-9)*1.15;if(Math.abs(X-8)>half)return null;
       if(Math.abs(X-8)>half-1.1||y===1)return rim;if(Math.hypot(X-8,Y-7)<1.7)return boss;if(bz&&(x+y*2)%9===0)return '#c8503c';return x%4===0?a:b;});}
     case DARK_SWORD:return toolIcon('sword',{c:'#2a2238',d:'#120c1c',l:'#c060ff'});
+    case IRON_ROD:return pixelIcon((X,Y)=>{const a=(X-Y)*Math.SQRT1_2,b=(X+Y)*Math.SQRT1_2-16;if(a>-9.5&&a<9.5&&Math.abs(b)<.9)return b>.2?'#8a8a94':b<-.3?'#f2f2f6':'#c8c8d0';return null;});
+    case MACE_HEAD:return pixelIcon((X,Y)=>{const dx=X-8,dy=Y-8.5,d=Math.hypot(dx,dy);if(d<3.8)return d<1.4?'#f6f6f6':dx+dy<0?'#e0e0e6':'#9a9aa4';
+      for(let i=0;i<8;i++){const a=i/8*Math.PI*2,px=Math.cos(a),py=Math.sin(a),t=dx*px+dy*py,q=Math.abs(-dx*py+dy*px);if(t>3.4&&t<6.4&&q<(6.4-t)*.35)return '#d8cca8';}return null;}); // 쇠뭉치 + 가시 8개
     case MACE:return pixelIcon((X,Y)=>{const dx=X-11,dy=Y-5,d=Math.hypot(dx,dy);
       if(d<3.3)return d<1.2?'#f6f6f6':dx+dy<0?'#e0e0e6':'#9a9aa4'; // 쇠뭉치
       if(d<4.9&&((Math.abs(dx)<.7||Math.abs(dy)<.7)||Math.abs(Math.abs(dx)-Math.abs(dy))<.6))return '#6a6a74'; // 가시
@@ -2335,6 +2346,7 @@ function buildItemModel(id){
   const it=IT[id];
   if(id<100){g.add(id===HOPPER?hopperModel(.2):id===LOG?logModel(.2):DOOR_OF[id]?doorModel(.2):id===SAPLING?tileBox(.2,.2,.001,TILE.sapling,true):blockCube(id,.2));return {g,grip};}
   if(it&&it.tool){
+    if(id===IRON_ROD){const st=imat('maceS',0x6a6a74,'metal',.4,.7);iBox(g,.034,.5,.034,st,0,.2,0);iBox(g,.045,.03,.045,st,0,-.05,0);iBox(g,.045,.03,.045,st,0,.45,0);return {g,grip:true};}
     if(id===MACE){const st=imat('maceS',0x6a6a74,'metal',.4,.7),hd=imat('maceH',0xcfcfd6,'metal',.28,.85),gr=GRIP();
       iBox(g,.04,.2,.04,gr,0,.02,0);iBox(g,.05,.03,.05,st,0,-.09,0);iBox(g,.034,.34,.034,st,0,.28,0); // 손잡이 · 끝마개 · 쇠 자루
       iMesh(g,IGEO.sph,hd,0,.52,0,0,0,0,.085,.1,.085); // 묵직한 쇠뭉치
@@ -2389,6 +2401,9 @@ function buildItemModel(id){
     case RAW_MEAT:case COOKED_MEAT:case ROTTEN:{const c=id===RAW_MEAT?0xd65c5c:id===COOKED_MEAT?0x8a5228:0x7a8a4a,m=imat('meat'+id,c,'skin',id===COOKED_MEAT?.5:.7);
       iMesh(g,IGEO.sph,m,0,0,0,0,0,.3,.095,.06,.07);if(id===ROTTEN)iMesh(g,IGEO.sph,imat('rot2',0x5a6a32,'skin',.8),.05,.02,.02,0,0,0,.04,.035,.04);
       else{iMesh(g,IGEO.cyl,imat('bone',0xf0ece0,'bone',.6),.1,.02,0,0,0,Math.PI/2+.3,.012,.08,.012);iMesh(g,IGEO.sph,imat('bone',0xf0ece0,'bone',.6),.14,.035,0,0,0,0,.02,.02,.02);}break;}
+    case MACE_HEAD:{const hd=imat('maceH',0xcfcfd6,'metal',.28,.85),sp=imat('spk',0xe0d4b0,'bone',.5);iMesh(g,IGEO.sph,hd,0,0,0,0,0,0,.08,.08,.08);
+      for(let i=0;i<8;i++){const a=i/8*Math.PI*2;iMesh(g,IGEO.cone,sp,Math.cos(a)*.1,0,Math.sin(a)*.1,0,0,0,.02,.06,.02).rotation.set(Math.PI/2,0,-a+Math.PI/2,'YXZ');}
+      iMesh(g,IGEO.cone,sp,0,.1,0,0,0,0,.02,.06,.02);iMesh(g,IGEO.cone,sp,0,-.1,0,Math.PI,0,0,.02,.06,.02);break;}
     case SCUTE:{const m=imat('scute',0x5aa860,'shell',.45,.1);iMesh(g,IGEO.cyl,m,0,0,0,Math.PI/2,0,0,.09,.02,.09).geometry=new THREE.CylinderGeometry(1,1,1,6);
       iMesh(g,new THREE.CylinderGeometry(1,1,1,6),imat('scuteD',0x2e6a36,'shell',.5),0,0,-.004,Math.PI/2,0,0,.095,.016,.095);break;}
     case NET:case NET_SQUID:{grip=true;const w=HANDLE(),rim=imat('netR',0x9a9aa6,'metal',.4,.5),cord=imat('netC',0xe8e4d6,'cloth',.9);
@@ -2447,7 +2462,7 @@ function setHeldModel(id){
 function iconPose(id,g){ // 아이콘에서 보이는 각도
   const it=IT[id],w=new THREE.Group();w.add(g);
   if(id<100){if(LADDER_OF[id]||DOOR_OF[id]||id===SAPLING)w.rotation.set(.12,.35,0);else w.rotation.set(.52,Math.PI/4,0);return w;} // 블록은 위·두 옆면이 보이게
-  if(it&&it.tool||[STICK,ARROW,FEATHER,FISHING_ROD,NET,NET_SQUID].includes(id)){g.rotation.y=.45;w.rotation.z=-Math.PI/4;return w;} // 손잡이 왼쪽 아래 → 머리 오른쪽 위
+  if(it&&it.tool||[STICK,ARROW,FEATHER,FISHING_ROD,NET,NET_SQUID,IRON_ROD].includes(id)){g.rotation.y=.45;w.rotation.z=-Math.PI/4;return w;} // 손잡이 왼쪽 아래 → 머리 오른쪽 위
   switch(id){
     case BOW:g.rotation.y=Math.PI/2;w.rotation.z=-Math.PI/4;break;
     case LASER:g.rotation.set(.25,-Math.PI/2+.35,0);break;
@@ -3891,11 +3906,16 @@ function sleep(t){
 }
 function attack(){
   const mace=heldTool()&&heldTool().type==='mace';
-  if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?1.1:.4; // 철퇴는 무거워서 천천히 휘두름
+  if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?2.5:.4; // 철퇴는 무거워서 2.5초마다 휘두름
   const t=heldTool();let dmg=t?t.dmg:HAND_DMG;
-  if(mace){ // 철퇴: 달리면서 머리를 내려치면 1.5배 (20 → 30)
-    if(isHead(mobTarget,mobHitY)&&player.sprinting){dmg*=1.5;headshotFx(mobTarget);SFX.smash();
-      spawnParticles(mobTarget.pos.x,mobTarget.pos.y+mobTarget.h,mobTarget.pos.z,new THREE.Color(0xd8d8e0),16,.5,5);}
+  if(mace){ // 철퇴: 높은 곳에서 떨어지며 칠수록 더 셈 (처음 3칸은 칸당 +4, 다음 5칸은 +2, 그 뒤로 +1) · 달리면서 머리를 치면 1.5배
+    const fall=player.onGround||player.inWater?0:Math.max(0,player.peakY-player.pos.y),M=mobTarget;
+    if(fall>1.2){dmg+=Math.min(fall,3)*4+Math.max(0,Math.min(fall,8)-3)*2+Math.max(0,fall-8);
+      player.peakY=player.pos.y;player.vel.y=Math.max(player.vel.y,3); // 내려찍으면 낙하 피해 없이 살짝 튕겨 오름
+      for(let i=0;i<3;i++)spawnParticles(M.pos.x,M.pos.y+.1,M.pos.z,new THREE.Color(0xb0a080),10,.6+i*.5,2+i);}
+    const head=isHead(M,mobHitY)&&player.sprinting;if(head){dmg*=1.5;headshotFx(M);}
+    if(head||fall>1.2){SFX.smash();spawnParticles(M.pos.x,M.pos.y+M.h,M.pos.z,new THREE.Color(0xd8d8e0),16,.5,5);
+      if(dmg>=40)toast(`💥 철퇴 내려찍기! <b>${Math.round(dmg)}</b>`);}
     else SFX.clank();}
   else if(isHead(mobTarget,mobHitY)){dmg*=HEAD_MULT;headshotFx(mobTarget);} // 머리를 맞히면 1.5배
   const dx=mobTarget.pos.x-player.pos.x,dz=mobTarget.pos.z-player.pos.z,l=Math.hypot(dx,dz)||1;
