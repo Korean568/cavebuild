@@ -244,7 +244,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.30 — 🧩 모드 시스템</h4>
+    <h4>🆕 v26.31 — 아주 먼 시야</h4>
+    • 청크를 훨씬 멀리까지 불러와요: PC <b>14청크(224칸)</b>, 모바일 6청크. 안개도 그만큼 멀어졌어요.
+    <h4>v26.30 — 🧩 모드 시스템</h4>
     • 타이틀의 <b>🧩 모드</b>에서 <b>.js 모드 파일</b>을 넣고 켜기 · 끄기 · 지우기를 할 수 있어요. 새로고침하면 적용돼요.<br>
     • 모드는 <b>CB</b> API로 <b>새 블록</b>(최대 8개, 색이나 그림 함수) · <b>새 아이템</b>(이모지 아이콘) · <b>조합법</b> · 우클릭 행동 · 매 순간 실행할 코드를 더할 수 있어요. <b>📄 예시 모드 받기</b>로 루비 모드를 받아 보세요!<br>
     • ⚠ 모드는 게임 안에서 코드를 실행하니 믿을 수 있는 모드만 넣으세요. (마인크래프트 자바 모드 .jar는 그대로 쓸 수 없어요)
@@ -1969,7 +1971,7 @@ const SFX={
 };
 
 // ---------- 월드 ----------
-const RD=MOBILE?3:5,DAY_LEN=600;
+const RD=MOBILE?6:14,DAY_LEN=600; // 시야 거리(청크): 멀리까지 보이게
 const chunks=new Map();let mods=new Map();
 const ckey=(cx,cz)=>cx+','+cz;
 const getChunk=(cx,cz)=>chunks.get(ckey(cx,cz));
@@ -2530,12 +2532,12 @@ function onWorkerMsg(e){
 }
 function workerChunks(pcx,pcz){
   for(const [dx,dz,d2] of OFFS){ // 가까운 청크부터 생성 요청 (동시에 최대 6개)
-    if(d2>(RD+1)*(RD+1)+1||wGenPend.size>=6)break;
+    if(d2>(RD+1)*(RD+1)+1||wGenPend.size>=12)break;
     const cx=pcx+dx,cz=pcz+dz,k=ckey(cx,cz);
     if(!getChunk(cx,cz)&&!wGenPend.has(k)){wGenPend.add(k);const L=world.carves&&world.carves[world.dim];wPost({t:'gen',key:k,cx,cz,cn:L?L.length:0},{t:'gen',cx,cz,cv:carvesNear(cx,cz)});}
   }
   for(const [dx,dz,d2] of OFFS){ // 메시 계산 요청 (동시에 최대 6개)
-    if(d2>RD*RD+1||wMeshN>=6)break;
+    if(d2>RD*RD+1||wMeshN>=12)break;
     const c=getChunk(pcx+dx,pcz+dz);
     if(c&&c.needsMesh&&!c.meshPending&&hasNeighbors(c.cx,c.cz)){
       const q=meshInputs(c);c.needsMesh=false;c.meshPending=true;wMeshN++;
