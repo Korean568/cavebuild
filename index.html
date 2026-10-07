@@ -92,6 +92,14 @@ body.mobile .help div.mobonly{display:block}
 #hurt{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(255,0,0,.55));opacity:0;transition:opacity .35s}
 #wtint{position:fixed;inset:0;pointer-events:none;background:rgba(20,60,170,.38);display:none}
 #fade{position:fixed;inset:0;pointer-events:none;background:#000;opacity:0;transition:opacity 1.2s;z-index:9}
+#flash{position:fixed;inset:0;pointer-events:none;background:#fff;opacity:0;z-index:9}
+#stellarHud{position:fixed;left:50%;bottom:118px;transform:translateX(-50%);display:none;background:rgba(10,10,20,.72);border:2px solid #c83030;padding:5px 12px;font-size:14px;text-align:center;z-index:6;text-shadow:1px 1px 0 #000;cursor:pointer}
+#stellarHud small{color:#ccc;font-size:11px}
+#stellarMenu h2{font-size:32px;margin:0 0 12px;text-shadow:3px 3px 0 #222}
+#stellarMenu .list{display:flex;flex-direction:column;gap:6px;max-width:460px;margin-bottom:10px}
+#stellarMenu .sk{background:rgba(20,20,30,.85);border:2px solid #555;padding:8px 12px;cursor:pointer;font-size:14px}
+#stellarMenu .sk.on{border-color:#e03030;background:rgba(80,10,10,.85)}
+#stellarMenu .sk small{color:#ccc}
 #bossbar{position:fixed;top:12px;left:50%;transform:translateX(-50%);width:min(420px,70vw);display:none;text-align:center;pointer-events:none;text-shadow:2px 2px 0 #000;font-weight:bold;color:#9ffcff}
 #bossbar .bb{height:10px;background:#1a2a30;border:2px solid #000;margin-top:4px}
 #bossbar i{display:block;height:100%;background:linear-gradient(#8ff,#1a9aa8)}
@@ -153,6 +161,9 @@ body.mobile #toasts{top:72px}
 <div id="wtint"></div>
 <div id="hurt"></div>
 <div id="fade"></div>
+<div id="flash"></div>
+<div id="stellarHud"></div>
+<div id="stellarMenu" class="overlay"><h2>🛰 스텔라 리모컨</h2><div class="list"></div><button class="btn" id="stMenuClose">닫기</button></div>
 <div id="debug"></div>
 <div id="compass"><span id="carrow">▲</span><span id="ctext"></span></div>
 <div id="toasts"></div>
@@ -208,6 +219,7 @@ body.mobile #toasts{top:72px}
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
     • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 엔딩드래곤도 떨어뜨림)를 흉갑 칸에 입고 떨어지는 중에 <b>점프</b>를 다시 누르면 활공해요. 아래를 보면 빨라지고 위를 보면 올라가요. 날면서 <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 쓰면 앞으로 쭉 날아가요!<br>
+    • <b>🛰 스텔라 리모컨</b>(스톤 4 + 블랙 다이아몬드 1 + 철 주괴 2) — The Shooting Star! <b>SS-01 레일건 · SS-03 궁니르 · SS-04 칠성</b>으로 세계를 바꿔요 (K/I/U 선택 · <span class="deskonly">우클릭</span><span class="mobonly">✋</span> 발동 · 웅크리고 쓰면 다음 기술 · H 메뉴 · J 연출 넘기기). <b>세계를 영원히 바꾸니</b> 저장 파일을 내보내 두세요!<br>
     • 깊은 곳의 <b>방사성 광석</b>(우라늄 · 라듐 · 플루토늄 · 폴로늄 · 프로트악티늄)은 가까이 있거나 들고 다니면 <b>방사능</b> 피해를 줘요. 천·가죽을 뺀 갑옷은 한 부위당 20%, <b>방독면·방독복</b>(가죽으로 만듦)은 25%씩 막아서 네 부위를 다 입으면 완전히 막혀요.<br>
     • 새 광석: <b>구리</b>·<b>금</b>(돌 곡괭이) · <b>티타늄</b>(철 곡괭이) · <b>다이아몬드</b>·<b>레드 다이아몬드</b>(수정 곡괭이) · <b>블랙 다이아몬드</b>(블레이즈스톤 곡괭이). 깊을수록 귀한 광석이 나오고, 캔 광석을 가마에서 녹이면 주괴·보석이 돼요. 주괴·보석으로 <b>도구</b>와 <b>갑옷</b>, 9개로 <b>구리 · 금 · 티타늄 · 다이아몬드 블록</b>을 만들 수 있어요.<br>
     • 새 세계를 만들 때 <b>서바이벌 · 크리에이티브 · 하드코어 · 세이프 · 관전</b> 중에 고를 수 있고, 일시정지의 <b>⚙ 서버 설정</b>에서 언제든 바꿀 수 있어요.<br>
@@ -219,7 +231,13 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.26 — 방사성 광석 · 방독면 · 가죽</h4>
+    <h4>🆕 v26.27 — The Shooting Star</h4>
+    • 인기 모드 <b>The Shooting Star</b>를 옮겨 왔어요! 뚜껑 아래 빨간 버튼이 달린 <b>🛰 스텔라 리모컨</b>(스톤 4 + 블랙 다이아몬드 1 + 철 주괴 2)으로 지구 궤도의 무기를 불러요.<br>
+    • <b>SS-01 레일건</b>: 빨간 레이저가 조준한 땅을 표시하고, 2.6초 뒤 거대한 광선이 반경 11칸을 하늘 끝부터 공허까지 통째로 지워요.<br>
+    • <b>SS-03 궁니르</b>: 소리 없이 거대한 바늘이 꽂혀 반경 17칸을 평평한 용암 분화구로 만들고, 부서지지 않는 금빛 바늘 기둥이 남아요.<br>
+    • <b>SS-04 칠성</b>: 북두칠성이 하늘에 떠오르고 별 일곱 개가 하나씩 떨어져 밝기만큼 분화구를 파요. 빛나는 <b>별의 핵 결정</b>과 별을 잇는 <b>불타는 도랑</b>이 남아요.<br>
+    • 범위 안의 모든 생물(보스 포함)이 사라지고, 서바이벌에선 플레이어도 쓰러져요 (크리에이티브는 대피). K/I/U 선택 · 우클릭 발동 · 웅크리고 우클릭 다음 기술 · H 메뉴 · J 연출 넘기기.
+    <h4>v26.26 — 방사성 광석 · 방독면 · 가죽</h4>
     • 깊은 곳에 <b>우라늄</b>(20 아래) · <b>라듐</b>(14 아래, 청록빛으로 빛남) · <b>폴로늄</b>(12 아래) · <b>플루토늄</b>(10 아래) · <b>프로트악티늄</b>(8 아래) 광석이 생겼어요. 가마에서 녹이면 덩어리·결정이 되고, 현자가 동전으로 사 가요.<br>
     • 방사성 광석 2칸 안에 있거나 방사성 아이템을 들고 다니면 <b>☢ 방사능</b> 피해를 받아요 (가이거 계수기 소리).<br>
     • 갑옷을 입으면 방사능을 막아요: 천·가죽 갑옷을 뺀 갑옷은 한 부위당 <b>20%</b>, <b>방독면·방독복</b>은 한 부위당 <b>25%</b> (네 부위를 다 입으면 완전히 막음).<br>
@@ -407,7 +425,7 @@ function makeNoise(seed){
   return {n2,n3};
 }
 
-const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71,gold_block:72,titanium_block:73,uranium_ore:74,radium_ore:75,plutonium_ore:76,polonium_ore:77,protactinium_ore:78};
+const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71,gold_block:72,titanium_block:73,uranium_ore:74,radium_ore:75,plutonium_ore:76,polonium_ore:77,protactinium_ore:78,gungnir:79,star_core:80};
 const ATW=8,ATH=16; // 타일 8×16칸 (512×1024)
 
 // ---------- 블록 & 아이템 정의 ----------
@@ -503,6 +521,10 @@ defB(RADIUM_ORE,'라듐 광석',TILE.radium_ore,{hard:4,tool:'pick',tier:2});
 defB(PLUTONIUM_ORE,'플루토늄 광석',TILE.plutonium_ore,{hard:5,tool:'pick',tier:3});
 defB(POLONIUM_ORE,'폴로늄 광석',TILE.polonium_ore,{hard:3.5,tool:'pick',tier:2});
 defB(PROTACTINIUM_ORE,'프로트악티늄 광석',TILE.protactinium_ore,{hard:4.5,tool:'pick',tier:3});
+// The Shooting Star: 궁니르가 남긴 바늘(부서지지 않음) · 칠성이 남긴 별의 핵 결정
+const GUNGNIR_NEEDLE=96,STAR_CORE=97,STELLAR_REMOTE=272;
+defB(GUNGNIR_NEEDLE,'궁니르의 바늘',TILE.gungnir,{hard:-1});
+defB(STAR_CORE,'별의 핵 결정',TILE.star_core,{hard:4,tool:'pick',tier:3});
 const OPAQUE=new Uint8Array(256),SOLID=new Uint8Array(256);
 BL.forEach((b,i)=>{if(b){OPAQUE[i]=b.opaque?1:0;SOLID[i]=b.solid?1:0;}});
 const LIQUID=new Uint8Array(256),EMIT=new Uint8Array(256),LIGHT_SRC=new Uint8Array(256),PORTAL=new Uint8Array(256);
@@ -514,6 +536,7 @@ const LADDER_OF=new Uint8Array(256),CONTAINER=new Uint8Array(256); // 사다리:
 LADDER_IDS.forEach(id=>LADDER_OF[id]=BL[id].face+1);BL.forEach((b,i)=>{if(b&&b.cont)CONTAINER[i]=b.cont;});
 for(const b of [P_HELL,P_CASTLE,P_CITY,P_END])PORTAL[b]=1;
 EMIT[RADIUM_ORE]=1; // 라듐은 스스로 희미하게 빛남
+EMIT[GUNGNIR_NEEDLE]=EMIT[STAR_CORE]=1;LIGHT_SRC[STAR_CORE]=1; // 별의 핵은 주변을 밝힘
 const RADIO=new Float32Array(512); // 방사능 세기 (초당 피해 기준)
 for(const [id,r] of [[URANIUM_ORE,.5],[RADIUM_ORE,.8],[PLUTONIUM_ORE,1],[POLONIUM_ORE,1.2],[PROTACTINIUM_ORE,.6],[URANIUM,.25],[RADIUM,.4],[PLUTONIUM,.5],[POLONIUM,.6],[PROTACTINIUM,.3]])RADIO[id]=r;
 const LIQ_KIND=new Uint8Array(256),LIQ_LV=new Uint8Array(256); // 액체 종류 (1 물, 2 용암) · 흐르는 단계 (0 = 흐르지 않는 샘)
@@ -1216,6 +1239,10 @@ T(TILE.uranium_ore,(u,v,x,y)=>oreC(u,v,x,y,92,[40,44,24],[206,236,60],[92,92,84]
 T(TILE.radium_ore,(u,v,x,y)=>oreC(u,v,x,y,93,[90,220,170],[220,255,236],undefined,[110,190,160],1.4)); // 라듐: 청록빛으로 빛남
 T(TILE.plutonium_ore,(u,v,x,y)=>oreC(u,v,x,y,94,[168,96,60],[255,180,120],undefined,[160,110,80],1.1)); // 플루토늄: 주황빛으로 달아오른 금속
 T(TILE.polonium_ore,(u,v,x,y)=>oreC(u,v,x,y,95,[120,130,170],[214,224,255],undefined,[120,130,180],1.5)); // 폴로늄: 푸른 은빛
+T(TILE.gungnir,(u,v,x,y)=>{const g=.5+.5*Math.sin((u*2+fbm(u,v,351,2,3))*Math.PI*6); // 궁니르의 바늘: 달아오른 금빛 합금 · 세로 홈
+  let c=mixc([170,110,30],[255,226,140],g*.7+.2*fbm(u,v,352,4,3));if(Math.abs(fr(u*4)-.5)<.04)c=mulc(c,.6);if(h2(x,y,353)>.99)c=[255,255,230];return c;});
+T(TILE.star_core,(u,v,x,y)=>{const p=cells(u,v,4,361),d=Math.hypot(u-.5,v-.5); // 별의 핵: 하얗게 빛나는 결정 · 가장자리는 푸른빛
+  let c=mixc([255,250,220],[120,170,255],Math.min(1,d*1.8));c=mulc(c,1+((p.c.x-u)+(p.c.y-v))*1.2);if(p.d2-p.d<.015)c=mixc(c,[255,255,255],.5);return c;});
 T(TILE.protactinium_ore,(u,v,x,y)=>oreC(u,v,x,y,96,[150,140,96],[236,226,170],undefined,[140,134,100],1)); // 프로트악티늄: 누런 은빛
 T(TILE.core,(u,v,x,y)=>{const p=cells(u,v,5,86);let c=mulc([58,56,64],(.7+.5*fbm(u,v,87,4,4))*grain(x,y,88,.2));return p.d2-p.d<.02?mulc(c,.5):c;});
 T(TILE.bench_top,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);
@@ -1425,6 +1452,7 @@ IT[IRON_ROD]={name:'철막대기',stack:16};
 IT[MACE_HEAD]={name:'메이스 헤드',stack:16};
 IT[ELYTRA]={name:'겉날개',stack:1,maxDur:432,armor:{part:1,pts:0,mat:1,tough:0,kb:0,elytra:true}}; // 흉갑 칸에 입고, 떨어지는 중에 점프로 활공
 IT[FIREWORK]={name:'폭죽',stack:64,use:true};
+IT[STELLAR_REMOTE]={name:'스텔라 리모컨',stack:1,use:true}; // The Shooting Star
 IT[URANIUM]={name:'우라늄 덩어리',stack:64};IT[RADIUM]={name:'라듐 결정',stack:64};IT[PLUTONIUM]={name:'플루토늄 덩어리',stack:64};
 IT[POLONIUM]={name:'폴로늄 결정',stack:64};IT[PROTACTINIUM]={name:'프로트악티늄 덩어리',stack:64};IT[LEATHER]={name:'가죽',stack:64};
 IT[COPPER_INGOT]={name:'구리 주괴',stack:64};IT[GOLD_INGOT]={name:'금 주괴',stack:64};IT[TITANIUM_INGOT]={name:'티타늄 주괴',stack:64};
@@ -1489,6 +1517,7 @@ RECIPES.push(
   {out:MACE,n:1,in:[[IRON_ROD,1],[MACE_HEAD,1]],st:'bench'},
   {out:ELYTRA,n:1,in:[[FEATHER,10],[SILK,4],[CRYSTAL,2]],st:'bench'},
   {out:FIREWORK,n:3,in:[[COAL,1],[STICK,1]],st:'bench'},
+  {out:STELLAR_REMOTE,n:1,in:[[ESTONE,4],[BLACK_DIAMOND,1],[IRON_INGOT,2]],st:'bench'},
   {out:LADDER,n:3,in:[[STICK,7]],st:'bench'},
   {out:CHEST,n:1,in:[[PLANKS,8]],st:'bench'},
   {out:DOOR,n:3,in:[[PLANKS,6]],st:'bench'},
@@ -1614,6 +1643,10 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{if(y<1||y>14)return null;const half=y<9?6:6-(y-9)*1.15;if(Math.abs(X-8)>half)return null;
       if(Math.abs(X-8)>half-1.1||y===1)return rim;if(Math.hypot(X-8,Y-7)<1.7)return boss;if(bz&&(x+y*2)%9===0)return '#c8503c';return x%4===0?a:b;});}
     case DARK_SWORD:return toolIcon('sword',{c:'#2a2238',d:'#120c1c',l:'#c060ff'});
+    case STELLAR_REMOTE:return pixelIcon((X,Y,x,y)=>{ // 검은 리모컨 · 열린 빨간 뚜껑 · 빨간 버튼 · 안테나
+      if(x===11&&y>=1&&y<=4)return '#2a2a30';if(x===11&&y===0)return '#ff3030';
+      if(x>=5&&x<=11&&y>=5&&y<=15){if(x===5||x===11||y===15)return '#16161a';if(Math.hypot(X-8,Y-9)<1.8)return Math.hypot(X-7.5,Y-8.5)<.8?'#ffb0a0':'#e01818';if(y>=12&&y<=13&&x>=7&&x<=9)return '#401010';return '#2c2c34';}
+      if(x>=4&&x<=12&&y>=2&&y<=4)return y===2?'#ff6a5a':'#c81e1e';return null;});
     case URANIUM:case RADIUM:case PLUTONIUM:case POLONIUM:case PROTACTINIUM:{const P={[URANIUM]:['#e8ff8a','#b8e040','#5a7020'],[RADIUM]:['#e0fff0','#7af0c0','#2a9a78'],[PLUTONIUM]:['#ffd0a8','#d88050','#7a4020'],[POLONIUM]:['#eef2ff','#a8b4e0','#5a6490'],[PROTACTINIUM]:['#f6eec4','#c8b878','#7a6c40']}[id];
       return pixelIcon((X,Y)=>{const d=Math.hypot((X-8)/1.15,Y-8.6);if(d>5.4)return null;if(Math.hypot(X-6.2,Y-6.6)<1.5)return P[0];return d>4.4?P[2]:P[1];});} // 방사성 덩어리
     case LEATHER:return pixelIcon((X,Y)=>{const dx=Math.abs(X-8),dy=Y-8;if(Math.abs(dy)>5.2||dx>6-(Math.abs(dy)>3.6?1.4:0))return null;return (Math.floor(X)+Math.floor(Y))%4===0?'#6a4024':Math.abs(dy)>4.2||dx>5?'#5a3418':'#8a5630';});
@@ -1889,6 +1922,97 @@ function disposeMesh(ch){
 }
 const hasNeighbors=(cx,cz)=>getChunk(cx+1,cz)&&getChunk(cx-1,cz)&&getChunk(cx,cz+1)&&getChunk(cx,cz-1);
 function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx,cz))buildMesh(c);else c.needsMesh=true;}
+// ---------- The Shooting Star: 스텔라 리모컨 ----------
+// 뚜껑 아래 빨간 버튼으로 지구 궤도의 무기를 부름. 세계를 영원히 바꾸니 조심!
+const STELLAR=[{code:'SS-01',name:'레일건',key:'K',desc:'우주에서 내려온 빨간 레이저가 조준한 땅을 표시하고, 거대한 광선이 그 둘레를 하늘 끝부터 공허까지 통째로 지워요.'},
+  {code:'SS-03',name:'궁니르',key:'I',desc:'목성의 가속 고리에서 쏜 거대한 바늘이 소리 없이 꽂혀, 주변을 평평한 용암 분화구로 만들어요. 바늘은 부서지지 않는 기둥으로 남아요.'},
+  {code:'SS-04',name:'칠성',key:'U',desc:'북두칠성이 하늘에 떠오르고 별 일곱 개가 하나씩 떨어져, 밝기만큼 분화구를 파고 빛나는 별의 핵과 불타는 도랑을 남겨요.'}];
+let stSkill=0,stCast=null,stCD=0,shakeT=0,shakeAmp=0;
+function stHud(){const el=$('stellarHud'),s=held();if(!s||s.id!==STELLAR_REMOTE||!running){el.style.display='none';return;}
+  const k=STELLAR[stSkill];el.style.display='block';el.innerHTML=`🛰 <b>${k.code} · ${k.name}</b>${stCast?' · 발동 중':stCD>0?` · 충전 ${Math.ceil(stCD)}초`:''}<br><small>${MOBILE?'✋ 발동 · 🧎+✋ 다음 · 여기를 눌러 메뉴':'우클릭 발동 · C+우클릭 다음 · K/I/U 선택 · H 메뉴 · J 연출 넘기기'}</small>`;}
+function stSelect(i){stSkill=i;SFX.click();toast(`🛰 <b>${STELLAR[i].code} · ${STELLAR[i].name}</b> 선택`);stHud();}
+function stMenu(open){const m=$('stellarMenu');if(open===undefined)open=!m.classList.contains('show');
+  if(open){m.querySelector('.list').innerHTML=STELLAR.map((k,i)=>`<div class="sk${i===stSkill?' on':''}" data-i="${i}"><b>[${k.key}] ${k.code} · ${k.name}</b><br><small>${k.desc}</small></div>`).join('');m.classList.add('show');if(document.pointerLockElement)document.exitPointerLock();}
+  else{m.classList.remove('show');lockPointer();}}
+function flash(o=1,t=600){const f=$('flash');f.style.transition='none';f.style.opacity=o;void f.offsetWidth;f.style.transition=`opacity ${t}ms ease-out`;f.style.opacity=0;}
+function shake(a,t){shakeAmp=Math.max(shakeAmp,a);shakeT=Math.max(shakeT,t);}
+function groundY(x,z){for(let y=CH-1;y>0;y--){const b=getBlock(x,y,z);if(b<0)return null;if(SOLID[b]&&!LIQUID[b])return y;}return 0;}
+function stAim(){const d=viewDir(),h=raycast(camera.position,d,60);if(h)return {x:h.x,y:h.y,z:h.z};
+  const x=Math.floor(camera.position.x+d.x*40),z=Math.floor(camera.position.z+d.z*40),y=groundY(x,z);return y===null?null:{x,y,z};}
+function stClearItems(cx,cz,r){for(let i=groundItems.length-1;i>=0;i--){const g=groundItems[i];if(Math.hypot(g.pos.x-cx,g.pos.z-cz)<r)removeGroundItem(i);}}
+function stStrike(cx,cz,r,r2,dmg2,cause){ // 반경 r 안의 모든 것을 없애고, r2 안은 피해와 함께 밀어냄
+  for(const m of [...mobs]){const d=Math.hypot(m.pos.x-cx,m.pos.z-cz);if(d<r){m.byPlayer=performance.now();m.hurt(1e6,0,0);}else if(d<r2){const k=1-(d-r)/(r2-r);m.hurt(Math.round(dmg2*k),(m.pos.x-cx)/d*2*k,(m.pos.z-cz)/d*2*k);}}
+  stClearItems(cx,cz,r);
+  const pd=Math.hypot(player.pos.x-cx,player.pos.z-cz);
+  if(pd<r&&!player.dead){if(isCreative()||isSpec()){const a=Math.atan2(player.pos.z-cz,player.pos.x-cx)||0;player.pos.set(cx+Math.cos(a)*(r+6),Math.min(CH+8,player.pos.y+20),cz+Math.sin(a)*(r+6));player.vel.set(0,0,0);if(isCreative())player.flying=true;toast('🛰 크리에이티브: 안전한 곳으로 대피했어요');}
+    else die(cause);}
+  else if(pd<r2&&!player.dead){const k=1-(pd-r)/(r2-r);hurtPlayer(Math.round(dmg2*k),(player.pos.x-cx)/pd*k,(player.pos.z-cz)/pd*k,cause);}
+}
+function stRemesh(batch){for(const k of batch){const [a,c]=k.split(',').map(Number);remeshAt(a,c);}}
+function useRemote(s){
+  if(rodLock)return;rodLock=true; // 누르고 있어도 한 번만
+  if(player.crouch||mobileCrouch){stSelect((stSkill+1)%STELLAR.length);return;}
+  if(stCast){toast('이미 발동 중이에요');return;}if(stCD>0){toast(`충전 중… ${Math.ceil(stCD)}초`);return;}
+  if(world.dim!=='over'&&stSkill!==0){toast('궁니르와 칠성은 프론티어 하늘 아래에서만 쓸 수 있어요');return;}
+  const P=stAim();if(!P){toast('조준할 땅이 없어요');return;}
+  if(!world.flags.stWarn){world.flags.stWarn=1;toast('⚠ 스텔라 리모컨은 <b>세계를 영원히 바꿔요</b>. 저장 파일을 내보내 두는 걸 추천해요');}
+  SFX.click();swing=1;const k=STELLAR[stSkill];toast(`🛰 <b>${k.code} · ${k.name}</b> 발동!`);
+  const o={type:k.code,t:0,x:P.x+.5,y:P.y+1,z:P.z+.5,objs:[],fired:false,step:0};
+  if(k.code==='SS-01'){o.r=11;o.laser=makeBeam(0xff2030,.12,.9);placeBeam(o.laser,new THREE.Vector3(o.x,o.y,o.z),new THREE.Vector3(o.x,o.y+260,o.z));
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(o.r,.12,6,64),new THREE.MeshBasicMaterial({color:0xff2030,transparent:true,opacity:.8,fog:false,depthWrite:false}));ring.rotation.x=Math.PI/2;ring.position.set(o.x,o.y+.1,o.z);scene.add(ring);o.objs.push(o.laser,ring);SFX.laserCharge();}
+  else if(k.code==='SS-03'){o.r=17;const nd=new THREE.Mesh(new THREE.CylinderGeometry(.7,.35,300,10),new THREE.MeshBasicMaterial({color:0xffd27a,fog:false}));nd.position.set(o.x,o.y+600,o.z);scene.add(nd);o.needle=nd;o.objs.push(nd);}
+  else{ // 북두칠성: 국자 모양 7개 별 (밝기 → 분화구 크기)
+    const D=[['두베',13,-3,1.8],['메라크',12,9,2.4],['페크다',0,10,2.4],['메그레즈',-3,0,3.3],['알리오스',-12,2,1.8],['미자르',-20,4,2.2],['알카이드',-30,10,1.9]];
+    const yaw=player.yaw,cs=Math.cos(yaw),sn=Math.sin(yaw),mx=-7.1,mz=4.6;
+    o.stars=D.map(([n,a,b,mag])=>{const ax=a-mx,bz=b-mz,x=Math.floor(o.x+ax*cs+bz*sn),z=Math.floor(o.z-ax*sn+bz*cs);return {n,x,z,r:Math.max(3,3+(3.5-mag)*2),fallen:false};});
+    const pts=[];for(const st of o.stars){const sp=new THREE.Mesh(IGEO.sph,new THREE.MeshBasicMaterial({color:0xfffbe0,fog:false,transparent:true,opacity:0}));sp.scale.setScalar(1.6);sp.position.set(st.x+.5,CH+40,st.z+.5);scene.add(sp);st.sky=sp;o.objs.push(sp);pts.push(sp.position.clone());}
+    const order=[6,5,4,3,2,1,0,3];const lg=new THREE.BufferGeometry().setFromPoints(order.map(i=>pts[i]));o.lines=new THREE.Line(lg,new THREE.LineBasicMaterial({color:0xbfd8ff,transparent:true,opacity:0,fog:false}));scene.add(o.lines);o.objs.push(o.lines);SFX.portal();}
+  stCast=o;stHud();
+}
+function stEnd(o,cd){for(const m of o.objs){scene.remove(m);if(m.material&&m.material.dispose)m.material.dispose();}stCast=null;stCD=cd;stHud();}
+function stCrater(cx,cy,cz,r,batch,core){ // 둥근 분화구 (아래로 파인 반구) · 바닥에 별의 핵
+  const R=Math.ceil(r);for(let dz=-R;dz<=R;dz++)for(let dx=-R;dx<=R;dx++)for(let dy=-R;dy<=R+3;dy++){const d=Math.hypot(dx,dz,Math.max(0,dy)*.5+Math.min(0,dy));if(d>r)continue;
+    const y=cy+dy;if(y<1||y>=CH)continue;const b=getBlock(cx+dx,y,cz+dz);if(b>0&&b!==GUNGNIR_NEEDLE&&b!==CORE)setBlock(cx+dx,y,cz+dz,(dy<=-R+1&&Math.random()<.35)?HELLSTONE:AIR,batch);}
+  if(core){const by=Math.max(1,cy-R+1);setBlock(cx,by,cz,STAR_CORE,batch);}}
+function updateStellar(dt){
+  stCD=Math.max(0,stCD-dt);if(shakeT>0){shakeT-=dt;if(shakeT<=0)shakeAmp=0;}
+  const o=stCast;if(!o){stHud();return;}o.t+=dt;const skip=o.skip;
+  if(o.type==='SS-01'){ // 레일건: 2.6초 조준 → 발사
+    if(!o.fired){o.objs[1].material.opacity=.5+.4*Math.sin(o.t*20);if(o.t>2.6||skip){o.fired=true;o.ft=o.t;
+      const beam=new THREE.Mesh(new THREE.CylinderGeometry(o.r,o.r,400,48,1,true),new THREE.MeshBasicMaterial({color:0xd8f6ff,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,depthWrite:false,fog:false}));
+      beam.position.set(o.x,o.y+100,o.z);scene.add(beam);o.beam=beam;o.objs.push(beam);flash(.9,900);shake(.5,1.4);SFX.laser();SFX.boom();
+      const batch=new Set(),bx=Math.floor(o.x),bz=Math.floor(o.z),R=Math.ceil(o.r); // 하늘 끝부터 공허까지 통째로
+      for(let dz=-R;dz<=R;dz++)for(let dx=-R;dx<=R;dx++){if(dx*dx+dz*dz>o.r*o.r)continue;for(let y=CH-1;y>=0;y--)if(getBlock(bx+dx,y,bz+dz)>0)setBlock(bx+dx,y,bz+dz,AIR,batch);}
+      stRemesh(batch);stStrike(o.x,o.z,o.r,o.r+8,12,'레일건 광선에 휩쓸렸습니다');}}
+    else{const k=(o.t-o.ft)/1.8;o.beam.material.opacity=Math.max(0,.95*(1-k));o.beam.scale.set(1+k*.2,1,1+k*.2);if(Math.random()<dt*20)spawnParticles(o.x+(Math.random()-.5)*o.r*2,o.y,o.z+(Math.random()-.5)*o.r*2,new THREE.Color(0xbfefff),3,.5,6);if(k>=1)stEnd(o,8);}}
+  else if(o.type==='SS-03'){ // 궁니르: 소리 없이 바늘이 꽂힘 → 충격파 · 용암 분화구 · 바늘 기둥
+    if(!o.fired){const k=Math.min(1,o.t/.7);o.needle.position.y=o.y+600-k*450;if(k>=1||skip){o.fired=true;o.ft=o.t;
+      const ring=new THREE.Mesh(new THREE.TorusGeometry(1,.5,8,64),new THREE.MeshBasicMaterial({color:0xffb050,transparent:true,opacity:.9,fog:false,depthWrite:false}));ring.rotation.x=Math.PI/2;ring.position.set(o.x,o.y+.5,o.z);scene.add(ring);o.ring=ring;o.objs.push(ring);
+      flash(.8,1100);shake(.7,1.8);SFX.boom();tone(50,25,1.6,.4,'sine');
+      const batch=new Set(),bx=Math.floor(o.x),bz=Math.floor(o.z),H=Math.floor(o.y)-1,R=Math.ceil(o.r);
+      for(let dz=-R;dz<=R;dz++)for(let dx=-R;dx<=R;dx++){const d=Math.hypot(dx,dz);if(d>o.r)continue;const X=bx+dx,Z=bz+dz,top=H-Math.round(3*(1-d/o.r)); // 가운데가 살짝 파인 평평한 분화구
+        for(let y=CH-1;y>top;y--)if(getBlock(X,y,Z)>0)setBlock(X,y,Z,AIR,batch);
+        for(let y=Math.max(1,top-2);y<=top;y++){const q=Math.random();setBlock(X,y,Z,y<top?HELLSTONE:q<.12?LAVA:q<.5?OBSIDIAN:HELLSTONE,batch);}}
+      for(let y=0;y<CH;y++)setBlock(bx,y,bz,GUNGNIR_NEEDLE,batch); // 바닥부터 하늘 끝까지 남는 바늘
+      stRemesh(batch);stStrike(o.x,o.z,o.r,o.r*2,10,'궁니르의 충격파에 휩쓸렸습니다');}}
+    else{const k=(o.t-o.ft)/1.4;o.ring.scale.setScalar(1+k*o.r*2.2);o.ring.material.opacity=Math.max(0,.9*(1-k));o.needle.material.opacity=1;if(k>=1)stEnd(o,10);}}
+  else{ // 칠성: 1.6초 동안 별자리가 떠오름 → 0.8초마다 별 하나씩 떨어짐 → 도랑
+    const fadeIn=Math.min(1,o.t/1.4);o.lines.material.opacity=.7*fadeIn*(o.trench?Math.max(0,1-(o.t-o.endT)):1);for(const st of o.stars)if(!st.fallen)st.sky.material.opacity=fadeIn;
+    if(skip&&!o.skipped){o.skipped=true;o.t=Math.max(o.t,1.6+o.step*.8);}
+    while(o.step<7&&o.t>1.6+o.step*.8){const st=o.stars[o.step];st.fallen=true;st.fallT=0;st.ball=st.sky;st.ball.material.color.setHex(0xfff2b0);st.gy=groundY(st.x,st.z);if(st.gy===null)st.gy=SEA;o.step++;SFX.fireball();}
+    for(const st of o.stars){if(!st.fallen||st.done)continue;st.fallT+=dt;const k=Math.min(1,st.fallT/.55),y=CH+40-(CH+40-st.gy)*k*k;st.ball.position.y=y;
+      if(Math.random()<.9)spawnParticles(st.x+.5,y+1,st.z+.5,new THREE.Color(0xffe0a0),2,.4,1);
+      if(k>=1){st.done=true;st.ball.visible=false;const batch=new Set();stCrater(st.x,st.gy,st.z,st.r,batch,true);stRemesh(batch);flash(.45,500);shake(.35,.6);SFX.boom();
+        for(let i=0;i<3;i++)spawnParticles(st.x+.5,st.gy+1,st.z+.5,new THREE.Color(i?0xffc070:0xffffff),14,st.r*.5,6);stStrike(st.x+.5,st.z+.5,st.r,st.r*2,8,'떨어지는 별에 맞았습니다');}}
+    if(o.step>=7&&o.stars.every(st=>st.done)&&!o.trench){o.trench=true;o.endT=o.t; // 별과 별 사이를 잇는 불타는 도랑
+      const order=[6,5,4,3,2,1,0,3],batch=new Set();
+      for(let i=0;i+1<order.length;i++){const a=o.stars[order[i]],b=o.stars[order[i+1]],L=Math.ceil(Math.hypot(b.x-a.x,b.z-a.z));
+        for(let k=0;k<=L;k++){const x=Math.round(a.x+(b.x-a.x)*k/L),z=Math.round(a.z+(b.z-a.z)*k/L),g=groundY(x,z);if(g===null||g<2)continue;const bb=getBlock(x,g,z);if(bb===STAR_CORE||bb===GUNGNIR_NEEDLE)continue;
+          setBlock(x,g,z,AIR,batch);if(getBlock(x,g-1,z)!==STAR_CORE)setBlock(x,g-1,z,LAVA,batch);}}
+      stRemesh(batch);SFX.crackle();}
+    if(o.trench&&o.t-o.endT>1.2)stEnd(o,12);}
+  stHud();
+}
 // ---------- 폭죽 ----------
 // 로켓이 꼬리 불꽃을 남기며 솟아오르다 1~1.5초 뒤 하늘에서 두 가지 색으로 터짐
 const rockets=[],sparks=[],sparkGeo=new THREE.BoxGeometry(.1,.1,.1),sparkMats={};
@@ -2605,6 +2729,10 @@ function buildItemModel(id){
     case CRYSTAL:iMesh(g,IGEO.octa,imat('cry',0x6ff0e6,null,.12,.2,0x30c8c0,.45),0,0,0,0,.4,0,.06,.1,.06);break;
     case ESTONE:iMesh(g,IGEO.octa,imat('est',0xffe060,null,.2,.1,0xffb020,.8),0,0,0,0,.4,0,.06,.09,.06);for(let i=0;i<3;i++)iBox(g,.008,.05,.008,imat('estS',0x9ad8ff,null,.3,0,0x60c0ff,1),Math.cos(i*2.1)*.06,.02,Math.sin(i*2.1)*.06,0,0,i);break;
     case HS_SCRAP:iMesh(g,IGEO.ico,imat('hss',0x54404a,'rough',.6,.4,0xe0603c,.15),0,0,0,.4,.2,0,.07,.06,.065);break;
+    case STELLAR_REMOTE:{const bd=imat('srB',0x22222a,'rough',.5,.2),cv=imat('srC',0xd82020,null,.25,0,0x400000,.3,.7),bt=imat('srBt',0xff2a2a,null,.3,0,0xff1010,.9),an=imat('srA',0x18181c,'rough',.6);
+      iBox(g,.09,.17,.035,bd,0,0,0);iBox(g,.07,.04,.004,imat('srS',0x401010,null,.3,0,0x801818,.6),0,-.04,.019); // 본체 · 작은 화면
+      iMesh(g,IGEO.cyl,bt,0,.03,.022,Math.PI/2,0,0,.02,.012,.02);iBox(g,.085,.06,.006,cv,0,.1,.05,-1.1,0,0); // 빨간 버튼 · 젖힌 뚜껑
+      iBox(g,.008,.12,.008,an,.03,.14,0);iMesh(g,IGEO.sph,bt,.03,.205,0,0,0,0,.009,.009,.009);break;} // 안테나 · 끝 불빛
     case URANIUM:case RADIUM:case PLUTONIUM:case POLONIUM:case PROTACTINIUM:{const c={[URANIUM]:0xb8e040,[RADIUM]:0x7af0c0,[PLUTONIUM]:0xd88050,[POLONIUM]:0xa8b4e0,[PROTACTINIUM]:0xc8b878}[id],m=imat('rad'+id,c,'rough',.4,.3,c,id===RADIUM?.8:.3);
       iMesh(g,IGEO.dode,m,0,0,0,.3,.5,0,.07,.065,.07);break;}
     case LEATHER:{const m=imat('lea',0x8a5630,'skin',.8);iBox(g,.2,.012,.16,m,0,0,0,.08,0,.05);iBox(g,.14,.012,.1,m,.02,.01,.02,-.1,.4,0);break;}
@@ -3319,7 +3447,7 @@ function enterDim(dim,pos,fromLoad){
   for(const c of chunks.values())disposeMesh(c);chunks.clear();resetWorkerJobs();
   syncGolems();VSTATE={};for(const b of [...boats])removeBoat(b,false);player.boat=null;for(const m of [...mobs])m.remove();for(const p of projs)scene.remove(p.mesh);projs.length=0;clearBeams();
   for(const p of parts)scene.remove(p);parts.length=0;clearGroundItems();
-  world.dim=dim;LQ[1].clear();LQ[2].clear();removeBobber();clearFireworks();player.gliding=false;if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
+  world.dim=dim;LQ[1].clear();LQ[2].clear();removeBobber();clearFireworks();if(stCast)stEnd(stCast,0);player.gliding=false;if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
   caveB=dim==='over'?.38:DIM[dim].caveB;
   player.pos.set(pos.x,pos.y,pos.z);player.vel.set(0,0,0);if(pos.yaw!==undefined)player.yaw=pos.yaw;
   loadNear(60);
@@ -3670,7 +3798,7 @@ const PROFS=[
   {name:'대장장이',robe:0xa0522d,trades:[{give:[[COPPER_INGOT,8]],get:[COIN,1]},{give:[[GOLD_INGOT,2]],get:[COIN,1]},{give:[[TITANIUM_INGOT,2]],get:[COIN,1]},{give:[[COAL,10]],get:[COIN,1]},{give:[[IRON_INGOT,4]],get:[COIN,1]},{give:[[COIN,3]],get:[toolId(2,0),1]},{give:[[COIN,4]],get:[toolId(2,3),1]},{give:[[COIN,6]],get:[armorId(1,1),1]},{give:[[COIN,3]],get:[SHIELD,1]}]},
   {name:'사냥꾼',robe:0x2a5a9a,trades:[{give:[[FLUFF,6]],get:[COIN,1]},{give:[[FEATHER,6]],get:[COIN,1]},{give:[[SPIKE,4]],get:[COIN,1]},{give:[[COIN,3]],get:[BOW,1]},{give:[[COIN,2]],get:[FISHING_ROD,1]},{give:[[COIN,1]],get:[ARROW,8]}]},
   {name:'광부',robe:0x9a8a3a,trades:[{give:[[COBBLE,32]],get:[COIN,1]},{give:[[COIN,1]],get:[COAL,8]},{give:[[COIN,1]],get:[LAMP,4]},{give:[[COIN,2]],get:[BUCKET,1]},{give:[[COIN,4]],get:[ESTONE,1]},{give:[[COIN,6]],get:[CRYSTAL,1]}]},
-  {name:'현자',robe:0x7a4a9a,trades:[{give:[[URANIUM,2]],get:[COIN,3]},{give:[[RADIUM,1]],get:[COIN,3]},{give:[[PLUTONIUM,1]],get:[COIN,5]},{give:[[POLONIUM,1]],get:[COIN,5]},{give:[[PROTACTINIUM,1]],get:[COIN,4]},{give:[[DIAMOND,1]],get:[COIN,4]},{give:[[RED_DIAMOND,1]],get:[COIN,8]},{give:[[BLACK_DIAMOND,1]],get:[COIN,12]},{give:[[INK_SAC,3]],get:[COIN,1]},{give:[[CRYSTAL,1]],get:[COIN,3]},{give:[[COIN,5]],get:[HELL_COMPASS,1]},{give:[[COIN,7]],get:[END_COMPASS,1]},{give:[[COIN,7]],get:[CITY_COMPASS,1]}]},
+  {name:'현자',robe:0x7a4a9a,trades:[{give:[[STAR_CORE,1]],get:[COIN,10]},{give:[[URANIUM,2]],get:[COIN,3]},{give:[[RADIUM,1]],get:[COIN,3]},{give:[[PLUTONIUM,1]],get:[COIN,5]},{give:[[POLONIUM,1]],get:[COIN,5]},{give:[[PROTACTINIUM,1]],get:[COIN,4]},{give:[[DIAMOND,1]],get:[COIN,4]},{give:[[RED_DIAMOND,1]],get:[COIN,8]},{give:[[BLACK_DIAMOND,1]],get:[COIN,12]},{give:[[INK_SAC,3]],get:[COIN,1]},{give:[[CRYSTAL,1]],get:[COIN,3]},{give:[[COIN,5]],get:[HELL_COMPASS,1]},{give:[[COIN,7]],get:[END_COMPASS,1]},{give:[[COIN,7]],get:[CITY_COMPASS,1]}]},
 ];
 document.getElementById('recSearch').addEventListener('input',()=>{if(invOpen)renderInv();});
 let tradeWith=null,ZV_PROF=null,VPROF=null; // VPROF: 다음에 태어날 주민의 직업 (대장장이 집 = 대장장이)
@@ -4171,6 +4299,7 @@ function useItem(){
   }
   if(s&&s.id===BOW){shootBow();return;}
   if(s&&s.id===FISHING_ROD){useRod();return;}
+  if(s&&s.id===STELLAR_REMOTE){useRemote(s);return;}
   if(s&&s.id===FIREWORK){ // 날고 있으면 앞으로 쭉 밀어 줌 · 아니면 바라본 곳에서 쏘아 올림
     if(player.gliding){player.boostT=1.3;SFX.launch();}
     else if(target){launchFirework(target.x+.5+target.n[0]*.6,target.y+.5+target.n[1]*.6,target.z+.5+target.n[2]*.6);}
@@ -4438,11 +4567,15 @@ addEventListener('keydown',e=>{
   else if(e.code==='KeyQ'){e.preventDefault();if(locked)dropHeld(e.ctrlKey||e.metaKey);}
   else if(/^Digit[1-9]$/.test(e.code)&&!invOpen)selectSlot(+e.code[5]-1);
   else if(e.code==='KeyP')cycleView();
+  else if(held()&&held().id===STELLAR_REMOTE&&!invOpen){if(e.code==='KeyK')stSelect(0);else if(e.code==='KeyI')stSelect(1);else if(e.code==='KeyU')stSelect(2);else if(e.code==='KeyH')stMenu();else if(e.code==='KeyJ'&&stCast)stCast.skip=true;}
   else if(e.code==='F3'||e.code==='Backquote'){debugOn=!debugOn;$('debug').style.display=debugOn?'block':'none';}
 });
 addEventListener('keyup',e=>{keys[e.code]=false;});
 $('btnHelp').addEventListener('click',()=>{$('title').classList.remove('updopen');$('btnUpd').textContent='📜 업데이트 목록';const o=$('title').classList.toggle('helpopen');$('btnHelp').textContent=o?'✕ 도움말 닫기':'❓ 도움말 보기';
   if(o)setTimeout(()=>$('title').querySelector('.help').scrollIntoView({behavior:'smooth',block:'start'}),30);});
+$('stellarMenu').addEventListener('click',e=>{const k=e.target.closest('.sk');if(k){stSelect(+k.dataset.i);stMenu(false);}});
+$('stMenuClose').onclick=()=>stMenu(false);
+$('stellarHud').addEventListener('click',()=>stMenu(true));$('stellarHud').addEventListener('touchstart',e=>{e.preventDefault();stMenu(true);},{passive:false});
 $('btnUpd').addEventListener('click',()=>{$('title').classList.remove('helpopen');$('btnHelp').textContent='❓ 도움말 보기';const o=$('title').classList.toggle('updopen');$('btnUpd').textContent=o?'✕ 업데이트 목록 닫기':'📜 업데이트 목록';
   if(o)setTimeout(()=>$('title').querySelector('.upd').scrollIntoView({behavior:'smooth',block:'start'}),30);});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;mouseL=mouseR=false;});
@@ -4735,9 +4868,10 @@ function frame(now){
   }
   updateSky(active?dt:0);
   if(active)updateSurvival(dt);
-  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);updateFireworks(dt);
+  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);updateFireworks(dt);if(active||stCast)updateStellar(dt);else stHud();
   updateChunks();
   if(debugOn){const p=player.pos;$('debug').textContent=`CAVEBUILD  ${fps} fps\nXYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}\n차원: ${DIM[world.dim].name}  청크: ${chunks.size}  몹: ${mobs.length}\n시간: ${(world.time*24+6)%24|0}시  시드: ${seed}\n바라보는 블록: ${target?BL[target.id].name:'-'}`;}
+  if(shakeT>0&&!player.dead){const a=shakeAmp*Math.min(1,shakeT);camera.position.x+=(Math.random()-.5)*a;camera.position.y+=(Math.random()-.5)*a;camera.position.z+=(Math.random()-.5)*a;camera.updateMatrixWorld();} // 화면 흔들림
   const tp=thirdPersonCam();
   renderer.render(scene,camera);
   if(tp){camera.position.copy(camSave.pos);camera.quaternion.copy(camSave.q);camera.updateMatrixWorld();} // 3인칭: 손은 그리지 않음
