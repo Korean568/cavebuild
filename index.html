@@ -100,6 +100,9 @@ body.mobile .help div.mobonly{display:block}
 #stellarMenu .sk{background:rgba(20,20,30,.85);border:2px solid #555;padding:8px 12px;cursor:pointer;font-size:14px}
 #stellarMenu .sk.on{border-color:#e03030;background:rgba(80,10,10,.85)}
 #stellarMenu .sk small{color:#ccc}
+#modPanel h2{font-size:32px;margin:0 0 8px;text-shadow:3px 3px 0 #222}#modPanel .mwarn{max-width:480px;font-size:13px;background:rgba(90,40,10,.8);border:2px solid #c87a30;padding:6px 10px;margin-bottom:8px}
+#modList{display:flex;flex-direction:column;gap:5px;width:min(480px,92vw);margin-bottom:8px}#modList .mi{display:flex;align-items:center;gap:8px;background:rgba(20,20,30,.85);border:2px solid #555;padding:6px 10px;font-size:14px}
+#modList .mi b{flex:1}#modList .mi.off{opacity:.55}#modList .mi small{color:#f88}#modList button{font:inherit;font-size:12px;padding:3px 8px}#modPanel .mrow{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 #cineFade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:8}
 #cineBars{position:fixed;inset:0;pointer-events:none;z-index:9;display:none}#cineBars i{position:absolute;left:0;right:0;height:10vh;background:#000}#cineBars i:first-child{top:0}#cineBars i:last-child{bottom:0}
 #cineCap{position:fixed;left:0;right:0;bottom:3.2vh;text-align:center;z-index:10;font-size:17px;letter-spacing:3px;color:#e8e8f2;text-shadow:0 0 8px #000;display:none;pointer-events:none}
@@ -195,6 +198,7 @@ body.mobile #toasts{top:72px}
   <button class="btn" id="btnImport">저장 파일 불러오기</button><input type="file" id="fileImport" accept=".json,application/json" hidden>
   <button class="btn" id="btnHelp">❓ 도움말 보기</button>
   <button class="btn" id="btnUpd">📜 업데이트 목록</button>
+  <button class="btn" id="btnMods">🧩 모드</button>
   <div class="help">
     <div class="deskonly"><h4>🖥 PC 조작법</h4>
       <span class="k">이동</span><b>WASD</b> 이동 · <b>스페이스</b> 점프/수영 · <b>Shift</b> 달리기 (물속에선 <b>수영</b>) · <b>C</b> 웅크리기 (모서리에서 안 떨어짐)<br>
@@ -240,7 +244,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.29 — ☢ 핵폭탄</h4>
+    <h4>🆕 v26.30 — 🧩 모드 시스템</h4>
+    • 타이틀의 <b>🧩 모드</b>에서 <b>.js 모드 파일</b>을 넣고 켜기 · 끄기 · 지우기를 할 수 있어요. 새로고침하면 적용돼요.<br>
+    • 모드는 <b>CB</b> API로 <b>새 블록</b>(최대 8개, 색이나 그림 함수) · <b>새 아이템</b>(이모지 아이콘) · <b>조합법</b> · 우클릭 행동 · 매 순간 실행할 코드를 더할 수 있어요. <b>📄 예시 모드 받기</b>로 루비 모드를 받아 보세요!<br>
+    • ⚠ 모드는 게임 안에서 코드를 실행하니 믿을 수 있는 모드만 넣으세요. (마인크래프트 자바 모드 .jar는 그대로 쓸 수 없어요)
+    <h4>v26.29 — ☢ 핵폭탄</h4>
     • 작업대에서 <b>강철</b>(철 주괴 + 돌) → <b>강철합금</b>(강철 + 돌) → <b>강철초고합금 블록</b>(강철 + 강철합금 + 철 주괴) → <b>핵폭탄</b>(강철초고합금 블록 4)을 만들어요.<br>
     • 놓은 핵폭탄을 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>하면 <b>10초 뒤 폭발</b>! 반경 40칸이 공 모양으로 사라지고 80칸까지 충격파가 퍼지며 버섯구름이 피어올라요. 구덩이 벽엔 방사성 우라늄이 남아요. 폭발 전에 부수면 꺼져요.
     <h4>v26.28 — The Shooting Star: 원작 규모 · 우주 연출</h4>
@@ -388,6 +396,13 @@ body.mobile #toasts{top:72px}
       <div id="recipes"></div>
     </div>
   </div>
+</div>
+<div id="modPanel" class="overlay"><h2>🧩 모드</h2>
+  <div class="mwarn">⚠ 모드는 이 게임 안에서 마음대로 코드를 실행해요. <b>믿을 수 있는 사람이 만든 모드만</b> 넣으세요. 바꾼 뒤에는 새로고침해야 적용돼요.</div>
+  <div id="modList"></div>
+  <div class="mrow"><button class="btn" id="btnModAdd">➕ 모드 파일(.js) 추가</button><button class="btn" id="btnModEx">📄 예시 모드 받기</button></div>
+  <div class="mrow"><button class="btn" id="btnModReload">🔄 새로고침해서 적용</button><button class="btn" id="btnModClose">닫기</button></div>
+  <input type="file" id="modFile" accept=".js,text/javascript" multiple hidden>
 </div>
 <div id="ending" class="overlay"><div class="endwrap"><div id="endscroll"></div></div><button class="btn" id="btnEndCont">계속하기</button></div>
 <div id="touch"></div>
@@ -2486,7 +2501,7 @@ OFFS.sort((a,b)=>a[2]-b[2]);
 let WK=null,wEpoch=0,wId=0,wMeshN=0;const wJobs=new Map(),wGenPend=new Set();
 function initWorker(){
   try{
-    const src=$('wcore').textContent+`
+    const src=$('wcore').textContent+MOD_WSRC+`
 const world={dim:'over',homeVillage:null};let hvKey='';
 onmessage=e=>{const j=e.data;
   if(j.seed!==seed||!N1){seed=j.seed;initNoise();SITES=null;VCACHE.clear();}
@@ -4616,6 +4631,7 @@ function useItem(){
   }
   if(s&&s.id===BOW){shootBow();return;}
   if(s&&s.id===FISHING_ROD){useRod();return;}
+  if(s&&MOD_USE[s.id]){try{MOD_USE[s.id](s,target);}catch(e){modErr('사용',e);}rodLock=true;return;} // 모드 아이템
   if(s&&s.id===STELLAR_REMOTE){useRemote(s);return;}
   if(s&&s.id===FIREWORK){ // 날고 있으면 앞으로 쭉 밀어 줌 · 아니면 바라본 곳에서 쏘아 올림
     if(player.gliding){player.boostT=1.3;SFX.launch();}
@@ -5167,6 +5183,66 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)sa
 
 addEventListener('error',e=>{if(!window.__errShown){window.__errShown=true;try{toast('문제가 생겼습니다: '+(e.message||'알 수 없는 오류'));}catch(_){}}});
 addEventListener('unhandledrejection',()=>{});
+// ---------- 🧩 모드 시스템 ----------
+// .js 모드 파일을 넣으면 게임이 켜질 때 CB(케이브빌드) API로 블록 · 아이템 · 조합법 · 행동을 더함. 모드 목록은 이 브라우저에 저장
+const MOD_KEY='cavebuild-mods',MOD_ID_KEY='cavebuild-modids',MOD_TICK=[],MOD_USE={};let MOD_WSRC='',modTile=85;
+const MOD_FREE_BLOCKS=[189,216,217,218,219,248,249,255];
+function modLoad(){try{return JSON.parse(localStorage.getItem(MOD_KEY)||'[]');}catch(e){return [];}}
+function modSave(L){try{localStorage.setItem(MOD_KEY,JSON.stringify(L));}catch(e){toast('모드를 저장할 공간이 부족해요');}}
+function modErr(where,e){console.warn('모드 오류',where,e);toast(`🧩 모드 오류(${where}): ${String(e&&e.message||e).slice(0,80)}`);}
+function modIds(){try{return JSON.parse(localStorage.getItem(MOD_ID_KEY)||'{}');}catch(e){return {};}}
+function modAlloc(key,isBlock){const M=modIds();if(M[key]!==undefined&&(isBlock?!BL[M[key]]&&!IT[M[key]]:!IT[M[key]]&&!BL[M[key]]))return M[key]; // 같은 key는 늘 같은 번호 (저장한 세계가 안 꼬이게)
+  const used=new Set(Object.values(M));let id;
+  if(isBlock){id=MOD_FREE_BLOCKS.find(i=>!BL[i]&&!IT[i]&&!used.has(i));if(id===undefined)throw new Error('모드 블록 칸이 다 찼어요 (최대 8개)');}
+  else{id=400;while(IT[id]||used.has(id))id++;}
+  M[key]=id;try{localStorage.setItem(MOD_ID_KEY,JSON.stringify(M));}catch(e){}return id;}
+function modIconCanvas(o){const c=makeCanvas(48,48),g=c.getContext('2d');
+  if(o.icon&&o.icon.length<=4){g.font='36px serif';g.textAlign='center';g.textBaseline='middle';g.fillText(o.icon,24,27);}
+  else{const col=o.color||[200,200,200];g.fillStyle=`rgb(${col})`;g.fillRect(10,10,28,28);g.fillStyle='rgba(255,255,255,.35)';g.fillRect(10,10,28,6);g.strokeStyle='#222';g.lineWidth=3;g.strokeRect(10,10,28,28);}return c;}
+let modCur=null;
+const CB={version:'v26.30',
+  id:name=>{for(let i=1;i<BL.length;i++)if(BL[i]&&BL[i].name===name)return i;for(let i=100;i<IT.length;i++)if(IT[i]&&IT[i].name===name)return i;return null;}, // 한국어 이름 → 번호
+  ids:{STONE,COBBLE,DIRT,GRASS,SAND,LOG,PLANKS,GLASS,BRICK,STICK,COAL,IRON_INGOT,CRYSTAL,OBSIDIAN,LAVA,WATER,STEEL,STEEL_ALLOY,SUPER_ALLOY,NUKE,GOLD_INGOT,COPPER_INGOT,TITANIUM_INGOT,DIAMOND,URANIUM,STELLAR_REMOTE,STAR_CORE},
+  block(o){ // {key,name,color:[r,g,b] | paint(u,v,x,y)→[r,g,b], hard,tool,tier,light,glow}
+    const id=modAlloc((modCur||'')+':'+(o.key||o.name),true),tile=modTile++;if(tile>=ATW*ATH)throw new Error('그림 칸이 다 찼어요');
+    const col=o.color||[180,180,180];T(tile,o.paint||((u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y),k=(.86+.14*h2(x,y,tile*7+1))*(e<2?.7:1);return [col[0]*k,col[1]*k,col[2]*k];}));
+    const p={hard:o.hard||1.5,tool:o.tool||'pick',tier:o.tier||0};defB(id,o.name,tile,p);OPAQUE[id]=SOLID[id]=1;if(o.glow||o.light)EMIT[id]=1;if(o.light)LIGHT_SRC[id]=1;
+    MOD_WSRC+=`\ndefB(${id},${JSON.stringify(o.name)},${tile},${JSON.stringify(p)});OPAQUE[${id}]=SOLID[${id}]=1;${o.glow||o.light?`EMIT[${id}]=1;`:''}${o.light?`LIGHT_SRC[${id}]=1;`:''}`;
+    actx.putImageData(AIMG,0,0);atlasTex.needsUpdate=true;ICON_CANVAS[id]=blockIcon(id);ICON[id]=ICON_CANVAS[id].toDataURL();return id;},
+  item(o){ // {key,name,icon:'🍎' 또는 color, stack, food, use(slot,target)}
+    const id=modAlloc((modCur||'')+':'+(o.key||o.name),false);IT[id]=Object.assign({name:o.name,stack:o.stack||64},o.food?{food:o.food}:{},o.use?{use:true}:{});
+    if(o.use)MOD_USE[id]=o.use;ICON_CANVAS[id]=modIconCanvas(o);ICON[id]=ICON_CANVAS[id].toDataURL();return id;},
+  recipe(out,n,ins,station){RECIPES.push(Object.assign({out,n,in:ins},station?{st:station}:{}));}, // station: 'bench' · 'kiln'
+  onTick(f){MOD_TICK.push(f);},onUse(id,f){MOD_USE[id]=f;if(IT[id])IT[id].use=true;},
+  toast:t=>toast(t),give:(id,n=1)=>addItem(id,n),player:()=>player,world:()=>world,target:()=>target,
+  getBlock:(x,y,z)=>getBlock(x,y,z),setBlock:(x,y,z,id)=>{setBlock(x,y,z,id);remeshAt(x>>4,z>>4);},
+  explode:(x,y,z,r)=>explode(x,y,z,r||3,'모드 폭발에 휘말렸습니다'),flash:(o,t,c)=>flash(o,t,c),shake:(a,t)=>shake(a,t),sound:n=>SFX[n]&&SFX[n](),
+  THREE};
+window.CB=CB;
+function modRunAll(){for(const m of modLoad()){if(!m.on)continue;modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
+function modRender(){const L=modLoad();$('modList').innerHTML=L.length?L.map((m,i)=>`<div class="mi${m.on?'':' off'}"><b>${m.name.replace(/</g,'&lt;')}</b>${modBroken[m.name]?`<small>오류</small>`:''}<button data-t="${i}">${m.on?'켜짐':'꺼짐'}</button><button data-d="${i}">삭제</button></div>`).join(''):'<div class="mi"><b>아직 넣은 모드가 없어요</b></div>';}
+const modBroken={};
+try{modRunAll();}catch(e){}
+$('btnMods').onclick=()=>{modRender();$('modPanel').classList.add('show');};
+$('btnModClose').onclick=()=>$('modPanel').classList.remove('show');
+$('btnModReload').onclick=()=>location.reload();
+$('btnModAdd').onclick=()=>$('modFile').click();
+$('modFile').onchange=async e=>{const L=modLoad();for(const f of e.target.files){const code=await f.text();const name=f.name.replace(/\.js$/,'');const i=L.findIndex(m=>m.name===name);if(i>=0)L[i].code=code;else L.push({name,code,on:true});}
+  modSave(L);e.target.value='';modRender();toast('🧩 모드를 넣었어요. <b>새로고침</b>하면 적용돼요');};
+$('modList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const L=modLoad();
+  if(b.dataset.t!==undefined){L[+b.dataset.t].on=!L[+b.dataset.t].on;}else if(b.dataset.d!==undefined){if(!confirm('이 모드를 지울까요?'))return;L.splice(+b.dataset.d,1);}modSave(L);modRender();};
+$('btnModEx').onclick=()=>{const code=`// CAVEBUILD 예시 모드: 루비 (모드 파일은 CB 하나만 받아요)
+// CB.block / CB.item / CB.recipe / CB.onUse / CB.onTick / CB.toast / CB.give / CB.getBlock / CB.setBlock / CB.explode / CB.ids / CB.id('이름')
+const RUBY=CB.item({key:'ruby',name:'루비',icon:'💎'});
+const RUBY_BLOCK=CB.block({key:'ruby_block',name:'루비 블록',color:[200,30,60],hard:6,tier:3,glow:true});
+CB.recipe(RUBY,1,[[CB.ids.CRYSTAL,1],[CB.ids.IRON_INGOT,1]],'bench');   // 수정 1 + 철 주괴 1 → 루비
+CB.recipe(RUBY_BLOCK,1,[[RUBY,9]],'bench');
+CB.recipe(RUBY,9,[[RUBY_BLOCK,1]]);
+// 우클릭하면 바라보는 블록에 작은 폭발을 일으키는 지팡이
+const WAND=CB.item({key:'wand',name:'루비 지팡이',icon:'🪄',stack:1,use:(slot,t)=>{if(!t){CB.toast('블록을 바라보세요');return;}CB.explode(t.x+.5,t.y+.5,t.z+.5,2.5);}});
+CB.recipe(WAND,1,[[RUBY,2],[CB.ids.STICK,1]],'bench');
+CB.toast('💎 루비 모드가 켜졌어요!');
+`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));a.download='ruby-mod.js';a.click();};
 initWorker();
 // ---------- 메인 루프 ----------
 let last=performance.now(),saveT=0,fpsA=0,fpsN=0,fps=0;
@@ -5188,7 +5264,7 @@ function frame(now){
   }
   updateSky(active?dt:0);
   if(active)updateSurvival(dt);
-  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);updateFireworks(dt);updateNukes(active?dt:0);if(active||stCast)updateStellar(dt);else stHud();
+  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);updateFireworks(dt);updateNukes(active?dt:0);if(active)for(const f of MOD_TICK)try{f(dt);}catch(e){modErr('틱',e);}if(active||stCast)updateStellar(dt);else stHud();
   updateChunks();
   if(debugOn){const p=player.pos;$('debug').textContent=`CAVEBUILD  ${fps} fps\nXYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}\n차원: ${DIM[world.dim].name}  청크: ${chunks.size}  몹: ${mobs.length}\n시간: ${(world.time*24+6)%24|0}시  시드: ${seed}\n바라보는 블록: ${target?BL[target.id].name:'-'}`;}
   if(shakeT>0&&!player.dead&&!stFrozen()){const a=shakeAmp*Math.min(1,shakeT);camera.position.x+=(Math.random()-.5)*a;camera.position.y+=(Math.random()-.5)*a;camera.position.z+=(Math.random()-.5)*a;camera.updateMatrixWorld();} // 화면 흔들림
