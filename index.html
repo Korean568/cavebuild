@@ -218,9 +218,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.24 — 금 · 티타늄 블록</h4>
+    <h4>🆕 v26.25 — 누런 티타늄 블록</h4>
+    • <b>티타늄 블록</b>이 철 블록과 헷갈리지 않게 누런 샴페인빛 금속판으로 바뀌었어요.
+    <h4>v26.24 — 금 · 티타늄 블록</h4>
     • 금 주괴 9개 → <b>금 블록</b>, 티타늄 주괴 9개 → <b>티타늄 블록</b> (작업대). 블록 1개는 다시 주괴 9개로 되돌릴 수 있어요.<br>
-    • 금 블록은 매끈하게 반짝이는 금괴판(무르니까 돌 곡괭이로도 캠), 티타늄 블록은 볼트로 조인 솔질한 금속판(아주 단단해서 철 곡괭이 필요)이에요.
+    • 금 블록은 매끈하게 반짝이는 금괴판(무르니까 돌 곡괭이로도 캠), 티타늄 블록은 볼트로 조인 누런 샴페인빛 금속판(아주 단단해서 철 곡괭이 필요)이에요.
     <h4>v26.23 — 구리 · 다이아몬드 블록</h4>
     • 구리 주괴 9개 → <b>구리 블록</b>, 다이아몬드 9개 → <b>다이아몬드 블록</b> (레드 · 블랙 다이아몬드도) 을 작업대에서 만들 수 있어요. 블록 1개는 다시 9개로 되돌릴 수 있어요.<br>
     • 구리 블록은 리벳 박힌 구리판에 군데군데 청록 녹이 슬어 있고, 다이아몬드 블록들은 깎은 보석 면이 반짝여요.
@@ -1186,11 +1188,11 @@ T(TILE.gold_block,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y); // 매끈하�
   if(e<1)return [120,86,14];if(e<4)return mulc([232,184,52],e<2?1.2:.85);
   const d=u+v,sh=Math.exp(-(((d-.62)*7)**2))*.5+Math.exp(-(((d-.95)*16)**2))*.3;
   let c=mixc([226,170,40],[255,232,120],.35+.4*fbm(u,v,331,3,3)+sh);if(h2(x,y,332)>.99)c=[255,250,220];return mulc(c,.97+.06*h2(x>>2,y,333));});
-T(TILE.titanium_block,(u,v,x,y)=>{const qx=x<TS/2?0:TS/2,qy=y<TS/2?0:TS/2,lx=x-qx,ly=y-qy; // 솔질한 티타늄판 4장 · 육각 볼트 · 푸르스름한 열변색 얼룩
-  if(lx<1||ly<1)return [70,74,86];const bx=Math.min(Math.abs(lx-5),Math.abs(lx-(TS/2-6))),by=Math.min(Math.abs(ly-5),Math.abs(ly-(TS/2-6)));
-  if(bx<2&&by<2)return bx+by<1.2?[236,240,248]:[120,124,138];
-  let c=mulc([188,192,204],(.92+.08*h2(x,0,341)+.04*h2(x,y>>3,342))*(1.06-lx/TS*.3));const t=fbm(u,v,343,3,3);
-  if(t>.7)c=mixc(c,[150,140,200],Math.min(.45,(t-.7)*1.6));return c;});
+T(TILE.titanium_block,(u,v,x,y)=>{const qx=x<TS/2?0:TS/2,qy=y<TS/2?0:TS/2,lx=x-qx,ly=y-qy; // 솔질한 티타늄판 4장 · 볼트 · 누런 샴페인빛 · 구릿빛 열변색 얼룩
+  if(lx<1||ly<1)return [86,76,52];const bx=Math.min(Math.abs(lx-5),Math.abs(lx-(TS/2-6))),by=Math.min(Math.abs(ly-5),Math.abs(ly-(TS/2-6)));
+  if(bx<2&&by<2)return bx+by<1.2?[250,240,206]:[138,122,86];
+  let c=mulc([212,196,150],(.92+.08*h2(x,0,341)+.04*h2(x,y>>3,342))*(1.06-lx/TS*.3));const t=fbm(u,v,343,3,3);
+  if(t>.7)c=mixc(c,[196,150,86],Math.min(.45,(t-.7)*1.6));return c;});
 T(TILE.core,(u,v,x,y)=>{const p=cells(u,v,5,86);let c=mulc([58,56,64],(.7+.5*fbm(u,v,87,4,4))*grain(x,y,88,.2));return p.d2-p.d<.02?mulc(c,.5):c;});
 T(TILE.bench_top,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);
   if(e<5)return mulc(woodGrain(u,v,x,y,91,[110,76,46],[134,96,60]),e<1?.7:1);
