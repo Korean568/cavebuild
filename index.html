@@ -100,6 +100,13 @@ body.mobile .help div.mobonly{display:block}
 #stellarMenu .sk{background:rgba(20,20,30,.85);border:2px solid #555;padding:8px 12px;cursor:pointer;font-size:14px}
 #stellarMenu .sk.on{border-color:#e03030;background:rgba(80,10,10,.85)}
 #stellarMenu .sk small{color:#ccc}
+#cineFade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:8}
+#cineBars{position:fixed;inset:0;pointer-events:none;z-index:9;display:none}#cineBars i{position:absolute;left:0;right:0;height:10vh;background:#000}#cineBars i:first-child{top:0}#cineBars i:last-child{bottom:0}
+#cineCap{position:fixed;left:0;right:0;bottom:3.2vh;text-align:center;z-index:10;font-size:17px;letter-spacing:3px;color:#e8e8f2;text-shadow:0 0 8px #000;display:none;pointer-events:none}
+#cineSkip{position:fixed;right:14px;top:calc(10vh + 10px);z-index:10;display:none;background:rgba(0,0,0,.55);border:1px solid #888;padding:5px 12px;font-size:13px;cursor:pointer}
+body.cine #cineBars,body.cine #cineCap,body.cine #cineSkip{display:block}
+body.cine #hud,body.cine #crosshair,body.cine #stellarHud,body.cine #compass,body.cine #bossbar,body.cine #toasts{display:none!important}
+#stCount{position:fixed;top:12vh;left:50%;transform:translateX(-50%);z-index:10;font:bold 26px monospace;color:#ff4848;text-shadow:0 0 10px #f00,2px 2px 0 #000;display:none;pointer-events:none;letter-spacing:3px}
 #bossbar{position:fixed;top:12px;left:50%;transform:translateX(-50%);width:min(420px,70vw);display:none;text-align:center;pointer-events:none;text-shadow:2px 2px 0 #000;font-weight:bold;color:#9ffcff}
 #bossbar .bb{height:10px;background:#1a2a30;border:2px solid #000;margin-top:4px}
 #bossbar i{display:block;height:100%;background:linear-gradient(#8ff,#1a9aa8)}
@@ -163,7 +170,8 @@ body.mobile #toasts{top:72px}
 <div id="fade"></div>
 <div id="flash"></div>
 <div id="stellarHud"></div>
-<div id="stellarMenu" class="overlay"><h2>🛰 스텔라 리모컨</h2><div class="list"></div><button class="btn" id="stMenuClose">닫기</button></div>
+<div id="stellarMenu" class="overlay"><h2>🛰 스텔라 리모컨</h2><div class="list"></div><button class="btn" id="stCineBtn">🎬 연출: 켬</button><button class="btn" id="stMenuClose">닫기</button></div>
+<div id="cineFade"></div><div id="cineBars"><i></i><i></i></div><div id="cineCap"></div><div id="cineSkip">J · 연출 넘기기 ▶</div><div id="stCount"></div>
 <div id="debug"></div>
 <div id="compass"><span id="carrow">▲</span><span id="ctext"></span></div>
 <div id="toasts"></div>
@@ -219,7 +227,7 @@ body.mobile #toasts{top:72px}
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
     • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 엔딩드래곤도 떨어뜨림)를 흉갑 칸에 입고 떨어지는 중에 <b>점프</b>를 다시 누르면 활공해요. 아래를 보면 빨라지고 위를 보면 올라가요. 날면서 <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 쓰면 앞으로 쭉 날아가요!<br>
-    • <b>🛰 스텔라 리모컨</b>(스톤 4 + 블랙 다이아몬드 1 + 철 주괴 2) — The Shooting Star! <b>SS-01 레일건 · SS-03 궁니르 · SS-04 칠성</b>으로 세계를 바꿔요 (K/I/U 선택 · <span class="deskonly">우클릭</span><span class="mobonly">✋</span> 발동 · 웅크리고 쓰면 다음 기술 · H 메뉴 · J 연출 넘기기). <b>세계를 영원히 바꾸니</b> 저장 파일을 내보내 두세요!<br>
+    • <b>🛰 스텔라 리모컨</b>(스톤 4 + 블랙 다이아몬드 1 + 철 주괴 2) — The Shooting Star! <b>SS-01 레일건</b>(반경 200칸) · <b>SS-03 궁니르</b>(400칸) · <b>SS-04 칠성</b>(1,440칸)으로 세계를 바꿔요. 발동하면 지구 · 토성 · 은하 · 목성 · 큰곰자리를 오가는 우주 연출이 나와요 (K/I/U 선택 · <span class="deskonly">우클릭</span><span class="mobonly">✋</span> 발동 · 웅크리고 쓰면 다음 기술 · H 메뉴 · J 연출 넘기기 / 들고 J 연출 켜기·끄기). <b>세계를 영원히 바꾸니</b> 저장 파일을 내보내 두세요!<br>
     • 깊은 곳의 <b>방사성 광석</b>(우라늄 · 라듐 · 플루토늄 · 폴로늄 · 프로트악티늄)은 가까이 있거나 들고 다니면 <b>방사능</b> 피해를 줘요. 천·가죽을 뺀 갑옷은 한 부위당 20%, <b>방독면·방독복</b>(가죽으로 만듦)은 25%씩 막아서 네 부위를 다 입으면 완전히 막혀요.<br>
     • 새 광석: <b>구리</b>·<b>금</b>(돌 곡괭이) · <b>티타늄</b>(철 곡괭이) · <b>다이아몬드</b>·<b>레드 다이아몬드</b>(수정 곡괭이) · <b>블랙 다이아몬드</b>(블레이즈스톤 곡괭이). 깊을수록 귀한 광석이 나오고, 캔 광석을 가마에서 녹이면 주괴·보석이 돼요. 주괴·보석으로 <b>도구</b>와 <b>갑옷</b>, 9개로 <b>구리 · 금 · 티타늄 · 다이아몬드 블록</b>을 만들 수 있어요.<br>
     • 새 세계를 만들 때 <b>서바이벌 · 크리에이티브 · 하드코어 · 세이프 · 관전</b> 중에 고를 수 있고, 일시정지의 <b>⚙ 서버 설정</b>에서 언제든 바꿀 수 있어요.<br>
@@ -231,7 +239,13 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.27 — The Shooting Star</h4>
+    <h4>🆕 v26.28 — The Shooting Star: 원작 규모 · 우주 연출</h4>
+    • 원작 설명대로 크기를 키웠어요: <b>SS-01 레일건 반경 200칸</b>, <b>SS-03 궁니르 400칸</b>, <b>SS-04 칠성 1,440칸</b>. 멀리 있는 땅도 최대 1,600칸 앞까지 조준할 수 있어요.<br>
+    • 아직 가 보지 않은 먼 땅까지 <b>영원히 새겨져요</b> — 그곳에 가면 똑같이 깎여 있어요. 레일건이 뚫은 곳은 바닥 아래까지 <b>공허</b>예요.<br>
+    • <b>우주 연출</b>: 레일건은 레이저를 따라 지구 → 토성 → 은하 밖 레일건 충전 · 발사, 궁니르는 목성 가속 고리에서 바늘을 일곱 바퀴 돌려 날리고, 칠성은 큰곰자리의 일곱 별이 배열로 깨어나 별똥별을 쏴요. <b>J</b>로 넘기거나(리모컨을 들고 J를 누르면 켜기·끄기) 메뉴에서 끌 수 있어요.<br>
+    • 궁니르는 소리 없이 꽂히고 <b>충격파가 지나간 뒤에야 쾅</b>! 바늘은 <b>텅스텐 블록</b>과 달아오른 <b>열 도관</b>으로 남고 가장 단단한 곡괭이로 캘 수 있어요. 칠성의 도랑 바닥엔 <b>별의 흔적</b>이 타올라요.<br>
+    • 서바이벌에서 내가 범위 안에 있으면 한 번 더 눌러야 발동해요. 카운트다운이 화면 위에 보여요.
+    <h4>v26.27 — The Shooting Star</h4>
     • 인기 모드 <b>The Shooting Star</b>를 옮겨 왔어요! 뚜껑 아래 빨간 버튼이 달린 <b>🛰 스텔라 리모컨</b>(스톤 4 + 블랙 다이아몬드 1 + 철 주괴 2)으로 지구 궤도의 무기를 불러요.<br>
     • <b>SS-01 레일건</b>: 빨간 레이저가 조준한 땅을 표시하고, 2.6초 뒤 거대한 광선이 반경 11칸을 하늘 끝부터 공허까지 통째로 지워요.<br>
     • <b>SS-03 궁니르</b>: 소리 없이 거대한 바늘이 꽂혀 반경 17칸을 평평한 용암 분화구로 만들고, 부서지지 않는 금빛 바늘 기둥이 남아요.<br>
@@ -425,7 +439,7 @@ function makeNoise(seed){
   return {n2,n3};
 }
 
-const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71,gold_block:72,titanium_block:73,uranium_ore:74,radium_ore:75,plutonium_ore:76,polonium_ore:77,protactinium_ore:78,gungnir:79,star_core:80};
+const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71,gold_block:72,titanium_block:73,uranium_ore:74,radium_ore:75,plutonium_ore:76,polonium_ore:77,protactinium_ore:78,gungnir:79,star_core:80,conduit:81,star_trace:82};
 const ATW=8,ATH=16; // 타일 8×16칸 (512×1024)
 
 // ---------- 블록 & 아이템 정의 ----------
@@ -521,10 +535,12 @@ defB(RADIUM_ORE,'라듐 광석',TILE.radium_ore,{hard:4,tool:'pick',tier:2});
 defB(PLUTONIUM_ORE,'플루토늄 광석',TILE.plutonium_ore,{hard:5,tool:'pick',tier:3});
 defB(POLONIUM_ORE,'폴로늄 광석',TILE.polonium_ore,{hard:3.5,tool:'pick',tier:2});
 defB(PROTACTINIUM_ORE,'프로트악티늄 광석',TILE.protactinium_ore,{hard:4.5,tool:'pick',tier:3});
-// The Shooting Star: 궁니르가 남긴 바늘(부서지지 않음) · 칠성이 남긴 별의 핵 결정
-const GUNGNIR_NEEDLE=96,STAR_CORE=97,STELLAR_REMOTE=272;
-defB(GUNGNIR_NEEDLE,'궁니르의 바늘',TILE.gungnir,{hard:-1});
+// The Shooting Star: 궁니르가 남긴 바늘(텅스텐 선체 + 열 도관, 가장 단단한 곡괭이로만) · 칠성이 남긴 별의 핵 결정 · 도랑 바닥의 별의 흔적
+const GUNGNIR_NEEDLE=96,STAR_CORE=97,THERMAL_CONDUIT=98,STAR_TRACE=99,STELLAR_REMOTE=272;
+defB(GUNGNIR_NEEDLE,'텅스텐 블록',TILE.gungnir,{hard:30,tool:'pick',tier:5});
+defB(THERMAL_CONDUIT,'열 도관',TILE.conduit,{hard:24,tool:'pick',tier:5});
 defB(STAR_CORE,'별의 핵 결정',TILE.star_core,{hard:4,tool:'pick',tier:3});
+defB(STAR_TRACE,'별의 흔적',TILE.star_trace,{hard:2.5,tool:'pick',tier:1});
 const OPAQUE=new Uint8Array(256),SOLID=new Uint8Array(256);
 BL.forEach((b,i)=>{if(b){OPAQUE[i]=b.opaque?1:0;SOLID[i]=b.solid?1:0;}});
 const LIQUID=new Uint8Array(256),EMIT=new Uint8Array(256),LIGHT_SRC=new Uint8Array(256),PORTAL=new Uint8Array(256);
@@ -536,7 +552,7 @@ const LADDER_OF=new Uint8Array(256),CONTAINER=new Uint8Array(256); // 사다리:
 LADDER_IDS.forEach(id=>LADDER_OF[id]=BL[id].face+1);BL.forEach((b,i)=>{if(b&&b.cont)CONTAINER[i]=b.cont;});
 for(const b of [P_HELL,P_CASTLE,P_CITY,P_END])PORTAL[b]=1;
 EMIT[RADIUM_ORE]=1; // 라듐은 스스로 희미하게 빛남
-EMIT[GUNGNIR_NEEDLE]=EMIT[STAR_CORE]=1;LIGHT_SRC[STAR_CORE]=1; // 별의 핵은 주변을 밝힘
+EMIT[THERMAL_CONDUIT]=EMIT[STAR_TRACE]=EMIT[STAR_CORE]=1;LIGHT_SRC[STAR_CORE]=1; // 별의 핵은 주변을 밝힘 · 열 도관과 별의 흔적은 스스로 빛남
 const RADIO=new Float32Array(512); // 방사능 세기 (초당 피해 기준)
 for(const [id,r] of [[URANIUM_ORE,.5],[RADIUM_ORE,.8],[PLUTONIUM_ORE,1],[POLONIUM_ORE,1.2],[PROTACTINIUM_ORE,.6],[URANIUM,.25],[RADIUM,.4],[PLUTONIUM,.5],[POLONIUM,.6],[PROTACTINIUM,.3]])RADIO[id]=r;
 const LIQ_KIND=new Uint8Array(256),LIQ_LV=new Uint8Array(256); // 액체 종류 (1 물, 2 용암) · 흐르는 단계 (0 = 흐르지 않는 샘)
@@ -1029,6 +1045,39 @@ function buildVillages(data,cx,cz){
     }
   }
 }
+// ---------- 스텔라 각인: The Shooting Star가 영원히 바꾼 땅 ----------
+// 청크를 만들 때마다 같은 모양으로 다시 새김 → 아직 안 가 본 먼 땅도 똑같이 깎여 있음 (무작위 대신 좌표 해시라 언제 만들어도 같음)
+function chash(x,z,s){let h=Math.imul(x|0,374761393)^Math.imul(z|0,668265263)^Math.imul(s|0,1442695041);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;}
+function carveBox(c){if(c.b)return c.b;
+  if(c.t==='line')return c.b=[Math.min(c.x,c.x2)-c.w-1,Math.min(c.z,c.z2)-c.w-1,Math.max(c.x,c.x2)+c.w+1,Math.max(c.z,c.z2)+c.w+1];
+  return c.b=[c.x-c.r-1,c.z-c.r-1,c.x+c.r+1,c.z+c.r+1];}
+function segD(X,Z,c){const ax=c.x2-c.x,az=c.z2-c.z,L=ax*ax+az*az||1,t=Math.max(0,Math.min(1,((X-c.x)*ax+(Z-c.z)*az)/L));return Math.hypot(X-c.x-ax*t,Z-c.z-az*t);}
+function applyCarves(data,cx,cz,list){if(list)for(const c of list)applyCarve(data,cx,cz,c);}
+function applyCarve(data,cx,cz,c){
+  const b=carveBox(c),ox=cx*16,oz=cz*16;if(ox+15<b[0]||ox>b[2]||oz+15<b[1]||oz>b[3])return;
+  for(let z=0;z<16;z++)for(let x=0;x<16;x++){const X=ox+x,Z=oz+z,col=z*16+x,at=y=>y*256+col;
+    if(c.sp&&(X-c.sp[0])**2+(Z-c.sp[1])**2<=c.sp[2]*c.sp[2])continue; // 크리에이티브: 발밑 땅은 남김
+    if(c.t==='rail'){if((X-c.x)**2+(Z-c.z)**2>c.r*c.r)continue;for(let y=0;y<CH;y++)data[at(y)]=AIR;} // 레일건: 하늘 끝부터 공허까지
+    else if(c.t==='gung'){const dx=X-c.x,dz=Z-c.z,d=Math.hypot(dx,dz);if(d>c.r)continue;
+      if(d<=c.nr){const edge=d>c.nr-1.2,seam=edge&&(dx===0||dz===0); // 바늘: 텅스텐 선체 + 세로 · 가로로 달아오른 열 도관
+        for(let y=0;y<CH;y++)data[at(y)]=(seam||(edge&&y%9===4))?THERMAL_CONDUIT:GUNGNIR_NEEDLE;continue;}
+      const top=d<c.rc?c.y-Math.round(c.dep*(1-(d/c.rc)**2)):c.y; // 400칸 둘레를 맞은 땅 높이로 평평하게 · 바늘 둘레는 녹아내린 분화구
+      for(let y=Math.max(1,top+1);y<CH;y++)data[at(y)]=AIR;
+      if(top<1)continue;
+      if(d<c.rc){for(let y=Math.max(1,top-2);y<=top;y++){const q=chash(X*7+y,Z,c.s);data[at(y)]=y<top?(q<.3?OBSIDIAN:HELLSTONE):q<.1+.32*(1-d/c.rc)?LAVA:q<.55?OBSIDIAN:HELLSTONE;}}
+      else if(data[at(top)]!==AIR&&!LIQUID[data[at(top)]]){const a=Math.atan2(dz,dx),sp=Math.abs((a/(Math.PI*2)*24+.5)-Math.floor(a/(Math.PI*2)*24+.5)-.5)*d*Math.PI*2/24; // 땅에 탄 궤적 표식: 24갈래 빛줄기 + 동심원
+        const ring=Math.abs(d-c.rc*1.6)<.8||Math.abs(d-c.rc*2.7)<.8||Math.abs(d-c.rc*4.2)<.8;
+        if((sp<.6&&d<c.rc*5)||ring)data[at(top)]=STAR_TRACE;else if(data[at(top)]===GRASS&&d<c.rc*3)data[at(top)]=DIRT;}}
+    else if(c.t==='crat'){const d=Math.hypot(X-c.x,Z-c.z);if(d>c.r)continue; // 칠성: 별의 밝기만큼 넓은 사발 모양 분화구 · 한가운데 별의 핵
+      const fl=Math.max(1,c.y-Math.round(c.r*.6*Math.sqrt(Math.max(0,1-(d/c.r)**2))));for(let y=fl+1;y<CH;y++)data[at(y)]=AIR;
+      const q=chash(X,Z,c.s);data[at(fl)]=d<1?STAR_CORE:q<.16?STAR_TRACE:q<.5?OBSIDIAN:HELLSTONE;}
+    else if(c.t==='line'){const d=segD(X,Z,c);if(d>c.w)continue; // 별자리 선: 땅을 따라 파인 도랑 · 바닥 가운데로 별의 흔적이 탐
+      if(Math.hypot(X-c.x,Z-c.z)<c.ra*.85||Math.hypot(X-c.x2,Z-c.z2)<c.rb*.85)continue; // 별이 떨어진 분화구는 그대로
+      let top=CH-1;while(top>1){const v=data[at(top)];if(v!==AIR&&!LIQUID[v]&&v!==LEAVES&&v!==LOG)break;top--;}
+      const fl=Math.max(1,top-c.dep+Math.round(d/c.w*2));for(let y=fl+1;y<CH;y++)data[at(y)]=AIR;
+      data[at(fl)]=d<1.3?STAR_TRACE:chash(X,Z,c.s)<.4?OBSIDIAN:HELLSTONE;}
+  }
+}
 </script>
 <script>
 'use strict';
@@ -1239,8 +1288,14 @@ T(TILE.uranium_ore,(u,v,x,y)=>oreC(u,v,x,y,92,[40,44,24],[206,236,60],[92,92,84]
 T(TILE.radium_ore,(u,v,x,y)=>oreC(u,v,x,y,93,[90,220,170],[220,255,236],undefined,[110,190,160],1.4)); // 라듐: 청록빛으로 빛남
 T(TILE.plutonium_ore,(u,v,x,y)=>oreC(u,v,x,y,94,[168,96,60],[255,180,120],undefined,[160,110,80],1.1)); // 플루토늄: 주황빛으로 달아오른 금속
 T(TILE.polonium_ore,(u,v,x,y)=>oreC(u,v,x,y,95,[120,130,170],[214,224,255],undefined,[120,130,180],1.5)); // 폴로늄: 푸른 은빛
-T(TILE.gungnir,(u,v,x,y)=>{const g=.5+.5*Math.sin((u*2+fbm(u,v,351,2,3))*Math.PI*6); // 궁니르의 바늘: 달아오른 금빛 합금 · 세로 홈
-  let c=mixc([170,110,30],[255,226,140],g*.7+.2*fbm(u,v,352,4,3));if(Math.abs(fr(u*4)-.5)<.04)c=mulc(c,.6);if(h2(x,y,353)>.99)c=[255,255,230];return c;});
+T(TILE.gungnir,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y); // 텅스텐 블록: 검푸른 금속판 · 세로 결 · 모서리 홈 · 그을음
+  if(e<1)return [14,15,20];let c=mulc([52,55,66],(.9+.1*h2(x,0,351)+.05*h2(x>>1,y>>3,352))*(e<3?.82:1));const t=fbm(u,v,353,3,3);if(t>.68)c=mixc(c,[24,22,26],Math.min(.6,(t-.68)*2));
+  if(h2(x,y,354)>.993)c=[150,156,172];return c;});
+T(TILE.conduit,(u,v,x,y)=>{const d=Math.abs(u-.5); // 열 도관: 검은 틀 속 세로로 달아오른 홈 (가운데일수록 하얗게 뜨거움)
+  if(d>.36){const e=Math.min(x,y,TS-1-x,TS-1-y);return mulc([46,48,58],(.9+.1*h2(x,y>>2,361))*(e<2?.7:1));}
+  const k=1-d/.36,f=.85+.15*Math.sin(v*Math.PI*8+fbm(u,v,362,2,3)*4);return mixc([200,60,12],[255,236,170],Math.min(1,k*k*f*1.15));});
+T(TILE.star_trace,(u,v,x,y)=>{const p=cells(u,v,5,371); // 별의 흔적: 그을린 바닥 · 금빛으로 타오르는 갈라진 틈
+  const crack=p.d2-p.d;let c=mulc([46,32,30],.75+.4*fbm(u,v,372,3,3));if(crack<.05)c=mixc([255,170,50],[255,244,190],1-crack/.05);else if(crack<.09)c=mixc(c,[200,80,20],(.09-crack)/.04*.7);return c;});
 T(TILE.star_core,(u,v,x,y)=>{const p=cells(u,v,4,361),d=Math.hypot(u-.5,v-.5); // 별의 핵: 하얗게 빛나는 결정 · 가장자리는 푸른빛
   let c=mixc([255,250,220],[120,170,255],Math.min(1,d*1.8));c=mulc(c,1+((p.c.x-u)+(p.c.y-v))*1.2);if(p.d2-p.d<.015)c=mixc(c,[255,255,255],.5);return c;});
 T(TILE.protactinium_ore,(u,v,x,y)=>oreC(u,v,x,y,96,[150,140,96],[236,226,170],undefined,[140,134,100],1)); // 프로트악티늄: 누런 은빛
@@ -1864,7 +1919,19 @@ const SFX={
   fireball:()=>noise(.35,900,.25),geiger:()=>bnoise(.012,4500,3,.07,0,.001),wing:()=>bnoise(.5,900,.5,.12,0,.05,'bandpass',300),launch:()=>{bnoise(.9,3000,.6,.14,0,.02,'bandpass',900);},
   fwBoom:()=>{bnoise(.6,500,.5,.5,0,.002,'lowpass',90);tone(90,40,.4,.25,'sine');for(let i=0;i<10;i++)bnoise(.05,5000,2,.08,.35+Math.random()*.8,.002);},smash:()=>{tone(130,45,.35,.35,'sine');bnoise(.3,700,.6,.4,0,.003,'lowpass',150);tone(1400,900,.12,.06,'triangle');},cast:()=>{bnoise(.25,1800,.8,.12,0,.01,'bandpass',4200);tone(900,500,.15,.03,'sine');},plop:()=>{bnoise(.18,900,.9,.18,0,.004,'bandpass',400);bubble(380,.08,.06,.03);},
   reel:()=>{for(let i=0;i<6;i++)bnoise(.03,3200,4,.08,i*.05,.002);},portal:()=>{tone(200,900,.6,.08,'sine');noise(.6,2000,.08);},
-  charge:()=>tone(90,160,.8,.12,'square'),equip:()=>{noise(.1,3000,.15);tone(600,800,.08,.06,'triangle');},
+  charge:()=>tone(90,160,.8,.12,'square'),
+  // The Shooting Star: 뚜껑 딸깍 · 버튼 · 고정음 · 카운트다운 · 상승 · 충전 · 발사 · 명중
+  stArm:()=>{tone(320,180,.07,.1,'square');bnoise(.05,3200,2,.1,.03,.002);tone(1400,1400,.09,.07,'square',.2);},
+  stLock:()=>{tone(1800,1800,.07,.07,'square');tone(2400,2400,.1,.06,'square',.09);},stTick:()=>tone(1100,1100,.06,.06,'square'),
+  stRise:()=>{bnoise(2.4,220,1.4,.25,0,.7,'bandpass',2600);tone(60,190,2.4,.07,'sawtooth');},
+  stCharge:()=>{tone(70,900,2.4,.08,'sawtooth');tone(140,1800,2.4,.045,'square');bnoise(2.4,400,2,.12,0,1.6,'bandpass',5200);},
+  stFire:()=>{tone(2400,40,1.4,.22,'sawtooth');bnoise(1.6,1300,.7,.6,0,.004,'lowpass',80);tone(55,28,2,.4,'sine');},
+  stImpact:()=>{bnoise(2.8,900,.6,.9,0,.004,'lowpass',55);tone(70,22,2.6,.5,'sine');for(let i=0;i<14;i++)bnoise(.08,3000,2,.12,.3+Math.random()*1.8,.003);},
+  gRing:()=>tone(660,680,.07,.045,'triangle'),gSpin:()=>{tone(90,1500,3,.07,'sawtooth');bnoise(3,300,3,.12,0,1,'bandpass',3600);},
+  gWhoosh:()=>bnoise(2,400,1,.32,0,.4,'bandpass',4200),gCrack:()=>{bnoise(.22,6000,1,.35,0,.001,'highpass');tone(3200,260,.25,.1,'sawtooth');},
+  gBoom:()=>{bnoise(3.2,600,.5,1,0,.003,'lowpass',38);tone(48,19,3,.55,'sine');bnoise(3.6,700,.8,.28,.35,.9,'bandpass',140);},gHum:()=>tone(55,58,3,.07,'sine'),
+  sArray:()=>{[523,659,784,988,1175,1319,1568].forEach((f,i)=>tone(f,f,.55,.05,'sine',i*.3));},sFall:()=>bnoise(.6,3200,1,.2,0,.05,'bandpass',300),
+  sLand:()=>{bnoise(1.3,700,.6,.6,0,.003,'lowpass',60);tone(80,30,1,.35,'sine');},sLink:()=>{bnoise(1.5,1500,1,.25,0,.2,'bandpass',600);tone(220,440,1.5,.06,'sawtooth');},equip:()=>{noise(.1,3000,.15);tone(600,800,.08,.06,'triangle');},
 };
 
 // ---------- 월드 ----------
@@ -1872,10 +1939,10 @@ const RD=MOBILE?3:5,DAY_LEN=600;
 const chunks=new Map();let mods=new Map();
 const ckey=(cx,cz)=>cx+','+cz;
 const getChunk=(cx,cz)=>chunks.get(ckey(cx,cz));
-function getBlock(x,y,z){if(y<0)return CORE;if(y>=CH)return AIR;const c=chunks.get(ckey(x>>4,z>>4));if(!c)return -1;return c.data[(y*16+(z&15))*16+(x&15)];}
+function getBlock(x,y,z){if(y<0)return voidAt(x,z)?AIR:CORE;if(y>=CH)return AIR;const c=chunks.get(ckey(x>>4,z>>4));if(!c)return -1;return c.data[(y*16+(z&15))*16+(x&15)];}
 function generateChunk(cx,cz){
   const data=new Uint8Array(16*16*CH);
-  GEN[world.dim](data,cx,cz);
+  GEN[world.dim](data,cx,cz);applyCarves(data,cx,cz,carvesNear(cx,cz));
   return finishChunk(cx,cz,data);
 }
 function finishChunk(cx,cz,data){ // 생성된 블록에 플레이어가 바꾼 기록을 덮고 등록
@@ -1923,96 +1990,299 @@ function disposeMesh(ch){
 const hasNeighbors=(cx,cz)=>getChunk(cx+1,cz)&&getChunk(cx-1,cz)&&getChunk(cx,cz+1)&&getChunk(cx,cz-1);
 function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx,cz))buildMesh(c);else c.needsMesh=true;}
 // ---------- The Shooting Star: 스텔라 리모컨 ----------
-// 뚜껑 아래 빨간 버튼으로 지구 궤도의 무기를 부름. 세계를 영원히 바꾸니 조심!
-const STELLAR=[{code:'SS-01',name:'레일건',key:'K',desc:'우주에서 내려온 빨간 레이저가 조준한 땅을 표시하고, 거대한 광선이 그 둘레를 하늘 끝부터 공허까지 통째로 지워요.'},
-  {code:'SS-03',name:'궁니르',key:'I',desc:'목성의 가속 고리에서 쏜 거대한 바늘이 소리 없이 꽂혀, 주변을 평평한 용암 분화구로 만들어요. 바늘은 부서지지 않는 기둥으로 남아요.'},
-  {code:'SS-04',name:'칠성',key:'U',desc:'북두칠성이 하늘에 떠오르고 별 일곱 개가 하나씩 떨어져, 밝기만큼 분화구를 파고 빛나는 별의 핵과 불타는 도랑을 남겨요.'}];
-let stSkill=0,stCast=null,stCD=0,shakeT=0,shakeAmp=0;
+// 뚜껑 아래 빨간 버튼 하나로 저 멀리 어둠 속의 무기들을 부름. 세계를 영원히 바꾸니 조심!
+// (원작 모드의 공개 설명을 바탕으로 CAVEBUILD에 맞게 새로 만든 것 — 원작의 코드·그림·소리는 쓰지 않음)
+const STELLAR=[
+  {code:'SS-01',name:'레일건',key:'K',T:16,end:3.6,cd:20,desc:'빨간 레이저가 조준한 땅을 표시하고, 16초 뒤 은하 가장자리에 걸린 레일건이 그 레이저를 따라 쏴요. <b>반경 200칸</b> 광선이 그 안의 모든 것을 없애고 하늘 끝부터 공허까지 세계를 통째로 도려내요. 범위 안에 서 있으면 함께 사라져요 (크리에이티브는 먼저 대피).'},
+  {code:'SS-03',name:'궁니르',key:'I',T:14,end:4.6,cd:20,desc:'조준한 곳에 불씨 표식이 새겨지고, 14초 뒤 목성의 가속 고리에서 일곱 바퀴를 돈 검은 바늘이 소리보다 빠르게 꽂혀요. 충격파가 <b>400칸</b> 둘레를 맞은 땅 높이로 평평하게 밀고 바늘 둘레는 녹아내린 분화구가 돼요. 쾅 소리는 충격파가 지나간 뒤에야 들리고, 그 밖에도 충격파가 밀치고 다치게 해요. 바늘은 <b>텅스텐 블록</b>과 달아오른 <b>열 도관</b>으로 남아요 (가장 단단한 곡괭이로 캘 수 있음).'},
+  {code:'SS-04',name:'칠성',key:'U',T:9.5,end:8.6,cd:24,desc:'조준한 곳을 중심으로 <b>1,440칸</b> 너비의 북두칠성이 땅에 투영되고, 큰곰자리의 일곱 별이 배열로 깨어나 별똥별을 쏴요. 별마다 밝기만큼 분화구를 파고 빛나는 <b>별의 핵 결정</b>을 남긴 뒤, 별자리 선을 따라 <b>별의 흔적</b>이 타오르는 도랑이 새겨져요 (크리에이티브는 발밑 땅이 남아요).'}];
+const DIPPER=[['두베',13,-3,1.8],['메라크',12,9,2.4],['페크다',0,10,2.4],['메그레즈',-3,0,3.3],['알리오스',-12,2,1.8],['미자르',-20,4,2.2],['알카이드',-30,10,1.9]],DIP_ORDER=[6,5,4,3,2,1,0,3];
+let stSkill=0,stCast=null,stCD=0,shakeT=0,shakeAmp=0,stConfirm=null;
 function stHud(){const el=$('stellarHud'),s=held();if(!s||s.id!==STELLAR_REMOTE||!running){el.style.display='none';return;}
-  const k=STELLAR[stSkill];el.style.display='block';el.innerHTML=`🛰 <b>${k.code} · ${k.name}</b>${stCast?' · 발동 중':stCD>0?` · 충전 ${Math.ceil(stCD)}초`:''}<br><small>${MOBILE?'✋ 발동 · 🧎+✋ 다음 · 여기를 눌러 메뉴':'우클릭 발동 · C+우클릭 다음 · K/I/U 선택 · H 메뉴 · J 연출 넘기기'}</small>`;}
+  const k=STELLAR[stSkill];el.style.display='block';el.innerHTML=`🛰 <b>${k.code} · ${k.name}</b>${stCast?' · 발동 중':stCD>0?` · 충전 ${Math.ceil(stCD)}초`:''}${world.flags.stCine===0?' · 🎬 연출 끔':''}<br><small>${MOBILE?'✋ 발동 · 🧎+✋ 다음 · 여기를 눌러 메뉴':'우클릭 발동 · C+우클릭 다음 · K/I/U 선택 · H 메뉴 · J 연출 켜기/끄기 · 넘기기'}</small>`;}
 function stSelect(i){stSkill=i;SFX.click();toast(`🛰 <b>${STELLAR[i].code} · ${STELLAR[i].name}</b> 선택`);stHud();}
+function stCineToggle(){world.flags.stCine=world.flags.stCine===0?1:0;toast(world.flags.stCine===0?'🎬 스텔라 연출을 껐어요 (땅에서 카운트다운만 봐요)':'🎬 스텔라 연출을 켰어요');stHud();const b=$('stCineBtn');if(b)b.textContent=world.flags.stCine===0?'🎬 연출: 끔':'🎬 연출: 켬';}
 function stMenu(open){const m=$('stellarMenu');if(open===undefined)open=!m.classList.contains('show');
-  if(open){m.querySelector('.list').innerHTML=STELLAR.map((k,i)=>`<div class="sk${i===stSkill?' on':''}" data-i="${i}"><b>[${k.key}] ${k.code} · ${k.name}</b><br><small>${k.desc}</small></div>`).join('');m.classList.add('show');if(document.pointerLockElement)document.exitPointerLock();}
+  if(open){m.querySelector('.list').innerHTML=STELLAR.map((k,i)=>`<div class="sk${i===stSkill?' on':''}" data-i="${i}"><b>[${k.key}] ${k.code} · ${k.name}</b><br><small>${k.desc}</small></div>`).join('');$('stCineBtn').textContent=world.flags.stCine===0?'🎬 연출: 끔':'🎬 연출: 켬';m.classList.add('show');if(document.pointerLockElement)document.exitPointerLock();}
   else{m.classList.remove('show');lockPointer();}}
-function flash(o=1,t=600){const f=$('flash');f.style.transition='none';f.style.opacity=o;void f.offsetWidth;f.style.transition=`opacity ${t}ms ease-out`;f.style.opacity=0;}
+function flash(o=1,t=600,col='#fff'){const f=$('flash');f.style.background=col;f.style.transition='none';f.style.opacity=o;void f.offsetWidth;f.style.transition=`opacity ${t}ms ease-out`;f.style.opacity=0;}
 function shake(a,t){shakeAmp=Math.max(shakeAmp,a);shakeT=Math.max(shakeT,t);}
 function groundY(x,z){for(let y=CH-1;y>0;y--){const b=getBlock(x,y,z);if(b<0)return null;if(SOLID[b]&&!LIQUID[b])return y;}return 0;}
-function stAim(){const d=viewDir(),h=raycast(camera.position,d,60);if(h)return {x:h.x,y:h.y,z:h.z};
-  const x=Math.floor(camera.position.x+d.x*40),z=Math.floor(camera.position.z+d.z*40),y=groundY(x,z);return y===null?null:{x,y,z};}
+function stAim(){const o=camera.position,d=viewDir(),h=raycast(o,d,90);if(h)return {x:h.x,y:h.y,z:h.z};
+  if(d.y<-.003&&world.dim==='over')for(let t=90;t<1600;t+=1.5){const x=Math.floor(o.x+d.x*t),y=o.y+d.y*t,z=Math.floor(o.z+d.z*t); // 멀리: 아직 안 만든 땅은 지형 높이로 짐작
+    const g=getChunk(x>>4,z>>4)?groundY(x,z):Math.max(SEA-1,terrainAt(x,z).h);if(g!==null&&y<=g+1)return {x,y:g,z};}
+  const x=Math.floor(o.x+d.x*40),z=Math.floor(o.z+d.z*40),y=groundY(x,z);return y===null?null:{x,y,z};}
 function stClearItems(cx,cz,r){for(let i=groundItems.length-1;i>=0;i--){const g=groundItems[i];if(Math.hypot(g.pos.x-cx,g.pos.z-cz)<r)removeGroundItem(i);}}
-function stStrike(cx,cz,r,r2,dmg2,cause){ // 반경 r 안의 모든 것을 없애고, r2 안은 피해와 함께 밀어냄
+function stStrikeMobs(cx,cz,r,r2,dmg2){ // 반경 r 안의 생물은 모두 사라지고, r2 안은 피해와 함께 밀려남
   for(const m of [...mobs]){const d=Math.hypot(m.pos.x-cx,m.pos.z-cz);if(d<r){m.byPlayer=performance.now();m.hurt(1e6,0,0);}else if(d<r2){const k=1-(d-r)/(r2-r);m.hurt(Math.round(dmg2*k),(m.pos.x-cx)/d*2*k,(m.pos.z-cz)/d*2*k);}}
-  stClearItems(cx,cz,r);
-  const pd=Math.hypot(player.pos.x-cx,player.pos.z-cz);
-  if(pd<r&&!player.dead){if(isCreative()||isSpec()){const a=Math.atan2(player.pos.z-cz,player.pos.x-cx)||0;player.pos.set(cx+Math.cos(a)*(r+6),Math.min(CH+8,player.pos.y+20),cz+Math.sin(a)*(r+6));player.vel.set(0,0,0);if(isCreative())player.flying=true;toast('🛰 크리에이티브: 안전한 곳으로 대피했어요');}
-    else die(cause);}
-  else if(pd<r2&&!player.dead){const k=1-(pd-r)/(r2-r);hurtPlayer(Math.round(dmg2*k),(player.pos.x-cx)/pd*k,(player.pos.z-cz)/pd*k,cause);}
+  stClearItems(cx,cz,r);}
+const stSafe=()=>isCreative()||isSpec();
+// ---------- 땅에 새기기: 이미 만든 청크엔 바로, 먼 땅은 만들어질 때 같은 모양으로 ----------
+function carvesNear(cx,cz){const L=world.carves&&world.carves[world.dim];if(!L||!L.length)return null;const ox=cx*16,oz=cz*16;
+  return L.filter(c=>{const b=carveBox(c);return !(ox+15<b[0]||ox>b[2]||oz+15<b[1]||oz>b[3]);});}
+function carveHit(c,X,y,Z){ // 아직 안 불러온 청크의 옛 기록이 새김 안에 있는지 (대략)
+  if(c.t==='rail')return (X-c.x)**2+(Z-c.z)**2<=c.r*c.r;
+  if(c.t==='gung')return Math.hypot(X-c.x,Z-c.z)<=c.r&&y>c.y-c.dep-3;
+  if(c.t==='crat')return Math.hypot(X-c.x,Z-c.z)<=c.r&&y>c.y-c.r;
+  if(c.t==='line')return segD(X,Z,c)<=c.w&&y>c.y0;return false;}
+function stCarve(c){
+  carveBox(c);if(!world.carves)world.carves={};(world.carves[world.dim]||(world.carves[world.dim]=[])).push(c);
+  const b=c.b,touched=[];
+  for(const ch of chunks.values()){const ox=ch.cx*16,oz=ch.cz*16;if(ox+15<b[0]||ox>b[2]||oz+15<b[1]||oz>b[3])continue;
+    const d=ch.data,old=d.slice(),k=ckey(ch.cx,ch.cz),m=mods.get(k);applyCarve(d,ch.cx,ch.cz,c);let any=false;
+    for(let i=0;i<d.length;i++)if(old[i]!==d[i]){any=true;if(m&&m.delete(i))modDirty.add(world.dim+'|'+k);} // 새긴 자리의 옛 기록은 지움
+    if(!any)continue;ch.lamps=[];for(let i=0;i<d.length;i++)if(LIGHT_SRC[d[i]])ch.lamps.push([ox+(i&15),i>>8,oz+((i>>4)&15)]);
+    for(let z=0;z<16;z++)for(let x=0;x<16;x++)calcHM(ch,x,z);ch.ver++;touched.push(ch);}
+  for(const ch of touched)for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const n=getChunk(ch.cx+dx,ch.cz+dz);if(n)n.needsMesh=true;}
+  for(const [k,m] of mods){if(chunks.has(k)||!m.size)continue;const [cx,cz]=k.split(',').map(Number);if(cx*16+15<b[0]||cx*16>b[2]||cz*16+15<b[1]||cz*16>b[3])continue;
+    for(const i of [...m.keys()])if(carveHit(c,cx*16+(i&15),i>>8,cz*16+((i>>4)&15))){m.delete(i);modDirty.add(world.dim+'|'+k);}}
 }
-function stRemesh(batch){for(const k of batch){const [a,c]=k.split(',').map(Number);remeshAt(a,c);}}
+function voidAt(x,z){const L=world.carves&&world.carves[world.dim];if(L)for(const c of L)if(c.t==='rail'&&(x-c.x)**2+(z-c.z)**2<=c.r*c.r)return true;return false;} // 레일건이 뚫은 곳은 바닥 아래도 공허
+// ---------- 우주 (컷신 무대) ----------
+let SPACE=null;const UPV=new THREE.Vector3(0,1,0),V3=(x=0,y=0,z=0)=>new THREE.Vector3(x,y,z),ease=k=>k*k*(3-2*k);
+function glowTex(){if(glowTex.t)return glowTex.t;const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),r=g.createRadialGradient(32,32,0,32,32,32);
+  r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(.18,'rgba(255,255,255,.8)');r.addColorStop(.45,'rgba(255,255,255,.2)');r.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=r;g.fillRect(0,0,64,64);return glowTex.t=new THREE.CanvasTexture(c);}
+function glow(color,s,op=1){const m=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false,fog:false}));m.scale.setScalar(s);return m;}
+function addMat(color,op=.9,side){return new THREE.MeshBasicMaterial({color,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false,fog:false,side:side||THREE.FrontSide});}
+function orient(m,a,b,w){const d=b.clone().sub(a),L=d.length()||1;m.position.copy(a).addScaledVector(d,.5);m.scale.set(w,L,w);m.quaternion.setFromUnitVectors(UPV,d.divideScalar(L));}
+function rod(color,op=.9){return new THREE.Mesh(new THREE.CylinderGeometry(1,1,1,10,1,true),addMat(color,op,THREE.DoubleSide));}
+function sphTex(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d'),im=g.createImageData(w,h),D=im.data;
+  for(let y=0;y<h;y++){const la=(.5-(y+.5)/h)*Math.PI,cl=Math.cos(la),sl=Math.sin(la);for(let x=0;x<w;x++){const lo=(x+.5)/w*Math.PI*2,p=fn(cl*Math.cos(lo),sl,cl*Math.sin(lo),la,lo),i=(y*w+x)*4;D[i]=p[0];D[i+1]=p[1];D[i+2]=p[2];D[i+3]=p.length>3?p[3]:255;}}
+  g.putImageData(im,0,0);return new THREE.CanvasTexture(c);}
+function fresnel(color,pw,k){return new THREE.ShaderMaterial({uniforms:{c:{value:new THREE.Color(color)},k:{value:k}},transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,
+  vertexShader:'varying vec3 vN,vV;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}',
+  fragmentShader:`uniform vec3 c;uniform float k;varying vec3 vN,vV;void main(){float f=pow(1.-max(0.,dot(vN,vV)),${pw.toFixed(1)});gl_FragColor=vec4(c*f*k,1.);}`});}
+function needleMesh(r,L,fog=true){ // 궁니르: 검은 텅스텐 선체 · 네 줄의 달아오른 열 도관 · 아래로 향한 뾰족한 끝
+  const g=new THREE.Group(),hm=new THREE.MeshLambertMaterial({color:0x1a1b22,fog}),sm=new THREE.MeshBasicMaterial({color:0xff7a20,fog});
+  g.add(new THREE.Mesh(new THREE.CylinderGeometry(r,r,L,12),hm));const tip=new THREE.Mesh(new THREE.ConeGeometry(r,r*6,12),hm);tip.position.y=-L/2-r*3;tip.rotation.x=Math.PI;g.add(tip);
+  for(let i=0;i<4;i++){const a=i*Math.PI/2,s=new THREE.Mesh(new THREE.BoxGeometry(r*.32,L*.97,r*.32),sm);s.position.set(Math.cos(a)*r,0,Math.sin(a)*r);g.add(s);}
+  for(let j=1;j<6;j++){const t=new THREE.Mesh(new THREE.TorusGeometry(r*1.02,r*.12,4,16),sm);t.rotation.x=Math.PI/2;t.position.y=-L/2+L*j/6;g.add(t);}return g;}
+function buildSpace(){if(SPACE)return SPACE;
+  const sc=new THREE.Scene();sc.background=new THREE.Color(0x010104);const cam=new THREE.PerspectiveCamera(55,1,1,5e5);
+  sc.add(new THREE.AmbientLight(0xffffff,.13));const sun=new THREE.DirectionalLight(0xfff2e0,1.3);sun.position.set(-1,.3,.7);sc.add(sun);
+  const nz=makeNoise(9173),f3=(x,y,z,o)=>{let s=0,a=1,f=1,n=0;for(let i=0;i<o;i++){s+=a*nz.n3(x*f,y*f,z*f);n+=a;a*=.5;f*=2.03;}return s/n;};
+  {const n=7000,P=new Float32Array(n*3),C=new Float32Array(n*3); // 별 바탕
+    for(let i=0;i<n;i++){const u=Math.random()*2-1,a=Math.random()*Math.PI*2,s=Math.sqrt(1-u*u),b=.3+Math.random()*.7,t=Math.random();P.set([s*Math.cos(a)*3e5,u*3e5,s*Math.sin(a)*3e5],i*3);C.set([b*(t<.2?.8:1),b*(t<.2?.88:1),b*(t>.85?.75:1)],i*3);}
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('color',new THREE.BufferAttribute(C,3));
+    sc.add(new THREE.Points(g,new THREE.PointsMaterial({size:1.8,sizeAttenuation:false,vertexColors:true})));}
+  const sets={},set=n=>{const g=new THREE.Group();g.visible=false;sc.add(g);return sets[n]=g;},lam=(map,o)=>new THREE.MeshLambertMaterial(Object.assign({map},o||{}));
+  const m=V3(.38,.5,.78).normalize(),side=V3().crossVectors(m,UPV).normalize(),up2=V3().crossVectors(side,m).normalize();
+  {const E=set('earth'); // 지구: 바다 · 대륙 · 사막 · 극지방 얼음 · 구름 · 푸른 대기
+    const tex=sphTex(512,256,(x,y,z,la)=>{const h=f3(x*1.6,y*1.6,z*1.6,6),dr=f3(x*3+9,y*3,z*3,3);if(Math.abs(la)>1.22+.14*f3(x*4,y*4,z*4,2))return [234,240,250];
+      if(h<.05){const k=Math.max(0,Math.min(1,(h+.45)/.5));return [8+26*k,34+58*k,96+74*k];}const q=Math.min(1,(h-.05)*3.2);
+      return dr>.1&&Math.abs(la)<.65?[196-40*q,166-34*q,104-10*q]:[52+80*q,112-6*q,44+46*q];});
+    E.add(new THREE.Mesh(new THREE.SphereGeometry(100,64,48),lam(tex)));
+    const cl=new THREE.Mesh(new THREE.SphereGeometry(101.3,64,48),lam(sphTex(512,256,(x,y,z)=>{const c=f3(x*3+20,y*5,z*3,5);return [255,255,255,Math.max(0,Math.min(1,(c-.03)*3.2))*235];}),{transparent:true,depthWrite:false}));E.add(cl);
+    E.add(new THREE.Mesh(new THREE.SphereGeometry(104.5,64,48),fresnel(0x5aa6ff,2.4,1.4)));
+    const dot=glow(0xff2030,9);dot.position.copy(m).multiplyScalar(100.6);E.add(dot);const las=rod(0xff2030,.95);E.add(las);
+    const inc=needleMesh(1.4,34);E.add(inc);const incG=glow(0xffb060,26);E.add(incG);E.userData={cl,dot,las,inc,incG};}
+  {const S=set('saturn'); // 토성: 줄무늬 · 카시니 간극이 있는 고리
+    const tex=sphTex(256,128,(x,y,z,la)=>{const b=Math.sin(la*14+f3(x*2,y*8,z*2,3)*3)*.5+.5;return [196+34*b,166+30*b,116+22*b];});
+    const sat=new THREE.Mesh(new THREE.SphereGeometry(80,48,36),lam(tex));sat.rotation.x=.42;S.add(sat);
+    const rm=new THREE.ShaderMaterial({transparent:true,side:THREE.DoubleSide,depthWrite:false,
+      vertexShader:'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+      fragmentShader:'varying vec3 vP;void main(){float r=(length(vP.xy)-100.)/85.;float b=.62+.2*sin(r*95.)+.14*sin(r*241.+1.3);float gap=smoothstep(.0,.02,abs(r-.64)-.025);float a=b*gap*smoothstep(0.,.04,r)*smoothstep(1.,.92,r);gl_FragColor=vec4(vec3(.88,.78,.62)*b,a*.88);}'});
+    const ring=new THREE.Mesh(new THREE.RingGeometry(100,185,180,1),rm);ring.rotation.x=-Math.PI/2+.42;S.add(ring);
+    const las=rod(0xff2030,.9);orient(las,V3(-4000,160,2200),V3(4000,-90,-1900),1.3);S.add(las);}
+  {const J=set('jupiter'); // 목성 · 적도를 감싼 가속 고리 · 24개 마디 · 약실 · 바늘
+    const tex=sphTex(512,256,(x,y,z,la,lo)=>{const w=f3(x*2,y*9,z*2,4),b=Math.sin(la*11+w*2.6);let c=b>0?[228,208,180]:[178,122,86];const t=.85+.25*f3(x*6,y*20,z*6,3);c=c.map(v=>v*t);
+      const dl=(la+.36)/.09,dlo=(lo-2.2)/.3,e=dl*dl+dlo*dlo;if(e<1){const k=1-e;c=[c[0]*(1-k)+200*k,c[1]*(1-k)+84*k,c[2]*(1-k)+58*k];}return c;});
+    J.add(new THREE.Mesh(new THREE.SphereGeometry(120,64,48),lam(tex)));J.add(new THREE.Mesh(new THREE.SphereGeometry(125,48,36),fresnel(0xffc890,3,.7)));
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(190,2.4,10,220),new THREE.MeshLambertMaterial({color:0x8c909a}));ring.rotation.x=Math.PI/2;J.add(ring);
+    const nodes=[];for(let i=0;i<24;i++){const a=i/24*Math.PI*2,n=new THREE.Mesh(new THREE.BoxGeometry(6,7,6),new THREE.MeshBasicMaterial({color:0x2a2a32}));n.position.set(Math.cos(a)*190,0,Math.sin(a)*190);n.rotation.y=-a;J.add(n);nodes.push(n);}
+    const br=new THREE.Mesh(new THREE.BoxGeometry(14,11,26),new THREE.MeshLambertMaterial({color:0x54586a}));br.position.set(200,0,0);J.add(br);
+    const nd=needleMesh(1.6,40);J.add(nd);const ng=glow(0xffa040,30,.0);J.add(ng);
+    const tg=new THREE.BufferGeometry();tg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(60*3),3));const trail=new THREE.Line(tg,new THREE.LineBasicMaterial({color:0xffa040,transparent:true,opacity:.9,blending:THREE.AdditiveBlending}));J.add(trail);
+    J.userData={nodes,nd,ng,trail};}
+  {const G=set('galaxy'); // 우리 은하: 네 갈래 나선팔 · 노란 중심 팽대부 · 가장자리의 레일건 불빛
+    const n=30000,P=new Float32Array(n*3),C=new Float32Array(n*3);
+    for(let i=0;i<n;i++){if(i<5000){const r=Math.pow(Math.random(),1.5)*420,a=Math.random()*Math.PI*2,u=Math.random()*2-1;P.set([Math.cos(a)*r*Math.sqrt(1-u*u),u*r*.45,Math.sin(a)*r*Math.sqrt(1-u*u)],i*3);C.set([1,.86,.62],i*3);continue;}
+      const t=Math.pow(Math.random(),.7),r=t*3000+150,a=(i%4)*Math.PI/2+r*.0022+(Math.random()-.5)*(.35+(1-t)*.5),blue=Math.random()<.4*t;
+      P.set([Math.cos(a)*r+(Math.random()-.5)*110*t,(Math.random()-.5)*(130*(1-t)+24),Math.sin(a)*r+(Math.random()-.5)*110*t],i*3);C.set(blue?[.55,.72,1]:[1,.8+.15*Math.random(),.62+.25*(1-t)],i*3);}
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('color',new THREE.BufferAttribute(C,3));
+    G.add(new THREE.Points(g,new THREE.PointsMaterial({size:30,map:glowTex(),vertexColors:true,transparent:true,opacity:.7,blending:THREE.AdditiveBlending,depthWrite:false})));
+    G.add(glow(0xffe2a8,1600,.85));const st=glow(0xff3030,110);st.position.set(3300,0,0);G.add(st);const las=rod(0xff2030,.85);orient(las,V3(820,0,520),V3(3300,0,0),5);G.add(las);G.userData={st,las};}
+  {const T=set('station'); // SS-01 레일건: 긴 포신 · 레일 두 줄 · 축전 고리 7개 · 본체 · 태양광 날개
+    const dk=new THREE.MeshLambertMaterial({color:0x3e434e}),dk2=new THREE.MeshLambertMaterial({color:0x24272f});
+    T.add(new THREE.Mesh(new THREE.BoxGeometry(7,7,110),dk));const rails=[];for(const sx of [-5,5]){const r=new THREE.Mesh(new THREE.BoxGeometry(1.6,1.6,116),new THREE.MeshBasicMaterial({color:0x401010}));r.position.x=sx;T.add(r);rails.push(r);}
+    const rings=[];for(let i=0;i<7;i++){const r=new THREE.Mesh(new THREE.TorusGeometry(8.5,1.3,8,36),new THREE.MeshBasicMaterial({color:0x1a2228}));r.position.z=40-i*13;T.add(r);rings.push(r);}
+    const body=new THREE.Mesh(new THREE.BoxGeometry(22,14,30),dk2);body.position.z=70;T.add(body);
+    const pm=new THREE.MeshLambertMaterial({color:0x1d3570,emissive:0x060c24});for(const sx of [-1,1]){const p=new THREE.Mesh(new THREE.BoxGeometry(70,.6,18),pm);p.position.set(sx*48,0,70);T.add(p);const a=new THREE.Mesh(new THREE.BoxGeometry(14,1.5,1.5),dk);a.position.set(sx*17,0,70);T.add(a);}
+    const muz=glow(0x9fe8ff,2);muz.position.z=-58;T.add(muz);const beam=rod(0xd8f8ff,.95);beam.visible=false;T.add(beam);T.userData={rails,rings,muz,beam};}
+  {const U=set('ursa'); // 큰곰자리: 북두칠성 일곱 별 · 깨어나는 별의 배열 고리 · 별을 잇는 선 · 쏘아 보낸 별똥별
+    const stars=[],rings=[],shots=[];
+    DIPPER.forEach(([n,a,b,mag],i)=>{const s=glow(0xe2ebff,70+(3.5-mag)*55);s.position.set((a+7.1)*16,(b-4.6)*16,((i*37)%5-2)*40);U.add(s);stars.push(s);
+      const rr=[];for(let j=0;j<2;j++){const t=new THREE.Mesh(new THREE.TorusGeometry(30+j*16,1,6,56),addMat(j?0x7fd8ff:0xffffff,0));t.position.copy(s.position);U.add(t);rr.push(t);}rings.push(rr);
+      const sh=glow(0xfff0c0,46);sh.visible=false;U.add(sh);shots.push(sh);});
+    const lines=new THREE.Line(new THREE.BufferGeometry().setFromPoints(DIP_ORDER.map(i=>stars[i].position)),new THREE.LineBasicMaterial({color:0x9fd0ff,transparent:true,opacity:0,blending:THREE.AdditiveBlending}));U.add(lines);
+    U.userData={stars,rings,lines,shots};}
+  return SPACE={scene:sc,cam,sets,m,side,up2};}
+// 컷 하나 = 시간 구간 + 우주/세계 + 카메라 움직임. 세계 컷은 카메라만 잠깐 옮겨 그림
+const W=(a,b,cap,cam,x)=>Object.assign({a,b,cap,cam,space:false},x||{}),SP=(a,b,set,cap,cam,x)=>Object.assign({a,b,set,cap,cam,space:true},x||{});
+const camNear=(dist,up,look)=>(k,o,P)=>{camera.position.copy(P).addScaledVector(o.back,dist).add(V3(0,up,0));const L=look(o);camera.lookAt(L.x,L.y,L.z);};
+function earthCam(Sp,k,a,b,out){const E=Sp.sets.earth.userData,c=Sp.cam,e=ease(k);E.cl.rotation.y=k*.05;c.position.copy(Sp.m).multiplyScalar(lerp(a,b,e)).addScaledVector(Sp.side,e*out);c.lookAt(V3().copy(Sp.m).multiplyScalar(100*(1-e*.8)));}
+const SHOTS={
+  'SS-01':[
+    W(0,2.6,'SS-01 · 레일건 — 레이저 조준 고정',camNear(4.5,2.2,o=>V3(o.x,o.y+6,o.z))),
+    W(2.6,5,'대기권을 지나 우주로',(k,o,P)=>{const e=k*k;camera.position.set(o.x+o.back.x*(30+e*260),o.y+12+e*1100,o.z+o.back.z*(30+e*260));camera.lookAt(o.x,o.y,o.z);},{far:4000,fo:.45}),
+    SP(5,7.5,'earth','지구 궤도 — 레이저는 어둠 저편으로 이어져요',(k,o,Sp)=>{const E=Sp.sets.earth.userData;E.dot.material.color.setHex(0xff2030);E.dot.visible=E.las.visible=true;E.inc.visible=E.incG.visible=false;
+      orient(E.las,V3().copy(Sp.m).multiplyScalar(100.5),V3().copy(Sp.m).multiplyScalar(100).addScaledVector(V3().copy(Sp.m).multiplyScalar(.5).addScaledVector(Sp.up2,.86),9000),.45);earthCam(Sp,k,116,560,-170);},{fi:.35}),
+    SP(7.5,10,'saturn','토성을 스쳐 지나',(k,o,Sp)=>{const e=ease(k),c=Sp.cam,a=lerp(2.5,.5,e);c.position.set(Math.cos(a)*340,lerp(95,15,e),Math.sin(a)*340);c.lookAt(lerp(0,-300,e*e),0,lerp(0,300,e*e));}),
+    SP(10,12.5,'galaxy','태양계 너머 — 우리 은하 밖으로',(k,o,Sp)=>{const G=Sp.sets.galaxy,e=ease(k),c=Sp.cam;G.position.set(0,0,0);G.rotation.set(0,0,0);G.userData.st.material.opacity=.6+.4*Math.sin(o.t*12);
+      c.position.set(lerp(820,0,e),lerp(40,4600,e),lerp(560,3900,e));c.lookAt(lerp(1600,0,e),0,lerp(300,0,e));}),
+    SP(12.5,15,'station','은하 가장자리 · SS-01 레일건 충전',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;G.position.set(0,-1900,-10000);G.rotation.set(.4,0,0);
+      T.rings.forEach((r,i)=>r.material.color.setHex(k*7.6>i?0x9fe8ff:0x1a2228));T.rails.forEach(r=>r.material.color.setRGB(.25+.75*k,.06+.1*k,.06+.1*k));T.muz.scale.setScalar(2+k*k*34*(1+.15*Math.sin(o.t*50)));T.beam.visible=false;
+      const a=.75+k*.45;c.position.set(Math.cos(a)*150,32,Math.sin(a)*120+10);c.lookAt(0,0,-25);}),
+    SP(15,16,'station','발사',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;T.beam.visible=true;orient(T.beam,V3(0,0,-58),V3(0,0,-58-200-k*k*30000),5+3*Math.sin(o.t*60));T.muz.scale.setScalar(60);
+      c.position.set(80,22,-10);c.lookAt(0,0,-110);},{fo:.15}),
+    W(16,19.6,'',camNear(28,24,o=>V3(o.x,o.y+10,o.z)),{far:1800})],
+  'SS-03':[
+    W(0,2.2,'SS-03 · 궁니르 — 불씨 표식 고정',camNear(4.5,2.2,o=>V3(o.x,o.y+2,o.z)),{fo:.3}),
+    SP(2.2,4.4,'earth','지구를 떠나 목성으로',(k,o,Sp)=>{const E=Sp.sets.earth.userData;E.dot.material.color.setHex(0xff8a20);E.dot.visible=true;E.las.visible=E.inc.visible=E.incG.visible=false;earthCam(Sp,k,120,900,300);},{fi:.3,fo:.3}),
+    SP(4.4,7.2,'jupiter','목성 가속 고리 기동 · 바늘 장전',(k,o,Sp)=>{const J=Sp.sets.jupiter.userData,c=Sp.cam,e=ease(k);J.nodes.forEach((n,i)=>n.material.color.setHex(k*26>i?0xffa040:0x2a2a32));
+      const s=Math.min(1,k*2);J.nd.position.set(200,0,lerp(110,0,ease(s)));J.nd.quaternion.setFromUnitVectors(V3(0,-1,0),V3(0,0,-1));J.ng.material.opacity=0;J.trail.visible=false;
+      c.position.set(lerp(-40,330,e),lerp(170,60,e),lerp(720,330,e));c.lookAt(lerp(0,170,e),0,0);},{fi:.3}),
+    SP(7.2,10.2,'jupiter','목성을 일곱 바퀴 — 소리보다 빠르게',(k,o,Sp)=>{const J=Sp.sets.jupiter.userData,c=Sp.cam,kr=.88;J.nodes.forEach(n=>n.material.color.setHex(0xffc070));
+      const th=t=>-((Math.min(t,kr)/kr)**2)*Math.PI*2*7,a=th(k),tv=V3(Math.sin(a),0,-Math.cos(a)); // 진행 방향(접선)
+      const p=V3(Math.cos(a)*190,0,Math.sin(a)*190);if(k>kr)p.addScaledVector(tv,(k-kr)/(1-kr)*1400);
+      J.nd.position.copy(p);J.nd.quaternion.setFromUnitVectors(V3(0,-1,0),tv);J.ng.position.copy(p);J.ng.material.opacity=Math.min(1,k*2);
+      const A=J.trail.geometry.attributes.position;for(let i=0;i<60;i++){const t=Math.max(0,Math.min(k,kr)-i*.004),aa=th(t);A.setXYZ(i,Math.cos(aa)*190,0,Math.sin(aa)*190);}A.needsUpdate=true;J.trail.visible=true;
+      c.position.set(0,460,560);c.lookAt(0,-40,0);},{fo:.25}),
+    SP(10.2,12.2,'earth','지구를 향해 — 궁니르 낙하',(k,o,Sp)=>{const E=Sp.sets.earth.userData,c=Sp.cam;E.dot.visible=true;E.las.visible=false;E.inc.visible=E.incG.visible=true;
+      const D=V3().copy(Sp.m).multiplyScalar(.6).addScaledVector(Sp.side,.8).normalize(),tgt=V3().copy(Sp.m).multiplyScalar(101),p=tgt.clone().addScaledVector(D,lerp(3200,30,k*k));
+      E.inc.position.copy(p);E.inc.quaternion.setFromUnitVectors(UPV,D);E.incG.position.copy(p);c.position.copy(Sp.m).multiplyScalar(150).addScaledVector(Sp.side,-50);c.lookAt(p.clone().lerp(tgt,.3));},{fi:.25,fo:.2}),
+    W(12.2,15.4,'',camNear(6,2.4,o=>V3(o.x,o.y+(o.fired?6:26),o.z)),{far:1800}),
+    W(15.4,18.6,'',camNear(26,20,o=>V3(o.x,o.y,o.z)),{far:2200})],
+  'SS-04':[
+    W(0,3,'SS-04 · 칠성 — 북두칠성을 땅에 투영',(k,o,P)=>{const e=ease(k);camera.position.set(lerp(P.x,o.x,e),P.y+e*1150,lerp(P.z,o.z,e)+e*430);camera.lookAt(o.x,o.y,o.z);},{far:6000,fo:.3}),
+    SP(3,5,'ursa','큰곰자리로',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;U.rings.forEach(r=>r.forEach(t=>t.material.opacity=0));U.lines.material.opacity=.15;U.shots.forEach(s=>s.visible=false);c.position.set(0,-80+k*40,lerp(3200,1000,ease(k)));c.lookAt(0,0,0);},{fi:.3}),
+    SP(5,7.8,'ursa','일곱 별이 별의 배열로 깨어나요',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;U.rings.forEach((r,i)=>r.forEach((t,j)=>{t.material.opacity=Math.max(0,Math.min(.9,(k*9-i)*.9));t.rotation.set(o.t*(j?.9:-.7)+i,o.t*.5,0);}));
+      U.lines.material.opacity=.15+.75*k;const a=-.35+k*.5;c.position.set(Math.sin(a)*900,60,Math.cos(a)*900);c.lookAt(0,0,0);}),
+    SP(7.8,9.5,'ursa','일곱 별 발사',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;c.position.set(0,0,760);c.lookAt(0,0,0);
+      U.shots.forEach((s,i)=>{const kk=Math.max(0,Math.min(1,k*1.4-i*.06));s.visible=kk>0;s.position.copy(U.stars[i].position).lerp(V3(0,0,900),kk*kk);});},{fo:.2}),
+    W(9.5,15.2,'별이 하나씩 떨어져요',(k,o)=>{camera.position.set(o.x,o.y+1150,o.z+430);camera.lookAt(o.x,o.y,o.z);},{far:6000,fi:.2}),
+    W(15.2,17.6,'별자리 점화',(k,o)=>{camera.position.set(o.x,o.y+1150-k*120,o.z+430);camera.lookAt(o.x,o.y,o.z);},{far:6000}),
+    W(17.6,18.1,'',camNear(4,2,o=>V3(o.x,o.y,o.z)))]};
+function stShot(o){const L=SHOTS[o.type];for(const s of L)if(o.t>=s.a&&o.t<s.b)return s;return null;}
+const stFrozen=()=>!!(stCast&&stCast.cine&&stShot(stCast));
+let cineCapTxt=null;
+function cineRender(o){const s=stShot(o);if(!s)return false;const k=Math.min(1,Math.max(0,(o.t-s.a)/(s.b-s.a)));
+  if(s.cap!==cineCapTxt){cineCapTxt=s.cap;$('cineCap').innerHTML=s.cap;}
+  let f=0;if(s.fi)f=Math.max(f,1-(o.t-s.a)/s.fi);if(s.fo)f=Math.max(f,1-(s.b-o.t)/s.fo);$('cineFade').style.opacity=Math.max(0,Math.min(1,f));
+  const sh=shakeT>0?shakeAmp*Math.min(1,shakeT):0;
+  if(s.space){const Sp=buildSpace(),c=Sp.cam;c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();for(const n in Sp.sets)Sp.sets[n].visible=n===s.set;
+    s.cam(k,o,Sp);if(sh){c.position.x+=(Math.random()-.5)*sh*4;c.position.y+=(Math.random()-.5)*sh*4;}renderer.render(Sp.scene,c);return true;}
+  const P=camera.position.clone(),Q=camera.quaternion.clone(),fn=scene.fog.near,ff=scene.fog.far,far=camera.far;
+  if(s.far){camera.far=s.far;camera.updateProjectionMatrix();scene.fog.near=s.far*.45;scene.fog.far=s.far;}
+  s.cam(k,o,P);if(sh){camera.position.x+=(Math.random()-.5)*sh;camera.position.y+=(Math.random()-.5)*sh;camera.position.z+=(Math.random()-.5)*sh;}
+  camera.updateMatrixWorld();skyDome.position.copy(camera.position);renderer.render(scene,camera);
+  camera.position.copy(P);camera.quaternion.copy(Q);if(s.far){camera.far=far;camera.updateProjectionMatrix();scene.fog.near=fn;scene.fog.far=ff;}camera.updateMatrixWorld();skyDome.position.copy(P);return true;}
+// ---------- 발동 ----------
+function stPlan(code,P){const o={x:P.x+.5,y:P.y+1,z:P.z+.5};
+  if(code==='SS-01')o.r=200;else if(code==='SS-03'){o.r=400;o.rc=40;}
+  else{const yaw=player.yaw,cs=Math.cos(yaw),sn=Math.sin(yaw),S=1440/43; // 국자 모양 7개 별: 1,440칸 너비 · 밝을수록 큰 분화구
+    o.nodes=DIPPER.map(([n,a,b,mag])=>{const ax=(a+7.1)*S,bz=(b-4.6)*S,x=Math.floor(o.x+ax*cs+bz*sn),z=Math.floor(o.z-ax*sn+bz*cs),g=getChunk(x>>4,z>>4)?groundY(x,z):Math.max(SEA-1,terrainAt(x,z).h);
+      return {n,x,z,y:g===null?SEA:g,r:Math.round(6+(3.5-mag)*7)};});
+    o.segs=[];for(let i=0;i+1<DIP_ORDER.length;i++)o.segs.push([o.nodes[DIP_ORDER[i]],o.nodes[DIP_ORDER[i+1]]]);}
+  return o;}
+function stInZone(o,code,x,z){if(code==='SS-01')return Math.hypot(x-o.x,z-o.z)<o.r+2;if(code==='SS-03')return Math.hypot(x-o.x,z-o.z)<o.r;
+  return o.nodes.some(n=>Math.hypot(x-n.x,z-n.z)<n.r+2)||o.segs.some(([a,b])=>segD(x,z,{x:a.x,z:a.z,x2:b.x,z2:b.z})<5);}
 function useRemote(s){
   if(rodLock)return;rodLock=true; // 누르고 있어도 한 번만
   if(player.crouch||mobileCrouch){stSelect((stSkill+1)%STELLAR.length);return;}
   if(stCast){toast('이미 발동 중이에요');return;}if(stCD>0){toast(`충전 중… ${Math.ceil(stCD)}초`);return;}
   if(world.dim!=='over'&&stSkill!==0){toast('궁니르와 칠성은 프론티어 하늘 아래에서만 쓸 수 있어요');return;}
-  const P=stAim();if(!P){toast('조준할 땅이 없어요');return;}
+  const P=stAim();if(!P){toast('조준할 땅이 없어요 (땅을 바라보세요)');return;}
+  const k=STELLAR[stSkill],o=stPlan(k.code,P);
+  if(!stSafe()&&stInZone(o,k.code,player.pos.x,player.pos.z)){const now=performance.now(); // 서바이벌: 내가 범위 안이면 한 번 더 확인
+    if(!stConfirm||stConfirm.k!==k.code||now-stConfirm.t>4000){stConfirm={k:k.code,t:now};SFX.hmm();toast(`⚠ 지금 서 있는 곳도 <b>${k.name}</b> 범위 안이에요! 4초 안에 한 번 더 누르면 그래도 발동해요`);return;}}
+  stConfirm=null;
   if(!world.flags.stWarn){world.flags.stWarn=1;toast('⚠ 스텔라 리모컨은 <b>세계를 영원히 바꿔요</b>. 저장 파일을 내보내 두는 걸 추천해요');}
-  SFX.click();swing=1;const k=STELLAR[stSkill];toast(`🛰 <b>${k.code} · ${k.name}</b> 발동!`);
-  const o={type:k.code,t:0,x:P.x+.5,y:P.y+1,z:P.z+.5,objs:[],fired:false,step:0};
-  if(k.code==='SS-01'){o.r=11;o.laser=makeBeam(0xff2030,.12,.9);placeBeam(o.laser,new THREE.Vector3(o.x,o.y,o.z),new THREE.Vector3(o.x,o.y+260,o.z));
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(o.r,.12,6,64),new THREE.MeshBasicMaterial({color:0xff2030,transparent:true,opacity:.8,fog:false,depthWrite:false}));ring.rotation.x=Math.PI/2;ring.position.set(o.x,o.y+.1,o.z);scene.add(ring);o.objs.push(o.laser,ring);SFX.laserCharge();}
-  else if(k.code==='SS-03'){o.r=17;const nd=new THREE.Mesh(new THREE.CylinderGeometry(.7,.35,300,10),new THREE.MeshBasicMaterial({color:0xffd27a,fog:false}));nd.position.set(o.x,o.y+600,o.z);scene.add(nd);o.needle=nd;o.objs.push(nd);}
-  else{ // 북두칠성: 국자 모양 7개 별 (밝기 → 분화구 크기)
-    const D=[['두베',13,-3,1.8],['메라크',12,9,2.4],['페크다',0,10,2.4],['메그레즈',-3,0,3.3],['알리오스',-12,2,1.8],['미자르',-20,4,2.2],['알카이드',-30,10,1.9]];
-    const yaw=player.yaw,cs=Math.cos(yaw),sn=Math.sin(yaw),mx=-7.1,mz=4.6;
-    o.stars=D.map(([n,a,b,mag])=>{const ax=a-mx,bz=b-mz,x=Math.floor(o.x+ax*cs+bz*sn),z=Math.floor(o.z-ax*sn+bz*cs);return {n,x,z,r:Math.max(3,3+(3.5-mag)*2),fallen:false};});
-    const pts=[];for(const st of o.stars){const sp=new THREE.Mesh(IGEO.sph,new THREE.MeshBasicMaterial({color:0xfffbe0,fog:false,transparent:true,opacity:0}));sp.scale.setScalar(1.6);sp.position.set(st.x+.5,CH+40,st.z+.5);scene.add(sp);st.sky=sp;o.objs.push(sp);pts.push(sp.position.clone());}
-    const order=[6,5,4,3,2,1,0,3];const lg=new THREE.BufferGeometry().setFromPoints(order.map(i=>pts[i]));o.lines=new THREE.Line(lg,new THREE.LineBasicMaterial({color:0xbfd8ff,transparent:true,opacity:0,fog:false}));scene.add(o.lines);o.objs.push(o.lines);SFX.portal();}
+  swing=1;SFX.stArm();toast(`🛰 <b>${k.code} · ${k.name}</b> — ${Math.round(Math.hypot(P.x-player.pos.x,P.z-player.pos.z))}칸 앞 조준 고정`);
+  Object.assign(o,{type:k.code,T:k.T,end:k.end,cd:k.cd,t:0,objs:[],ev:{},fired:false,cine:world.flags.stCine!==0});
+  {let bx=player.pos.x-o.x,bz=player.pos.z-o.z,L=Math.hypot(bx,bz);if(L<1){const d=viewDir();bx=-d.x;bz=-d.z;L=Math.hypot(bx,bz)||1;}o.back=V3(bx/L,0,bz/L);}
+  const add=m=>{scene.add(m);o.objs.push(m);return m;};
+  if(k.code==='SS-01'){ // 하늘에서 내려온 빨간 레이저 + 반경 200칸 고리
+    o.laser=makeBeam(0xff2030,.35,.9);placeBeam(o.laser,V3(o.x,o.y,o.z),V3(o.x,o.y+900,o.z));o.objs.push(o.laser);
+    o.ring=add(new THREE.Mesh(new THREE.TorusGeometry(o.r,.8,6,240),addMat(0xff2030,.7)));o.ring.rotation.x=Math.PI/2;o.ring.position.set(o.x,o.y+.3,o.z);
+    o.dot=add(glow(0xff3040,5));o.dot.position.set(o.x,o.y+.3,o.z);SFX.laserCharge();}
+  else if(k.code==='SS-03'){ // 불씨 표식 + 400칸 범위 + 떨어질 바늘
+    o.mark=add(new THREE.Mesh(new THREE.RingGeometry(4,5.2,48),addMat(0xff8a20,.9,THREE.DoubleSide)));o.mark.rotation.x=-Math.PI/2;o.mark.position.set(o.x,o.y+.15,o.z);
+    for(const a of [0,Math.PI/2]){const c=add(new THREE.Mesh(new THREE.PlaneGeometry(14,.5),addMat(0xff8a20,.8,THREE.DoubleSide)));c.rotation.set(-Math.PI/2,0,a);c.position.set(o.x,o.y+.16,o.z);}
+    o.zone=add(new THREE.Mesh(new THREE.TorusGeometry(o.r,1.2,6,280),addMat(0xff7a20,.35)));o.zone.rotation.x=Math.PI/2;o.zone.position.set(o.x,o.y+.3,o.z);
+    o.needle=add(needleMesh(2.6,620,false));o.needle.visible=false;SFX.portal();}
+  else{ // 땅에 투영된 북두칠성 (노드 고리 + 선) · 하늘에 고정될 별 일곱 개
+    o.beams=o.segs.map(([a,b])=>{const m=makeBeam(0x9fd0ff,2.5,0);placeBeam(m,V3(a.x+.5,a.y+1.2,a.z+.5),V3(b.x+.5,b.y+1.2,b.z+.5));o.objs.push(m);return m;});
+    for(const n of o.nodes){n.ring=add(new THREE.Mesh(new THREE.TorusGeometry(n.r,.9,6,64),addMat(0x9fd0ff,0)));n.ring.rotation.x=Math.PI/2;n.ring.position.set(n.x+.5,n.y+1.3,n.z+.5);
+      n.sky=add(glow(0xfffbe0,40,0));n.sky.position.set(n.x+.5,CH+240,n.z+.5);n.trail=makeBeam(0xffd890,3,.85);n.trail.visible=false;o.objs.push(n.trail);}
+    SFX.portal();}
   stCast=o;stHud();
 }
-function stEnd(o,cd){for(const m of o.objs){scene.remove(m);if(m.material&&m.material.dispose)m.material.dispose();}stCast=null;stCD=cd;stHud();}
-function stCrater(cx,cy,cz,r,batch,core){ // 둥근 분화구 (아래로 파인 반구) · 바닥에 별의 핵
-  const R=Math.ceil(r);for(let dz=-R;dz<=R;dz++)for(let dx=-R;dx<=R;dx++)for(let dy=-R;dy<=R+3;dy++){const d=Math.hypot(dx,dz,Math.max(0,dy)*.5+Math.min(0,dy));if(d>r)continue;
-    const y=cy+dy;if(y<1||y>=CH)continue;const b=getBlock(cx+dx,y,cz+dz);if(b>0&&b!==GUNGNIR_NEEDLE&&b!==CORE)setBlock(cx+dx,y,cz+dz,(dy<=-R+1&&Math.random()<.35)?HELLSTONE:AIR,batch);}
-  if(core){const by=Math.max(1,cy-R+1);setBlock(cx,by,cz,STAR_CORE,batch);}}
+function stEnd(o,cd){for(const m of o.objs){scene.remove(m);if(m.material&&m.material.dispose)m.material.dispose();}stCast=null;stCD=cd;document.body.classList.remove('cine');$('stCount').style.display='none';$('cineFade').style.opacity=0;cineCapTxt=null;stHud();}
+function stAt(o,t,f,cineOnly){if(o.ev[t]||o.t<t)return;o.ev[t]=1;if(cineOnly&&!o.cine)return;f();}
 function updateStellar(dt){
   stCD=Math.max(0,stCD-dt);if(shakeT>0){shakeT-=dt;if(shakeT<=0)shakeAmp=0;}
-  const o=stCast;if(!o){stHud();return;}o.t+=dt;const skip=o.skip;
-  if(o.type==='SS-01'){ // 레일건: 2.6초 조준 → 발사
-    if(!o.fired){o.objs[1].material.opacity=.5+.4*Math.sin(o.t*20);if(o.t>2.6||skip){o.fired=true;o.ft=o.t;
-      const beam=new THREE.Mesh(new THREE.CylinderGeometry(o.r,o.r,400,48,1,true),new THREE.MeshBasicMaterial({color:0xd8f6ff,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,depthWrite:false,fog:false}));
-      beam.position.set(o.x,o.y+100,o.z);scene.add(beam);o.beam=beam;o.objs.push(beam);flash(.9,900);shake(.5,1.4);SFX.laser();SFX.boom();
-      const batch=new Set(),bx=Math.floor(o.x),bz=Math.floor(o.z),R=Math.ceil(o.r); // 하늘 끝부터 공허까지 통째로
-      for(let dz=-R;dz<=R;dz++)for(let dx=-R;dx<=R;dx++){if(dx*dx+dz*dz>o.r*o.r)continue;for(let y=CH-1;y>=0;y--)if(getBlock(bx+dx,y,bz+dz)>0)setBlock(bx+dx,y,bz+dz,AIR,batch);}
-      stRemesh(batch);stStrike(o.x,o.z,o.r,o.r+8,12,'레일건 광선에 휩쓸렸습니다');}}
-    else{const k=(o.t-o.ft)/1.8;o.beam.material.opacity=Math.max(0,.95*(1-k));o.beam.scale.set(1+k*.2,1,1+k*.2);if(Math.random()<dt*20)spawnParticles(o.x+(Math.random()-.5)*o.r*2,o.y,o.z+(Math.random()-.5)*o.r*2,new THREE.Color(0xbfefff),3,.5,6);if(k>=1)stEnd(o,8);}}
-  else if(o.type==='SS-03'){ // 궁니르: 소리 없이 바늘이 꽂힘 → 충격파 · 용암 분화구 · 바늘 기둥
-    if(!o.fired){const k=Math.min(1,o.t/.7);o.needle.position.y=o.y+600-k*450;if(k>=1||skip){o.fired=true;o.ft=o.t;
-      const ring=new THREE.Mesh(new THREE.TorusGeometry(1,.5,8,64),new THREE.MeshBasicMaterial({color:0xffb050,transparent:true,opacity:.9,fog:false,depthWrite:false}));ring.rotation.x=Math.PI/2;ring.position.set(o.x,o.y+.5,o.z);scene.add(ring);o.ring=ring;o.objs.push(ring);
-      flash(.8,1100);shake(.7,1.8);SFX.boom();tone(50,25,1.6,.4,'sine');
-      const batch=new Set(),bx=Math.floor(o.x),bz=Math.floor(o.z),H=Math.floor(o.y)-1,R=Math.ceil(o.r);
-      for(let dz=-R;dz<=R;dz++)for(let dx=-R;dx<=R;dx++){const d=Math.hypot(dx,dz);if(d>o.r)continue;const X=bx+dx,Z=bz+dz,top=H-Math.round(3*(1-d/o.r)); // 가운데가 살짝 파인 평평한 분화구
-        for(let y=CH-1;y>top;y--)if(getBlock(X,y,Z)>0)setBlock(X,y,Z,AIR,batch);
-        for(let y=Math.max(1,top-2);y<=top;y++){const q=Math.random();setBlock(X,y,Z,y<top?HELLSTONE:q<.12?LAVA:q<.5?OBSIDIAN:HELLSTONE,batch);}}
-      for(let y=0;y<CH;y++)setBlock(bx,y,bz,GUNGNIR_NEEDLE,batch); // 바닥부터 하늘 끝까지 남는 바늘
-      stRemesh(batch);stStrike(o.x,o.z,o.r,o.r*2,10,'궁니르의 충격파에 휩쓸렸습니다');}}
-    else{const k=(o.t-o.ft)/1.4;o.ring.scale.setScalar(1+k*o.r*2.2);o.ring.material.opacity=Math.max(0,.9*(1-k));o.needle.material.opacity=1;if(k>=1)stEnd(o,10);}}
-  else{ // 칠성: 1.6초 동안 별자리가 떠오름 → 0.8초마다 별 하나씩 떨어짐 → 도랑
-    const fadeIn=Math.min(1,o.t/1.4);o.lines.material.opacity=.7*fadeIn*(o.trench?Math.max(0,1-(o.t-o.endT)):1);for(const st of o.stars)if(!st.fallen)st.sky.material.opacity=fadeIn;
-    if(skip&&!o.skipped){o.skipped=true;o.t=Math.max(o.t,1.6+o.step*.8);}
-    while(o.step<7&&o.t>1.6+o.step*.8){const st=o.stars[o.step];st.fallen=true;st.fallT=0;st.ball=st.sky;st.ball.material.color.setHex(0xfff2b0);st.gy=groundY(st.x,st.z);if(st.gy===null)st.gy=SEA;o.step++;SFX.fireball();}
-    for(const st of o.stars){if(!st.fallen||st.done)continue;st.fallT+=dt;const k=Math.min(1,st.fallT/.55),y=CH+40-(CH+40-st.gy)*k*k;st.ball.position.y=y;
-      if(Math.random()<.9)spawnParticles(st.x+.5,y+1,st.z+.5,new THREE.Color(0xffe0a0),2,.4,1);
-      if(k>=1){st.done=true;st.ball.visible=false;const batch=new Set();stCrater(st.x,st.gy,st.z,st.r,batch,true);stRemesh(batch);flash(.45,500);shake(.35,.6);SFX.boom();
-        for(let i=0;i<3;i++)spawnParticles(st.x+.5,st.gy+1,st.z+.5,new THREE.Color(i?0xffc070:0xffffff),14,st.r*.5,6);stStrike(st.x+.5,st.z+.5,st.r,st.r*2,8,'떨어지는 별에 맞았습니다');}}
-    if(o.step>=7&&o.stars.every(st=>st.done)&&!o.trench){o.trench=true;o.endT=o.t; // 별과 별 사이를 잇는 불타는 도랑
-      const order=[6,5,4,3,2,1,0,3],batch=new Set();
-      for(let i=0;i+1<order.length;i++){const a=o.stars[order[i]],b=o.stars[order[i+1]],L=Math.ceil(Math.hypot(b.x-a.x,b.z-a.z));
-        for(let k=0;k<=L;k++){const x=Math.round(a.x+(b.x-a.x)*k/L),z=Math.round(a.z+(b.z-a.z)*k/L),g=groundY(x,z);if(g===null||g<2)continue;const bb=getBlock(x,g,z);if(bb===STAR_CORE||bb===GUNGNIR_NEEDLE)continue;
-          setBlock(x,g,z,AIR,batch);if(getBlock(x,g-1,z)!==STAR_CORE)setBlock(x,g-1,z,LAVA,batch);}}
-      stRemesh(batch);SFX.crackle();}
-    if(o.trench&&o.t-o.endT>1.2)stEnd(o,12);}
+  const o=stCast;if(!o){stHud();return;}
+  if(o.skip){o.skip=false;if(o.cine){o.cine=false;if(o.t<o.T-.4)o.t=o.T-.4;}} // 연출 넘기기 → 명중 직전으로
+  o.t+=dt;
+  if(o.type==='SS-01')stRail(o,dt);else if(o.type==='SS-03')stGung(o,dt);else stSeven(o,dt);
+  if(stCast!==o)return;
+  const n=Math.ceil(o.T-o.t),hush=o.type==='SS-03'&&o.t>12.2,el=$('stCount'); // 카운트다운
+  if(!o.fired&&n>0&&!hush){el.style.display='block';el.textContent=`${o.type} · T-${n}`;if(n<=5&&n!==o.tick){o.tick=n;SFX.stTick();}}else el.style.display='none';
+  document.body.classList.toggle('cine',stFrozen());
   stHud();
 }
+function stRail(o,dt){ // SS-01: 레이저 조준 → (우주 연출) → 반경 200칸 광선
+  if(!o.fired){o.ring.material.opacity=.45+.35*Math.sin(o.t*8);o.laser.material.opacity=.55+.4*Math.sin(o.t*31);o.dot.scale.setScalar(5+2*Math.sin(o.t*12));
+    stAt(o,2.6,SFX.stRise,1);stAt(o,12.5,SFX.stCharge,1);stAt(o,15,()=>{flash(1,450,'#dff6ff');shake(.4,.8);SFX.stFire();},1);
+    if(o.t>=o.T){o.fired=true;o.laser.visible=o.ring.visible=o.dot.visible=false;
+      const beam=new THREE.Mesh(new THREE.CylinderGeometry(o.r,o.r,1200,128,1,true),addMat(0xd8f6ff,.92,THREE.DoubleSide));beam.position.set(o.x,500,o.z);scene.add(beam);o.beam=beam;o.objs.push(beam);
+      flash(1,1600);shake(.9,2.6);SFX.stImpact();stStrikeMobs(o.x,o.z,o.r,o.r+30,14);
+      if(Math.hypot(player.pos.x-o.x,player.pos.z-o.z)<o.r+1&&!player.dead){if(stSafe()){const a=Math.atan2(player.pos.z-o.z,player.pos.x-o.x)||0;player.pos.set(o.x+Math.cos(a)*(o.r+8),CH+6,o.z+Math.sin(a)*(o.r+8));player.vel.set(0,0,0);if(isCreative())player.flying=true;toast('🛰 크리에이티브: 광선 밖으로 대피했어요');}
+        else die('궤도에서 지워졌습니다');}
+      stCarve({t:'rail',x:Math.floor(o.x),z:Math.floor(o.z),r:o.r});}}
+  else{const k=(o.t-o.T)/(o.end-.2);o.beam.material.opacity=Math.max(0,.92*(1-k*k));o.beam.scale.set(1+k*.04,1,1+k*.04);
+    if(Math.random()<dt*24)spawnParticles(player.pos.x+(Math.random()-.5)*24,player.pos.y+Math.random()*8,player.pos.z+(Math.random()-.5)*24,new THREE.Color(0xff9a50),2,.4,3);
+    stAt(o,o.T+1.4,SFX.crackle);if(o.t>=o.T+o.end)stEnd(o,o.cd);}}
+function stGung(o,dt){ // SS-03: 불씨 표식 → (목성 가속) → 소리 없는 명중 → 충격파가 지나가고서야 쾅
+  if(!o.fired){o.mark.rotation.z+=dt*.8;o.mark.material.opacity=.6+.35*Math.sin(o.t*6);
+    stAt(o,2.2,SFX.stRise,1);for(let i=0;i<24;i++)stAt(o,4.6+i*.1,SFX.gRing,1);stAt(o,6,SFX.mech,1);stAt(o,7.2,SFX.gSpin,1);stAt(o,10.2,SFX.gWhoosh,1);
+    const dk=(o.t-(o.T-1.3))/1.3;o.needle.visible=dk>0;if(dk>0)o.needle.position.set(o.x,o.y+310+15+(1-dk)*(1-dk)*700,o.z);
+    if(o.t>=o.T){o.fired=true;o.mark.visible=o.zone.visible=false;o.needle.position.set(o.x,o.y+310+15-8,o.z);
+      flash(.95,1300,'#fff1dc');shake(.35,.8);SFX.gCrack();stStrikeMobs(o.x,o.z,o.r,o.r+220,10);
+      if(Math.hypot(player.pos.x-o.x,player.pos.z-o.z)<o.r&&!player.dead){if(isCreative())player.flying=true;else if(!isSpec())die('궁니르의 충격파에 휩쓸렸습니다');}
+      stCarve({t:'gung',x:Math.floor(o.x),z:Math.floor(o.z),y:Math.floor(o.y)-1,r:o.r,rc:o.rc,dep:7,nr:2.6,s:(Math.random()*1e9)|0});
+      o.shock=new THREE.Mesh(new THREE.RingGeometry(.94,1,200),addMat(0xffc080,.9,THREE.DoubleSide));o.shock.rotation.x=-Math.PI/2;o.shock.position.set(o.x,o.y+1,o.z);scene.add(o.shock);o.objs.push(o.shock);
+      o.wall=new THREE.Mesh(new THREE.CylinderGeometry(1,1,1,160,1,true),addMat(0xffd8a8,.35,THREE.DoubleSide));o.wall.position.set(o.x,o.y+6,o.z);scene.add(o.wall);o.objs.push(o.wall);}}
+  else{const R=Math.max(1,(o.t-o.T)*175),f=Math.max(0,1-R/640);o.shock.scale.setScalar(R);o.shock.material.opacity=.9*f;o.wall.scale.set(R,12+R*.03,R);o.wall.material.opacity=.35*f;
+    const pd=Math.hypot(player.pos.x-o.x,player.pos.z-o.z);
+    if(!o.boomed&&(R>=pd||R>=640)){o.boomed=true;SFX.gBoom();shake(1.1,2.4);flash(.3,700,'#ffd0a0');
+      if(pd>=o.r&&pd<o.r+220&&!player.dead){const kk=1-(pd-o.r)/220;hurtPlayer(Math.round(4+12*kk),(player.pos.x-o.x)/pd*2.4*kk,(player.pos.z-o.z)/pd*2.4*kk,'궁니르의 충격파에 휩쓸렸습니다',true);}
+      for(let i=0;i<4;i++)spawnParticles(player.pos.x+(Math.random()-.5)*10,player.pos.y+1,player.pos.z+(Math.random()-.5)*10,new THREE.Color(0xc8b090),10,1.2,4);}
+    stAt(o,o.T+2.4,SFX.gHum);if(o.t>=o.T+o.end)stEnd(o,o.cd);}}
+function stSeven(o,dt){ // SS-04: 투영 → 별 고정 → (큰곰자리 배열) → 별이 하나씩 떨어짐 → 별자리 점화
+  const fin=o.t>=o.T+6.3,fade=Math.min(1,o.t/1.2);
+  o.beams.forEach((m,i)=>{if(!m.lit)m.material.opacity=.55*fade;});
+  o.nodes.forEach((n,i)=>{const k=Math.max(0,Math.min(1,(o.t-.4-i*.32)/.3));if(!n.fell)n.sky.material.opacity=k;if(k>0&&!n.lock){n.lock=1;SFX.stLock();}if(!n.done)n.ring.material.opacity=.7*fade*(n.fell?1:.6+.4*Math.sin(o.t*5+i));});
+  stAt(o,3,SFX.stRise,1);stAt(o,5,SFX.sArray,1);stAt(o,7.8,SFX.stFire,1);stAt(o,9.3,()=>flash(.7,500,'#fff6d8'),1);
+  if(!o.fired&&o.t>=o.T)o.fired=true;
+  o.nodes.forEach((n,i)=>{const tf=o.T+i*.72;if(o.t<tf||n.done)return;
+    if(!n.fell){n.fell=1;n.ft=tf;n.sky.material.color.setHex(0xfff0b0);n.trail.visible=true;SFX.sFall();}
+    const k=Math.min(1,(o.t-n.ft)/.55),y=CH+240-(CH+240-n.y)*k*k;n.sky.position.y=y;n.sky.scale.setScalar(40+30*k);placeBeam(n.trail,V3(n.x+.5,y,n.z+.5),V3(n.x+.5,y+180,n.z+.5));
+    if(k>=1){n.done=1;n.trail.visible=false;n.sky.visible=false;n.ring.material.color.setHex(0xffa040);n.ring.material.opacity=.95;
+      const pd=Math.hypot(player.pos.x-n.x,player.pos.z-n.z),near=Math.max(0,1-pd/400);flash(.25+.55*near,450,'#fff2c8');shake(.15+.7*near,.4+near);SFX.sLand();
+      n.burst=glow(0xffe0a0,10);n.burst.position.set(n.x+.5,n.y+4,n.z+.5);scene.add(n.burst);o.objs.push(n.burst);
+      stStrikeMobs(n.x+.5,n.z+.5,n.r,n.r*1.6,8);if(pd<n.r+.5&&!player.dead&&!stSafe())die('떨어진 별에 맞았습니다');
+      const c={t:'crat',x:n.x,z:n.z,y:n.y,r:n.r,s:(Math.random()*1e9)|0};if(stSafe()&&pd<n.r+3)c.sp=[Math.floor(player.pos.x),Math.floor(player.pos.z),3];stCarve(c);}});
+  for(const n of o.nodes)if(n.burst){const a=o.t-(n.ft+.55);n.burst.scale.setScalar(10+a*n.r*9);n.burst.material.opacity=Math.max(0,1-a/1.2);}
+  const tl=o.T+5.4;o.beams.forEach((m,i)=>stAt(o,tl+i*.12,()=>{m.lit=1;m.material.color.setHex(0xff9a40);m.material.opacity=1;m.scale.x=m.scale.y=5;}));
+  stAt(o,tl+.95,()=>{SFX.sLink();const sp=stSafe()?[Math.floor(player.pos.x),Math.floor(player.pos.z),3]:null;
+    for(const [a,b] of o.segs){const c={t:'line',x:a.x,z:a.z,x2:b.x,z2:b.z,w:3,dep:5,ra:a.r,rb:b.r,y0:Math.min(a.y,b.y)-14,s:(Math.random()*1e9)|0};if(sp)c.sp=sp;stCarve(c);
+      for(const m of [...mobs])if(segD(m.pos.x,m.pos.z,c)<c.w+1){m.byPlayer=performance.now();m.hurt(1e6,0,0);}
+      if(!player.dead&&!stSafe()&&segD(player.pos.x,player.pos.z,c)<c.w+.5)die('불타는 별자리에 휩쓸렸습니다');}});
+  stAt(o,o.T+6.3,()=>{flash(.85,1000,'#ffe4b8');shake(.6,1.3);SFX.stImpact();});
+  if(fin){const a=o.t-(o.T+6.3);for(const n of o.nodes)n.ring.scale.setScalar(1+a*.6);o.beams.forEach(m=>m.material.opacity=Math.max(0,1-a/2));}
+  if(o.t>=o.T+o.end)stEnd(o,o.cd);}
 // ---------- 폭죽 ----------
 // 로켓이 꼬리 불꽃을 남기며 솟아오르다 1~1.5초 뒤 하늘에서 두 가지 색으로 터짐
 const rockets=[],sparks=[],sparkGeo=new THREE.BoxGeometry(.1,.1,.1),sparkMats={};
@@ -2177,7 +2447,7 @@ onmessage=e=>{const j=e.data;
   if(j.seed!==seed||!N1){seed=j.seed;initNoise();SITES=null;VCACHE.clear();}
   const hk=JSON.stringify(j.hv||null);if(hk!==hvKey){hvKey=hk;world.homeVillage=j.hv||null;VCACHE.clear();}
   world.dim=j.dim;
-  if(j.t==='gen'){const data=new Uint8Array(16*16*CH);GEN[j.dim](data,j.cx,j.cz);postMessage({id:j.id,data},[data.buffer]);}
+  if(j.t==='gen'){const data=new Uint8Array(16*16*CH);GEN[j.dim](data,j.cx,j.cz);applyCarves(data,j.cx,j.cz,j.cv);postMessage({id:j.id,data},[data.buffer]);}
   else{const r=meshCore(j.cx,j.cz,j.datas,j.hms,j.lamps,j.caveB);postMessage({id:j.id,r},[r.P.buffer,r.U.buffer,r.C.buffer,r.I.buffer,r.WP.buffer,r.WU.buffer,r.WC.buffer,r.WI.buffer,r.LP.buffer,r.LU.buffer,r.LC.buffer,r.LI.buffer,r.GP.buffer,r.GU.buffer,r.GC.buffer,r.GI.buffer]);}
 };`;
     const url=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
@@ -2193,7 +2463,7 @@ function resetWorkerJobs(){wEpoch++;wGenPend.clear();} // 차원 이동·새 월
 function wPost(job,msg,transfer){job.epoch=wEpoch;const id=++wId;wJobs.set(id,job);msg.id=id;msg.seed=seed;msg.dim=world.dim;msg.hv=world.homeVillage||null;WK.postMessage(msg,transfer||[]);}
 function onWorkerMsg(e){
   const m=e.data,j=wJobs.get(m.id);if(!j)return;wJobs.delete(m.id);
-  if(j.t==='gen'){wGenPend.delete(j.key);if(j.epoch!==wEpoch||getChunk(j.cx,j.cz))return;finishChunk(j.cx,j.cz,m.data);return;}
+  if(j.t==='gen'){wGenPend.delete(j.key);if(j.epoch!==wEpoch||getChunk(j.cx,j.cz))return;const L=world.carves&&world.carves[world.dim];if(L&&L.length>j.cn)applyCarves(m.data,j.cx,j.cz,L.slice(j.cn));finishChunk(j.cx,j.cz,m.data);return;} // 만드는 사이 새로 새긴 것도 반영
   wMeshN--;const ch=j.ch;ch.meshPending=false;
   if(j.epoch!==wEpoch||chunks.get(ckey(ch.cx,ch.cz))!==ch||ch.ver!==j.ver)return; // 그 사이 바뀌었으면 버림
   applyMesh(ch,m.r);
@@ -2202,7 +2472,7 @@ function workerChunks(pcx,pcz){
   for(const [dx,dz,d2] of OFFS){ // 가까운 청크부터 생성 요청 (동시에 최대 6개)
     if(d2>(RD+1)*(RD+1)+1||wGenPend.size>=6)break;
     const cx=pcx+dx,cz=pcz+dz,k=ckey(cx,cz);
-    if(!getChunk(cx,cz)&&!wGenPend.has(k)){wGenPend.add(k);wPost({t:'gen',key:k,cx,cz},{t:'gen',cx,cz});}
+    if(!getChunk(cx,cz)&&!wGenPend.has(k)){wGenPend.add(k);const L=world.carves&&world.carves[world.dim];wPost({t:'gen',key:k,cx,cz,cn:L?L.length:0},{t:'gen',cx,cz,cv:carvesNear(cx,cz)});}
   }
   for(const [dx,dz,d2] of OFFS){ // 메시 계산 요청 (동시에 최대 6개)
     if(d2>RD*RD+1||wMeshN>=6)break;
@@ -4057,6 +4327,7 @@ Object.assign(MOBDEF,{
 // ---------- 플레이어 로직 ----------
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
   if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec())return; // 크리에이티브·관전: 다치지 않음
+  if(!bypass&&stFrozen())return; // 스텔라 연출 중엔 몹에게 맞지 않음
   if(isHardcore()&&!bypass)dmg*=1.5; // 하드코어: 몹이 1.5배 아프게 때림
   // 방패: 정면(약 ±70°)에서 오는 공격을 막음. 대미지 30 이상은 절반만 막고 5초간 막기 불가
   if(!bypass&&player.blocking&&armor[4]&&(kx||kz)){
@@ -4567,14 +4838,16 @@ addEventListener('keydown',e=>{
   else if(e.code==='KeyQ'){e.preventDefault();if(locked)dropHeld(e.ctrlKey||e.metaKey);}
   else if(/^Digit[1-9]$/.test(e.code)&&!invOpen)selectSlot(+e.code[5]-1);
   else if(e.code==='KeyP')cycleView();
-  else if(held()&&held().id===STELLAR_REMOTE&&!invOpen){if(e.code==='KeyK')stSelect(0);else if(e.code==='KeyI')stSelect(1);else if(e.code==='KeyU')stSelect(2);else if(e.code==='KeyH')stMenu();else if(e.code==='KeyJ'&&stCast)stCast.skip=true;}
+  else if(e.code==='KeyJ'&&stCast)stCast.skip=true; // 연출 넘기기
+  else if(held()&&held().id===STELLAR_REMOTE&&!invOpen){if(e.code==='KeyK')stSelect(0);else if(e.code==='KeyI')stSelect(1);else if(e.code==='KeyU')stSelect(2);else if(e.code==='KeyH')stMenu();else if(e.code==='KeyJ')stCineToggle();}
   else if(e.code==='F3'||e.code==='Backquote'){debugOn=!debugOn;$('debug').style.display=debugOn?'block':'none';}
 });
 addEventListener('keyup',e=>{keys[e.code]=false;});
 $('btnHelp').addEventListener('click',()=>{$('title').classList.remove('updopen');$('btnUpd').textContent='📜 업데이트 목록';const o=$('title').classList.toggle('helpopen');$('btnHelp').textContent=o?'✕ 도움말 닫기':'❓ 도움말 보기';
   if(o)setTimeout(()=>$('title').querySelector('.help').scrollIntoView({behavior:'smooth',block:'start'}),30);});
 $('stellarMenu').addEventListener('click',e=>{const k=e.target.closest('.sk');if(k){stSelect(+k.dataset.i);stMenu(false);}});
-$('stMenuClose').onclick=()=>stMenu(false);
+$('stMenuClose').onclick=()=>stMenu(false);$('stCineBtn').onclick=()=>stCineToggle();
+$('cineSkip').onclick=$('cineSkip').ontouchstart=e=>{e.preventDefault();if(stCast)stCast.skip=true;};
 $('stellarHud').addEventListener('click',()=>stMenu(true));$('stellarHud').addEventListener('touchstart',e=>{e.preventDefault();stMenu(true);},{passive:false});
 $('btnUpd').addEventListener('click',()=>{$('title').classList.remove('helpopen');$('btnHelp').textContent='❓ 도움말 보기';const o=$('title').classList.toggle('updopen');$('btnUpd').textContent=o?'✕ 업데이트 목록 닫기':'📜 업데이트 목록';
   if(o)setTimeout(()=>$('title').querySelector('.upd').scrollIntoView({behavior:'smooth',block:'start'}),30);});
@@ -4661,7 +4934,7 @@ function encodeMods(){
 }
 function saveSnapshot(){
   syncGolems();
-  return {v:2,t:Date.now(),seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,mode:world.mode||'survival',containers:world.containers||{},saplings:world.saplings||[],items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
+  return {v:2,t:Date.now(),seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,carves:world.carves||{},mode:world.mode||'survival',containers:world.containers||{},saplings:world.saplings||[],items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
     p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};
 }
 // 파일/localStorage용: 압축 배열을 base64 문자열로
@@ -4734,7 +5007,7 @@ function startWorld(save,onOk){
       save=fromPortable(save);modsByDim={};
       for(const d in save.md){const mm=new Map();for(const k in save.md[d]){const a=save.md[d][k],m=new Map();for(let i=0;i+1<a.length;i+=2)m.set(a[i],a[i+1]);mm.set(k,m);}modsByDim[d]=mm;}
       for(const k in modCache)delete modCache[k];Object.assign(modCache,save.md);modDirty.clear();
-      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.containers=save.containers||{};world.saplings=save.saplings||[];world.mode=save.mode||'survival';VCACHE.clear();
+      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.carves=save.carves||{};world.containers=save.containers||{};world.saplings=save.saplings||[];world.mode=save.mode||'survival';VCACHE.clear();
       world.stats=Object.assign({kills:0,deaths:0,play:0,days:0},save.stats||{});
       if(!modsByDim[world.dim])modsByDim[world.dim]=new Map();mods=modsByDim[world.dim];caveB=world.dim==='over'?.38:DIM[world.dim].caveB;
       Object.assign(player,{hp:save.p.hp,food:save.p.food,yaw:save.p.yaw,pitch:save.p.pitch});player.pos.set(save.p.x,save.p.y,save.p.z);
@@ -4746,7 +5019,7 @@ function startWorld(save,onOk){
       }
     }else{
       seed=(wantSeed!==null?wantSeed:(Math.random()*1e9)|0);wantSeed=null;initNoise();mods=new Map();modsByDim={over:mods};for(const k in modCache)delete modCache[k];modDirty.clear();armor=[null,null,null,null,null];
-      Object.assign(world,{dim:'over',mode:wantMode,golems:[],homeVillage:null,containers:{},saplings:[],flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
+      Object.assign(world,{dim:'over',mode:wantMode,golems:[],homeVillage:null,carves:{},containers:{},saplings:[],flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
       const s=findSpawn();world.spawn={x:s.x,y:s.h+1,z:s.z};player.pos.set(s.x,s.h+1,s.z);
       VCACHE.clear();world.homeVillage=findHomeVillage(s.x,s.z);
     }
@@ -4857,11 +5130,12 @@ function frame(now){
   fpsA+=dt;fpsN++;if(fpsA>.5){fps=Math.round(fpsN/fpsA);fpsA=0;fpsN=0;}
   if(!running){renderer.render(scene,camera);return;}
   const active=!paused&&!endingOpen&&!player.dead; // 쓰러져 있으면 세계가 멈춤 (hp 0으로 저장되지 않게)
-  if(MOBILE)document.body.classList.toggle('playing',active&&!invOpen&&!player.dead);
+  if(MOBILE)document.body.classList.toggle('playing',active&&!invOpen&&!player.dead&&!stFrozen());
   if(active){
+    if(!stFrozen()){ // 스텔라 연출 중에는 플레이어가 멈춤
     updatePlayer(dt);
     updateTarget();updateMining(dt);
-    if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}
+    if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}}
     for(const m of [...mobs])m.update(dt);
     spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);updateHoppers(dt);updateSaplings(dt);updateLiquids(dt);updateProjectiles(dt);updateBoats(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
@@ -4871,7 +5145,8 @@ function frame(now){
   updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);updateFireworks(dt);if(active||stCast)updateStellar(dt);else stHud();
   updateChunks();
   if(debugOn){const p=player.pos;$('debug').textContent=`CAVEBUILD  ${fps} fps\nXYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}\n차원: ${DIM[world.dim].name}  청크: ${chunks.size}  몹: ${mobs.length}\n시간: ${(world.time*24+6)%24|0}시  시드: ${seed}\n바라보는 블록: ${target?BL[target.id].name:'-'}`;}
-  if(shakeT>0&&!player.dead){const a=shakeAmp*Math.min(1,shakeT);camera.position.x+=(Math.random()-.5)*a;camera.position.y+=(Math.random()-.5)*a;camera.position.z+=(Math.random()-.5)*a;camera.updateMatrixWorld();} // 화면 흔들림
+  if(shakeT>0&&!player.dead&&!stFrozen()){const a=shakeAmp*Math.min(1,shakeT);camera.position.x+=(Math.random()-.5)*a;camera.position.y+=(Math.random()-.5)*a;camera.position.z+=(Math.random()-.5)*a;camera.updateMatrixWorld();} // 화면 흔들림
+  if(stFrozen()&&cineRender(stCast))return; // 스텔라 연출 화면
   const tp=thirdPersonCam();
   renderer.render(scene,camera);
   if(tp){camera.position.copy(camSave.pos);camera.quaternion.copy(camSave.q);camera.updateMatrixWorld();} // 3인칭: 손은 그리지 않음
