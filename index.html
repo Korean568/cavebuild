@@ -208,7 +208,7 @@ body.mobile #toasts{top:72px}
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
     • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 엔딩드래곤도 떨어뜨림)를 흉갑 칸에 입고 떨어지는 중에 <b>점프</b>를 다시 누르면 활공해요. 아래를 보면 빨라지고 위를 보면 올라가요. 날면서 <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 쓰면 앞으로 쭉 날아가요!<br>
-    • 새 광석: <b>구리</b>·<b>금</b>(돌 곡괭이) · <b>티타늄</b>(철 곡괭이) · <b>다이아몬드</b>·<b>레드 다이아몬드</b>(수정 곡괭이) · <b>블랙 다이아몬드</b>(블레이즈스톤 곡괭이). 깊을수록 귀한 광석이 나오고, 캔 광석을 가마에서 녹이면 주괴·보석이 돼요. 주괴·보석으로 <b>도구</b>와 <b>갑옷</b>을 만들 수 있어요.<br>
+    • 새 광석: <b>구리</b>·<b>금</b>(돌 곡괭이) · <b>티타늄</b>(철 곡괭이) · <b>다이아몬드</b>·<b>레드 다이아몬드</b>(수정 곡괭이) · <b>블랙 다이아몬드</b>(블레이즈스톤 곡괭이). 깊을수록 귀한 광석이 나오고, 캔 광석을 가마에서 녹이면 주괴·보석이 돼요. 주괴·보석으로 <b>도구</b>와 <b>갑옷</b>, 9개로 <b>구리 블록 · 다이아몬드 블록</b>을 만들 수 있어요.<br>
     • 새 세계를 만들 때 <b>서바이벌 · 크리에이티브 · 하드코어 · 세이프 · 관전</b> 중에 고를 수 있고, 일시정지의 <b>⚙ 서버 설정</b>에서 언제든 바꿀 수 있어요.<br>
     • 깊은 바다에는 <b>돌고래</b> 무리가 펄쩍펄쩍 뛰어올라요. 곁에서 헤엄치면 <b>돌고래의 은총</b>으로 수영이 빨라져요.<br>
     • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
@@ -218,7 +218,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.22 — 새 광석 도구 · 갑옷</h4>
+    <h4>🆕 v26.23 — 구리 · 다이아몬드 블록</h4>
+    • 구리 주괴 9개 → <b>구리 블록</b>, 다이아몬드 9개 → <b>다이아몬드 블록</b> (레드 · 블랙 다이아몬드도) 을 작업대에서 만들 수 있어요. 블록 1개는 다시 9개로 되돌릴 수 있어요.<br>
+    • 구리 블록은 리벳 박힌 구리판에 군데군데 청록 녹이 슬어 있고, 다이아몬드 블록들은 깎은 보석 면이 반짝여요.
+    <h4>v26.22 — 새 광석 도구 · 갑옷</h4>
     • <b>구리 · 금 · 티타늄 · 다이아몬드 · 레드 다이아몬드 · 블랙 다이아몬드</b>로 곡괭이 · 도끼 · 삽 · 검과 투구 · 흉갑 · 각반 · 장화를 만들 수 있어요 (작업대, 기존 도구·갑옷과 같은 개수).<br>
     • 다이아몬드 · 레드 다이아몬드 · 블랙 다이아몬드 광석도 캐면 <b>광석</b>이 나오고, 가마에서 녹이면 보석이 돼요.<br>
     • 구리: 돌과 철 사이 · <b>금</b>: 아주 빠르지만 금방 닳음 · <b>티타늄</b>: 철보다 튼튼 · <b>다이아몬드·레드 다이아몬드</b>: 수정급, 더 질기고 빠름 · <b>블랙 다이아몬드</b>: 가장 강함 (블랙 다이아몬드 광석도 캘 수 있음).
@@ -392,7 +395,7 @@ function makeNoise(seed){
   return {n2,n3};
 }
 
-const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67};
+const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71};
 const ATW=8,ATH=16; // 타일 8×16칸 (512×1024)
 
 // ---------- 블록 & 아이템 정의 ----------
@@ -470,6 +473,12 @@ defB(TITANIUM_ORE,'티타늄 광석',TILE.titanium_ore,{hard:6,tool:'pick',tier:
 defB(DIAMOND_ORE,'다이아몬드 광석',TILE.diamond_ore,{hard:10,tool:'pick',tier:4}); // 캐면 광석 → 가마에서 보석
 defB(REDDIA_ORE,'레드 다이아몬드 광석',TILE.reddia_ore,{hard:10,tool:'pick',tier:4});
 defB(BLACKDIA_ORE,'블랙 다이아몬드 광석',TILE.blackdia_ore,{hard:12,tool:'pick',tier:5});
+// 보관 블록 90~93 (주괴·보석 9개 ↔ 블록 1개)
+const COPPER_BLOCK=90,DIAMOND_BLOCK=91,REDDIA_BLOCK=92,BLACKDIA_BLOCK=93;
+defB(COPPER_BLOCK,'구리 블록',TILE.copper_block,{hard:5,tool:'pick',tier:2});
+defB(DIAMOND_BLOCK,'다이아몬드 블록',TILE.diamond_block,{hard:10,tool:'pick',tier:4});
+defB(REDDIA_BLOCK,'레드 다이아몬드 블록',TILE.reddia_block,{hard:10,tool:'pick',tier:4});
+defB(BLACKDIA_BLOCK,'블랙 다이아몬드 블록',TILE.blackdia_block,{hard:12,tool:'pick',tier:5});
 const OPAQUE=new Uint8Array(256),SOLID=new Uint8Array(256);
 BL.forEach((b,i)=>{if(b){OPAQUE[i]=b.opaque?1:0;SOLID[i]=b.solid?1:0;}});
 const LIQUID=new Uint8Array(256),EMIT=new Uint8Array(256),LIGHT_SRC=new Uint8Array(256),PORTAL=new Uint8Array(256);
@@ -1157,6 +1166,16 @@ T(TILE.titanium_ore,(u,v,x,y)=>oreC(u,v,x,y,88,[132,138,156],[226,232,244],undef
 T(TILE.diamond_ore,(u,v,x,y)=>oreC(u,v,x,y,89,[110,214,230],[236,255,255],undefined,[140,170,176],1.6)); // 다이아몬드: 투명한 하늘빛 결정
 T(TILE.reddia_ore,(u,v,x,y)=>oreC(u,v,x,y,90,[180,22,44],[255,130,150],undefined,[150,90,96],1.6)); // 레드 다이아몬드
 T(TILE.blackdia_ore,(u,v,x,y)=>oreC(u,v,x,y,91,[18,18,26],[120,120,150],[86,86,94],[60,60,70],1.8)); // 블랙 다이아몬드 (카보나도)
+T(TILE.copper_block,(u,v,x,y)=>{const qx=x<TS/2?0:TS/2,qy=y<TS/2?0:TS/2,lx=x-qx,ly=y-qy; // 구리판 4장 · 리벳 · 군데군데 청록 녹
+  if(lx<1||ly<1)return [104,54,32];if((lx===5||lx===TS/2-6)&&(ly===5||ly===TS/2-6))return [255,200,160];
+  let c=mulc([216,128,78],(.93+.07*h2(0,y,311)+.04*h2(x>>3,y,312))*(1.1-ly/TS*.45));const pat=fbm(u,v,313,4,3);
+  if(pat>.66)c=mixc(c,[84,168,138],Math.min(.8,(pat-.66)*2.4));if(lx===1||ly===1)c=mulc(c,1.25);return c;});
+const gemBlock=(c1,c2,s)=>(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if(e<2)return mulc(c1,.5); // 깎은 보석 면이 촘촘히 박힌 블록
+  const p=cells(u,v,5,s);let c=mixc(c1,c2,.2+.65*p.c.h);c=mulc(c,1+((p.c.x-u)+(p.c.y-v))*1.6);
+  if(p.d2-p.d<.012)c=mixc(c,[255,255,255],.35);if(h2(x,y,s+1)>.985)c=[255,255,255];if(e<4)c=mulc(c,1.18);return c;};
+T(TILE.diamond_block,gemBlock([70,190,212],[220,252,255],321));
+T(TILE.reddia_block,gemBlock([150,14,36],[255,120,140],322));
+T(TILE.blackdia_block,gemBlock([16,16,24],[96,96,124],323));
 T(TILE.core,(u,v,x,y)=>{const p=cells(u,v,5,86);let c=mulc([58,56,64],(.7+.5*fbm(u,v,87,4,4))*grain(x,y,88,.2));return p.d2-p.d<.02?mulc(c,.5):c;});
 T(TILE.bench_top,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);
   if(e<5)return mulc(woodGrain(u,v,x,y,91,[110,76,46],[134,96,60]),e<1?.7:1);
@@ -1430,6 +1449,10 @@ RECIPES.push(
   {out:HOPPER,n:1,in:[[IRON_INGOT,5],[CHEST,1]],st:'bench'},
   {out:IRON_BLOCK,n:1,in:[[IRON_INGOT,9]],st:'bench'},
   {out:IRON_INGOT,n:9,in:[[IRON_BLOCK,1]]},
+  {out:COPPER_BLOCK,n:1,in:[[COPPER_INGOT,9]],st:'bench'},{out:COPPER_INGOT,n:9,in:[[COPPER_BLOCK,1]]},
+  {out:DIAMOND_BLOCK,n:1,in:[[DIAMOND,9]],st:'bench'},{out:DIAMOND,n:9,in:[[DIAMOND_BLOCK,1]]},
+  {out:REDDIA_BLOCK,n:1,in:[[RED_DIAMOND,9]],st:'bench'},{out:RED_DIAMOND,n:9,in:[[REDDIA_BLOCK,1]]},
+  {out:BLACKDIA_BLOCK,n:1,in:[[BLACK_DIAMOND,9]],st:'bench'},{out:BLACK_DIAMOND,n:9,in:[[BLACKDIA_BLOCK,1]]},
   {out:HS_SCRAP,n:1,in:[[HS_ORE,1]],st:'kiln',fuel:true},
   {out:COOKED_MEAT,n:1,in:[[RAW_MEAT,1]],st:'kiln',fuel:true},
   {out:COOKED_FISH,n:1,in:[[RAW_FISH,1]],st:'kiln',fuel:true},
