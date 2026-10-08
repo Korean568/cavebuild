@@ -246,7 +246,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.37 — CB-01 레일건 새 연출 · 범위 50칸</h4>
+    <h4>🆕 v26.38 — CB-NM 궁니르 새 연출: 위성 핵미사일</h4>
+    • 불씨 표식 → <b>화성 궤도 위성들</b>이 핵미사일 발사 → <b>목성 궤도 위성들</b>도 발사 → 핵미사일 편대가 지구를 향해 날아와 대기권 돌입 → 표식 위로 탄두를 아래로 떨어져 <b>버섯구름</b>! (그래서 핵폭탄이 핵미사일 모양이 됐어요)<br>
+    • 바늘 대신 핵미사일이 떨어지므로 텅스텐 기둥은 더 이상 생기지 않아요. 400칸 평탄화 · 녹은 분화구 · 늦게 오는 쾅 소리는 그대로예요.
+    <h4>v26.37 — CB-01 레일건 새 연출 · 범위 50칸</h4>
     • 연출 순서: 지구 대기권 통과 → 토성 통과 → 레일건이 보이며 흰 글씨 <b>The Shooting Star</b>(1.5초) → 레일건 엔진 속에서 <b>별의 힘 결정</b>이 빙글빙글 회전 → 밖으로 나와 에너지 충전 → <b>빨간 레이저</b> 발사 → 지구 풍경으로 돌아와 1초 뒤 레이저 도착 · 폭발!<br>
     • 범위가 <b>반경 50칸</b>으로 줄었어요 (15초 뒤 명중).
     <h4>v26.36 — 별의 힘 · 에너지 스톤</h4>
@@ -2064,7 +2067,7 @@ function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx
 // (원작 모드의 공개 설명을 바탕으로 CAVEBUILD에 맞게 새로 만든 것 — 원작의 코드·그림·소리는 쓰지 않음)
 const STELLAR=[
   {code:'CB-01',name:'레일건',key:'K',T:15,end:3.6,cd:20,desc:'빨간 레이저가 조준한 땅을 표시하면, 지구 대기권과 토성을 지나 은하 가장자리의 레일건 <b>The Shooting Star</b>가 엔진 속 <b>별의 힘</b> 결정을 돌려 에너지를 모은 뒤 빨간 레이저를 쏴요. 15초 뒤 레이저가 도착해 <b>반경 50칸</b>을 하늘 끝부터 공허까지 날려 버려요. 범위 안에 서 있으면 함께 사라져요 (크리에이티브는 먼저 대피).'},
-  {code:'CB-NM',name:'궁니르',key:'I',T:14,end:4.6,cd:20,desc:'조준한 곳에 불씨 표식이 새겨지고, 14초 뒤 목성의 가속 고리에서 일곱 바퀴를 돈 검은 바늘이 소리보다 빠르게 꽂혀요. 충격파가 <b>400칸</b> 둘레를 맞은 땅 높이로 평평하게 밀고 바늘 둘레는 녹아내린 분화구가 돼요. 쾅 소리는 충격파가 지나간 뒤에야 들리고, 그 밖에도 충격파가 밀치고 다치게 해요. 바늘은 <b>텅스텐 블록</b>과 달아오른 <b>열 도관</b>으로 남아요 (가장 단단한 곡괭이로 캘 수 있음).'},
+  {code:'CB-NM',name:'궁니르',key:'I',T:14,end:4.6,cd:20,desc:'조준한 곳에 불씨 표식이 새겨지면 <b>화성과 목성 궤도의 인공위성들</b>이 <b>핵미사일</b>을 쏴요. 미사일 편대가 지구로 날아와 14초 뒤 표식 위로 떨어지고, 버섯구름과 함께 충격파가 <b>400칸</b> 둘레를 맞은 땅 높이로 평평하게 밀어요. 한가운데는 녹아내린 분화구가 되고, 쾅 소리는 충격파가 지나간 뒤에야 들려요.'},
   {code:'CB-SL',name:'칠성',key:'U',T:9.5,end:8.6,cd:24,desc:'조준한 곳을 중심으로 <b>1,440칸</b> 너비의 북두칠성이 땅에 투영되고, 큰곰자리의 일곱 별이 배열로 깨어나 별똥별을 쏴요. 별마다 밝기만큼 분화구를 파고 빛나는 <b>별의 핵 결정</b>을 남긴 뒤, 별자리 선을 따라 <b>별의 흔적</b>이 타오르는 도랑이 새겨져요 (크리에이티브는 발밑 땅이 남아요).'}];
 const DIPPER=[['두베',13,-3,1.8],['메라크',12,9,2.4],['페크다',0,10,2.4],['메그레즈',-3,0,3.3],['알리오스',-12,2,1.8],['미자르',-20,4,2.2],['알카이드',-30,10,1.9]],DIP_ORDER=[6,5,4,3,2,1,0,3];
 let stSkill=0,stCast=null,stCD=0,shakeT=0,shakeAmp=0,stConfirm=null;
@@ -2128,6 +2131,17 @@ function needleMesh(r,L,fog=true){ // 궁니르: 검은 텅스텐 선체 · 네 
   g.add(new THREE.Mesh(new THREE.CylinderGeometry(r,r,L,12),hm));const tip=new THREE.Mesh(new THREE.ConeGeometry(r,r*6,12),hm);tip.position.y=-L/2-r*3;tip.rotation.x=Math.PI;g.add(tip);
   for(let i=0;i<4;i++){const a=i*Math.PI/2,s=new THREE.Mesh(new THREE.BoxGeometry(r*.32,L*.97,r*.32),sm);s.position.set(Math.cos(a)*r,0,Math.sin(a)*r);g.add(s);}
   for(let j=1;j<6;j++){const t=new THREE.Mesh(new THREE.TorusGeometry(r*1.02,r*.12,4,16),sm);t.rotation.x=Math.PI/2;t.position.y=-L/2+L*j/6;g.add(t);}return g;}
+function mkSat(){ // 인공위성: 금박 몸체 · 파란 태양광 날개 두 장 · 안테나 접시 · 미사일 발사관
+  const g=new THREE.Group(),L=c=>new THREE.MeshLambertMaterial({color:c});const add=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);g.add(o);return o;};
+  add(new THREE.BoxGeometry(9,9,13),L(0xc8a040),0,0,0);for(const sx of [-1,1])add(new THREE.BoxGeometry(26,.5,8),L(0x2a4a9a),sx*18,0,0);
+  const d=add(new THREE.ConeGeometry(4,2.5,16,1,true),L(0xe0e0e8),0,0,8.5);d.rotation.x=-Math.PI/2;add(new THREE.CylinderGeometry(1.8,1.8,3,12),L(0x30323a),0,5.5,0);return g;}
+function satMissiles(G,n,R,sc){ // 행성 둘레 위성 n기 · 위성마다 핵미사일 한 발 (+ 꼬리 불꽃)
+  const sats=[],mis=[];for(let i=0;i<n;i++){const s=mkSat();s.scale.setScalar(sc);G.add(s);sats.push(s);const m=nukeMissile();m.scale.setScalar(8*sc);m.visible=false;G.add(m);const f=glow(0xffa040,34*sc);f.visible=false;G.add(f);mis.push({m,f});}
+  G.userData.sats=sats;G.userData.mis=mis;G.userData.R=R;}
+function satLaunch(G,k,t){ // 위성들이 궤도를 돌다 차례로 핵미사일을 쏨 (지구 쪽 = +z 방향)
+  const U=G.userData,dir=V3(.15,.35,1).normalize();
+  U.sats.forEach((s,i)=>{const a=i/U.sats.length*Math.PI*2+t*.15;s.position.set(Math.cos(a)*U.R,Math.sin(a*2)*U.R*.12,Math.sin(a)*U.R);s.lookAt(0,0,0);
+    const M=U.mis[i],p=Math.max(0,k*1.6-.25-i*.18);M.m.visible=M.f.visible=p>0;if(p>0){const pos=s.position.clone().addScaledVector(dir,p*p*700);M.m.position.copy(pos);M.m.quaternion.setFromUnitVectors(UPV,dir);M.f.position.copy(pos).addScaledVector(dir,-3);}});}
 function buildSpace(){if(SPACE)return SPACE;
   const sc=new THREE.Scene();sc.background=new THREE.Color(0x010104);const cam=new THREE.PerspectiveCamera(55,1,1,5e5);
   sc.add(new THREE.AmbientLight(0xffffff,.13));const sun=new THREE.DirectionalLight(0xfff2e0,1.3);sun.position.set(-1,.3,.7);sc.add(sun);
@@ -2146,7 +2160,8 @@ function buildSpace(){if(SPACE)return SPACE;
     const cl=new THREE.Mesh(new THREE.SphereGeometry(101.3,64,48),lam(sphTex(512,256,(x,y,z)=>{const c=f3(x*3+20,y*5,z*3,5);return [255,255,255,Math.max(0,Math.min(1,(c-.03)*3.2))*235];}),{transparent:true,depthWrite:false}));E.add(cl);
     E.add(new THREE.Mesh(new THREE.SphereGeometry(104.5,64,48),fresnel(0x5aa6ff,2.4,1.4)));
     const dot=glow(0xff2030,9);dot.position.copy(m).multiplyScalar(100.6);E.add(dot);const las=rod(0xff2030,.95);E.add(las);
-    const inc=needleMesh(1.4,34);E.add(inc);const incG=glow(0xffb060,26);E.add(incG);E.userData={cl,dot,las,inc,incG};}
+    const inc=needleMesh(1.4,34);E.add(inc);const incG=glow(0xffb060,26);E.add(incG);const fleet=[];for(let i=0;i<9;i++){const m=nukeMissile();m.scale.setScalar(5);m.visible=false;E.add(m);const f=glow(0xffa040,26);f.visible=false;E.add(f);fleet.push({m,f});}
+    E.userData={cl,dot,las,inc,incG,fleet};}
   {const S=set('saturn'); // 토성: 줄무늬 · 카시니 간극이 있는 고리
     const tex=sphTex(256,128,(x,y,z,la)=>{const b=Math.sin(la*14+f3(x*2,y*8,z*2,3)*3)*.5+.5;return [196+34*b,166+30*b,116+22*b];});
     const sat=new THREE.Mesh(new THREE.SphereGeometry(80,48,36),lam(tex));sat.rotation.x=.42;S.add(sat);
@@ -2164,7 +2179,10 @@ function buildSpace(){if(SPACE)return SPACE;
     const br=new THREE.Mesh(new THREE.BoxGeometry(14,11,26),new THREE.MeshLambertMaterial({color:0x54586a}));br.position.set(200,0,0);J.add(br);
     const nd=needleMesh(1.6,40);J.add(nd);const ng=glow(0xffa040,30,.0);J.add(ng);
     const tg=new THREE.BufferGeometry();tg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(60*3),3));const trail=new THREE.Line(tg,new THREE.LineBasicMaterial({color:0xffa040,transparent:true,opacity:.9,blending:THREE.AdditiveBlending}));J.add(trail);
-    J.userData={nodes,nd,ng,trail};}
+    J.userData={nodes,nd,ng,trail,ring,br};satMissiles(J,5,230,1.4);}
+  {const Ma=set('mars'); // 화성: 붉은 사막 · 어두운 무늬 · 하얀 극관 · 옅은 분홍 대기 + 궤도 위성들
+    const tex=sphTex(512,256,(x,y,z,la)=>{if(Math.abs(la)>1.32)return [236,226,220];const h=f3(x*2+40,y*2,z*2,5),d=f3(x*5,y*5,z*5,3);let c=h>.08?[150,64,36]:[196,98,58];if(d>.25)c=c.map(v=>v*.75);return c.map(v=>v*(.9+.2*f3(x*9,y*9,z*9,2)));});
+    Ma.add(new THREE.Mesh(new THREE.SphereGeometry(70,48,36),lam(tex)));Ma.add(new THREE.Mesh(new THREE.SphereGeometry(73,40,30),fresnel(0xff9a80,3,.5)));satMissiles(Ma,4,120,1);}
   {const G=set('galaxy'); // 우리 은하: 네 갈래 나선팔 · 노란 중심 팽대부 · 가장자리의 레일건 불빛
     const n=30000,P=new Float32Array(n*3),C=new Float32Array(n*3);
     for(let i=0;i<n;i++){if(i<5000){const r=Math.pow(Math.random(),1.5)*420,a=Math.random()*Math.PI*2,u=Math.random()*2-1;P.set([Math.cos(a)*r*Math.sqrt(1-u*u),u*r*.45,Math.sin(a)*r*Math.sqrt(1-u*u)],i*3);C.set([1,.86,.62],i*3);continue;}
@@ -2219,21 +2237,18 @@ const SHOTS={
     W(14,18.6,'',camNear(40,26,o=>V3(o.x,o.y+8,o.z)),{far:1800,fi:.25})],
   'CB-NM':[
     W(0,2.2,'CB-NM · 궁니르 — 불씨 표식 고정',camNear(4.5,2.2,o=>V3(o.x,o.y+2,o.z)),{fo:.3}),
-    SP(2.2,4.4,'earth','지구를 떠나 목성으로',(k,o,Sp)=>{const E=Sp.sets.earth.userData;E.dot.material.color.setHex(0xff8a20);E.dot.visible=true;E.las.visible=E.inc.visible=E.incG.visible=false;earthCam(Sp,k,120,900,300);},{fi:.3,fo:.3}),
-    SP(4.4,7.2,'jupiter','목성 가속 고리 기동 · 바늘 장전',(k,o,Sp)=>{const J=Sp.sets.jupiter.userData,c=Sp.cam,e=ease(k);J.nodes.forEach((n,i)=>n.material.color.setHex(k*26>i?0xffa040:0x2a2a32));
-      const s=Math.min(1,k*2);J.nd.position.set(200,0,lerp(110,0,ease(s)));J.nd.quaternion.setFromUnitVectors(V3(0,-1,0),V3(0,0,-1));J.ng.material.opacity=0;J.trail.visible=false;
-      c.position.set(lerp(-40,330,e),lerp(170,60,e),lerp(720,330,e));c.lookAt(lerp(0,170,e),0,0);},{fi:.3}),
-    SP(7.2,10.2,'jupiter','목성을 일곱 바퀴 — 소리보다 빠르게',(k,o,Sp)=>{const J=Sp.sets.jupiter.userData,c=Sp.cam,kr=.88;J.nodes.forEach(n=>n.material.color.setHex(0xffc070));
-      const th=t=>-((Math.min(t,kr)/kr)**2)*Math.PI*2*7,a=th(k),tv=V3(Math.sin(a),0,-Math.cos(a)); // 진행 방향(접선)
-      const p=V3(Math.cos(a)*190,0,Math.sin(a)*190);if(k>kr)p.addScaledVector(tv,(k-kr)/(1-kr)*1400);
-      J.nd.position.copy(p);J.nd.quaternion.setFromUnitVectors(V3(0,-1,0),tv);J.ng.position.copy(p);J.ng.material.opacity=Math.min(1,k*2);
-      const A=J.trail.geometry.attributes.position;for(let i=0;i<60;i++){const t=Math.max(0,Math.min(k,kr)-i*.004),aa=th(t);A.setXYZ(i,Math.cos(aa)*190,0,Math.sin(aa)*190);}A.needsUpdate=true;J.trail.visible=true;
-      c.position.set(0,460,560);c.lookAt(0,-40,0);},{fo:.25}),
-    SP(10.2,12.2,'earth','지구를 향해 — 궁니르 낙하',(k,o,Sp)=>{const E=Sp.sets.earth.userData,c=Sp.cam;E.dot.visible=true;E.las.visible=false;E.inc.visible=E.incG.visible=true;
-      const D=V3().copy(Sp.m).multiplyScalar(.6).addScaledVector(Sp.side,.8).normalize(),tgt=V3().copy(Sp.m).multiplyScalar(101),p=tgt.clone().addScaledVector(D,lerp(3200,30,k*k));
-      E.inc.position.copy(p);E.inc.quaternion.setFromUnitVectors(UPV,D);E.incG.position.copy(p);c.position.copy(Sp.m).multiplyScalar(150).addScaledVector(Sp.side,-50);c.lookAt(p.clone().lerp(tgt,.3));},{fi:.25,fo:.2}),
-    W(12.2,15.4,'',camNear(6,2.4,o=>V3(o.x,o.y+(o.fired?6:26),o.z)),{far:1800}),
-    W(15.4,18.6,'',camNear(26,20,o=>V3(o.x,o.y,o.z)),{far:2200})],
+    SP(2.2,4.8,'mars','화성 궤도 위성 — 핵미사일 발사',(k,o,Sp)=>{const Ma=Sp.sets.mars,c=Sp.cam,e=ease(k);satLaunch(Ma,k,o.t);c.position.set(lerp(-160,60,e),lerp(70,40,e),lerp(330,260,e));c.lookAt(0,0,40*e);},{fi:.3,fo:.3}),
+    SP(4.8,7.6,'jupiter','목성 궤도 위성 — 핵미사일 발사',(k,o,Sp)=>{const J=Sp.sets.jupiter,U=J.userData,c=Sp.cam,e=ease(k);[U.ring,U.br,U.nd,U.ng,U.trail,...U.nodes].forEach(m=>m.visible=false);satLaunch(J,k,o.t);
+      c.position.set(lerp(260,-80,e),lerp(120,60,e),lerp(520,430,e));c.lookAt(0,0,60*e);},{fi:.3,fo:.3}),
+    SP(7.6,10.6,'earth','핵미사일 편대 — 지구를 향해',(k,o,Sp)=>{const E=Sp.sets.earth.userData,c=Sp.cam;E.las.visible=E.inc.visible=E.incG.visible=false;E.dot.visible=true;E.dot.material.color.setHex(0xff8a20);
+      const D=V3().copy(Sp.m).multiplyScalar(.55).addScaledVector(Sp.side,.75).addScaledVector(Sp.up2,.3).normalize(),tgt=V3().copy(Sp.m).multiplyScalar(101),dist=lerp(3600,700,ease(k)),q=new THREE.Quaternion().setFromUnitVectors(UPV,D.clone().negate());
+      E.fleet.forEach((F,i)=>{const off=V3().addScaledVector(Sp.side,((i%3)-1)*45).addScaledVector(Sp.up2,(Math.floor(i/3)-1)*45),p=tgt.clone().addScaledVector(D,dist+i*22).add(off);F.m.visible=F.f.visible=true;F.m.position.copy(p);F.m.quaternion.copy(q);F.f.position.copy(p).addScaledVector(D,6);});
+      c.position.copy(tgt).addScaledVector(D,dist+260).addScaledVector(Sp.up2,60);c.lookAt(tgt);},{fi:.3}),
+    SP(10.6,12.2,'earth','대기권 돌입',(k,o,Sp)=>{const E=Sp.sets.earth.userData,c=Sp.cam;const D=V3().copy(Sp.m).multiplyScalar(.55).addScaledVector(Sp.side,.75).addScaledVector(Sp.up2,.3).normalize(),tgt=V3().copy(Sp.m).multiplyScalar(101),q=new THREE.Quaternion().setFromUnitVectors(UPV,D.clone().negate());
+      E.fleet.forEach((F,i)=>{const off=V3().addScaledVector(Sp.side,((i%3)-1)*14).addScaledVector(Sp.up2,(Math.floor(i/3)-1)*14).multiplyScalar(1-k),p=tgt.clone().addScaledVector(D,lerp(700,4,k*k)+i*6*(1-k)).add(off);F.m.visible=F.f.visible=k<.97;F.m.position.copy(p);F.m.quaternion.copy(q);F.f.position.copy(p).addScaledVector(D,6);});
+      E.dot.scale.setScalar(9+k*k*40);c.position.copy(Sp.m).multiplyScalar(250).addScaledVector(Sp.side,140);c.lookAt(tgt);},{fo:.2}),
+    W(12.2,15.4,'',camNear(8,3,o=>V3(o.x,o.y+(o.fired?8:30),o.z)),{far:1800,fi:.2}),
+    W(15.4,18.6,'',camNear(30,22,o=>V3(o.x,o.y+10,o.z)),{far:2200})],
   'CB-SL':[
     W(0,3,'CB-SL · 칠성 — 북두칠성을 땅에 투영',(k,o,P)=>{const e=ease(k);camera.position.set(lerp(P.x,o.x,e),P.y+e*1150,lerp(P.z,o.z,e)+e*430);camera.lookAt(o.x,o.y,o.z);},{far:6000,fo:.3}),
     SP(3,5,'ursa','큰곰자리로',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;U.rings.forEach(r=>r.forEach(t=>t.material.opacity=0));U.lines.material.opacity=.15;U.shots.forEach(s=>s.visible=false);c.position.set(0,-80+k*40,lerp(3200,1000,ease(k)));c.lookAt(0,0,0);},{fi:.3}),
@@ -2292,7 +2307,7 @@ function useRemote(s){
     o.mark=add(new THREE.Mesh(new THREE.RingGeometry(4,5.2,48),addMat(0xff8a20,.9,THREE.DoubleSide)));o.mark.rotation.x=-Math.PI/2;o.mark.position.set(o.x,o.y+.15,o.z);
     for(const a of [0,Math.PI/2]){const c=add(new THREE.Mesh(new THREE.PlaneGeometry(14,.5),addMat(0xff8a20,.8,THREE.DoubleSide)));c.rotation.set(-Math.PI/2,0,a);c.position.set(o.x,o.y+.16,o.z);}
     o.zone=add(new THREE.Mesh(new THREE.TorusGeometry(o.r,1.2,6,280),addMat(0xff7a20,.35)));o.zone.rotation.x=Math.PI/2;o.zone.position.set(o.x,o.y+.3,o.z);
-    o.needle=add(needleMesh(2.6,620,false));o.needle.visible=false;SFX.portal();}
+    o.miss=[];for(let i=0;i<5;i++){const m=add(nukeMissile());m.scale.setScalar(3);m.rotation.x=Math.PI;m.visible=false;const a=i*2.4;o.miss.push({m,dx:i?Math.cos(a)*7:0,dz:i?Math.sin(a)*7:0,lag:i*.08});}SFX.portal();}
   else{ // 땅에 투영된 북두칠성 (노드 고리 + 선) · 하늘에 고정될 별 일곱 개
     o.beams=o.segs.map(([a,b])=>{const m=makeBeam(0x9fd0ff,2.5,0);placeBeam(m,V3(a.x+.5,a.y+1.2,a.z+.5),V3(b.x+.5,b.y+1.2,b.z+.5));o.objs.push(m);return m;});
     for(const n of o.nodes){n.ring=add(new THREE.Mesh(new THREE.TorusGeometry(n.r,.9,6,64),addMat(0x9fd0ff,0)));n.ring.rotation.x=Math.PI/2;n.ring.position.set(n.x+.5,n.y+1.3,n.z+.5);
@@ -2327,14 +2342,15 @@ function stRail(o,dt){ // CB-01: 조준 → 대기권 · 토성 · 레일건(The
   else{const k=(o.t-o.T)/(o.end-.2);o.beam.material.opacity=Math.max(0,.92*(1-k*k));o.beam.scale.set(1+k*.04,1,1+k*.04);
     if(Math.random()<dt*24)spawnParticles(player.pos.x+(Math.random()-.5)*24,player.pos.y+Math.random()*8,player.pos.z+(Math.random()-.5)*24,new THREE.Color(0xff9a50),2,.4,3);
     stAt(o,o.T+1.4,SFX.crackle);if(o.t>=o.T+o.end)stEnd(o,o.cd);}}
-function stGung(o,dt){ // CB-NM: 불씨 표식 → (목성 가속) → 소리 없는 명중 → 충격파가 지나가고서야 쾅
+function stGung(o,dt){ // CB-NM: 불씨 표식 → 화성 · 목성 궤도 위성들이 핵미사일 발사 → 지구로 낙하 → 소리 없는 명중 · 버섯구름 → 충격파가 지나가고서야 쾅
   if(!o.fired){o.mark.rotation.z+=dt*.8;o.mark.material.opacity=.6+.35*Math.sin(o.t*6);
-    stAt(o,2.2,SFX.stRise,1);for(let i=0;i<24;i++)stAt(o,4.6+i*.1,SFX.gRing,1);stAt(o,6,SFX.mech,1);stAt(o,7.2,SFX.gSpin,1);stAt(o,10.2,SFX.gWhoosh,1);
-    const dk=(o.t-(o.T-1.3))/1.3;o.needle.visible=dk>0;if(dk>0)o.needle.position.set(o.x,o.y+310+15+(1-dk)*(1-dk)*700,o.z);
-    if(o.t>=o.T){o.fired=true;o.mark.visible=o.zone.visible=false;o.needle.position.set(o.x,o.y+310+15-8,o.z);
+    stAt(o,2.6,SFX.launch,1);stAt(o,3.2,SFX.launch,1);stAt(o,5.2,SFX.launch,1);stAt(o,5.8,SFX.launch,1);stAt(o,7.6,SFX.stRise,1);stAt(o,10.6,SFX.gWhoosh,1);
+    for(const M of o.miss){const dk=(o.t-(o.T-1.4+M.lag))/(1.4-M.lag);M.m.visible=dk>0&&dk<1;if(dk>0){M.m.position.set(o.x+M.dx,o.y+8.1+(1-dk)*(1-dk)*520,o.z+M.dz); // 탄두를 아래로 떨어지는 핵미사일 편대
+      if(Math.random()<.7)spawnParticles(o.x+M.dx,M.m.position.y+1,o.z+M.dz,new THREE.Color(0xffb060),1,.3,2);}}
+    if(o.t>=o.T){o.fired=true;o.mark.visible=o.zone.visible=false;for(const M of o.miss)M.m.visible=false;nukeCloud(o.x,o.y,o.z,2.2); // 버섯구름
       flash(.95,1300,'#fff1dc');shake(.35,.8);SFX.gCrack();stStrikeMobs(o.x,o.z,o.r,o.r+220,10);
       if(Math.hypot(player.pos.x-o.x,player.pos.z-o.z)<o.r&&!player.dead){if(isCreative())player.flying=true;else if(!isSpec())die('궁니르의 충격파에 휩쓸렸습니다');}
-      stCarve({t:'gung',x:Math.floor(o.x),z:Math.floor(o.z),y:Math.floor(o.y)-1,r:o.r,rc:o.rc,dep:7,nr:2.6,s:(Math.random()*1e9)|0});
+      stCarve({t:'gung',x:Math.floor(o.x),z:Math.floor(o.z),y:Math.floor(o.y)-1,r:o.r,rc:o.rc,dep:7,nr:-1,s:(Math.random()*1e9)|0});
       o.shock=new THREE.Mesh(new THREE.RingGeometry(.94,1,200),addMat(0xffc080,.9,THREE.DoubleSide));o.shock.rotation.x=-Math.PI/2;o.shock.position.set(o.x,o.y+1,o.z);scene.add(o.shock);o.objs.push(o.shock);
       o.wall=new THREE.Mesh(new THREE.CylinderGeometry(1,1,1,160,1,true),addMat(0xffd8a8,.35,THREE.DoubleSide));o.wall.position.set(o.x,o.y+6,o.z);scene.add(o.wall);o.objs.push(o.wall);}}
   else{const R=Math.max(1,(o.t-o.T)*175),f=Math.max(0,1-R/640);o.shock.scale.setScalar(R);o.shock.material.opacity=.9*f;o.wall.scale.set(R,12+R*.03,R);o.wall.material.opacity=.35*f;
@@ -2389,19 +2405,21 @@ function updateNukes(dt){
       spawnParticles(cx,n.y+h+3.2,cz,new THREE.Color(0xffc060),1,.2,1.5);
       if(k>=1){nukes.splice(i,1);scene.remove(m);nukeBoom(n);}}}
   for(let i=nukeFx.length-1;i>=0;i--){const f=nukeFx[i];f.t+=dt;const t=f.t,h=Math.min(85,t*32),gray=Math.min(1,t/5),op=Math.max(0,1-Math.max(0,t-7)/5);
-    f.stem.scale.set(5+t*.8,h,5+t*.8);f.stem.position.y=f.y+h/2;f.cap.position.y=f.y+h+10;f.cap.scale.set(16+Math.min(t,6)*5,9+Math.min(t,6)*2,16+Math.min(t,6)*5);
+    const S=f.S||1,tm=Math.min(t,6);f.stem.scale.set((5+t*.8)*S,h*S,(5+t*.8)*S);f.stem.position.y=f.y+h*S/2;f.cap.position.y=f.y+(h+10)*S;f.cap.scale.set((16+tm*5)*S,(9+tm*2)*S,(16+tm*5)*S);
     for(const m of [f.stem,f.cap]){m.material.color.setRGB(lerp(1,.45,gray),lerp(.62,.42,gray),lerp(.3,.4,gray));m.material.opacity=.92*op;}
-    f.ring.scale.setScalar(1+t*95);f.ring.material.opacity=Math.max(0,.9-t/2);f.ball.scale.setScalar(20+t*90);f.ball.material.opacity=Math.max(0,1-t/1.3);
+    f.ring.scale.setScalar((1+t*95)*(f.S||1));f.ring.material.opacity=Math.max(0,.9-t/2);f.ball.scale.setScalar((20+t*90)*(f.S||1));f.ball.material.opacity=Math.max(0,1-t/1.3);
     if(t>12){for(const m of [f.stem,f.cap,f.ring,f.ball]){scene.remove(m);m.material.dispose();}nukeFx.splice(i,1);}}}
 function nukeBoom(n){const R=40,cx=n.x+.5,cz=n.z+.5;
   flash(1,2600,'#fffbe8');shake(1.4,3.5);SFX.stImpact();SFX.gBoom();stStrikeMobs(cx,cz,R,R*2,40);
   const pd=Math.hypot(player.pos.x-cx,player.pos.y-n.y,player.pos.z-cz);
   if(!player.dead&&!stSafe()){if(pd<R)die('핵폭발에 휘말렸습니다');else if(pd<R*2){const k=1-(pd-R)/R;hurtPlayer(Math.round(6+30*k),(player.pos.x-cx)/pd*3*k,(player.pos.z-cz)/pd*3*k,'핵폭발의 충격파에 휩쓸렸습니다',true);}}
   stCarve({t:'nuke',x:n.x,y:n.y,z:n.z,r:R,s:(Math.random()*1e9)|0});
-  const mk=(g,op)=>{const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xffa050,transparent:true,opacity:op,depthWrite:false,fog:false}));m.position.set(cx,n.y,cz);scene.add(m);return m;};
-  const ring=new THREE.Mesh(new THREE.RingGeometry(.92,1,96),addMat(0xffe0b0,.9,THREE.DoubleSide));ring.rotation.x=-Math.PI/2;ring.position.set(cx,n.y+1,cz);scene.add(ring);
-  const ball=glow(0xfff0c0,20);ball.position.set(cx,n.y+6,cz);scene.add(ball);
-  nukeFx.push({t:0,y:n.y,stem:mk(new THREE.CylinderGeometry(1,1.3,1,16),.9),cap:mk(new THREE.SphereGeometry(1,20,14),.9),ring,ball});}
+  nukeCloud(cx,n.y,cz,1);}
+function nukeCloud(cx,y,cz,S){ // 버섯구름 · 섬광 불덩이 · 바닥 충격 고리 (S배 크기)
+  const mk=(g,op)=>{const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xffa050,transparent:true,opacity:op,depthWrite:false,fog:false}));m.position.set(cx,y,cz);scene.add(m);return m;};
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.92,1,96),addMat(0xffe0b0,.9,THREE.DoubleSide));ring.rotation.x=-Math.PI/2;ring.position.set(cx,y+1,cz);scene.add(ring);
+  const ball=glow(0xfff0c0,20*S);ball.position.set(cx,y+6*S,cz);scene.add(ball);
+  nukeFx.push({t:0,y,S,stem:mk(new THREE.CylinderGeometry(1,1.3,1,16),.9),cap:mk(new THREE.SphereGeometry(1,20,14),.9),ring,ball});}
 // ---------- 폭죽 ----------
 // 로켓이 꼬리 불꽃을 남기며 솟아오르다 1~1.5초 뒤 하늘에서 두 가지 색으로 터짐
 const rockets=[],sparks=[],sparkGeo=new THREE.BoxGeometry(.1,.1,.1),sparkMats={};
