@@ -246,7 +246,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.40 — 연출 자막 제거</h4>
+    <h4>🆕 v26.41 — CB-SL 칠성 새 연출: 빨간 레이저</h4>
+    • 앞부분(북두칠성 투영 → 일곱 별 고정 → 큰곰자리 별의 배열)은 그대로이고, 그다음 <b>일곱 별이 빨간 레이저를 갈겨요</b>! 하늘의 별에서 노드마다 차례로 빨간 레이저가 내리꽂혀 <b>폭파</b>해요.<br>
+    • 별이 불타며 떨어지는 장면과 별자리 선을 따라 불타는 도랑은 없앴어요.
+    <h4>v26.40 — 연출 자막 제거</h4>
     • CB-01 · CB-NM · CB-SL 연출 화면 아래에 나오던 <b>자막을 없앴어요</b>. 화면만 보여요.
     <h4>v26.39 — CB-01에 우리 은하 장면</h4>
     • CB-01 레일건 연출에 빠졌던 <b>우리 은하를 지나는 장면</b>을 토성 다음에 넣었어요 (대기권 → 토성 → 우리 은하 → The Shooting Star → 엔진 속 별의 힘 → 충전 → 빨간 레이저 → 지구 · 폭발). 명중 시간은 그대로 15초예요.
@@ -2072,7 +2075,7 @@ function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx
 const STELLAR=[
   {code:'CB-01',name:'레일건',key:'K',T:15,end:3.6,cd:20,desc:'빨간 레이저가 조준한 땅을 표시하면, 지구 대기권과 토성, 우리 은하를 지나 은하 가장자리의 레일건 <b>The Shooting Star</b>가 엔진 속 <b>별의 힘</b> 결정을 돌려 에너지를 모은 뒤 빨간 레이저를 쏴요. 15초 뒤 레이저가 도착해 <b>반경 50칸</b>을 하늘 끝부터 공허까지 날려 버려요. 범위 안에 서 있으면 함께 사라져요 (크리에이티브는 먼저 대피).'},
   {code:'CB-NM',name:'궁니르',key:'I',T:14,end:4.6,cd:20,desc:'조준한 곳에 불씨 표식이 새겨지면 <b>화성과 목성 궤도의 인공위성들</b>이 <b>핵미사일</b>을 쏴요. 미사일 편대가 지구로 날아와 14초 뒤 표식 위로 떨어지고, 버섯구름과 함께 충격파가 <b>400칸</b> 둘레를 맞은 땅 높이로 평평하게 밀어요. 한가운데는 녹아내린 분화구가 되고, 쾅 소리는 충격파가 지나간 뒤에야 들려요.'},
-  {code:'CB-SL',name:'칠성',key:'U',T:9.5,end:8.6,cd:24,desc:'조준한 곳을 중심으로 <b>1,440칸</b> 너비의 북두칠성이 땅에 투영되고, 큰곰자리의 일곱 별이 배열로 깨어나 별똥별을 쏴요. 별마다 밝기만큼 분화구를 파고 빛나는 <b>별의 핵 결정</b>을 남긴 뒤, 별자리 선을 따라 <b>별의 흔적</b>이 타오르는 도랑이 새겨져요 (크리에이티브는 발밑 땅이 남아요).'}];
+  {code:'CB-SL',name:'칠성',key:'U',T:9.5,end:8.6,cd:24,desc:'조준한 곳을 중심으로 <b>1,440칸</b> 너비의 북두칠성이 땅에 투영되고, 큰곰자리의 일곱 별이 배열로 깨어나 <b>빨간 레이저</b>를 쏴요. 하늘에 고정된 일곱 별이 차례로 빨간 레이저를 내리꽂아 별마다 밝기만큼 큰 분화구로 <b>폭파</b>하고, 가운데에 별의 핵 결정을 남겨요 (크리에이티브는 발밑 땅이 남아요).'}];
 const DIPPER=[['두베',13,-3,1.8],['메라크',12,9,2.4],['페크다',0,10,2.4],['메그레즈',-3,0,3.3],['알리오스',-12,2,1.8],['미자르',-20,4,2.2],['알카이드',-30,10,1.9]],DIP_ORDER=[6,5,4,3,2,1,0,3];
 let stSkill=0,stCast=null,stCD=0,shakeT=0,shakeAmp=0,stConfirm=null;
 function stHud(){const el=$('stellarHud'),s=held();if(!s||s.id!==STELLAR_REMOTE||!running){el.style.display='none';return;}
@@ -2216,7 +2219,8 @@ function buildSpace(){if(SPACE)return SPACE;
       const rr=[];for(let j=0;j<2;j++){const t=new THREE.Mesh(new THREE.TorusGeometry(30+j*16,1,6,56),addMat(j?0x7fd8ff:0xffffff,0));t.position.copy(s.position);U.add(t);rr.push(t);}rings.push(rr);
       const sh=glow(0xfff0c0,46);sh.visible=false;U.add(sh);shots.push(sh);});
     const lines=new THREE.Line(new THREE.BufferGeometry().setFromPoints(DIP_ORDER.map(i=>stars[i].position)),new THREE.LineBasicMaterial({color:0x9fd0ff,transparent:true,opacity:0,blending:THREE.AdditiveBlending}));U.add(lines);
-    U.userData={stars,rings,lines,shots};}
+    const las=stars.map(()=>{const r=rod(0xff2030,.95);r.visible=false;U.add(r);return r;});
+    U.userData={stars,rings,lines,shots,las};}
   return SPACE={scene:sc,cam,sets,m,side,up2};}
 // 컷 하나 = 시간 구간 + 우주/세계 + 카메라 움직임. 세계 컷은 카메라만 잠깐 옮겨 그림
 const W=(a,b,cap,cam,x)=>Object.assign({a,b,cap,cam,space:false},x||{}),SP=(a,b,set,cap,cam,x)=>Object.assign({a,b,set,cap,cam,space:true},x||{});
@@ -2257,11 +2261,12 @@ const SHOTS={
     W(15.4,18.6,'',camNear(30,22,o=>V3(o.x,o.y+10,o.z)),{far:2200})],
   'CB-SL':[
     W(0,3,'CB-SL · 칠성 — 북두칠성을 땅에 투영',(k,o,P)=>{const e=ease(k);camera.position.set(lerp(P.x,o.x,e),P.y+e*1150,lerp(P.z,o.z,e)+e*430);camera.lookAt(o.x,o.y,o.z);},{far:6000,fo:.3}),
-    SP(3,5,'ursa','큰곰자리로',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;U.rings.forEach(r=>r.forEach(t=>t.material.opacity=0));U.lines.material.opacity=.15;U.shots.forEach(s=>s.visible=false);c.position.set(0,-80+k*40,lerp(3200,1000,ease(k)));c.lookAt(0,0,0);},{fi:.3}),
+    SP(3,5,'ursa','큰곰자리로',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;U.las.forEach(l=>l.visible=false);U.stars.forEach(s=>s.material.color.setHex(0xe2ebff));U.rings.forEach(r=>r.forEach(t=>t.material.opacity=0));U.lines.material.opacity=.15;U.shots.forEach(s=>s.visible=false);c.position.set(0,-80+k*40,lerp(3200,1000,ease(k)));c.lookAt(0,0,0);},{fi:.3}),
     SP(5,7.8,'ursa','일곱 별이 별의 배열로 깨어나요',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;U.rings.forEach((r,i)=>r.forEach((t,j)=>{t.material.opacity=Math.max(0,Math.min(.9,(k*9-i)*.9));t.rotation.set(o.t*(j?.9:-.7)+i,o.t*.5,0);}));
       U.lines.material.opacity=.15+.75*k;const a=-.35+k*.5;c.position.set(Math.sin(a)*900,60,Math.cos(a)*900);c.lookAt(0,0,0);}),
-    SP(7.8,9.5,'ursa','일곱 별 발사',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;c.position.set(0,0,760);c.lookAt(0,0,0);
-      U.shots.forEach((s,i)=>{const kk=Math.max(0,Math.min(1,k*1.4-i*.06));s.visible=kk>0;s.position.copy(U.stars[i].position).lerp(V3(0,0,900),kk*kk);});},{fo:.2}),
+    SP(7.8,9.5,'ursa','일곱 별이 빨간 레이저 발사',(k,o,Sp)=>{const U=Sp.sets.ursa.userData,c=Sp.cam;c.position.set(560,160,520);c.lookAt(-60,0,0);U.shots.forEach(s=>s.visible=false);
+      U.stars.forEach((st,i)=>{const kk=Math.max(0,Math.min(1,k*1.5-i*.08));st.material.color.setHex(kk>0?0xff5060:0xe2ebff);const l=U.las[i];l.visible=kk>0;
+        if(kk>0)orient(l,st.position.clone(),st.position.clone().add(V3(0,-.25,1).multiplyScalar(80+kk*kk*6000)),3+1.5*Math.sin(o.t*50+i));});},{fo:.2}),
     W(9.5,15.2,'별이 하나씩 떨어져요',(k,o)=>{camera.position.set(o.x,o.y+1150,o.z+430);camera.lookAt(o.x,o.y,o.z);},{far:6000,fi:.2}),
     W(15.2,17.6,'별자리 점화',(k,o)=>{camera.position.set(o.x,o.y+1150-k*120,o.z+430);camera.lookAt(o.x,o.y,o.z);},{far:6000}),
     W(17.6,18.1,'',camNear(4,2,o=>V3(o.x,o.y,o.z)))]};
@@ -2289,7 +2294,7 @@ function stPlan(code,P){const o={x:P.x+.5,y:P.y+1,z:P.z+.5};
     o.segs=[];for(let i=0;i+1<DIP_ORDER.length;i++)o.segs.push([o.nodes[DIP_ORDER[i]],o.nodes[DIP_ORDER[i+1]]]);}
   return o;}
 function stInZone(o,code,x,z){if(code==='CB-01')return Math.hypot(x-o.x,z-o.z)<o.r+2;if(code==='CB-NM')return Math.hypot(x-o.x,z-o.z)<o.r;
-  return o.nodes.some(n=>Math.hypot(x-n.x,z-n.z)<n.r+2)||o.segs.some(([a,b])=>segD(x,z,{x:a.x,z:a.z,x2:b.x,z2:b.z})<5);}
+  return o.nodes.some(n=>Math.hypot(x-n.x,z-n.z)<n.r+2);}
 function useRemote(s){
   if(rodLock)return;rodLock=true; // 누르고 있어도 한 번만
   if(player.crouch||mobileCrouch){stSelect((stSkill+1)%STELLAR.length);return;}
@@ -2365,28 +2370,25 @@ function stGung(o,dt){ // CB-NM: 불씨 표식 → 화성 · 목성 궤도 위�
       if(pd>=o.r&&pd<o.r+220&&!player.dead){const kk=1-(pd-o.r)/220;hurtPlayer(Math.round(4+12*kk),(player.pos.x-o.x)/pd*2.4*kk,(player.pos.z-o.z)/pd*2.4*kk,'궁니르의 충격파에 휩쓸렸습니다',true);}
       for(let i=0;i<4;i++)spawnParticles(player.pos.x+(Math.random()-.5)*10,player.pos.y+1,player.pos.z+(Math.random()-.5)*10,new THREE.Color(0xc8b090),10,1.2,4);}
     stAt(o,o.T+2.4,SFX.gHum);if(o.t>=o.T+o.end)stEnd(o,o.cd);}}
-function stSeven(o,dt){ // CB-SL: 투영 → 별 고정 → (큰곰자리 배열) → 별이 하나씩 떨어짐 → 별자리 점화
-  const fin=o.t>=o.T+6.3,fade=Math.min(1,o.t/1.2);
-  o.beams.forEach((m,i)=>{if(!m.lit)m.material.opacity=.55*fade;});
+function stSeven(o,dt){ // CB-SL: 투영 → 별 고정 → (큰곰자리 배열 · 빨간 레이저 발사) → 하늘의 일곱 별이 차례로 빨간 레이저를 내리꽂아 폭파
+  const fin=o.t>=o.T+5.6,fade=Math.min(1,o.t/1.2);
+  o.beams.forEach(m=>{m.material.opacity=.55*fade*(fin?Math.max(0,1-(o.t-o.T-5.6)/1.5):1);});
   o.nodes.forEach((n,i)=>{const k=Math.max(0,Math.min(1,(o.t-.4-i*.32)/.3));if(!n.fell)n.sky.material.opacity=k;if(k>0&&!n.lock){n.lock=1;SFX.stLock();}if(!n.done)n.ring.material.opacity=.7*fade*(n.fell?1:.6+.4*Math.sin(o.t*5+i));});
-  stAt(o,3,SFX.stRise,1);stAt(o,5,SFX.sArray,1);stAt(o,7.8,SFX.stFire,1);stAt(o,9.3,()=>flash(.7,500,'#fff6d8'),1);
+  stAt(o,3,SFX.stRise,1);stAt(o,5,SFX.sArray,1);stAt(o,7.8,SFX.stFire,1);stAt(o,9.3,()=>flash(.7,500,'#ffd0d0'),1);
   if(!o.fired&&o.t>=o.T)o.fired=true;
-  o.nodes.forEach((n,i)=>{const tf=o.T+i*.72;if(o.t<tf||n.done)return;
-    if(!n.fell){n.fell=1;n.ft=tf;n.sky.material.color.setHex(0xfff0b0);n.trail.visible=true;SFX.sFall();}
-    const k=Math.min(1,(o.t-n.ft)/.55),y=CH+240-(CH+240-n.y)*k*k;n.sky.position.y=y;n.sky.scale.setScalar(40+30*k);placeBeam(n.trail,V3(n.x+.5,y,n.z+.5),V3(n.x+.5,y+180,n.z+.5));
-    if(k>=1){n.done=1;n.trail.visible=false;n.sky.visible=false;n.ring.material.color.setHex(0xffa040);n.ring.material.opacity=.95;
-      const pd=Math.hypot(player.pos.x-n.x,player.pos.z-n.z),near=Math.max(0,1-pd/400);flash(.25+.55*near,450,'#fff2c8');shake(.15+.7*near,.4+near);SFX.sLand();
-      n.burst=glow(0xffe0a0,10);n.burst.position.set(n.x+.5,n.y+4,n.z+.5);scene.add(n.burst);o.objs.push(n.burst);
-      stStrikeMobs(n.x+.5,n.z+.5,n.r,n.r*1.6,8);if(pd<n.r+.5&&!player.dead&&!stSafe())die('떨어진 별에 맞았습니다');
+  o.nodes.forEach((n,i)=>{const tf=o.T+i*.7;if(o.t<tf)return;
+    if(!n.fell){n.fell=1;n.ft=tf;n.sky.material.color.setHex(0xff4050);n.sky.scale.setScalar(70);n.trail.material.color.setHex(0xff2030);n.trail.visible=true;n.trail.scale.x=n.trail.scale.y=5;
+      placeBeam(n.trail,V3(n.x+.5,CH+240,n.z+.5),V3(n.x+.5,n.y,n.z+.5));SFX.laser();} // 하늘의 별 → 노드로 빨간 레이저
+    const a=o.t-n.ft;if(!n.done)n.trail.material.opacity=.95;else{n.trail.material.opacity=Math.max(0,.95*(1-(a-.3)/.8));n.sky.material.opacity=Math.max(0,1-(a-.3)/.8);}
+    if(a>=.3&&!n.done){n.done=1;n.ring.material.color.setHex(0xff5040);n.ring.material.opacity=.95; // 폭파
+      const pd=Math.hypot(player.pos.x-n.x,player.pos.z-n.z),near=Math.max(0,1-pd/400);flash(.3+.55*near,450,'#ffd8d0');shake(.2+.7*near,.4+near);SFX.sLand();SFX.boom();
+      n.burst=glow(0xff7050,10);n.burst.position.set(n.x+.5,n.y+4,n.z+.5);scene.add(n.burst);o.objs.push(n.burst);
+      for(let j=0;j<3;j++)spawnParticles(n.x+.5,n.y+2,n.z+.5,new THREE.Color(j?0xff6040:0xffe0a0),16,n.r*.3,8);
+      stStrikeMobs(n.x+.5,n.z+.5,n.r,n.r*1.6,8);if(pd<n.r+.5&&!player.dead&&!stSafe())die('칠성의 레이저에 맞았습니다');
       const c={t:'crat',x:n.x,z:n.z,y:n.y,r:n.r,s:(Math.random()*1e9)|0};if(stSafe()&&pd<n.r+3)c.sp=[Math.floor(player.pos.x),Math.floor(player.pos.z),3];stCarve(c);}});
-  for(const n of o.nodes)if(n.burst){const a=o.t-(n.ft+.55);n.burst.scale.setScalar(10+a*n.r*9);n.burst.material.opacity=Math.max(0,1-a/1.2);}
-  const tl=o.T+5.4;o.beams.forEach((m,i)=>stAt(o,tl+i*.12,()=>{m.lit=1;m.material.color.setHex(0xff9a40);m.material.opacity=1;m.scale.x=m.scale.y=5;}));
-  stAt(o,tl+.95,()=>{SFX.sLink();const sp=stSafe()?[Math.floor(player.pos.x),Math.floor(player.pos.z),3]:null;
-    for(const [a,b] of o.segs){const c={t:'line',x:a.x,z:a.z,x2:b.x,z2:b.z,w:3,dep:5,ra:a.r,rb:b.r,y0:Math.min(a.y,b.y)-14,s:(Math.random()*1e9)|0};if(sp)c.sp=sp;stCarve(c);
-      for(const m of [...mobs])if(segD(m.pos.x,m.pos.z,c)<c.w+1){m.byPlayer=performance.now();m.hurt(1e6,0,0);}
-      if(!player.dead&&!stSafe()&&segD(player.pos.x,player.pos.z,c)<c.w+.5)die('불타는 별자리에 휩쓸렸습니다');}});
-  stAt(o,o.T+6.3,()=>{flash(.85,1000,'#ffe4b8');shake(.6,1.3);SFX.stImpact();});
-  if(fin){const a=o.t-(o.T+6.3);for(const n of o.nodes)n.ring.scale.setScalar(1+a*.6);o.beams.forEach(m=>m.material.opacity=Math.max(0,1-a/2));}
+  for(const n of o.nodes)if(n.burst){const a=o.t-(n.ft+.3);n.burst.scale.setScalar(10+a*n.r*9);n.burst.material.opacity=Math.max(0,1-a/1.2);}
+  stAt(o,o.T+5.6,()=>{flash(.85,1000,'#ffd8c8');shake(.6,1.3);SFX.stImpact();}); // 마지막 폭파
+  if(fin){const a=o.t-(o.T+5.6);for(const n of o.nodes)n.ring.scale.setScalar(1+a*.6);}
   if(o.t>=o.T+o.end)stEnd(o,o.cd);}
 // ---------- 핵폭탄 ----------
 // 놓은 핵폭탄을 누르면 10초 뒤 폭발: 반경 40칸이 공 모양으로 사라지고 80칸까지 충격파 · 버섯구름
