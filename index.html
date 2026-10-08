@@ -247,7 +247,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.43 — 🌐 영어 · 크레이지 게임즈 준비</h4>
+    <h4>🆕 v26.44 — 차원문 이동 고침</h4>
+    • 판데모니움 등 차원문에 들어가도 이동이 안 되던 문제를 고쳤어요: 몸이 차원문에 살짝만 닿아도 이동하고, 도착한 문에 3초 넘게 서 있어도 다시 쓸 수 있고, 이동 중 오류가 나도 멈추지 않아요.<br>
+    • 차원문을 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>해도 바로 이동해요.
+    <h4>v26.43 — 🌐 영어 · 크레이지 게임즈 준비</h4>
     • 게임 전체를 <b>영어</b>로도 할 수 있어요. 타이틀이나 ⚙ 서버 설정의 <b>🌐 언어</b> 버튼으로 바꾸고, 처음엔 브라우저 언어에 맞춰 골라져요.<br>
     • 게임 포털(iframe) 안에서는 모바일 자동 전체 화면을 하지 않아요 (포털이 전체 화면을 맡아요).
     <h4>v26.42 — 레일건이 은하 속 지구를 겨눠요</h4>
@@ -3997,7 +4000,9 @@ function arrivalOf(dim){
   if(dim==='end')return {x:.5,y:endTop(0,36).top+1,z:36.5,yaw:0};
   return null;
 }
-let portalLock=false,portalT=0,traveling=false;
+let portalLock=false,portalT=0,traveling=false,portalLockT=0;
+function touchPortal(e){const hw=e.w/2+.2,p=e.pos; // 몸이 차원문 칸에 살짝만 닿아도 인정
+  for(let y=Math.floor(p.y);y<=Math.floor(p.y+e.h-.01);y++)for(let z=Math.floor(p.z-hw);z<=Math.floor(p.z+hw);z++)for(let x=Math.floor(p.x-hw);x<=Math.floor(p.x+hw);x++){const b=getBlock(x,y,z);if(b>0&&PORTAL[b])return b;}return 0;}
 function overlapBlock(e,test){
   const hw=e.w/2,p=e.pos;
   for(let y=Math.floor(p.y);y<=Math.floor(p.y+e.h-.01);y++)for(let z=Math.floor(p.z-hw);z<=Math.floor(p.z+hw);z++)for(let x=Math.floor(p.x-hw);x<=Math.floor(p.x+hw);x++){const b=getBlock(x,y,z);if(b>0&&test(b))return b;}
@@ -4013,7 +4018,7 @@ function usePortal(pid){
 }
 function travel(dest,pos){
   if(traveling)return;traveling=true;SFX.portal();$('fade').style.opacity=1;
-  setTimeout(()=>{enterDim(dest,pos);$('fade').style.opacity=0;traveling=false;},450);
+  setTimeout(()=>{try{enterDim(dest,pos);}catch(e){console.warn('차원 이동 실패',e);toast('차원 이동 중 문제가 생겼어요: '+(e&&e.message||e));}finally{$('fade').style.opacity=0;traveling=false;}},450); // 오류가 나도 다시 이동할 수 있게
 }
 function enterDim(dim,pos,fromLoad){
   if(!fromLoad)world.lastPos[world.dim]={x:player.pos.x,y:player.pos.y,z:player.pos.z};
@@ -4027,7 +4032,7 @@ function enterDim(dim,pos,fromLoad){
   if(pos.hell)fixHellArrival();
   onArrive(dim,fromLoad);restoreGolems();
   while(entHits(player)&&player.pos.y<CH-2)player.pos.y+=1;
-  player.peakY=player.pos.y;portalLock=true;portalT=0;lastStats='';renderStats();updateSky(0);
+  player.peakY=player.pos.y;portalLock=true;portalT=0;portalLockT=0;lastStats='';renderStats();updateSky(0);
   camera.position.set(player.pos.x,player.pos.y+1.62,player.pos.z);
 }
 function fixHellArrival(){ // 어비스 도착 지점에 발판과 돌아가는 차원문을 만듦
@@ -4696,8 +4701,9 @@ function updatePlayer(dt){
   p.thornT=Math.max(0,(p.thornT||0)-dt);if(p.thornT<=0&&touchingBlock(p,THORN)){p.thornT=.7;hurtPlayer(1,0,0,'가시 덤불에 찔렸습니다');}
   p.invulnT=Math.max(0,p.invulnT-dt);p.graceT=Math.max(0,(p.graceT||0)-dt);p.lavaT=Math.max(0,p.lavaT-dt);
   if(p.lavaT<=0&&overlapBlock(p,b=>LIQ_KIND[b]===2)){p.lavaT=.5;hurtPlayer(4,0,0,'용암에 빠졌습니다');}
-  const pb=overlapBlock(p,b=>PORTAL[b]===1); // 차원문 안에 잠시 서 있으면 이동
-  if(pb){if(!portalLock&&!traveling){portalT+=dt;if(portalT>.2){portalT=0;usePortal(pb);}}}else{portalLock=false;portalT=0;}
+  const pb=overlapBlock(p,b=>PORTAL[b]===1)||touchPortal(p); // 차원문 안(또는 바로 맞닿은 채)에 잠시 서 있으면 이동
+  if(pb){if(portalLock){portalLockT+=dt;if(portalLockT>3)portalLock=false;} // 도착한 문에서 3초 넘게 머물면 다시 쓸 수 있음
+    if(!portalLock&&!traveling){portalT+=dt;if(portalT>.2){portalT=0;usePortal(pb);}}}else{portalLock=false;portalT=0;portalLockT=0;}
   if(isSpec()){ // 관전: 블록을 뚫고 자유롭게 날아다님 (스페이스 위 · C 아래 · 달리면 2배)
     let gx=0,gz=0;if(!invOpen){if(keys.KeyW)gz+=1;if(keys.KeyS)gz-=1;if(keys.KeyA)gx-=1;if(keys.KeyD)gx+=1;}if(joy.active&&!invOpen){gx=joy.x;gz=-joy.y;}
     const sp=(keys.ShiftLeft||keys.ShiftRight||mobileSprint)?22:11,sn=Math.sin(p.yaw),cs=Math.cos(p.yaw),l=Math.hypot(gx,gz),q=l>0?Math.min(1,l)*sp/l:0,k=Math.min(1,8*dt);
@@ -4883,6 +4889,7 @@ function useItem(){
   if(target&&!keys.ShiftLeft){
     if(target.id===BENCH||target.id===KILN){openInv();return;}
     if(DOOR_OF[target.id]){toggleDoor(target.x,target.y,target.z);return;}
+    if(PORTAL[target.id]&&!traveling){usePortal(target.id);return;} // 차원문을 우클릭해도 이동
     if(target.id===NUKE){igniteNuke(target.x,target.y,target.z);return;}
     if(CONTAINER[target.id]){openContainer(target.x,target.y,target.z);return;}
     if(target.id===BED){sleep(target);return;}
