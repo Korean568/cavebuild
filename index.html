@@ -240,12 +240,15 @@ body.mobile #toasts{top:72px}
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
     • <b>🔫 총</b>: 권총(강철 3 + 철 주괴 2 + 막대기 1) · 돌격소총(강철합금 3 + 강철 2 + 철 주괴 2) · 총알(철 주괴 1 + 석탄 1 → 16). 머리를 맞히면 2배!<br>
-    • <b>☢ 핵폭탄</b> = 강철초고합금 블록 4 (강철초고합금 블록 = 강철 + 강철합금 + 철 주괴, 강철 = 철 주괴 + 돌, 강철합금 = 강철 + 돌). 놓고 누르면 10초 뒤 반경 40칸이 날아가요!<br>
+    • <b>☢ 핵폭탄</b>(핵미사일) = 우라늄 1 + 플루토늄 1 + 강철초고합금 블록 1 (강철초고합금 블록 = 강철 + 강철합금 + 철 주괴, 강철 = 철 주괴 + 돌, 강철합금 = 강철 + 돌). 놓고 누르면 10초 뒤 반경 40칸이 날아가요!<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>스톤</b>은 이 세계의 전기이며, 깊은 동굴의 스톤 광석에서 캘 수 있어요.
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.32 — 🔫 총</h4>
+    <h4>🆕 v26.33 — ☢ 핵미사일</h4>
+    • 핵폭탄이 <b>핵미사일</b> 모양이 됐어요: 흰 동체 · 빨간 탄두 · 노랑/검정 경고띠와 방사능 표지 · 꼬리 날개. 점화하면 탄두가 깜빡이고 분사구에서 불꽃이 튀며 떨려요.<br>
+    • 조합법이 <b>우라늄 1 + 플루토늄 1 + 강철초고합금 블록 1</b>(작업대)로 바뀌었어요.
+    <h4>v26.32 — 🔫 총</h4>
     • <b>권총</b>(강철 3 + 철 주괴 2 + 막대기 1)과 <b>돌격소총</b>(강철합금 3 + 강철 2 + 철 주괴 2)을 작업대에서 만들어요. <b>총알</b>은 철 주괴 1 + 석탄 1 → 16개.<br>
     • <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 쏴요. 권총은 한 발에 9, 돌격소총은 누르고 있으면 3점사로 6씩! 머리를 맞히면 <b>헤드샷 2배</b>. 쏠 때마다 총알 1개가 들고 반동이 있어요 (크리에이티브는 무한).
     <h4>v26.31 — 아주 먼 시야</h4>
@@ -569,7 +572,7 @@ defB(STAR_TRACE,'별의 흔적',TILE.star_trace,{hard:2.5,tool:'pick',tier:1});
 // 핵폭탄: 강철(철+돌) → 강철합금(강철+돌) → 강철초고합금 블록(강철+강철합금+철) → 핵폭탄
 const STEEL=152,STEEL_ALLOY=159,SUPER_ALLOY=214,NUKE=215;
 defB(SUPER_ALLOY,'강철초고합금 블록',TILE.super_alloy,{hard:14,tool:'pick',tier:3});
-defB(NUKE,'핵폭탄',TILE.nuke,{hard:3,tool:'pick',tier:1});
+defB(NUKE,'핵폭탄',TILE.nuke,{hard:3,tool:'pick',tier:1,opaque:false}); // 블록 칸은 투명 · 3D 핵미사일 모델로 보임
 const OPAQUE=new Uint8Array(256),SOLID=new Uint8Array(256);
 BL.forEach((b,i)=>{if(b){OPAQUE[i]=b.opaque?1:0;SOLID[i]=b.solid?1:0;}});
 const LIQUID=new Uint8Array(256),EMIT=new Uint8Array(256),LIGHT_SRC=new Uint8Array(256),PORTAL=new Uint8Array(256);
@@ -1328,10 +1331,7 @@ T(TILE.conduit,(u,v,x,y)=>{const d=Math.abs(u-.5); // 열 도관: 검은 틀 속
 T(TILE.super_alloy,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y); // 강철초고합금: 푸른 강철판 · X자 보강대 · 리벳
   if(e<1)return [30,36,48];if(e<3)return [150,164,188];const dg=Math.min(Math.abs(x-y),Math.abs(x+y-TS+1));if(dg<2)return mulc([120,136,164],dg<1?1.15:.9);
   if((x===5||x===TS-6)&&(y===5||y===TS-6))return [230,236,250];return mulc([96,110,136],.9+.12*h2(x>>1,y,381)+.06*fbm(u,v,382,3,3));});
-T(TILE.nuke,(u,v,x,y)=>{if(y<4||y>TS-5)return ((x+y)>>2)&1?[24,22,18]:[250,206,30]; // 핵폭탄: 노랑·검정 경고띠 · 방사능 표지
-  const dx=u-.5,dy=v-.5,r=Math.hypot(dx,dy),a=Math.atan2(dy,dx);
-  if(r<.33){if(r<.07)return [20,20,16];if(r>.12&&fr(a/(Math.PI*2)*3+.25)<.5)return [20,20,16];return [250,206,30];}
-  return mulc([70,84,62],.85+.2*fbm(u,v,383,3,3));});
+T(TILE.nuke,()=>null); // 핵폭탄: 칸은 비워 두고 3D 핵미사일 모델을 세움
 T(TILE.star_trace,(u,v,x,y)=>{const p=cells(u,v,5,371); // 별의 흔적: 그을린 바닥 · 금빛으로 타오르는 갈라진 틈
   const crack=p.d2-p.d;let c=mulc([46,32,30],.75+.4*fbm(u,v,372,3,3));if(crack<.05)c=mixc([255,170,50],[255,244,190],1-crack/.05);else if(crack<.09)c=mixc(c,[200,80,20],(.09-crack)/.04*.7);return c;});
 T(TILE.star_core,(u,v,x,y)=>{const p=cells(u,v,4,361),d=Math.hypot(u-.5,v-.5); // 별의 핵: 하얗게 빛나는 결정 · 가장자리는 푸른빛
@@ -1625,7 +1625,7 @@ RECIPES.push(
   {out:BLACKDIA_BLOCK,n:1,in:[[BLACK_DIAMOND,9]],st:'bench'},{out:GOLD_BLOCK,n:1,in:[[GOLD_INGOT,9]],st:'bench'},{out:GOLD_INGOT,n:9,in:[[GOLD_BLOCK,1]]},
   {out:STEEL,n:1,in:[[IRON_INGOT,1],[STONE,1]],st:'bench'},{out:STEEL_ALLOY,n:1,in:[[STEEL,1],[STONE,1]],st:'bench'},
   {out:BULLET,n:16,in:[[IRON_INGOT,1],[COAL,1]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
-  {out:SUPER_ALLOY,n:1,in:[[STEEL,1],[STEEL_ALLOY,1],[IRON_INGOT,1]],st:'bench'},{out:NUKE,n:1,in:[[SUPER_ALLOY,4]],st:'bench'},
+  {out:SUPER_ALLOY,n:1,in:[[STEEL,1],[STEEL_ALLOY,1],[IRON_INGOT,1]],st:'bench'},{out:NUKE,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[SUPER_ALLOY,1]],st:'bench'},
   {out:TITANIUM_BLOCK,n:1,in:[[TITANIUM_INGOT,9]],st:'bench'},{out:TITANIUM_INGOT,n:9,in:[[TITANIUM_BLOCK,1]]},{out:BLACK_DIAMOND,n:9,in:[[BLACKDIA_BLOCK,1]]},
   {out:HS_SCRAP,n:1,in:[[HS_ORE,1]],st:'kiln',fuel:true},
   {out:COOKED_MEAT,n:1,in:[[RAW_MEAT,1]],st:'kiln',fuel:true},
@@ -1720,6 +1720,7 @@ function itemIcon(id){
     case BOW:return pixelIcon((X,Y)=>{const d=Math.hypot(X-14,Y-14);if(X<14&&Y<14&&Math.abs(d-10.5)<.9)return d>10.5?'#5a3a1a':'#8a5a2a';if(X<13.8&&Y<13.8&&X>3&&Y>3&&Math.abs(X+Y-17.5)<.55)return '#dddddd';return null;});
     case ARROW:return pixelIcon((X,Y)=>{const dx=X-10.5,dy=Y-5.5,a=(dx-dy)*Math.SQRT1_2,b=(dx+dy)*Math.SQRT1_2;if(a>=2&&a<5&&Math.abs(b)<(5-a)*.6)return '#d0d0d0';if(a>-11&&a<2&&Math.abs(b)<.55)return '#8a6a44';if(a>-11&&a<-7.5&&Math.abs(b)<1.9)return '#9cc46a';return null;});
     case POTION:return pixelIcon((X,Y,x,y)=>{if(y===2&&x>=7&&x<=8)return '#8a5a2a';if(y>=3&&y<=5&&x>=7&&x<=8)return '#d8ecff';const d=Math.hypot(X-8,Y-10.5);if(d<4.6){if(d>3.9)return '#d8ecff';if(Y<8.2)return '#e8f4ff';return Math.hypot(X-6.5,Y-9.5)<1?'#fff6c0':'#ffc830';}return null;});
+    case NUKE:return pixelIcon((X,Y,x,y)=>{if(x<6||x>9){if(y>=11&&y<=14&&(x===4||x===5||x===10||x===11))return '#30323a';return null;}if(y<=1)return null;if(y<=4)return y<=2&&(x===6||x===9)?null:'#c82020';if(y>=7&&y<=8)return y===7&&(x===7||x===8)?'#20201a':'#f2c81e';if(y>=14)return '#30323a';return x===6?'#b8bcc6':'#e6e8ec';});
     case PISTOL:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=7&&x>=3&&x<=14)return y===5?'#9aa0ac':'#4a4e58';if(y>=8&&y<=12&&x>=3&&x<=6)return x===3?'#2a2016':'#5a3e26';if(y===8&&x>=7&&x<=8)return '#4a4e58';if(x===14&&y===4)return '#cfd4dc';return null;});
     case RIFLE:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=7&&x>=1&&x<=15)return y===5?'#8a909c':x<5?'#5a3e26':'#3a3e48';if(y>=8&&y<=11&&x>=7&&x<=8)return '#2a2e36';if(y>=8&&y<=10&&x>=1&&x<=3)return '#5a3e26';if(y===4&&x>=8&&x<=11)return '#22252c';return null;});
     case BULLET:return pixelIcon((X,Y,x,y)=>{const c=[[5,'#d8a040'],[8,'#e8c060'],[11,'#d8a040']];for(const [bx,col] of c){if(x>=bx&&x<=bx+1&&y>=7&&y<=12)return col;if(x>=bx&&x<=bx+1&&y>=4&&y<=6)return y===4?'#9a6a3a':'#b88050';}return null;});
@@ -1788,6 +1789,7 @@ function buildIcons(){
   for(let i=1;i<BL.length;i++)if(BL[i]&&!LIQUID[i]){ICON_CANVAS[i]=blockIcon(i);ICON[i]=ICON_CANVAS[i].toDataURL();}
   for(let i=100;i<IT.length;i++)if(IT[i]){ICON_CANVAS[i]=itemIcon(i);ICON[i]=ICON_CANVAS[i].toDataURL();}
   for(const i of LADDER_IDS){const c=makeCanvas(48,48),g=c.getContext('2d'),t=TILE.ladder;g.drawImage(atlas,(t%ATW)*TS,Math.floor(t/ATW)*TS,TS,TS,4,4,40,40);ICON_CANVAS[i]=c;ICON[i]=c.toDataURL();} // 사다리는 납작하게
+  ICON_CANVAS[NUKE]=itemIcon(NUKE);ICON[NUKE]=ICON_CANVAS[NUKE].toDataURL();
   ICON_CANVAS[CHEST]=ICON_CANVAS[CHEST_IDS[3]];ICON[CHEST]=ICON[CHEST_IDS[3]]; // 상자 아이콘은 앞면(걸쇠)이 보이게
 }
 buildIcons();
@@ -1999,7 +2001,7 @@ function finishChunk(cx,cz,data){ // 생성된 블록에 플레이어가 바꾼 
   // 이웃 청크의 등불 빛이 이 청크로 넘어올 수 있으므로 등불이 있으면 주변도 다시 그림
   if(lamps.length)for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const n=getChunk(cx+dx,cz+dz);if(n)n.needsMesh=true;}
   for(let z=0;z<16;z++)for(let x=0;x<16;x++)calcHM(ch,x,z);
-  chunks.set(ckey(cx,cz),ch);
+  nukeScan(ch);chunks.set(ckey(cx,cz),ch);
   for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]]){const n=getChunk(cx+dx,cz+dz);if(n)n.needsMesh=true;}
   return ch;
 }
@@ -2079,7 +2081,7 @@ function stCarve(c){
   for(const ch of chunks.values()){const ox=ch.cx*16,oz=ch.cz*16;if(ox+15<b[0]||ox>b[2]||oz+15<b[1]||oz>b[3])continue;
     const d=ch.data,old=d.slice(),k=ckey(ch.cx,ch.cz),m=mods.get(k);applyCarve(d,ch.cx,ch.cz,c);let any=false;
     for(let i=0;i<d.length;i++)if(old[i]!==d[i]){any=true;if(m&&m.delete(i))modDirty.add(world.dim+'|'+k);} // 새긴 자리의 옛 기록은 지움
-    if(!any)continue;ch.lamps=[];for(let i=0;i<d.length;i++)if(LIGHT_SRC[d[i]])ch.lamps.push([ox+(i&15),i>>8,oz+((i>>4)&15)]);
+    if(!any)continue;nukeScan(ch);ch.lamps=[];for(let i=0;i<d.length;i++)if(LIGHT_SRC[d[i]])ch.lamps.push([ox+(i&15),i>>8,oz+((i>>4)&15)]);
     for(let z=0;z<16;z++)for(let x=0;x<16;x++)calcHM(ch,x,z);ch.ver++;touched.push(ch);}
   for(const ch of touched)for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const n=getChunk(ch.cx+dx,ch.cz+dz);if(n)n.needsMesh=true;}
   for(const [k,m] of mods){if(chunks.has(k)||!m.size)continue;const [cx,cz]=k.split(',').map(Number);if(cx*16+15<b[0]||cx*16>b[2]||cz*16+15<b[1]||cz*16>b[3])continue;
@@ -2333,14 +2335,20 @@ function stSeven(o,dt){ // SS-04: 투영 → 별 고정 → (큰곰자리 배열
   if(o.t>=o.T+o.end)stEnd(o,o.cd);}
 // ---------- 핵폭탄 ----------
 // 놓은 핵폭탄을 누르면 10초 뒤 폭발: 반경 40칸이 공 모양으로 사라지고 80칸까지 충격파 · 버섯구름
-const nukes=[],nukeFx=[];
+const nukes=[],nukeFx=[],nukeModels=new Map();let nukeSyncT=0;
+function nukeScan(ch){const d=ch.data;let L=null;for(let i=0;i<d.length;i++)if(d[i]===NUKE)(L||(L=[])).push([ch.cx*16+(i&15),i>>8,ch.cz*16+((i>>4)&15)]);ch.nk=L;}
+function syncNukeModels(){const want=new Set();for(const ch of chunks.values())if(ch.nk)for(const [x,y,z] of ch.nk){const k=x+','+y+','+z;want.add(k);
+    if(!nukeModels.has(k)){const m=nukeMissile();m.position.set(x+.5,y,z+.5);scene.add(m);nukeModels.set(k,m);}}
+  for(const [k,m] of nukeModels)if(!want.has(k)){scene.remove(m);nukeModels.delete(k);}}
 function igniteNuke(x,y,z){if(nukes.some(n=>n.x===x&&n.y===y&&n.z===z))return;nukes.push({x,y,z,t:0});SFX.fuse();swing=1;
   toast('☢ <b>핵폭탄 점화!</b> 10초 안에 멀리 도망치세요 (반경 40칸 소멸 · 80칸까지 충격파)');}
 function updateNukes(dt){
+  nukeSyncT-=dt;if(nukeSyncT<=0||dt===0){nukeSyncT=.25;syncNukeModels();}
   for(let i=nukes.length-1;i>=0;i--){const n=nukes[i];n.t+=dt;const b=getBlock(n.x,n.y,n.z);
     if(b!==NUKE&&b!==-1){nukes.splice(i,1);toast('☢ 핵폭탄이 꺼졌어요');continue;} // 부수면 꺼짐
     const sc=Math.ceil(10-n.t);if(sc!==n.s){n.s=sc;SFX.stTick();if(sc<=5&&sc>0)toast(`☢ ${sc}`);}
-    if(Math.random()<dt*20)spawnParticles(n.x+.5,n.y+1.1,n.z+.5,new THREE.Color(0x9cff60),1,.15,2);
+    const mm=nukeModels.get(n.x+','+n.y+','+n.z);if(mm){const on=Math.sin(n.t*(6+n.t*2))>0;mm.userData.nose.material.emissive.setHex(on?0x801010:0);mm.position.x=n.x+.5+(Math.random()-.5)*.03*n.t/10;}
+    if(Math.random()<dt*20)spawnParticles(n.x+.5,n.y+.1,n.z+.5,new THREE.Color(0xffa040),1,.15,2); // 분사구 불꽃
     if(n.t>=10){nukes.splice(i,1);nukeBoom(n);}}
   for(let i=nukeFx.length-1;i>=0;i--){const f=nukeFx[i];f.t+=dt;const t=f.t,h=Math.min(85,t*32),gray=Math.min(1,t/5),op=Math.max(0,1-Math.max(0,t-7)/5);
     f.stem.scale.set(5+t*.8,h,5+t*.8);f.stem.position.y=f.y+h/2;f.cap.position.y=f.y+h+10;f.cap.scale.set(16+Math.min(t,6)*5,9+Math.min(t,6)*2,16+Math.min(t,6)*5);
@@ -2488,7 +2496,7 @@ function updateLiquids(dt){
 }
 function setBlock(x,y,z,id,batch){
   if(y<0||y>=CH)return;const cx=x>>4,cz=z>>4,c=getChunk(cx,cz);if(!c)return;
-  const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;calcHM(c,lx,lz);c.ver++;
+  const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;if(old===NUKE||id===NUKE)nukeScan(c);calcHM(c,lx,lz);c.ver++;
   if(CONTAINER[old]&&CONTAINER[old]!==CONTAINER[id])dropContainer(x,y,z); // 상자·호퍼가 없어지면 안의 물건을 떨어뜨림
   if(CONTAINER[id]&&!CONTAINER[old])getCont(x,y,z); // 새로 놓은 상자·호퍼를 등록 (호퍼가 바로 작동)
   if(id===SAPLING&&old!==SAPLING)(world.saplings||(world.saplings=[])).push({d:world.dim,x,y,z,t:world.stats.play+90+Math.random()*120}); // 1.5~3.5분 뒤 자람
@@ -2978,6 +2986,15 @@ function imat(key,c,t='rough',r=.6,m=0,em=0,emI=.5,op=1){
   return IMAT[key]=x;
 }
 function iBox(g,w,h,d,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0){const m=part(g,w,h,d,mat,x,y,z);m.rotation.set(rx,ry,rz);return m;}
+function nukeMissile(){ // 핵미사일: 흰 동체 · 빨간 탄두 · 노랑/검정 경고띠와 방사능 표지 · 꼬리 날개 4장 · 분사구 (높이 약 2.7칸)
+  const g=new THREE.Group(),L=(c,e=0)=>new THREE.MeshLambertMaterial({color:c,emissive:e}),body=L(0xe6e8ec),dark=L(0x30323a),red=L(0xc82020),yel=L(0xf2c81e);
+  const M=(geo,m,y,x=0,z=0)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);g.add(o);return o;};
+  M(new THREE.CylinderGeometry(.2,.26,.16,16),dark,.08);M(new THREE.CylinderGeometry(.27,.27,1.9,18),body,.16+.95);
+  M(new THREE.CylinderGeometry(.275,.275,.3,18),yel,1.62);M(new THREE.CylinderGeometry(.278,.278,.06,18),dark,1.45);M(new THREE.CylinderGeometry(.278,.278,.06,18),dark,1.79);
+  for(let i=0;i<3;i++){const a=i*Math.PI*2/3,t=M(new THREE.BoxGeometry(.13,.16,.02),dark,1.62,Math.sin(a)*.28,Math.cos(a)*.28);t.rotation.y=a;} // 방사능 표지
+  const nose=M(new THREE.ConeGeometry(.27,.62,18),red,2.06+.31);nose.userData.nose=1;g.userData.nose=nose;
+  for(let i=0;i<4;i++){const a=i*Math.PI/2,f=M(new THREE.BoxGeometry(.04,.5,.34),dark,.42,Math.sin(a)*.36,Math.cos(a)*.36);f.rotation.y=a;}
+  return g;}
 function iMesh(g,geo,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.scale.set(sx,sy,sz);g.add(m);return m;}
 const IGEO={sph:new THREE.SphereGeometry(1,16,12),cyl:new THREE.CylinderGeometry(1,1,1,16),cone:new THREE.ConeGeometry(1,1,12),
   dode:new THREE.DodecahedronGeometry(1,0),octa:new THREE.OctahedronGeometry(1,0),ico:new THREE.IcosahedronGeometry(1,0),torus:new THREE.TorusGeometry(1,.22,8,20),halfTorus:new THREE.TorusGeometry(1,.08,6,16,Math.PI)};
@@ -3022,6 +3039,7 @@ function hopperModel(s){ // 깔때기 모양 호퍼 (블록 텍스처 일부를 
 function buildItemModel(id){
   const g=new THREE.Group();let grip=false;
   const it=IT[id];
+  if(id===NUKE){const m=nukeMissile();m.scale.setScalar(.12);m.position.y=-.16;g.add(m);return {g,grip};}
   if(isBlk(id)){g.add(id===HOPPER?hopperModel(.2):id===LOG?logModel(.2):DOOR_OF[id]?doorModel(.2):id===SAPLING?tileBox(.2,.2,.001,TILE.sapling,true):blockCube(id,.2));return {g,grip};}
   if(it&&it.tool){
     if(id===IRON_ROD){const st=imat('maceS',0x6a6a74,'metal',.4,.7);iBox(g,.034,.5,.034,st,0,.2,0);iBox(g,.045,.03,.045,st,0,-.05,0);iBox(g,.045,.03,.045,st,0,.45,0);return {g,grip:true};}
