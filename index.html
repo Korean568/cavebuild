@@ -103,6 +103,7 @@ body.mobile .help div.mobonly{display:block}
 #modPanel h2{font-size:32px;margin:0 0 8px;text-shadow:3px 3px 0 #222}#modPanel .mwarn{max-width:480px;font-size:13px;background:rgba(90,40,10,.8);border:2px solid #c87a30;padding:6px 10px;margin-bottom:8px}
 #modList{display:flex;flex-direction:column;gap:5px;width:min(480px,92vw);margin-bottom:8px}#modList .mi{display:flex;align-items:center;gap:8px;background:rgba(20,20,30,.85);border:2px solid #555;padding:6px 10px;font-size:14px}
 #modList .mi b{flex:1}#modList .mi.off{opacity:.55}#modList .mi small{color:#f88}#modList button{font:inherit;font-size:12px;padding:3px 8px}#modPanel .mrow{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#cineTitle{position:fixed;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;z-index:10;font:300 54px Georgia,'Times New Roman',serif;letter-spacing:8px;color:#fff;text-shadow:0 0 18px rgba(255,255,255,.6);opacity:0;pointer-events:none}
 #cineFade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:8}
 #cineBars{position:fixed;inset:0;pointer-events:none;z-index:9;display:none}#cineBars i{position:absolute;left:0;right:0;height:10vh;background:#000}#cineBars i:first-child{top:0}#cineBars i:last-child{bottom:0}
 #cineCap{position:fixed;left:0;right:0;bottom:3.2vh;text-align:center;z-index:10;font-size:17px;letter-spacing:3px;color:#e8e8f2;text-shadow:0 0 8px #000;display:none;pointer-events:none}
@@ -174,7 +175,7 @@ body.mobile #toasts{top:72px}
 <div id="flash"></div>
 <div id="stellarHud"></div>
 <div id="stellarMenu" class="overlay"><h2>🛰 스텔라 리모컨</h2><div class="list"></div><button class="btn" id="stCineBtn">🎬 연출: 켬</button><button class="btn" id="stMenuClose">닫기</button></div>
-<div id="cineFade"></div><div id="cineBars"><i></i><i></i></div><div id="cineCap"></div><div id="cineSkip">J · 연출 넘기기 ▶</div><div id="stCount"></div>
+<div id="cineFade"></div><div id="cineTitle">The Shooting Star</div><div id="cineBars"><i></i><i></i></div><div id="cineCap"></div><div id="cineSkip">J · 연출 넘기기 ▶</div><div id="stCount"></div>
 <div id="debug"></div>
 <div id="compass"><span id="carrow">▲</span><span id="ctext"></span></div>
 <div id="toasts"></div>
@@ -231,7 +232,7 @@ body.mobile #toasts{top:72px}
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
     • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 엔딩드래곤도 떨어뜨림)를 흉갑 칸에 입고 떨어지는 중에 <b>점프</b>를 다시 누르면 활공해요. 아래를 보면 빨라지고 위를 보면 올라가요. 날면서 <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 쓰면 앞으로 쭉 날아가요!<br>
-    • <b>🛰 스텔라 리모컨</b>(에너지 스톤 8 테두리 + 가운데 <b>별의 힘</b> 1) — The Shooting Star! <b>CB-01 레일건</b>(반경 200칸) · <b>CB-NM 궁니르</b>(400칸) · <b>CB-SL 칠성</b>(1,440칸)으로 세계를 바꿔요. 발동하면 지구 · 토성 · 은하 · 목성 · 큰곰자리를 오가는 우주 연출이 나와요 (K/I/U 선택 · <span class="deskonly">우클릭</span><span class="mobonly">✋</span> 발동 · 웅크리고 쓰면 다음 기술 · H 메뉴 · J 연출 넘기기 / 들고 J 연출 켜기·끄기). <b>세계를 영원히 바꾸니</b> 저장 파일을 내보내 두세요!<br>
+    • <b>🛰 스텔라 리모컨</b>(에너지 스톤 8 테두리 + 가운데 <b>별의 힘</b> 1) — The Shooting Star! <b>CB-01 레일건</b>(반경 50칸) · <b>CB-NM 궁니르</b>(400칸) · <b>CB-SL 칠성</b>(1,440칸)으로 세계를 바꿔요. 발동하면 지구 · 토성 · 은하 · 목성 · 큰곰자리를 오가는 우주 연출이 나와요 (K/I/U 선택 · <span class="deskonly">우클릭</span><span class="mobonly">✋</span> 발동 · 웅크리고 쓰면 다음 기술 · H 메뉴 · J 연출 넘기기 / 들고 J 연출 켜기·끄기). <b>세계를 영원히 바꾸니</b> 저장 파일을 내보내 두세요!<br>
     • 깊은 곳의 <b>방사성 광석</b>(우라늄 · 라듐 · 플루토늄 · 폴로늄 · 프로트악티늄)은 가까이 있거나 들고 다니면 <b>방사능</b> 피해를 줘요. 천·가죽을 뺀 갑옷은 한 부위당 20%, <b>방독면·방독복</b>(가죽으로 만듦)은 25%씩 막아서 네 부위를 다 입으면 완전히 막혀요.<br>
     • 새 광석: <b>구리</b>·<b>금</b>(돌 곡괭이) · <b>티타늄</b>(철 곡괭이) · <b>다이아몬드</b>·<b>레드 다이아몬드</b>(수정 곡괭이) · <b>블랙 다이아몬드</b>(블레이즈스톤 곡괭이). 깊을수록 귀한 광석이 나오고, 캔 광석을 가마에서 녹이면 주괴·보석이 돼요. 주괴·보석으로 <b>도구</b>와 <b>갑옷</b>, 9개로 <b>구리 · 금 · 티타늄 · 다이아몬드 블록</b>을 만들 수 있어요.<br>
     • 새 세계를 만들 때 <b>서바이벌 · 크리에이티브 · 하드코어 · 세이프 · 관전</b> 중에 고를 수 있고, 일시정지의 <b>⚙ 서버 설정</b>에서 언제든 바꿀 수 있어요.<br>
@@ -245,7 +246,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.36 — 별의 힘 · 에너지 스톤</h4>
+    <h4>🆕 v26.37 — CB-01 레일건 새 연출 · 범위 50칸</h4>
+    • 연출 순서: 지구 대기권 통과 → 토성 통과 → 레일건이 보이며 흰 글씨 <b>The Shooting Star</b>(1.5초) → 레일건 엔진 속에서 <b>별의 힘 결정</b>이 빙글빙글 회전 → 밖으로 나와 에너지 충전 → <b>빨간 레이저</b> 발사 → 지구 풍경으로 돌아와 1초 뒤 레이저 도착 · 폭발!<br>
+    • 범위가 <b>반경 50칸</b>으로 줄었어요 (15초 뒤 명중).
+    <h4>v26.36 — 별의 힘 · 에너지 스톤</h4>
     • 새 광석 <b>별의 힘 광석</b>: 아주 깊은 곳(높이 9 아래)에 드물게 있고, 어두운 돌 속에 빨간 레이저 줄기가 빛나요. 다이아몬드 곡괭이 이상으로 캐면 <b>별의 힘</b>이 나와요.<br>
     • <b>🛰 스텔라 리모컨</b> 조합법이 <b>에너지 스톤 8</b>(테두리) + <b>별의 힘 1</b>(가운데)로 바뀌었어요.<br>
     • <b>스톤</b>의 이름이 <b>에너지 스톤</b>으로 바뀌었어요 (광석도 에너지 스톤 광석).
@@ -2059,7 +2063,7 @@ function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx
 // 뚜껑 아래 빨간 버튼 하나로 저 멀리 어둠 속의 무기들을 부름. 세계를 영원히 바꾸니 조심!
 // (원작 모드의 공개 설명을 바탕으로 CAVEBUILD에 맞게 새로 만든 것 — 원작의 코드·그림·소리는 쓰지 않음)
 const STELLAR=[
-  {code:'CB-01',name:'레일건',key:'K',T:16,end:3.6,cd:20,desc:'빨간 레이저가 조준한 땅을 표시하고, 16초 뒤 은하 가장자리에 걸린 레일건이 그 레이저를 따라 쏴요. <b>반경 200칸</b> 광선이 그 안의 모든 것을 없애고 하늘 끝부터 공허까지 세계를 통째로 도려내요. 범위 안에 서 있으면 함께 사라져요 (크리에이티브는 먼저 대피).'},
+  {code:'CB-01',name:'레일건',key:'K',T:15,end:3.6,cd:20,desc:'빨간 레이저가 조준한 땅을 표시하면, 지구 대기권과 토성을 지나 은하 가장자리의 레일건 <b>The Shooting Star</b>가 엔진 속 <b>별의 힘</b> 결정을 돌려 에너지를 모은 뒤 빨간 레이저를 쏴요. 15초 뒤 레이저가 도착해 <b>반경 50칸</b>을 하늘 끝부터 공허까지 날려 버려요. 범위 안에 서 있으면 함께 사라져요 (크리에이티브는 먼저 대피).'},
   {code:'CB-NM',name:'궁니르',key:'I',T:14,end:4.6,cd:20,desc:'조준한 곳에 불씨 표식이 새겨지고, 14초 뒤 목성의 가속 고리에서 일곱 바퀴를 돈 검은 바늘이 소리보다 빠르게 꽂혀요. 충격파가 <b>400칸</b> 둘레를 맞은 땅 높이로 평평하게 밀고 바늘 둘레는 녹아내린 분화구가 돼요. 쾅 소리는 충격파가 지나간 뒤에야 들리고, 그 밖에도 충격파가 밀치고 다치게 해요. 바늘은 <b>텅스텐 블록</b>과 달아오른 <b>열 도관</b>으로 남아요 (가장 단단한 곡괭이로 캘 수 있음).'},
   {code:'CB-SL',name:'칠성',key:'U',T:9.5,end:8.6,cd:24,desc:'조준한 곳을 중심으로 <b>1,440칸</b> 너비의 북두칠성이 땅에 투영되고, 큰곰자리의 일곱 별이 배열로 깨어나 별똥별을 쏴요. 별마다 밝기만큼 분화구를 파고 빛나는 <b>별의 핵 결정</b>을 남긴 뒤, 별자리 선을 따라 <b>별의 흔적</b>이 타오르는 도랑이 새겨져요 (크리에이티브는 발밑 땅이 남아요).'}];
 const DIPPER=[['두베',13,-3,1.8],['메라크',12,9,2.4],['페크다',0,10,2.4],['메그레즈',-3,0,3.3],['알리오스',-12,2,1.8],['미자르',-20,4,2.2],['알카이드',-30,10,1.9]],DIP_ORDER=[6,5,4,3,2,1,0,3];
@@ -2176,6 +2180,14 @@ function buildSpace(){if(SPACE)return SPACE;
     const body=new THREE.Mesh(new THREE.BoxGeometry(22,14,30),dk2);body.position.z=70;T.add(body);
     const pm=new THREE.MeshLambertMaterial({color:0x1d3570,emissive:0x060c24});for(const sx of [-1,1]){const p=new THREE.Mesh(new THREE.BoxGeometry(70,.6,18),pm);p.position.set(sx*48,0,70);T.add(p);const a=new THREE.Mesh(new THREE.BoxGeometry(14,1.5,1.5),dk);a.position.set(sx*17,0,70);T.add(a);}
     const muz=glow(0x9fe8ff,2);muz.position.z=-58;T.add(muz);const beam=rod(0xd8f8ff,.95);beam.visible=false;T.add(beam);T.userData={rails,rings,muz,beam};}
+  {const N=set('engine'); // 레일건 엔진 속: 붉은 고리가 늘어선 원통 방 · 한가운데서 빙글빙글 도는 별의 힘 결정
+    const ch=new THREE.Mesh(new THREE.CylinderGeometry(70,70,600,40,1,false),new THREE.MeshBasicMaterial({color:0x15161d,side:THREE.BackSide}));ch.rotation.x=Math.PI/2;N.add(ch);
+    const wr=[];for(let i=0;i<7;i++){const r=new THREE.Mesh(new THREE.TorusGeometry(68,1.4,6,64),new THREE.MeshBasicMaterial({color:0x5a1018}));r.position.z=-120+i*40;N.add(r);wr.push(r);}
+    const cr=new THREE.Mesh(new THREE.OctahedronGeometry(9,0),new THREE.MeshLambertMaterial({color:0xff4050,emissive:0xa00018}));cr.scale.set(1,1.6,1);N.add(cr);
+    const cw=new THREE.Mesh(new THREE.OctahedronGeometry(9.3,0),new THREE.MeshBasicMaterial({color:0xffb0b8,wireframe:true,transparent:true,opacity:.6}));cw.scale.set(1,1.6,1);N.add(cw);
+    N.add(glow(0xff2030,140,.9));N.add(glow(0xffe0e0,40));
+    const sp=[];for(let j=0;j<3;j++){const t=new THREE.Mesh(new THREE.TorusGeometry(18+j*6,.6,6,64),addMat(j===1?0xffffff:0xff3040,.85));N.add(t);sp.push(t);}
+    N.add(new THREE.PointLight(0xff3040,2,300));N.userData={cr,cw,sp,wr};}
   {const U=set('ursa'); // 큰곰자리: 북두칠성 일곱 별 · 깨어나는 별의 배열 고리 · 별을 잇는 선 · 쏘아 보낸 별똥별
     const stars=[],rings=[],shots=[];
     DIPPER.forEach(([n,a,b,mag],i)=>{const s=glow(0xe2ebff,70+(3.5-mag)*55);s.position.set((a+7.1)*16,(b-4.6)*16,((i*37)%5-2)*40);U.add(s);stars.push(s);
@@ -2190,19 +2202,21 @@ const camNear=(dist,up,look)=>(k,o,P)=>{camera.position.copy(P).addScaledVector(
 function earthCam(Sp,k,a,b,out){const E=Sp.sets.earth.userData,c=Sp.cam,e=ease(k);E.cl.rotation.y=k*.05;c.position.copy(Sp.m).multiplyScalar(lerp(a,b,e)).addScaledVector(Sp.side,e*out);c.lookAt(V3().copy(Sp.m).multiplyScalar(100*(1-e*.8)));}
 const SHOTS={
   'CB-01':[
-    W(0,2.6,'CB-01 · 레일건 — 레이저 조준 고정',camNear(4.5,2.2,o=>V3(o.x,o.y+6,o.z))),
-    W(2.6,5,'대기권을 지나 우주로',(k,o,P)=>{const e=k*k;camera.position.set(o.x+o.back.x*(30+e*260),o.y+12+e*1100,o.z+o.back.z*(30+e*260));camera.lookAt(o.x,o.y,o.z);},{far:4000,fo:.45}),
-    SP(5,7.5,'earth','지구 궤도 — 레이저는 어둠 저편으로 이어져요',(k,o,Sp)=>{const E=Sp.sets.earth.userData;E.dot.material.color.setHex(0xff2030);E.dot.visible=E.las.visible=true;E.inc.visible=E.incG.visible=false;
-      orient(E.las,V3().copy(Sp.m).multiplyScalar(100.5),V3().copy(Sp.m).multiplyScalar(100).addScaledVector(V3().copy(Sp.m).multiplyScalar(.5).addScaledVector(Sp.up2,.86),9000),.45);earthCam(Sp,k,116,560,-170);},{fi:.35}),
-    SP(7.5,10,'saturn','토성을 스쳐 지나',(k,o,Sp)=>{const e=ease(k),c=Sp.cam,a=lerp(2.5,.5,e);c.position.set(Math.cos(a)*340,lerp(95,15,e),Math.sin(a)*340);c.lookAt(lerp(0,-300,e*e),0,lerp(0,300,e*e));}),
-    SP(10,12.5,'galaxy','태양계 너머 — 우리 은하 밖으로',(k,o,Sp)=>{const G=Sp.sets.galaxy,e=ease(k),c=Sp.cam;G.position.set(0,0,0);G.rotation.set(0,0,0);G.userData.st.material.opacity=.6+.4*Math.sin(o.t*12);
-      c.position.set(lerp(820,0,e),lerp(40,4600,e),lerp(560,3900,e));c.lookAt(lerp(1600,0,e),0,lerp(300,0,e));}),
-    SP(12.5,15,'station','은하 가장자리 · CB-01 레일건 충전',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;G.position.set(0,-1900,-10000);G.rotation.set(.4,0,0);
-      T.rings.forEach((r,i)=>r.material.color.setHex(k*7.6>i?0x9fe8ff:0x1a2228));T.rails.forEach(r=>r.material.color.setRGB(.25+.75*k,.06+.1*k,.06+.1*k));T.muz.scale.setScalar(2+k*k*34*(1+.15*Math.sin(o.t*50)));T.beam.visible=false;
-      const a=.75+k*.45;c.position.set(Math.cos(a)*150,32,Math.sin(a)*120+10);c.lookAt(0,0,-25);}),
-    SP(15,16,'station','발사',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;T.beam.visible=true;orient(T.beam,V3(0,0,-58),V3(0,0,-58-200-k*k*30000),5+3*Math.sin(o.t*60));T.muz.scale.setScalar(60);
-      c.position.set(80,22,-10);c.lookAt(0,0,-110);},{fo:.15}),
-    W(16,19.6,'',camNear(28,24,o=>V3(o.x,o.y+10,o.z)),{far:1800})],
+    W(0,1.5,'CB-01 · 레일건 — 레이저 조준 고정',camNear(4.5,2.2,o=>V3(o.x,o.y+6,o.z))),
+    W(1.5,4,'지구 대기권을 지나',(k,o,P)=>{const e=k*k;camera.position.set(o.x+o.back.x*(30+e*260),o.y+12+e*1100,o.z+o.back.z*(30+e*260));camera.lookAt(o.x,o.y,o.z);},{far:4000,fo:.4}),
+    SP(4,6.5,'saturn','토성을 지나',(k,o,Sp)=>{const e=ease(k),c=Sp.cam,a=lerp(2.5,.5,e);c.position.set(Math.cos(a)*340,lerp(95,15,e),Math.sin(a)*340);c.lookAt(lerp(0,-300,e*e),0,lerp(0,300,e*e));},{fi:.35,fo:.3}),
+    SP(6.5,8,'station','',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam,e=ease(k);G.visible=true;G.position.set(0,-1900,-10000);G.rotation.set(.4,0,0);
+      T.rings.forEach(r=>r.material.color.setHex(0x1a2228));T.rails.forEach(r=>r.material.color.setHex(0x401010));T.muz.scale.setScalar(2);T.beam.visible=false;
+      c.position.set(lerp(420,190,e),lerp(120,55,e),lerp(380,170,e));c.lookAt(0,0,-10);},{fi:.3,title:1}),
+    SP(8,10.5,'engine','레일건 엔진 속 — 별의 힘 결정 회전',(k,o,Sp)=>{const N=Sp.sets.engine.userData,c=Sp.cam,sp=1+k*k*14;
+      N.cr.rotation.y=N.cw.rotation.y=o.t*sp;N.cr.rotation.z=N.cw.rotation.z=Math.sin(o.t*2)*.3;N.sp.forEach((t,j)=>t.rotation.set(o.t*sp*(j?.7:-.9)+j,o.t*sp*.5*(j-1),0));
+      N.wr.forEach((r,i)=>r.material.color.setHex(k*8>i?0xff3040:0x5a1018));const a=o.t*.6;c.position.set(Math.cos(a)*50,lerp(8,18,k),Math.sin(a)*50);c.lookAt(0,0,0);},{fi:.3,fo:.3}),
+    SP(10.5,13,'station','밖으로 — 에너지 충전',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;G.position.set(0,-1900,-10000);G.rotation.set(.4,0,0);
+      T.rings.forEach((r,i)=>r.material.color.setHex(k*7.6>i?0xff5060:0x1a2228));T.rails.forEach(r=>r.material.color.setRGB(.25+.75*k,.06+.1*k,.06+.1*k));T.muz.material.color.setHex(0xff3040);T.muz.scale.setScalar(2+k*k*34*(1+.15*Math.sin(o.t*50)));T.beam.visible=false;
+      const a=.75+k*.45;c.position.set(Math.cos(a)*170,36,Math.sin(a)*140+10);c.lookAt(0,0,-25);},{fi:.3}),
+    SP(13,14,'station','빨간 레이저 발사',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;T.beam.visible=true;T.beam.material.color.setHex(0xff2030);
+      orient(T.beam,V3(0,0,-58),V3(0,0,-58-200-k*k*30000),5+3*Math.sin(o.t*60));T.muz.scale.setScalar(60);c.position.set(80,22,-10);c.lookAt(0,0,-110);},{fo:.2}),
+    W(14,18.6,'',camNear(40,26,o=>V3(o.x,o.y+8,o.z)),{far:1800,fi:.25})],
   'CB-NM':[
     W(0,2.2,'CB-NM · 궁니르 — 불씨 표식 고정',camNear(4.5,2.2,o=>V3(o.x,o.y+2,o.z)),{fo:.3}),
     SP(2.2,4.4,'earth','지구를 떠나 목성으로',(k,o,Sp)=>{const E=Sp.sets.earth.userData;E.dot.material.color.setHex(0xff8a20);E.dot.visible=true;E.las.visible=E.inc.visible=E.incG.visible=false;earthCam(Sp,k,120,900,300);},{fi:.3,fo:.3}),
@@ -2235,6 +2249,7 @@ const stFrozen=()=>!!(stCast&&stCast.cine&&stShot(stCast));
 let cineCapTxt=null;
 function cineRender(o){const s=stShot(o);if(!s)return false;const k=Math.min(1,Math.max(0,(o.t-s.a)/(s.b-s.a)));
   if(s.cap!==cineCapTxt){cineCapTxt=s.cap;$('cineCap').innerHTML=s.cap;}
+  $('cineTitle').style.opacity=s.title?Math.max(0,Math.min(1,(o.t-s.a)/.25,(s.b-o.t)/.25)):0; // 흰 글씨 The Shooting Star
   let f=0;if(s.fi)f=Math.max(f,1-(o.t-s.a)/s.fi);if(s.fo)f=Math.max(f,1-(s.b-o.t)/s.fo);$('cineFade').style.opacity=Math.max(0,Math.min(1,f));
   const sh=shakeT>0?shakeAmp*Math.min(1,shakeT):0;
   if(s.space){const Sp=buildSpace(),c=Sp.cam;c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();for(const n in Sp.sets)Sp.sets[n].visible=n===s.set;
@@ -2246,7 +2261,7 @@ function cineRender(o){const s=stShot(o);if(!s)return false;const k=Math.min(1,M
   camera.position.copy(P);camera.quaternion.copy(Q);if(s.far){camera.far=far;camera.updateProjectionMatrix();scene.fog.near=fn;scene.fog.far=ff;}camera.updateMatrixWorld();skyDome.position.copy(P);return true;}
 // ---------- 발동 ----------
 function stPlan(code,P){const o={x:P.x+.5,y:P.y+1,z:P.z+.5};
-  if(code==='CB-01')o.r=200;else if(code==='CB-NM'){o.r=400;o.rc=40;}
+  if(code==='CB-01')o.r=50;else if(code==='CB-NM'){o.r=400;o.rc=40;}
   else{const yaw=player.yaw,cs=Math.cos(yaw),sn=Math.sin(yaw),S=1440/43; // 국자 모양 7개 별: 1,440칸 너비 · 밝을수록 큰 분화구
     o.nodes=DIPPER.map(([n,a,b,mag])=>{const ax=(a+7.1)*S,bz=(b-4.6)*S,x=Math.floor(o.x+ax*cs+bz*sn),z=Math.floor(o.z-ax*sn+bz*cs),g=getChunk(x>>4,z>>4)?groundY(x,z):Math.max(SEA-1,terrainAt(x,z).h);
       return {n,x,z,y:g===null?SEA:g,r:Math.round(6+(3.5-mag)*7)};});
@@ -2285,7 +2300,7 @@ function useRemote(s){
     SFX.portal();}
   stCast=o;stHud();
 }
-function stEnd(o,cd){for(const m of o.objs){scene.remove(m);if(m.material&&m.material.dispose)m.material.dispose();}stCast=null;stCD=cd;document.body.classList.remove('cine');$('stCount').style.display='none';$('cineFade').style.opacity=0;cineCapTxt=null;stHud();}
+function stEnd(o,cd){for(const m of o.objs){scene.remove(m);if(m.material&&m.material.dispose)m.material.dispose();}stCast=null;stCD=cd;document.body.classList.remove('cine');$('stCount').style.display='none';$('cineFade').style.opacity=0;$('cineTitle').style.opacity=0;cineCapTxt=null;stHud();}
 function stAt(o,t,f,cineOnly){if(o.ev[t]||o.t<t)return;o.ev[t]=1;if(cineOnly&&!o.cine)return;f();}
 function updateStellar(dt){
   stCD=Math.max(0,stCD-dt);if(shakeT>0){shakeT-=dt;if(shakeT<=0)shakeAmp=0;}
@@ -2299,12 +2314,13 @@ function updateStellar(dt){
   document.body.classList.toggle('cine',stFrozen());
   stHud();
 }
-function stRail(o,dt){ // CB-01: 레이저 조준 → (우주 연출) → 반경 200칸 광선
+function stRail(o,dt){ // CB-01: 조준 → 대기권 · 토성 · 레일건(The Shooting Star) · 엔진 속 별의 힘 · 충전 · 빨간 레이저 → 지구 → 1초 뒤 도착 · 반경 50칸 폭발
   if(!o.fired){o.ring.material.opacity=.45+.35*Math.sin(o.t*8);o.laser.material.opacity=.55+.4*Math.sin(o.t*31);o.dot.scale.setScalar(5+2*Math.sin(o.t*12));
-    stAt(o,2.6,SFX.stRise,1);stAt(o,12.5,SFX.stCharge,1);stAt(o,15,()=>{flash(1,450,'#dff6ff');shake(.4,.8);SFX.stFire();},1);
+    stAt(o,1.5,SFX.stRise,1);stAt(o,6.5,SFX.sArray,1);stAt(o,8,SFX.gSpin,1);stAt(o,10.5,SFX.stCharge,1);stAt(o,13,()=>{flash(1,450,'#ffd0d0');shake(.4,.8);SFX.stFire();},1);
     if(o.t>=o.T){o.fired=true;o.laser.visible=o.ring.visible=o.dot.visible=false;
-      const beam=new THREE.Mesh(new THREE.CylinderGeometry(o.r,o.r,1200,128,1,true),addMat(0xd8f6ff,.92,THREE.DoubleSide));beam.position.set(o.x,500,o.z);scene.add(beam);o.beam=beam;o.objs.push(beam);
-      flash(1,1600);shake(.9,2.6);SFX.stImpact();stStrikeMobs(o.x,o.z,o.r,o.r+30,14);
+      const beam=new THREE.Mesh(new THREE.CylinderGeometry(o.r,o.r,1200,96,1,true),addMat(0xff2a3a,.9,THREE.DoubleSide));beam.position.set(o.x,500,o.z);scene.add(beam);o.beam=beam;o.objs.push(beam); // 빨간 레이저 도착
+      for(let i=0;i<5;i++)spawnParticles(o.x+(Math.random()-.5)*o.r,o.y+2,o.z+(Math.random()-.5)*o.r,new THREE.Color(i%2?0xff6040:0xffe0a0),18,o.r*.15,10); // 폭발
+      flash(1,1600,'#ffe0e0');shake(.9,2.6);SFX.stImpact();stStrikeMobs(o.x,o.z,o.r,o.r+30,14);
       if(Math.hypot(player.pos.x-o.x,player.pos.z-o.z)<o.r+1&&!player.dead){if(stSafe()){const a=Math.atan2(player.pos.z-o.z,player.pos.x-o.x)||0;player.pos.set(o.x+Math.cos(a)*(o.r+8),CH+6,o.z+Math.sin(a)*(o.r+8));player.vel.set(0,0,0);if(isCreative())player.flying=true;toast('🛰 크리에이티브: 광선 밖으로 대피했어요');}
         else die('궤도에서 지워졌습니다');}
       stCarve({t:'rail',x:Math.floor(o.x),z:Math.floor(o.z),r:o.r});}}
