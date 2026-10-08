@@ -239,12 +239,16 @@ body.mobile #toasts{top:72px}
     • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
+    • <b>🔫 총</b>: 권총(강철 3 + 철 주괴 2 + 막대기 1) · 돌격소총(강철합금 3 + 강철 2 + 철 주괴 2) · 총알(철 주괴 1 + 석탄 1 → 16). 머리를 맞히면 2배!<br>
     • <b>☢ 핵폭탄</b> = 강철초고합금 블록 4 (강철초고합금 블록 = 강철 + 강철합금 + 철 주괴, 강철 = 철 주괴 + 돌, 강철합금 = 강철 + 돌). 놓고 누르면 10초 뒤 반경 40칸이 날아가요!<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>스톤</b>은 이 세계의 전기이며, 깊은 동굴의 스톤 광석에서 캘 수 있어요.
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.31 — 아주 먼 시야</h4>
+    <h4>🆕 v26.32 — 🔫 총</h4>
+    • <b>권총</b>(강철 3 + 철 주괴 2 + 막대기 1)과 <b>돌격소총</b>(강철합금 3 + 강철 2 + 철 주괴 2)을 작업대에서 만들어요. <b>총알</b>은 철 주괴 1 + 석탄 1 → 16개.<br>
+    • <span class="deskonly">우클릭</span><span class="mobonly">✋</span>으로 쏴요. 권총은 한 발에 9, 돌격소총은 누르고 있으면 3점사로 6씩! 머리를 맞히면 <b>헤드샷 2배</b>. 쏠 때마다 총알 1개가 들고 반동이 있어요 (크리에이티브는 무한).
+    <h4>v26.31 — 아주 먼 시야</h4>
     • 청크를 훨씬 멀리까지 불러와요: PC <b>14청크(224칸)</b>, 모바일 6청크. 안개도 그만큼 멀어졌어요.
     <h4>v26.30 — 🧩 모드 시스템</h4>
     • 타이틀의 <b>🧩 모드</b>에서 <b>.js 모드 파일</b>을 넣고 켜기 · 끄기 · 지우기를 할 수 있어요. 새로고침하면 적용돼요.<br>
@@ -1501,6 +1505,8 @@ IT[BOW]={name:'활',stack:1,maxDur:200,bow:true};
 IT[ARROW]={name:'화살',stack:64};
 IT[POTION]={name:'불사의 마법 물약',stack:16};
 IT[LASER]={name:'레이저 (일회용)',stack:16};
+const PISTOL=280,RIFLE=281,BULLET=282; // 총: 권총(한 발씩) · 돌격소총(3점사) · 총알
+IT[PISTOL]={name:'권총',stack:1,use:true};IT[RIFLE]={name:'돌격소총',stack:1,use:true};IT[BULLET]={name:'총알',stack:64};
 IT[ESTONE]={name:'스톤 (전기)',stack:64};
 IT[HS_SCRAP]={name:'블레이즈스톤 조각',stack:64};
 IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
@@ -1618,6 +1624,7 @@ RECIPES.push(
   {out:REDDIA_BLOCK,n:1,in:[[RED_DIAMOND,9]],st:'bench'},{out:RED_DIAMOND,n:9,in:[[REDDIA_BLOCK,1]]},
   {out:BLACKDIA_BLOCK,n:1,in:[[BLACK_DIAMOND,9]],st:'bench'},{out:GOLD_BLOCK,n:1,in:[[GOLD_INGOT,9]],st:'bench'},{out:GOLD_INGOT,n:9,in:[[GOLD_BLOCK,1]]},
   {out:STEEL,n:1,in:[[IRON_INGOT,1],[STONE,1]],st:'bench'},{out:STEEL_ALLOY,n:1,in:[[STEEL,1],[STONE,1]],st:'bench'},
+  {out:BULLET,n:16,in:[[IRON_INGOT,1],[COAL,1]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
   {out:SUPER_ALLOY,n:1,in:[[STEEL,1],[STEEL_ALLOY,1],[IRON_INGOT,1]],st:'bench'},{out:NUKE,n:1,in:[[SUPER_ALLOY,4]],st:'bench'},
   {out:TITANIUM_BLOCK,n:1,in:[[TITANIUM_INGOT,9]],st:'bench'},{out:TITANIUM_INGOT,n:9,in:[[TITANIUM_BLOCK,1]]},{out:BLACK_DIAMOND,n:9,in:[[BLACKDIA_BLOCK,1]]},
   {out:HS_SCRAP,n:1,in:[[HS_ORE,1]],st:'kiln',fuel:true},
@@ -1713,6 +1720,9 @@ function itemIcon(id){
     case BOW:return pixelIcon((X,Y)=>{const d=Math.hypot(X-14,Y-14);if(X<14&&Y<14&&Math.abs(d-10.5)<.9)return d>10.5?'#5a3a1a':'#8a5a2a';if(X<13.8&&Y<13.8&&X>3&&Y>3&&Math.abs(X+Y-17.5)<.55)return '#dddddd';return null;});
     case ARROW:return pixelIcon((X,Y)=>{const dx=X-10.5,dy=Y-5.5,a=(dx-dy)*Math.SQRT1_2,b=(dx+dy)*Math.SQRT1_2;if(a>=2&&a<5&&Math.abs(b)<(5-a)*.6)return '#d0d0d0';if(a>-11&&a<2&&Math.abs(b)<.55)return '#8a6a44';if(a>-11&&a<-7.5&&Math.abs(b)<1.9)return '#9cc46a';return null;});
     case POTION:return pixelIcon((X,Y,x,y)=>{if(y===2&&x>=7&&x<=8)return '#8a5a2a';if(y>=3&&y<=5&&x>=7&&x<=8)return '#d8ecff';const d=Math.hypot(X-8,Y-10.5);if(d<4.6){if(d>3.9)return '#d8ecff';if(Y<8.2)return '#e8f4ff';return Math.hypot(X-6.5,Y-9.5)<1?'#fff6c0':'#ffc830';}return null;});
+    case PISTOL:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=7&&x>=3&&x<=14)return y===5?'#9aa0ac':'#4a4e58';if(y>=8&&y<=12&&x>=3&&x<=6)return x===3?'#2a2016':'#5a3e26';if(y===8&&x>=7&&x<=8)return '#4a4e58';if(x===14&&y===4)return '#cfd4dc';return null;});
+    case RIFLE:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=7&&x>=1&&x<=15)return y===5?'#8a909c':x<5?'#5a3e26':'#3a3e48';if(y>=8&&y<=11&&x>=7&&x<=8)return '#2a2e36';if(y>=8&&y<=10&&x>=1&&x<=3)return '#5a3e26';if(y===4&&x>=8&&x<=11)return '#22252c';return null;});
+    case BULLET:return pixelIcon((X,Y,x,y)=>{const c=[[5,'#d8a040'],[8,'#e8c060'],[11,'#d8a040']];for(const [bx,col] of c){if(x>=bx&&x<=bx+1&&y>=7&&y<=12)return col;if(x>=bx&&x<=bx+1&&y>=4&&y<=6)return y===4?'#9a6a3a':'#b88050';}return null;});
     case LASER:return pixelIcon((X,Y,x,y)=>{if(x>=13&&x<=14&&y>=6&&y<=9)return '#ff3050';if(y===7&&x>=6&&x<=9)return '#ff6080';if(y>=6&&y<=9&&x>=2&&x<=12)return y===6?'#8a8a9a':'#4a4a58';if(y>=10&&y<=13&&x>=3&&x<=5)return '#3a3a44';return null;});
     case ESTONE:return pixelIcon((X,Y,x,y)=>{const d=Math.abs(X-8)*.9+Math.abs(Y-8);if(d>6.5)return null;if((x===7&&y>=3&&y<=7)||(x===8&&y>=7&&y<=8)||(x===9&&y>=8&&y<=12))return '#fffbd0';return d<3?'#ffe44a':d<5?'#f2c21a':'#5ab8ff';});
     case HELL_COMPASS:case END_COMPASS:case CITY_COMPASS:{const nc=id===HELL_COMPASS?'#ff4a2a':id===END_COMPASS?'#1fe0cc':'#b060ff';
@@ -1956,6 +1966,7 @@ const SFX={
   fwBoom:()=>{bnoise(.6,500,.5,.5,0,.002,'lowpass',90);tone(90,40,.4,.25,'sine');for(let i=0;i<10;i++)bnoise(.05,5000,2,.08,.35+Math.random()*.8,.002);},smash:()=>{tone(130,45,.35,.35,'sine');bnoise(.3,700,.6,.4,0,.003,'lowpass',150);tone(1400,900,.12,.06,'triangle');},cast:()=>{bnoise(.25,1800,.8,.12,0,.01,'bandpass',4200);tone(900,500,.15,.03,'sine');},plop:()=>{bnoise(.18,900,.9,.18,0,.004,'bandpass',400);bubble(380,.08,.06,.03);},
   reel:()=>{for(let i=0;i<6;i++)bnoise(.03,3200,4,.08,i*.05,.002);},portal:()=>{tone(200,900,.6,.08,'sine');noise(.6,2000,.08);},
   charge:()=>tone(90,160,.8,.12,'square'),
+  gun:()=>{bnoise(.18,2600,.8,.55,0,.001,'lowpass',300);tone(160,50,.12,.3,'square');bnoise(.05,6000,1,.2,0,.001,'highpass');},
   // The Shooting Star: 뚜껑 딸깍 · 버튼 · 고정음 · 카운트다운 · 상승 · 충전 · 발사 · 명중
   stArm:()=>{tone(320,180,.07,.1,'square');bnoise(.05,3200,2,.1,.03,.002);tone(1400,1400,.09,.07,'square',.2);},
   stLock:()=>{tone(1800,1800,.07,.07,'square');tone(2400,2400,.1,.06,'square',.09);},stTick:()=>tone(1100,1100,.06,.06,'square'),
@@ -3109,6 +3120,8 @@ function buildItemModel(id){
     case SILK:for(const [y,r] of [[0,.05],[.025,.04]])iMesh(g,IGEO.torus,imat('silk',0xeeeef6,'cloth',.6),0,y,0,Math.PI/2,0,0,r,r,r);break;
     case POTION:iMesh(g,IGEO.sph,imat('glass',0xd8ecff,null,.05,.1,0,0,.35),0,0,0,0,0,0,.07,.07,.07);iMesh(g,IGEO.sph,imat('pliq',0xffc830,null,.2,0,0xffa020,.9),0,-.008,0,0,0,0,.058,.055,.058);
       iMesh(g,IGEO.cyl,imat('glass',0xd8ecff,null,.05,.1,0,0,.35),0,.085,0,0,0,0,.022,.06,.022);iMesh(g,IGEO.cyl,imat('cork',0x9a6a3a,'wood',.9),0,.12,0,0,0,0,.02,.025,.02);break;
+    case PISTOL:case RIFLE:{const r=id===RIFLE,b=imat('gnb',0x3a3e48,'metal',.35,.75),w=imat('gnw',0x5a3e26,'rough',.6,0);iBox(g,.04,.06,r?.5:.22,b,0,.02,r?-.12:-.04);
+      iBox(g,.035,.11,.05,w,0,-.06,r?.02:.04,.3,0,0);if(r){iBox(g,.04,.07,.16,w,0,0,.2);iBox(g,.03,.09,.04,b,0,-.06,-.1);}break;}
     case LASER:{const b=imat('lsb',0x3a3a46,'metal',.35,.7);iBox(g,.05,.07,.24,b,0,.02,-.04);iMesh(g,IGEO.cyl,b,0,.03,-.2,Math.PI/2,0,0,.018,.1,.018);iBox(g,.04,.1,.05,GRIP(),0,-.05,.04,.3,0,0);
       iBox(g,.03,.012,.06,imat('lsr',0xff3050,null,.3,0,0xff2040,1),0,.06,-.06);iMesh(g,IGEO.sph,imat('lsr',0xff3050,null,.3,0,0xff2040,1),0,.03,-.25,0,0,0,.016,.016,.016);break;}
     case HELL_COMPASS:case END_COMPASS:case CITY_COMPASS:{const nc=id===HELL_COMPASS?0xff4a2a:id===END_COMPASS?0x1fe0cc:0xb060ff;
@@ -3150,7 +3163,7 @@ function iconPose(id,g){ // 아이콘에서 보이는 각도
   if(it&&it.tool||[STICK,ARROW,FEATHER,FISHING_ROD,NET,NET_SQUID,IRON_ROD].includes(id)){g.rotation.y=.45;w.rotation.z=-Math.PI/4;return w;} // 손잡이 왼쪽 아래 → 머리 오른쪽 위
   switch(id){
     case BOW:g.rotation.y=Math.PI/2;w.rotation.z=-Math.PI/4;break;
-    case LASER:g.rotation.set(.25,-Math.PI/2+.35,0);break;
+    case LASER:case PISTOL:case RIFLE:g.rotation.set(.25,-Math.PI/2+.35,0);break;
     case BUCKET:case WATER_BUCKET:case LAVA_BUCKET:w.rotation.set(.5,.3,0);break;
     case BOAT:w.rotation.set(.55,.7,0);break;
     case SHIELD:case BZ_SHIELD:case COIN:case HELL_COMPASS:case END_COMPASS:case CITY_COMPASS:case PORTAL_KEY:w.rotation.set(.12,-.38,0);break;
@@ -3844,6 +3857,21 @@ function fireLaserItem(){
   s.count--;if(!s.count)inv[sel]=null;invChanged();SFX.laser();swing=1;
 }
 const LASER_DMG=500;
+// ---------- 총 ----------
+let gunCD=0;
+function fireGun(s){
+  if(gunCD>0)return;const rifle=s.id===RIFLE;gunCD=rifle?.32:.38;
+  const shots=rifle?3:1;for(let i=0;i<shots;i++)setTimeout(()=>gunShot(rifle),i*90);swing=1;}
+function gunShot(rifle){const s=held();if(!s||(s.id!==PISTOL&&s.id!==RIFLE)||player.dead)return;
+  if(!isCreative()){if(!inv.some(q=>q&&q.id===BULLET)){toast('🔫 총알이 없어요 (철 주괴 1 + 석탄 1 → 총알 16)');SFX.click();return;}removeItem(BULLET,1);invChanged();}
+  const sp=rifle?.012:.006,d=viewDir();d.x+=(Math.random()-.5)*sp;d.y+=(Math.random()-.5)*sp;d.z+=(Math.random()-.5)*sp;d.normalize();
+  const o=camera.position.clone(),hit=raycast(o,d,100);let L=hit?hit.dist:100,best=null;
+  for(const m of mobs){const hw=m.w/2;const t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){L=t;best=m;}}
+  if(best){const hy=o.y+d.y*L,head=hy>best.pos.y+best.h*.72,dmg=(rifle?6:9)*(head?2:1);best.byPlayer=performance.now();best.hurt(dmg,d.x*.4,d.z*.4);if(head){SFX.crit();toast('🎯 헤드샷!');}}
+  else if(hit)spawnParticles(o.x+d.x*L,o.y+d.y*L,o.z+d.z*L,new THREE.Color(0xc8b090),6,.15,3);
+  flashBeam(o.clone().add(new THREE.Vector3(0,-.18,0)).addScaledVector(d,.7),o.clone().addScaledVector(d,L),0xffe08a,.04,.07);
+  spawnParticles(o.x+d.x*.9,o.y-.15+d.y*.9,o.z+d.z*.9,new THREE.Color(0xffc040),4,.08,2);
+  SFX.gun();player.pitch=Math.min(1.5,player.pitch+(rifle?.012:.03));shake(.05,.08);}
 
 // --- 보스 ---
 function flyTo(m,x,y,z,sp,dt){const dx=x-m.pos.x,dy=y-m.pos.y,dz=z-m.pos.z,l=Math.hypot(dx,dy,dz)||1,s=Math.min(sp,l*2),k=Math.min(1,2.5*dt);
@@ -4641,6 +4669,7 @@ function useItem(){
     else return;
     s.count--;if(!s.count)inv[sel]=null;swing=1;invChanged();return;}
   if(s&&s.id===LASER){fireLaserItem();return;}
+  if(s&&(s.id===PISTOL||s.id===RIFLE)){fireGun(s);return;}
   if(s&&IT[s.id]&&IT[s.id].armor){inv[sel]=equipArmor(s);invChanged();return;}
   if(s&&IT[s.id]&&IT[s.id].bucket){useBucket(s);return;}
   if(s&&s.id===POTION){toast('불사의 마법 물약은 가지고만 있으면 쓰러질 때 자동으로 발동합니다');return;}
@@ -5266,7 +5295,7 @@ function frame(now){
   }
   updateSky(active?dt:0);
   if(active)updateSurvival(dt);
-  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);updateFireworks(dt);updateNukes(active?dt:0);if(active)for(const f of MOD_TICK)try{f(dt);}catch(e){modErr('틱',e);}if(active||stCast)updateStellar(dt);else stHud();
+  updateHand(dt);updateAvatar(dt);updateBobber(active?dt:0);updateFireworks(dt);updateNukes(active?dt:0);gunCD=Math.max(0,gunCD-dt);if(active)for(const f of MOD_TICK)try{f(dt);}catch(e){modErr('틱',e);}if(active||stCast)updateStellar(dt);else stHud();
   updateChunks();
   if(debugOn){const p=player.pos;$('debug').textContent=`CAVEBUILD  ${fps} fps\nXYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}\n차원: ${DIM[world.dim].name}  청크: ${chunks.size}  몹: ${mobs.length}\n시간: ${(world.time*24+6)%24|0}시  시드: ${seed}\n바라보는 블록: ${target?BL[target.id].name:'-'}`;}
   if(shakeT>0&&!player.dead&&!stFrozen()){const a=shakeAmp*Math.min(1,shakeT);camera.position.x+=(Math.random()-.5)*a;camera.position.y+=(Math.random()-.5)*a;camera.position.z+=(Math.random()-.5)*a;camera.updateMatrixWorld();} // 화면 흔들림
