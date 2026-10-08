@@ -246,7 +246,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.38 — CB-NM 궁니르 새 연출: 위성 핵미사일</h4>
+    <h4>🆕 v26.39 — CB-01에 우리 은하 장면</h4>
+    • CB-01 레일건 연출에 빠졌던 <b>우리 은하를 지나는 장면</b>을 토성 다음에 넣었어요 (대기권 → 토성 → 우리 은하 → The Shooting Star → 엔진 속 별의 힘 → 충전 → 빨간 레이저 → 지구 · 폭발). 명중 시간은 그대로 15초예요.
+    <h4>v26.38 — CB-NM 궁니르 새 연출: 위성 핵미사일</h4>
     • 불씨 표식 → <b>화성 궤도 위성들</b>이 핵미사일 발사 → <b>목성 궤도 위성들</b>도 발사 → 핵미사일 편대가 지구를 향해 날아와 대기권 돌입 → 표식 위로 탄두를 아래로 떨어져 <b>버섯구름</b>! (그래서 핵폭탄이 핵미사일 모양이 됐어요)<br>
     • 바늘 대신 핵미사일이 떨어지므로 텅스텐 기둥은 더 이상 생기지 않아요. 400칸 평탄화 · 녹은 분화구 · 늦게 오는 쾅 소리는 그대로예요.
     <h4>v26.37 — CB-01 레일건 새 연출 · 범위 50칸</h4>
@@ -2066,7 +2068,7 @@ function remeshAt(cx,cz){const c=getChunk(cx,cz);if(!c)return;if(hasNeighbors(cx
 // 뚜껑 아래 빨간 버튼 하나로 저 멀리 어둠 속의 무기들을 부름. 세계를 영원히 바꾸니 조심!
 // (원작 모드의 공개 설명을 바탕으로 CAVEBUILD에 맞게 새로 만든 것 — 원작의 코드·그림·소리는 쓰지 않음)
 const STELLAR=[
-  {code:'CB-01',name:'레일건',key:'K',T:15,end:3.6,cd:20,desc:'빨간 레이저가 조준한 땅을 표시하면, 지구 대기권과 토성을 지나 은하 가장자리의 레일건 <b>The Shooting Star</b>가 엔진 속 <b>별의 힘</b> 결정을 돌려 에너지를 모은 뒤 빨간 레이저를 쏴요. 15초 뒤 레이저가 도착해 <b>반경 50칸</b>을 하늘 끝부터 공허까지 날려 버려요. 범위 안에 서 있으면 함께 사라져요 (크리에이티브는 먼저 대피).'},
+  {code:'CB-01',name:'레일건',key:'K',T:15,end:3.6,cd:20,desc:'빨간 레이저가 조준한 땅을 표시하면, 지구 대기권과 토성, 우리 은하를 지나 은하 가장자리의 레일건 <b>The Shooting Star</b>가 엔진 속 <b>별의 힘</b> 결정을 돌려 에너지를 모은 뒤 빨간 레이저를 쏴요. 15초 뒤 레이저가 도착해 <b>반경 50칸</b>을 하늘 끝부터 공허까지 날려 버려요. 범위 안에 서 있으면 함께 사라져요 (크리에이티브는 먼저 대피).'},
   {code:'CB-NM',name:'궁니르',key:'I',T:14,end:4.6,cd:20,desc:'조준한 곳에 불씨 표식이 새겨지면 <b>화성과 목성 궤도의 인공위성들</b>이 <b>핵미사일</b>을 쏴요. 미사일 편대가 지구로 날아와 14초 뒤 표식 위로 떨어지고, 버섯구름과 함께 충격파가 <b>400칸</b> 둘레를 맞은 땅 높이로 평평하게 밀어요. 한가운데는 녹아내린 분화구가 되고, 쾅 소리는 충격파가 지나간 뒤에야 들려요.'},
   {code:'CB-SL',name:'칠성',key:'U',T:9.5,end:8.6,cd:24,desc:'조준한 곳을 중심으로 <b>1,440칸</b> 너비의 북두칠성이 땅에 투영되고, 큰곰자리의 일곱 별이 배열로 깨어나 별똥별을 쏴요. 별마다 밝기만큼 분화구를 파고 빛나는 <b>별의 핵 결정</b>을 남긴 뒤, 별자리 선을 따라 <b>별의 흔적</b>이 타오르는 도랑이 새겨져요 (크리에이티브는 발밑 땅이 남아요).'}];
 const DIPPER=[['두베',13,-3,1.8],['메라크',12,9,2.4],['페크다',0,10,2.4],['메그레즈',-3,0,3.3],['알리오스',-12,2,1.8],['미자르',-20,4,2.2],['알카이드',-30,10,1.9]],DIP_ORDER=[6,5,4,3,2,1,0,3];
@@ -2220,16 +2222,18 @@ const camNear=(dist,up,look)=>(k,o,P)=>{camera.position.copy(P).addScaledVector(
 function earthCam(Sp,k,a,b,out){const E=Sp.sets.earth.userData,c=Sp.cam,e=ease(k);E.cl.rotation.y=k*.05;c.position.copy(Sp.m).multiplyScalar(lerp(a,b,e)).addScaledVector(Sp.side,e*out);c.lookAt(V3().copy(Sp.m).multiplyScalar(100*(1-e*.8)));}
 const SHOTS={
   'CB-01':[
-    W(0,1.5,'CB-01 · 레일건 — 레이저 조준 고정',camNear(4.5,2.2,o=>V3(o.x,o.y+6,o.z))),
-    W(1.5,4,'지구 대기권을 지나',(k,o,P)=>{const e=k*k;camera.position.set(o.x+o.back.x*(30+e*260),o.y+12+e*1100,o.z+o.back.z*(30+e*260));camera.lookAt(o.x,o.y,o.z);},{far:4000,fo:.4}),
-    SP(4,6.5,'saturn','토성을 지나',(k,o,Sp)=>{const e=ease(k),c=Sp.cam,a=lerp(2.5,.5,e);c.position.set(Math.cos(a)*340,lerp(95,15,e),Math.sin(a)*340);c.lookAt(lerp(0,-300,e*e),0,lerp(0,300,e*e));},{fi:.35,fo:.3}),
-    SP(6.5,8,'station','',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam,e=ease(k);G.visible=true;G.position.set(0,-1900,-10000);G.rotation.set(.4,0,0);
+    W(0,1.2,'CB-01 · 레일건 — 레이저 조준 고정',camNear(4.5,2.2,o=>V3(o.x,o.y+6,o.z))),
+    W(1.2,3.2,'지구 대기권을 지나',(k,o,P)=>{const e=k*k;camera.position.set(o.x+o.back.x*(30+e*260),o.y+12+e*1100,o.z+o.back.z*(30+e*260));camera.lookAt(o.x,o.y,o.z);},{far:4000,fo:.4}),
+    SP(3.2,5.2,'saturn','토성을 지나',(k,o,Sp)=>{const e=ease(k),c=Sp.cam,a=lerp(2.5,.5,e);c.position.set(Math.cos(a)*340,lerp(95,15,e),Math.sin(a)*340);c.lookAt(lerp(0,-300,e*e),0,lerp(0,300,e*e));},{fi:.35,fo:.3}),
+    SP(5.2,7.4,'galaxy','태양계 너머 — 우리 은하를 지나',(k,o,Sp)=>{const G=Sp.sets.galaxy,e=ease(k),c=Sp.cam;G.position.set(0,0,0);G.rotation.set(0,0,0);G.userData.st.material.opacity=.6+.4*Math.sin(o.t*12);
+      c.position.set(lerp(820,0,e),lerp(40,4600,e),lerp(560,3900,e));c.lookAt(lerp(1600,0,e),0,lerp(300,0,e));},{fi:.3,fo:.3}),
+    SP(7.4,8.9,'station','',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam,e=ease(k);G.visible=true;G.position.set(0,-1900,-10000);G.rotation.set(.4,0,0);
       T.rings.forEach(r=>r.material.color.setHex(0x1a2228));T.rails.forEach(r=>r.material.color.setHex(0x401010));T.muz.scale.setScalar(2);T.beam.visible=false;
       c.position.set(lerp(420,190,e),lerp(120,55,e),lerp(380,170,e));c.lookAt(0,0,-10);},{fi:.3,title:1}),
-    SP(8,10.5,'engine','레일건 엔진 속 — 별의 힘 결정 회전',(k,o,Sp)=>{const N=Sp.sets.engine.userData,c=Sp.cam,sp=1+k*k*14;
+    SP(8.9,11,'engine','레일건 엔진 속 — 별의 힘 결정 회전',(k,o,Sp)=>{const N=Sp.sets.engine.userData,c=Sp.cam,sp=1+k*k*14;
       N.cr.rotation.y=N.cw.rotation.y=o.t*sp;N.cr.rotation.z=N.cw.rotation.z=Math.sin(o.t*2)*.3;N.sp.forEach((t,j)=>t.rotation.set(o.t*sp*(j?.7:-.9)+j,o.t*sp*.5*(j-1),0));
       N.wr.forEach((r,i)=>r.material.color.setHex(k*8>i?0xff3040:0x5a1018));const a=o.t*.6;c.position.set(Math.cos(a)*50,lerp(8,18,k),Math.sin(a)*50);c.lookAt(0,0,0);},{fi:.3,fo:.3}),
-    SP(10.5,13,'station','밖으로 — 에너지 충전',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;G.position.set(0,-1900,-10000);G.rotation.set(.4,0,0);
+    SP(11,13,'station','밖으로 — 에너지 충전',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;G.position.set(0,-1900,-10000);G.rotation.set(.4,0,0);
       T.rings.forEach((r,i)=>r.material.color.setHex(k*7.6>i?0xff5060:0x1a2228));T.rails.forEach(r=>r.material.color.setRGB(.25+.75*k,.06+.1*k,.06+.1*k));T.muz.material.color.setHex(0xff3040);T.muz.scale.setScalar(2+k*k*34*(1+.15*Math.sin(o.t*50)));T.beam.visible=false;
       const a=.75+k*.45;c.position.set(Math.cos(a)*170,36,Math.sin(a)*140+10);c.lookAt(0,0,-25);},{fi:.3}),
     SP(13,14,'station','빨간 레이저 발사',(k,o,Sp)=>{const T=Sp.sets.station.userData,G=Sp.sets.galaxy,c=Sp.cam;G.visible=true;T.beam.visible=true;T.beam.material.color.setHex(0xff2030);
@@ -2331,7 +2335,7 @@ function updateStellar(dt){
 }
 function stRail(o,dt){ // CB-01: 조준 → 대기권 · 토성 · 레일건(The Shooting Star) · 엔진 속 별의 힘 · 충전 · 빨간 레이저 → 지구 → 1초 뒤 도착 · 반경 50칸 폭발
   if(!o.fired){o.ring.material.opacity=.45+.35*Math.sin(o.t*8);o.laser.material.opacity=.55+.4*Math.sin(o.t*31);o.dot.scale.setScalar(5+2*Math.sin(o.t*12));
-    stAt(o,1.5,SFX.stRise,1);stAt(o,6.5,SFX.sArray,1);stAt(o,8,SFX.gSpin,1);stAt(o,10.5,SFX.stCharge,1);stAt(o,13,()=>{flash(1,450,'#ffd0d0');shake(.4,.8);SFX.stFire();},1);
+    stAt(o,1.2,SFX.stRise,1);stAt(o,7.4,SFX.sArray,1);stAt(o,8.9,SFX.gSpin,1);stAt(o,11,SFX.stCharge,1);stAt(o,13,()=>{flash(1,450,'#ffd0d0');shake(.4,.8);SFX.stFire();},1);
     if(o.t>=o.T){o.fired=true;o.laser.visible=o.ring.visible=o.dot.visible=false;
       const beam=new THREE.Mesh(new THREE.CylinderGeometry(o.r,o.r,1200,96,1,true),addMat(0xff2a3a,.9,THREE.DoubleSide));beam.position.set(o.x,500,o.z);scene.add(beam);o.beam=beam;o.objs.push(beam); // 빨간 레이저 도착
       for(let i=0;i<5;i++)spawnParticles(o.x+(Math.random()-.5)*o.r,o.y+2,o.z+(Math.random()-.5)*o.r,new THREE.Color(i%2?0xff6040:0xffe0a0),18,o.r*.15,10); // 폭발
