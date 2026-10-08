@@ -240,12 +240,15 @@ body.mobile #toasts{top:72px}
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
     • <b>🔫 총</b>: 권총(강철 3 + 철 주괴 2 + 막대기 1) · 돌격소총(강철합금 3 + 강철 2 + 철 주괴 2) · 총알(철 주괴 1 + 석탄 1 → 16). 머리를 맞히면 2배!<br>
-    • <b>☢ 핵폭탄</b>(핵미사일) = 우라늄 1 + 플루토늄 1 + 강철초고합금 블록 1 (강철초고합금 블록 = 강철 + 강철합금 + 철 주괴, 강철 = 철 주괴 + 돌, 강철합금 = 강철 + 돌). 놓고 누르면 10초 뒤 반경 40칸이 날아가요!<br>
+    • <b>☢ 핵폭탄</b>(핵미사일) = 우라늄 1 + 플루토늄 1 + 강철초고합금 블록 1 (강철초고합금 블록 = 강철 + 강철합금 + 철 주괴, 강철 = 철 주괴 + 돌, 강철합금 = 강철 + 돌). 놓고 누르면 하늘로 솟았다가 그 자리로 떨어져 반경 40칸이 날아가요!<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>스톤</b>은 이 세계의 전기이며, 깊은 동굴의 스톤 광석에서 캘 수 있어요.
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.33 — ☢ 핵미사일</h4>
+    <h4>🆕 v26.34 — ☢ 핵미사일 발사 · 핵 로고</h4>
+    • 놓은 핵미사일을 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>하면 연기를 뿜으며 떨다가 <b>불꽃 꼬리를 달고 하늘 높이 솟구쳤다가</b>, 탄두를 아래로 하고 <b>그 자리로 떨어져 폭발</b>해요 (약 8초).<br>
+    • 노란 띠를 넓히고 <b>방사능 표지(☢)</b>를 큼직하게 네 방향으로 그려 넣었어요.
+    <h4>v26.33 — ☢ 핵미사일</h4>
     • 핵폭탄이 <b>핵미사일</b> 모양이 됐어요: 흰 동체 · 빨간 탄두 · 노랑/검정 경고띠와 방사능 표지 · 꼬리 날개. 점화하면 탄두가 깜빡이고 분사구에서 불꽃이 튀며 떨려요.<br>
     • 조합법이 <b>우라늄 1 + 플루토늄 1 + 강철초고합금 블록 1</b>(작업대)로 바뀌었어요.
     <h4>v26.32 — 🔫 총</h4>
@@ -2340,16 +2343,21 @@ function nukeScan(ch){const d=ch.data;let L=null;for(let i=0;i<d.length;i++)if(d
 function syncNukeModels(){const want=new Set();for(const ch of chunks.values())if(ch.nk)for(const [x,y,z] of ch.nk){const k=x+','+y+','+z;want.add(k);
     if(!nukeModels.has(k)){const m=nukeMissile();m.position.set(x+.5,y,z+.5);scene.add(m);nukeModels.set(k,m);}}
   for(const [k,m] of nukeModels)if(!want.has(k)){scene.remove(m);nukeModels.delete(k);}}
-function igniteNuke(x,y,z){if(nukes.some(n=>n.x===x&&n.y===y&&n.z===z))return;nukes.push({x,y,z,t:0});SFX.fuse();swing=1;
-  toast('☢ <b>핵폭탄 점화!</b> 10초 안에 멀리 도망치세요 (반경 40칸 소멸 · 80칸까지 충격파)');}
+function igniteNuke(x,y,z){ // 우클릭 → 점화 0.8초 → 하늘 높이 솟구침 → 사라졌다가 → 탄두를 아래로 같은 자리에 떨어져 폭발 (약 8초)
+  setBlock(x,y,z,AIR);remeshAt(x>>4,z>>4);const m=nukeMissile();m.position.set(x+.5,y,z+.5);scene.add(m);
+  nukes.push({x,y,z,t:0,m});SFX.fuse();swing=1;toast('☢ <b>핵미사일 발사!</b> 하늘로 솟았다가 <b>이 자리로 떨어져요</b> — 8초 안에 멀리 도망치세요 (반경 40칸 소멸 · 80칸까지 충격파)');}
 function updateNukes(dt){
   nukeSyncT-=dt;if(nukeSyncT<=0||dt===0){nukeSyncT=.25;syncNukeModels();}
-  for(let i=nukes.length-1;i>=0;i--){const n=nukes[i];n.t+=dt;const b=getBlock(n.x,n.y,n.z);
-    if(b!==NUKE&&b!==-1){nukes.splice(i,1);toast('☢ 핵폭탄이 꺼졌어요');continue;} // 부수면 꺼짐
-    const sc=Math.ceil(10-n.t);if(sc!==n.s){n.s=sc;SFX.stTick();if(sc<=5&&sc>0)toast(`☢ ${sc}`);}
-    const mm=nukeModels.get(n.x+','+n.y+','+n.z);if(mm){const on=Math.sin(n.t*(6+n.t*2))>0;mm.userData.nose.material.emissive.setHex(on?0x801010:0);mm.position.x=n.x+.5+(Math.random()-.5)*.03*n.t/10;}
-    if(Math.random()<dt*20)spawnParticles(n.x+.5,n.y+.1,n.z+.5,new THREE.Color(0xffa040),1,.15,2); // 분사구 불꽃
-    if(n.t>=10){nukes.splice(i,1);nukeBoom(n);}}
+  for(let i=nukes.length-1;i>=0;i--){const n=nukes[i],m=n.m,t=(n.t+=dt),cx=n.x+.5,cz=n.z+.5;
+    const sc=Math.ceil(8-t);if(sc!==n.s){n.s=sc;if(sc<=5&&sc>0){SFX.stTick();toast(`☢ ${sc}`);}}
+    m.userData.nose.material.emissive.setHex(Math.sin(t*(6+t*2))>0?0x801010:0);
+    if(t<.8){m.position.set(cx+(Math.random()-.5)*.06,n.y,cz+(Math.random()-.5)*.06);if(Math.random()<dt*40)spawnParticles(cx,n.y+.1,cz,new THREE.Color(0xd0d0d0),2,.4,1.5);} // 점화: 떨림 · 연기
+    else if(t<3.8){if(!n.up){n.up=1;SFX.launch();SFX.roar();shake(.25,.6);}const h=(t-.8)**2*28;m.visible=true;m.rotation.x=0;m.position.set(cx,n.y+h,cz); // 솟구침: 불꽃 꼬리
+      for(let k=0;k<3;k++)spawnParticles(cx,n.y+h-.2-k*.8,cz,new THREE.Color(k?0xffa040:0xfff0a0),1,.25,2);if(Math.random()<dt*30)spawnParticles(cx,n.y+h-3,cz,new THREE.Color(0xbcbcbc),1,.6,1);}
+    else if(t<5.6)m.visible=false; // 하늘 높이 사라짐
+    else{const k=Math.min(1,(t-5.6)/2.2),h=260*(1-k*k);if(!n.down){n.down=1;tone(2200,380,2.2,.12,'sine');toast('☢ 떨어진다!');}m.visible=true;m.rotation.x=Math.PI;m.position.set(cx,n.y+h+2.7,cz); // 탄두를 아래로 같은 자리에
+      spawnParticles(cx,n.y+h+3.2,cz,new THREE.Color(0xffc060),1,.2,1.5);
+      if(k>=1){nukes.splice(i,1);scene.remove(m);nukeBoom(n);}}}
   for(let i=nukeFx.length-1;i>=0;i--){const f=nukeFx[i];f.t+=dt;const t=f.t,h=Math.min(85,t*32),gray=Math.min(1,t/5),op=Math.max(0,1-Math.max(0,t-7)/5);
     f.stem.scale.set(5+t*.8,h,5+t*.8);f.stem.position.y=f.y+h/2;f.cap.position.y=f.y+h+10;f.cap.scale.set(16+Math.min(t,6)*5,9+Math.min(t,6)*2,16+Math.min(t,6)*5);
     for(const m of [f.stem,f.cap]){m.material.color.setRGB(lerp(1,.45,gray),lerp(.62,.42,gray),lerp(.3,.4,gray));m.material.opacity=.92*op;}
@@ -2986,12 +2994,16 @@ function imat(key,c,t='rough',r=.6,m=0,em=0,emI=.5,op=1){
   return IMAT[key]=x;
 }
 function iBox(g,w,h,d,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0){const m=part(g,w,h,d,mat,x,y,z);m.rotation.set(rx,ry,rz);return m;}
+function nukeLogoTex(){if(nukeLogoTex.t)return nukeLogoTex.t;const c=makeCanvas(480,128),g=c.getContext('2d');g.fillStyle='#f2c81e';g.fillRect(0,0,480,128);g.fillStyle='#16140e'; // 띠 둘레:높이 비율(약 3.75:1)에 맞춰 찌그러지지 않게
+  for(const cx of [60,180,300,420]){g.beginPath();g.arc(cx,64,10,0,Math.PI*2);g.fill(); // 가운데 점 + 60°씩 벌어진 날개 세 장
+    for(let k=0;k<3;k++){const a=-Math.PI/2+k*Math.PI*2/3,w=Math.PI/6;g.beginPath();g.arc(cx,64,52,a-w,a+w);g.arc(cx,64,17,a+w,a-w,true);g.closePath();g.fill();}}
+  const t=new THREE.CanvasTexture(c);t.anisotropy=4;return nukeLogoTex.t=t;}
 function nukeMissile(){ // 핵미사일: 흰 동체 · 빨간 탄두 · 노랑/검정 경고띠와 방사능 표지 · 꼬리 날개 4장 · 분사구 (높이 약 2.7칸)
   const g=new THREE.Group(),L=(c,e=0)=>new THREE.MeshLambertMaterial({color:c,emissive:e}),body=L(0xe6e8ec),dark=L(0x30323a),red=L(0xc82020),yel=L(0xf2c81e);
   const M=(geo,m,y,x=0,z=0)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);g.add(o);return o;};
   M(new THREE.CylinderGeometry(.2,.26,.16,16),dark,.08);M(new THREE.CylinderGeometry(.27,.27,1.9,18),body,.16+.95);
-  M(new THREE.CylinderGeometry(.275,.275,.3,18),yel,1.62);M(new THREE.CylinderGeometry(.278,.278,.06,18),dark,1.45);M(new THREE.CylinderGeometry(.278,.278,.06,18),dark,1.79);
-  for(let i=0;i<3;i++){const a=i*Math.PI*2/3,t=M(new THREE.BoxGeometry(.13,.16,.02),dark,1.62,Math.sin(a)*.28,Math.cos(a)*.28);t.rotation.y=a;} // 방사능 표지
+  M(new THREE.CylinderGeometry(.276,.276,.46,24,1,true),new THREE.MeshLambertMaterial({map:nukeLogoTex()}),1.6); // 노란 띠에 큼직한 방사능 표지(☢) 네 개 (어느 쪽에서 봐도 보임)
+  M(new THREE.CylinderGeometry(.279,.279,.05,18),dark,1.35);M(new THREE.CylinderGeometry(.279,.279,.05,18),dark,1.85);
   const nose=M(new THREE.ConeGeometry(.27,.62,18),red,2.06+.31);nose.userData.nose=1;g.userData.nose=nose;
   for(let i=0;i<4;i++){const a=i*Math.PI/2,f=M(new THREE.BoxGeometry(.04,.5,.34),dark,.42,Math.sin(a)*.36,Math.cos(a)*.36);f.rotation.y=a;}
   return g;}
