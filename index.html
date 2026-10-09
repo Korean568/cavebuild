@@ -299,7 +299,7 @@ body.mobile #toasts{top:72px}
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
     <h4>🆕 v26.52 — 🚀 런처</h4>
     • 게임을 켜면 <b>마인크래프트 런처</b>처럼 생긴 화면이 먼저 나와요: 왼쪽 메뉴 · 플레이 / 패치 노트 / 설치 설정 탭 · 버전 선택 · 큰 초록색 <b>플레이</b> 버튼! 플레이를 누르면 타이틀로 가요.<br>
-    • 게임 포털(크레이지 게임즈 등) 안에서는 바로 타이틀이 나와요 (한 번에 시작할 수 있게).
+    • 크레이지 게임즈 같은 게임 포털 안에서도 런처가 나와요.
     <h4>v26.51 — 무기별 전용 리모컨</h4>
     • <b>🔴 핵폭탄 리모컨</b>(에너지 스톤 2 + 철 주괴 3 + 우라늄 1) · <b>🟡 원자폭탄 리모컨</b>(… + 라듐 1) · <b>⚪ 차르 봄바 리모컨</b>(… + 폴로늄 1)을 만들 수 있어요. 들고 우클릭하면 그 무기를 직접 조종해요.<br>
     • <b>🔵 미사일 리모컨</b>은 이제 대륙간 핵탄두 미사일 전용이에요 (웅크리고 바꾸기 없음).
@@ -1281,7 +1281,7 @@ const HELP_EN=`
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
     <h4>🆕 v26.52 — 🚀 Launcher</h4>
-    • A Minecraft-style launcher now greets you with tabs, patch notes, a version picker and a big green PLAY button (skipped inside game portals).
+    • A Minecraft-style launcher now greets you with tabs, patch notes, a version picker and a big green PLAY button.
     <h4>v26.51 — A remote for every weapon</h4>
     • New <b>Nuke Remote</b> (2 Energy Stones + 3 Iron Ingots + 1 Uranium), <b>Atomic Bomb Remote</b> (+ Radium) and <b>Tsar Bomba Remote</b> (+ Polonium). The Missile Remote now pilots ICBMs only.
     <h4>v26.50 — Bomb models fix</h4>
@@ -5711,7 +5711,7 @@ CB.recipe(WAND,1,[[RUBY,2],[CB.ids.STICK,1]],'bench');
 CB.toast('💎 루비 모드가 켜졌어요!');
 `;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));a.download='ruby-mod.js';a.click();};
 {const b=$('btnLang');b.textContent=LANG==='en'?'🌐 한국어':'🌐 English';b.onclick=()=>setLang(LANG==='en'?'ko':'en');} // 언어 바꾸기 (타이틀)
-{ // 런처: 탭 · 버전 · 플레이 (게임 포털 안에서는 바로 타이틀로 — 한 번 클릭 규정)
+{ // 런처: 탭 · 버전 · 플레이 (게임 포털 안에서도 보임)
   const L=$('launcher'),show=t=>{for(const e of L.querySelectorAll('[data-tab]'))e.classList.toggle('on',e.dataset.tab===t);for(const [c,k] of [['lplay','play'],['lnews','news'],['lset','set']])L.querySelector('.'+c).classList.toggle('show',k===t);};
   for(const e of L.querySelectorAll('[data-tab]'))e.onclick=()=>{SFX.click();show(e.dataset.tab);};
   $('lLogo').src=($('logoImg')||{}).src||'';const up=document.querySelector('#title .help.upd');$('lNews').innerHTML=up?up.innerHTML:'';
@@ -5720,7 +5720,7 @@ CB.toast('💎 루비 모드가 켜졌어요!');
   try{$('lUser').textContent=localStorage.getItem('cavebuild-user')||'Player';}catch(e){}
   for(const b of L.querySelectorAll('#lLang button')){b.classList.toggle('on',b.dataset.l===LANG);b.onclick=()=>{if(b.dataset.l!==LANG)setLang(b.dataset.l);};}
   $('lPlay').onclick=()=>{SFX.click();L.classList.add('hide');setTimeout(()=>L.style.display='none',400);};
-  if(window.top!==window)L.style.display='none';}
+}
 for(const b of document.querySelectorAll('#setLang button')){b.classList.toggle('on',b.dataset.l===LANG);b.onclick=()=>{if(b.dataset.l!==LANG)setLang(b.dataset.l);};} // 설정 화면의 언어 선택
 initWorker();
 // ---------- 메인 루프 ----------
