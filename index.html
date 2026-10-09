@@ -250,7 +250,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.49 — 3D 아이템 · 스텔라 메뉴 마우스 잠금 고침</h4>
+    <h4>🆕 v26.50 — 원자폭탄 · 차르 봄바 모양 고침</h4>
+    • 놓은 <b>원자폭탄 · 차르 봄바</b>가 투명하게 보이던 문제를 고쳤어요. 이제 통통한 원자폭탄과 거대한 차르 봄바 모양이 보여요.
+    <h4>v26.49 — 3D 아이템 · 스텔라 메뉴 마우스 잠금 고침</h4>
     • 2D 그림으로 나오던 <b>총알 · 별의 힘 · 미사일 리모컨 · 철막대기</b>가 이제 3D 모델로 보여요 (손에 든 모습 · 아이콘 모두).<br>
     • 스텔라 리모컨 메뉴(H)를 열면 일시정지가 같이 뜨고 닫으면 마우스 잠금이 꼬이던 버그를 고쳤어요. 이제 작업대 · 가마 창처럼 열고 닫혀요.
     <h4>v26.48 — 모든 핵무기 조종 · 마우스 잠금 고침</h4>
@@ -1225,7 +1227,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.49 — 3D items · menu mouse lock fix</h4>
+    <h4>🆕 v26.50 — Bomb models fix</h4>
+    • Placed Atomic Bombs and Tsar Bombas are no longer invisible.
+    <h4>v26.49 — 3D items · menu mouse lock fix</h4>
     • Bullets, Star Power, the Missile Remote and the Iron Rod now have 3D models. The Stellar Remote menu (H) no longer breaks the mouse lock.
     <h4>v26.48 — Pilot every nuke · mouse lock fix</h4>
     • The Missile Remote can now pilot the <b>Nuke, Atomic Bomb and Tsar Bomba</b> too — crouch + right click to switch weapons.<br>
@@ -2811,7 +2815,7 @@ function updateLiquids(dt){
 }
 function setBlock(x,y,z,id,batch){
   if(y<0||y>=CH)return;const cx=x>>4,cz=z>>4,c=getChunk(cx,cz);if(!c)return;
-  const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;if(old===NUKE||id===NUKE)nukeScan(c);calcHM(c,lx,lz);c.ver++;
+  const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;if(BOMB_BLK[old]||BOMB_BLK[id])nukeScan(c); // 핵폭탄 · 원자폭탄 · 차르 봄바 모델 갱신calcHM(c,lx,lz);c.ver++;
   if(CONTAINER[old]&&CONTAINER[old]!==CONTAINER[id])dropContainer(x,y,z); // 상자·호퍼가 없어지면 안의 물건을 떨어뜨림
   if(CONTAINER[id]&&!CONTAINER[old])getCont(x,y,z); // 새로 놓은 상자·호퍼를 등록 (호퍼가 바로 작동)
   if(id===SAPLING&&old!==SAPLING)(world.saplings||(world.saplings=[])).push({d:world.dim,x,y,z,t:world.stats.play+90+Math.random()*120}); // 1.5~3.5분 뒤 자람
