@@ -250,7 +250,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.48 — 모든 핵무기 조종 · 마우스 잠금 고침</h4>
+    <h4>🆕 v26.49 — 3D 아이템 · 스텔라 메뉴 마우스 잠금 고침</h4>
+    • 2D 그림으로 나오던 <b>총알 · 별의 힘 · 미사일 리모컨 · 철막대기</b>가 이제 3D 모델로 보여요 (손에 든 모습 · 아이콘 모두).<br>
+    • 스텔라 리모컨 메뉴(H)를 열면 일시정지가 같이 뜨고 닫으면 마우스 잠금이 꼬이던 버그를 고쳤어요. 이제 작업대 · 가마 창처럼 열고 닫혀요.
+    <h4>v26.48 — 모든 핵무기 조종 · 마우스 잠금 고침</h4>
     • 미사일 리모컨으로 <b>핵폭탄 · 원자폭탄 · 차르 봄바</b>도 조종할 수 있어요. 리모컨을 들고 <b>웅크린 채 우클릭</b>하면 조종할 무기가 바뀌어요 (대륙간 핵탄두 미사일 60칸 → 핵폭탄 40칸 → 원자폭탄 70칸 → 차르 봄바 120칸).<br>
     • 메뉴를 닫은 직후 마우스 잠금이 안 걸려 "마우스 잠금을 쓸 수 없는 화면"으로 넘어가던 버그를 고쳤어요. 이제 일시정지 화면이 뜨고, <b>계속하기</b>를 누르면 다시 잠겨요.
     <h4>v26.47 — 🎮 미사일 리모컨</h4>
@@ -1222,7 +1225,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.48 — Pilot every nuke · mouse lock fix</h4>
+    <h4>🆕 v26.49 — 3D items · menu mouse lock fix</h4>
+    • Bullets, Star Power, the Missile Remote and the Iron Rod now have 3D models. The Stellar Remote menu (H) no longer breaks the mouse lock.
+    <h4>v26.48 — Pilot every nuke · mouse lock fix</h4>
     • The Missile Remote can now pilot the <b>Nuke, Atomic Bomb and Tsar Bomba</b> too — crouch + right click to switch weapons.<br>
     • Fixed the mouse lock failing right after closing a menu.
     <h4>v26.47 — 🎮 Missile Remote</h4>
@@ -2259,7 +2264,8 @@ function stHud(){const el=$('stellarHud'),s=held();if(!s||s.id!==STELLAR_REMOTE|
   const k=STELLAR[stSkill];el.style.display='block';el.innerHTML=`🛰 <b>${k.code} · ${k.name}</b>${stCast?' · 발동 중':stCD>0?` · 충전 ${Math.ceil(stCD)}초`:''}${world.flags.stCine===0?' · 🎬 연출 끔':''}<br><small>${MOBILE?'✋ 발동 · 🧎+✋ 다음 · 여기를 눌러 메뉴':'우클릭 발동 · C+우클릭 다음 · K/I/U 선택 · H 메뉴 · J 연출 켜기/끄기 · 넘기기'}</small>`;}
 function stSelect(i){stSkill=i;SFX.click();toast(`🛰 <b>${STELLAR[i].code} · ${STELLAR[i].name}</b> 선택`);stHud();}
 function stCineToggle(){world.flags.stCine=world.flags.stCine===0?1:0;toast(world.flags.stCine===0?'🎬 스텔라 연출을 껐어요 (땅에서 카운트다운만 봐요)':'🎬 스텔라 연출을 켰어요');stHud();const b=$('stCineBtn');if(b)b.textContent=world.flags.stCine===0?'🎬 연출: 끔':'🎬 연출: 켬';}
-function stMenu(open){const m=$('stellarMenu');if(open===undefined)open=!m.classList.contains('show');
+let stMenuOpen=false; // 인벤토리의 invOpen처럼: 메뉴가 열려 있으면 마우스 잠금이 풀려도 일시정지를 띄우지 않음
+function stMenu(open){const m=$('stellarMenu');if(open===undefined)open=!m.classList.contains('show');stMenuOpen=open;mouseL=mouseR=false;
   if(open){m.querySelector('.list').innerHTML=STELLAR.map((k,i)=>`<div class="sk${i===stSkill?' on':''}" data-i="${i}"><b>[${k.key}] ${k.code} · ${k.name}</b> <span style="opacity:.7;font-size:12px">${k.full}</span><br><small>${(LANG==='en'&&STELLAR_EN[k.code])||k.desc}</small></div>`).join('');$('stCineBtn').textContent=world.flags.stCine===0?'🎬 연출: 끔':'🎬 연출: 켬';m.classList.add('show');if(document.pointerLockElement)document.exitPointerLock();}
   else{m.classList.remove('show');lockPointer();}}
 function flash(o=1,t=600,col='#fff'){const f=$('flash');f.style.background=col;f.style.transition='none';f.style.opacity=o;void f.offsetWidth;f.style.transition=`opacity ${t}ms ease-out`;f.style.opacity=0;}
@@ -3369,6 +3375,15 @@ function buildItemModel(id){
   if(id===NUKE||id===ICBM){const m=nukeMissile();m.scale.setScalar(.12);m.position.y=-.16;if(id===ICBM)m.userData.band.material.color.setHex(0x2a5ad0);g.add(m);return {g,grip};}
   if(id===ATOM_BOMB||id===TSAR_BOMBA){const m=id===ATOM_BOMB?fatMan():tsarModel();m.scale.setScalar(id===ATOM_BOMB?.16:.08);m.position.y=-.1;g.add(m);return {g,grip};}
   if(isBlk(id)){g.add(id===HOPPER?hopperModel(.2):id===LOG?logModel(.2):DOOR_OF[id]?doorModel(.2):id===SAPLING?tileBox(.2,.2,.001,TILE.sapling,true):blockCube(id,.2));return {g,grip};}
+  if(id===IRON_ROD){const st=imat('maceS',0x6a6a74,'metal',.4,.7);iBox(g,.034,.5,.034,st,0,.2,0);iBox(g,.045,.03,.045,st,0,-.05,0);iBox(g,.045,.03,.045,st,0,.45,0);return {g,grip:true};} // 철막대기
+  if(id===BULLET){const br=imat('bulB',0xd8a040,'metal',.3,.85),cu=imat('bulC',0xb87333,'metal',.35,.8); // 총알: 놋쇠 탄피 세 발 · 구리 탄두
+    for(const [x,z] of [[-.045,0],[.045,0],[0,.06]]){iMesh(g,IGEO.cyl,br,x,0,z,0,0,0,.022,.11,.022);iMesh(g,IGEO.cone,cu,x,.075,z,0,0,0,.022,.04,.022);}return {g,grip};}
+  if(id===STAR_POWER){const cr=new THREE.MeshStandardMaterial({color:0xff3040,emissive:0xb00018,emissiveIntensity:.9,roughness:.15,metalness:.1}); // 별의 힘: 빨갛게 빛나는 결정
+    const m=new THREE.Mesh(new THREE.OctahedronGeometry(.08,0),cr);m.scale.set(1,1.7,1);m.rotation.y=.4;g.add(m);
+    const w=new THREE.Mesh(new THREE.OctahedronGeometry(.082,0),new THREE.MeshBasicMaterial({color:0xffc0c8,wireframe:true,transparent:true,opacity:.55}));w.scale.copy(m.scale);w.rotation.copy(m.rotation);g.add(w);return {g,grip};}
+  if(id===MISSILE_REMOTE){const bd=imat('mrB',0x2a2e38,'rough',.5,.2),bl=imat('mrBl',0x2a5ad0,'rough',.4,.2),rd=imat('mrR',0xff2a2a,null,.3,0,0xff1010,.8),an=imat('mrA',0x9aa0aa,'metal',.3,.8); // 미사일 리모컨
+    iBox(g,.14,.04,.2,bd,0,0,0);iBox(g,.12,.006,.06,bl,0,.023,.05);iMesh(g,IGEO.cyl,an,-.04,.035,-.02,0,0,0,.012,.03,.012);iMesh(g,IGEO.sph,bd,-.04,.055,-.02,0,0,0,.018,.018,.018);
+    iMesh(g,IGEO.cyl,rd,.04,.025,-.03,0,0,0,.015,.012,.015);iMesh(g,IGEO.cyl,an,.05,.1,.09,0,0,0,.005,.16,.005);iMesh(g,IGEO.sph,rd,.05,.185,.09,0,0,0,.012,.012,.012);return {g,grip};}
   if(it&&it.tool){
     if(id===IRON_ROD){const st=imat('maceS',0x6a6a74,'metal',.4,.7);iBox(g,.034,.5,.034,st,0,.2,0);iBox(g,.045,.03,.045,st,0,-.05,0);iBox(g,.045,.03,.045,st,0,.45,0);return {g,grip:true};}
     if(id===MACE){const st=imat('maceS',0x6a6a74,'metal',.4,.7),hd=imat('maceH',0xcfcfd6,'metal',.28,.85),gr=GRIP();
@@ -5265,7 +5280,7 @@ function enterNoLock(){
 }
 function lockPointer(){
   if(MOBILE||noLock){locked=true;paused=false;$('pause').classList.remove('show');return;}
-  const fail=()=>{if(!running||invOpen||player.dead||endingOpen||document.pointerLockElement)return;lockFails++; // 막 풀린 잠금은 1초쯤 다시 못 걸어서 실패할 수 있음
+  const fail=()=>{if(!running||invOpen||stMenuOpen||player.dead||endingOpen||document.pointerLockElement)return;lockFails++; // 막 풀린 잠금은 1초쯤 다시 못 걸어서 실패할 수 있음
     if(lockFails>=3)enterNoLock();else showPause();}; // 세 번 연속 실패할 때만 잠금 없이 하기로 (아티팩트 틀 안 등)
   if(!canvas.requestPointerLock){enterNoLock();return;}
   try{const r=canvas.requestPointerLock();if(r&&r.catch)r.catch(fail);else setTimeout(()=>{if(!document.pointerLockElement)fail();},1500);}catch(e){fail();}}
@@ -5274,7 +5289,7 @@ function showPause(){paused=true;$('pause').classList.add('show');mouseL=mouseR=
 document.addEventListener('pointerlockchange',()=>{
   if(document.pointerLockElement===canvas){locked=true;noLock=false;lockFails=0;canvas.style.cursor='';paused=false;$('pause').classList.remove('show');return;}
   locked=false;if(noLock)return; // 잠금 없이 하는 중이면 일시정지로 돌리지 않음
-  if(running&&!invOpen&&!player.dead&&!endingOpen)showPause();
+  if(running&&!invOpen&&!stMenuOpen&&!player.dead&&!endingOpen)showPause();
 });
 addEventListener('keydown',e=>{
   if(!running)return;
