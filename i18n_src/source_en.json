@@ -1,0 +1,3647 @@
+[
+{
+"id": 0,
+"k": "🛰 스텔라 리모컨",
+"en": "🛰 Stellar Remote"
+},
+{
+"id": 1,
+"k": "🎬 연출: 켬",
+"en": "🎬 Cutscenes: ON"
+},
+{
+"id": 2,
+"k": "닫기",
+"en": "Close"
+},
+{
+"id": 3,
+"k": "J · 연출 넘기기 ▶",
+"en": "J · Skip cutscene ▶"
+},
+{
+"id": 4,
+"k": "보스",
+"en": "Boss"
+},
+{
+"id": 5,
+"k": "케 이 브 빌 드",
+"en": "VOXEL SURVIVAL"
+},
+{
+"id": 6,
+"k": "캐고, 짓고, 살아남으세요",
+"en": "Mine, build and survive"
+},
+{
+"id": 7,
+"k": "새 세계 만들기",
+"en": "Create New World"
+},
+{
+"id": 8,
+"k": "⚔ 서바이벌",
+"en": "⚔ Survival"
+},
+{
+"id": 9,
+"k": "🛠 크리에이티브",
+"en": "🛠 Creative"
+},
+{
+"id": 10,
+"k": "💀 하드코어",
+"en": "💀 Hardcore"
+},
+{
+"id": 11,
+"k": "🕊 세이프",
+"en": "🕊 Safe"
+},
+{
+"id": 12,
+"k": "👁 관전",
+"en": "👁 Spectator"
+},
+{
+"id": 13,
+"k": "배고픔·체력을 챙기며 살아남아요. 쓰러져도 스폰 지점에서 다시 시작해요.",
+"en": "Manage hunger and health to survive. If you fall, you restart at your spawn point."
+},
+{
+"id": 14,
+"k": "이어하기",
+"en": "Continue"
+},
+{
+"id": 15,
+"k": "저장 파일 불러오기",
+"en": "Load Save File"
+},
+{
+"id": 16,
+"k": "❓ 도움말 보기",
+"en": "❓ How to Play"
+},
+{
+"id": 17,
+"k": "📜 업데이트 목록",
+"en": "📜 Update Notes"
+},
+{
+"id": 18,
+"k": "🧩 모드",
+"en": "🧩 Mods"
+},
+{
+"id": 19,
+"k": "🖥 PC 조작법",
+"en": "🖥 PC Controls"
+},
+{
+"id": 20,
+"k": "이동",
+"en": "Move"
+},
+{
+"id": 21,
+"k": "이동 ·",
+"en": "move ·"
+},
+{
+"id": 22,
+"k": "스페이스",
+"en": "Space"
+},
+{
+"id": 23,
+"k": "점프/수영 ·",
+"en": "jump/swim ·"
+},
+{
+"id": 24,
+"k": "달리기 (물속에선",
+"en": "sprint (in water:"
+},
+{
+"id": 25,
+"k": "수영",
+"en": "swim"
+},
+{
+"id": 26,
+"k": "웅크리기 (모서리에서 안 떨어짐)",
+"en": "crouch (won't fall off edges)"
+},
+{
+"id": 27,
+"k": "시점",
+"en": "View"
+},
+{
+"id": 28,
+"k": "마우스",
+"en": "Mouse"
+},
+{
+"id": 29,
+"k": "둘러보기 ·",
+"en": "look around ·"
+},
+{
+"id": 30,
+"k": "시점 변경 (3인칭 앞 → 3인칭 뒤 → 1인칭)",
+"en": "change view (3rd front → 3rd back → 1st person)"
+},
+{
+"id": 31,
+"k": "공격 · 캐기",
+"en": "Attack · Mine"
+},
+{
+"id": 32,
+"k": "좌클릭",
+"en": "Left click"
+},
+{
+"id": 33,
+"k": "공격 (한 번씩 누르기) ·",
+"en": "attack (click) ·"
+},
+{
+"id": 34,
+"k": "좌클릭 누르고 있기",
+"en": "Hold left click"
+},
+{
+"id": 35,
+"k": "블록 캐기",
+"en": "mine block"
+},
+{
+"id": 36,
+"k": "사용",
+"en": "Use"
+},
+{
+"id": 37,
+"k": "우클릭",
+"en": "Right click"
+},
+{
+"id": 38,
+"k": "설치 / 먹기 / 사용 / 거래 · 무기를 든 채",
+"en": "place / eat / use / trade · with a weapon,"
+},
+{
+"id": 39,
+"k": "우클릭 누르고 있기",
+"en": "hold right click"
+},
+{
+"id": 40,
+"k": "방패로 막기",
+"en": "to block with a shield"
+},
+{
+"id": 41,
+"k": "아이템",
+"en": "Items"
+},
+{
+"id": 42,
+"k": "1~9 / 휠",
+"en": "1~9 / wheel"
+},
+{
+"id": 43,
+"k": "선택 ·",
+"en": "select ·"
+},
+{
+"id": 44,
+"k": "인벤토리 & 제작 ·",
+"en": "inventory & crafting ·"
+},
+{
+"id": 45,
+"k": "버리기 (",
+"en": "drop ("
+},
+{
+"id": 46,
+"k": "한 묶음)",
+"en": "whole stack)"
+},
+{
+"id": 47,
+"k": "인벤토리",
+"en": "Inventory"
+},
+{
+"id": 48,
+"k": "집기/놓기 ·",
+"en": "pick up/place ·"
+},
+{
+"id": 49,
+"k": "반 나누기/하나 놓기 ·",
+"en": "split half/place one ·"
+},
+{
+"id": 50,
+"k": "Shift+클릭",
+"en": "Shift+click"
+},
+{
+"id": 51,
+"k": "빠른 이동 / 갑옷 착용",
+"en": "quick move / equip armor"
+},
+{
+"id": 52,
+"k": "기타",
+"en": "Other"
+},
+{
+"id": 53,
+"k": "디버그 정보 ·",
+"en": "debug info ·"
+},
+{
+"id": 54,
+"k": "일시정지",
+"en": "pause"
+},
+{
+"id": 55,
+"k": "📱 모바일 조작법",
+"en": "📱 Mobile Controls"
+},
+{
+"id": 56,
+"k": "왼쪽 화면",
+"en": "Left screen"
+},
+{
+"id": 57,
+"k": "조이스틱 (끝까지 밀면 달리기) ·",
+"en": "joystick (push all the way to sprint) ·"
+},
+{
+"id": 58,
+"k": "웅크리기",
+"en": "crouch"
+},
+{
+"id": 59,
+"k": "오른쪽 화면 드래그",
+"en": "Drag right screen"
+},
+{
+"id": 60,
+"k": "시점 변경",
+"en": "change view"
+},
+{
+"id": 61,
+"k": "한 번씩 누르기 공격 · 누르고 있기 블록 캐기",
+"en": "tap to attack · hold to mine"
+},
+{
+"id": 62,
+"k": "✋ 누르고 있기",
+"en": "hold ✋"
+},
+{
+"id": 63,
+"k": "아래 칸을 눌러 선택 ·",
+"en": "tap a slot to select ·"
+},
+{
+"id": 64,
+"k": "버리기 (길게 누르면 한 묶음)",
+"en": "drop (hold for whole stack)"
+},
+{
+"id": 65,
+"k": "📖 게임 팁",
+"en": "📖 Tips"
+},
+{
+"id": 66,
+"k": "어둠덩이",
+"en": "Gloomling"
+},
+{
+"id": 67,
+"k": "등불",
+"en": "Lantern"
+},
+{
+"id": 68,
+"k": "침대",
+"en": "Bed"
+},
+{
+"id": 69,
+"k": "좀비",
+"en": "Zombie"
+},
+{
+"id": 70,
+"k": "명사수 해골",
+"en": "Skeleton Archer"
+},
+{
+"id": 71,
+"k": "불씨방울",
+"en": "Ember Blob"
+},
+{
+"id": 72,
+"k": "갑옷",
+"en": "armor"
+},
+{
+"id": 73,
+"k": "방패",
+"en": "Shield"
+},
+{
+"id": 74,
+"k": "차원 나침반",
+"en": "Dimension Compass"
+},
+{
+"id": 75,
+"k": "에너지 스톤",
+"en": "Energy Stone"
+},
+{
+"id": 76,
+"k": "어비스",
+"en": "Abyss"
+},
+{
+"id": 77,
+"k": "호라이즌",
+"en": "Horizon"
+},
+{
+"id": 78,
+"k": "네크로폴리스",
+"en": "Necropolis"
+},
+{
+"id": 79,
+"k": "표식 돌",
+"en": "Marker Stone"
+},
+{
+"id": 80,
+"k": "포탈 열쇠",
+"en": "Portal Key"
+},
+{
+"id": 81,
+"k": "흐릅니다",
+"en": "flow"
+},
+{
+"id": 82,
+"k": "흑요석",
+"en": "Obsidian"
+},
+{
+"id": 83,
+"k": "조약돌",
+"en": "Cobblestone"
+},
+{
+"id": 84,
+"k": "철 곡괭이",
+"en": "Iron Pickaxe"
+},
+{
+"id": 85,
+"k": "마을",
+"en": "Village"
+},
+{
+"id": 86,
+"k": "대장장이 집",
+"en": "Blacksmith's House"
+},
+{
+"id": 87,
+"k": "어비스 차원문",
+"en": "Abyss Portal"
+},
+{
+"id": 88,
+"k": "철 블록",
+"en": "Iron Block"
+},
+{
+"id": 89,
+"k": "나무 판자",
+"en": "Wooden Planks"
+},
+{
+"id": 90,
+"k": "빌리저 가디언",
+"en": "Villager Guardian"
+},
+{
+"id": 91,
+"k": "동전",
+"en": "Coin"
+},
+{
+"id": 92,
+"k": "문",
+"en": "Door"
+},
+{
+"id": 93,
+"k": "묘목",
+"en": "Sapling"
+},
+{
+"id": 94,
+"k": "사다리",
+"en": "Ladder"
+},
+{
+"id": 95,
+"k": "상자",
+"en": "Chest"
+},
+{
+"id": 96,
+"k": "호퍼",
+"en": "Hopper"
+},
+{
+"id": 97,
+"k": "철퇴",
+"en": "Mace"
+},
+{
+"id": 98,
+"k": "철막대기",
+"en": "Iron Rod"
+},
+{
+"id": 99,
+"k": "메이스 헤드",
+"en": "Mace Head"
+},
+{
+"id": 100,
+"k": "높은 곳에서 떨어지며",
+"en": "falling from higher"
+},
+{
+"id": 101,
+"k": "달리면서 머리",
+"en": "sprinting headshots"
+},
+{
+"id": 102,
+"k": "겉날개",
+"en": "Elytra"
+},
+{
+"id": 103,
+"k": "점프",
+"en": "Jump"
+},
+{
+"id": 104,
+"k": "폭죽",
+"en": "Firework"
+},
+{
+"id": 105,
+"k": "별의 힘",
+"en": "Star Power"
+},
+{
+"id": 106,
+"k": "CB-TSR 레일건",
+"en": "CB-TSR Railgun"
+},
+{
+"id": 107,
+"k": "CB-NM 궁니르",
+"en": "CB-NM Gungnir"
+},
+{
+"id": 108,
+"k": "CB-SL 칠성",
+"en": "CB-SL Seven Stars"
+},
+{
+"id": 109,
+"k": "세계를 영원히 바꾸니",
+"en": "It changes the world forever,"
+},
+{
+"id": 110,
+"k": "저장 파일을 내보내 두세요!",
+"en": "so export your save first!"
+},
+{
+"id": 111,
+"k": "방사성 광석",
+"en": "radioactive ores"
+},
+{
+"id": 112,
+"k": "방사능",
+"en": "Radiation"
+},
+{
+"id": 113,
+"k": "방독면·방독복",
+"en": "Gas mask & hazmat suit"
+},
+{
+"id": 114,
+"k": "구리",
+"en": "Copper"
+},
+{
+"id": 115,
+"k": "금",
+"en": "Gold"
+},
+{
+"id": 116,
+"k": "티타늄",
+"en": "Titanium"
+},
+{
+"id": 117,
+"k": "다이아몬드",
+"en": "Diamond"
+},
+{
+"id": 118,
+"k": "레드 다이아몬드",
+"en": "Red Diamond"
+},
+{
+"id": 119,
+"k": "블랙 다이아몬드",
+"en": "Black Diamond"
+},
+{
+"id": 120,
+"k": "도구",
+"en": "tools"
+},
+{
+"id": 121,
+"k": "와",
+"en": " and"
+},
+{
+"id": 122,
+"k": "구리 · 금 · 티타늄 · 다이아몬드 블록",
+"en": "Copper · Gold · Titanium · Diamond blocks"
+},
+{
+"id": 123,
+"k": "⚙ 서버 설정",
+"en": "⚙ Server Settings"
+},
+{
+"id": 124,
+"k": "돌고래",
+"en": "Dolphin"
+},
+{
+"id": 125,
+"k": "돌고래의 은총",
+"en": "Dolphin's Grace"
+},
+{
+"id": 126,
+"k": "바다거북",
+"en": "Sea Turtle"
+},
+{
+"id": 127,
+"k": "거북 비늘",
+"en": "Turtle Scute"
+},
+{
+"id": 128,
+"k": "거북 등딱지 투구",
+"en": "Turtle Shell Helmet"
+},
+{
+"id": 129,
+"k": "오징어",
+"en": "Squid"
+},
+{
+"id": 130,
+"k": "먹물 주머니",
+"en": "Ink Sac"
+},
+{
+"id": 131,
+"k": "그물",
+"en": "Net"
+},
+{
+"id": 132,
+"k": "산 채로",
+"en": "alive"
+},
+{
+"id": 133,
+"k": "물고기",
+"en": "Fish"
+},
+{
+"id": 134,
+"k": "낚싯대",
+"en": "Fishing Rod"
+},
+{
+"id": 135,
+"k": "구운 생선",
+"en": "Cooked Fish"
+},
+{
+"id": 136,
+"k": "🔫 총",
+"en": "🔫 Guns"
+},
+{
+"id": 137,
+"k": "☢ 핵폭탄",
+"en": "☢ Nuke"
+},
+{
+"id": 138,
+"k": "블레이즈스톤",
+"en": "Blazestone"
+},
+{
+"id": 139,
+"k": "별의 힘 광석",
+"en": "Star Power Ore"
+},
+{
+"id": 140,
+"k": "계속하기",
+"en": "Resume"
+},
+{
+"id": 141,
+"k": "저장하기",
+"en": "Save"
+},
+{
+"id": 142,
+"k": "🌱 세계 코드 복사",
+"en": "🌱 Copy World Code"
+},
+{
+"id": 143,
+"k": "저장 파일 내보내기",
+"en": "Export Save File"
+},
+{
+"id": 144,
+"k": "저장 후 타이틀로",
+"en": "Save & Quit to Title"
+},
+{
+"id": 145,
+"k": "게임 모드",
+"en": "Game Mode"
+},
+{
+"id": 146,
+"k": "쓰러졌습니다!",
+"en": "You died!"
+},
+{
+"id": 147,
+"k": "부활하기",
+"en": "Respawn"
+},
+{
+"id": 148,
+"k": "집기",
+"en": "Pick up"
+},
+{
+"id": 149,
+"k": "나누기",
+"en": "Split"
+},
+{
+"id": 150,
+"k": "빠른 이동/착용",
+"en": "Quick move/equip"
+},
+{
+"id": 151,
+"k": "✕ 닫기",
+"en": "✕ Close"
+},
+{
+"id": 152,
+"k": "좌클릭: 집기/놓기 · 우클릭: 반 나누기/하나 놓기 · Shift+클릭: 빠른 이동 / 갑옷 착용",
+"en": "Left click: pick up/place · Right click: split/place one · Shift+click: quick move / equip armor"
+},
+{
+"id": 153,
+"k": "위의 모드를 고른 뒤 칸을 누르세요 · 레시피를 누르면 제작",
+"en": "Pick a mode above, then tap a slot · tap a recipe to craft"
+},
+{
+"id": 154,
+"k": "제작",
+"en": "Crafting"
+},
+{
+"id": 155,
+"k": "⚠ 모드는 이 게임 안에서 마음대로 코드를 실행해요.",
+"en": "⚠ Mods can run any code inside this game."
+},
+{
+"id": 156,
+"k": "믿을 수 있는 사람이 만든 모드만",
+"en": "Only add mods made by people you trust."
+},
+{
+"id": 157,
+"k": "넣으세요. 바꾼 뒤에는 새로고침해야 적용돼요.",
+"en": "Reload the page after changing mods."
+},
+{
+"id": 158,
+"k": "➕ 모드 파일(.js) 추가",
+"en": "➕ Add mod file (.js)"
+},
+{
+"id": 159,
+"k": "📄 예시 모드 받기",
+"en": "📄 Download example mod"
+},
+{
+"id": 160,
+"k": "🔄 새로고침해서 적용",
+"en": "🔄 Reload to apply"
+},
+{
+"id": 161,
+"k": "세계를 만드는 중...",
+"en": "Creating world..."
+},
+{
+"id": 162,
+"k": "🌱 세계 코드 (비우면 무작위)",
+"en": "🌱 World code (empty = random)"
+},
+{
+"id": 163,
+"k": "🔍 레시피 검색 (예: 철)",
+"en": "🔍 Search recipes (e.g. iron)"
+},
+{
+"id": 164,
+"k": "잔디 블록",
+"en": "Grass Block"
+},
+{
+"id": 165,
+"k": "흙",
+"en": "Dirt"
+},
+{
+"id": 166,
+"k": "돌",
+"en": "Stone"
+},
+{
+"id": 167,
+"k": "원목",
+"en": "Log"
+},
+{
+"id": 168,
+"k": "나뭇잎",
+"en": "Leaves"
+},
+{
+"id": 169,
+"k": "판자",
+"en": "Planks"
+},
+{
+"id": 170,
+"k": "모래",
+"en": "Sand"
+},
+{
+"id": 171,
+"k": "물",
+"en": "Water"
+},
+{
+"id": 172,
+"k": "석탄 광석",
+"en": "Coal Ore"
+},
+{
+"id": 173,
+"k": "철 광석",
+"en": "Iron Ore"
+},
+{
+"id": 174,
+"k": "수정 광석",
+"en": "Crystal Ore"
+},
+{
+"id": 175,
+"k": "심층암",
+"en": "Bedrock"
+},
+{
+"id": 176,
+"k": "작업대",
+"en": "Crafting Table"
+},
+{
+"id": 177,
+"k": "가마",
+"en": "Kiln"
+},
+{
+"id": 178,
+"k": "유리",
+"en": "Glass"
+},
+{
+"id": 179,
+"k": "돌벽돌",
+"en": "Stone Bricks"
+},
+{
+"id": 180,
+"k": "눈 덮인 흙",
+"en": "Snowy Dirt"
+},
+{
+"id": 181,
+"k": "가시 덤불",
+"en": "Thornbush"
+},
+{
+"id": 182,
+"k": "어비스석",
+"en": "Abyss Stone"
+},
+{
+"id": 183,
+"k": "용암",
+"en": "Lava"
+},
+{
+"id": 184,
+"k": "악마 벽돌",
+"en": "Demon Bricks"
+},
+{
+"id": 185,
+"k": "판데모니움 차원문",
+"en": "Pandemonium Portal"
+},
+{
+"id": 186,
+"k": "네크로폴리스 차원문",
+"en": "Necropolis Portal"
+},
+{
+"id": 187,
+"k": "호라이즌 차원문",
+"en": "Horizon Portal"
+},
+{
+"id": 188,
+"k": "종말석",
+"en": "End Stone"
+},
+{
+"id": 189,
+"k": "어둠돌",
+"en": "Darkstone"
+},
+{
+"id": 190,
+"k": "빛나는 창",
+"en": "Lit Window"
+},
+{
+"id": 191,
+"k": "도로",
+"en": "Road"
+},
+{
+"id": 192,
+"k": "어비스 등석",
+"en": "Abyss Glowstone"
+},
+{
+"id": 193,
+"k": "어두운 창",
+"en": "Dark Window"
+},
+{
+"id": 194,
+"k": "에너지 스톤 광석",
+"en": "Energy Stone Ore"
+},
+{
+"id": 195,
+"k": "열쇠 틀",
+"en": "Key Frame"
+},
+{
+"id": 196,
+"k": "열쇠가 꽂힌 틀",
+"en": "Filled Key Frame"
+},
+{
+"id": 197,
+"k": "심연 균사",
+"en": "Void Moss"
+},
+{
+"id": 198,
+"k": "심연 등불",
+"en": "Void Lamp"
+},
+{
+"id": 199,
+"k": "블레이즈스톤 광석",
+"en": "Blazestone Ore"
+},
+{
+"id": 200,
+"k": "흐르는 물",
+"en": "Flowing Water"
+},
+{
+"id": 201,
+"k": "흐르는 용암",
+"en": "Flowing Lava"
+},
+{
+"id": 202,
+"k": "구리 광석",
+"en": "Copper Ore"
+},
+{
+"id": 203,
+"k": "금 광석",
+"en": "Gold Ore"
+},
+{
+"id": 204,
+"k": "티타늄 광석",
+"en": "Titanium Ore"
+},
+{
+"id": 205,
+"k": "다이아몬드 광석",
+"en": "Diamond Ore"
+},
+{
+"id": 206,
+"k": "레드 다이아몬드 광석",
+"en": "Red Diamond Ore"
+},
+{
+"id": 207,
+"k": "블랙 다이아몬드 광석",
+"en": "Black Diamond Ore"
+},
+{
+"id": 208,
+"k": "구리 블록",
+"en": "Copper Block"
+},
+{
+"id": 209,
+"k": "다이아몬드 블록",
+"en": "Diamond Block"
+},
+{
+"id": 210,
+"k": "레드 다이아몬드 블록",
+"en": "Red Diamond Block"
+},
+{
+"id": 211,
+"k": "블랙 다이아몬드 블록",
+"en": "Black Diamond Block"
+},
+{
+"id": 212,
+"k": "금 블록",
+"en": "Gold Block"
+},
+{
+"id": 213,
+"k": "티타늄 블록",
+"en": "Titanium Block"
+},
+{
+"id": 214,
+"k": "우라늄 광석",
+"en": "Uranium Ore"
+},
+{
+"id": 215,
+"k": "라듐 광석",
+"en": "Radium Ore"
+},
+{
+"id": 216,
+"k": "플루토늄 광석",
+"en": "Plutonium Ore"
+},
+{
+"id": 217,
+"k": "폴로늄 광석",
+"en": "Polonium Ore"
+},
+{
+"id": 218,
+"k": "프로트악티늄 광석",
+"en": "Protactinium Ore"
+},
+{
+"id": 219,
+"k": "텅스텐 블록",
+"en": "Tungsten Block"
+},
+{
+"id": 220,
+"k": "열 도관",
+"en": "Thermal Conduit"
+},
+{
+"id": 221,
+"k": "별의 핵 결정",
+"en": "Star Core Crystal"
+},
+{
+"id": 222,
+"k": "별의 흔적",
+"en": "Star Trace"
+},
+{
+"id": 223,
+"k": "강철초고합금 블록",
+"en": "Steel Superalloy Block"
+},
+{
+"id": 224,
+"k": "핵폭탄",
+"en": "Nuke"
+},
+{
+"id": 225,
+"k": "막대기",
+"en": "Stick"
+},
+{
+"id": 226,
+"k": "석탄",
+"en": "Coal"
+},
+{
+"id": 227,
+"k": "철 주괴",
+"en": "Iron Ingot"
+},
+{
+"id": 228,
+"k": "수정",
+"en": "Crystal"
+},
+{
+"id": 229,
+"k": "생고기",
+"en": "Raw Meat"
+},
+{
+"id": 230,
+"k": "구운 고기",
+"en": "Cooked Meat"
+},
+{
+"id": 231,
+"k": "사과",
+"en": "Apple"
+},
+{
+"id": 232,
+"k": "솜뭉치",
+"en": "Fluff"
+},
+{
+"id": 233,
+"k": "깃털",
+"en": "Feather"
+},
+{
+"id": 234,
+"k": "알",
+"en": "Egg"
+},
+{
+"id": 235,
+"k": "생선",
+"en": "Raw Fish"
+},
+{
+"id": 236,
+"k": "오징어가 든 그물",
+"en": "Net with Squid"
+},
+{
+"id": 237,
+"k": "가시",
+"en": "Spike"
+},
+{
+"id": 238,
+"k": "끈적실",
+"en": "Sticky Silk"
+},
+{
+"id": 239,
+"k": "썩은 살점",
+"en": "Rotten Flesh"
+},
+{
+"id": 240,
+"k": "활",
+"en": "Bow"
+},
+{
+"id": 241,
+"k": "화살",
+"en": "Arrow"
+},
+{
+"id": 242,
+"k": "불사의 마법 물약",
+"en": "Potion of Undying"
+},
+{
+"id": 243,
+"k": "레이저 (일회용)",
+"en": "Laser (single use)"
+},
+{
+"id": 244,
+"k": "권총",
+"en": "Pistol"
+},
+{
+"id": 245,
+"k": "돌격소총",
+"en": "Assault Rifle"
+},
+{
+"id": 246,
+"k": "총알",
+"en": "Bullet"
+},
+{
+"id": 247,
+"k": "블레이즈스톤 조각",
+"en": "Blazestone Shard"
+},
+{
+"id": 248,
+"k": "블레이즈스톤 주괴",
+"en": "Blazestone Ingot"
+},
+{
+"id": 249,
+"k": "보트",
+"en": "Boat"
+},
+{
+"id": 250,
+"k": "양동이",
+"en": "Bucket"
+},
+{
+"id": 251,
+"k": "물 양동이",
+"en": "Water Bucket"
+},
+{
+"id": 252,
+"k": "용암 양동이",
+"en": "Lava Bucket"
+},
+{
+"id": 253,
+"k": "블레이즈스톤 방패",
+"en": "Blazestone Shield"
+},
+{
+"id": 254,
+"k": "어비스 나침반",
+"en": "Abyss Compass"
+},
+{
+"id": 255,
+"k": "호라이즌 나침반",
+"en": "Horizon Compass"
+},
+{
+"id": 256,
+"k": "네크로폴리스 나침반",
+"en": "Necropolis Compass"
+},
+{
+"id": 257,
+"k": "곡괭이",
+"en": "Pickaxe"
+},
+{
+"id": 258,
+"k": "도끼",
+"en": "Axe"
+},
+{
+"id": 259,
+"k": "삽",
+"en": "Shovel"
+},
+{
+"id": 260,
+"k": "검",
+"en": "Sword"
+},
+{
+"id": 261,
+"k": "나무",
+"en": "Wooden"
+},
+{
+"id": 262,
+"k": "철",
+"en": "Iron"
+},
+{
+"id": 263,
+"k": "다크나이트 검",
+"en": "Dark Knight Sword"
+},
+{
+"id": 264,
+"k": "스텔라 리모컨",
+"en": "Stellar Remote"
+},
+{
+"id": 265,
+"k": "우라늄 덩어리",
+"en": "Uranium Lump"
+},
+{
+"id": 266,
+"k": "라듐 결정",
+"en": "Radium Crystal"
+},
+{
+"id": 267,
+"k": "플루토늄 덩어리",
+"en": "Plutonium Lump"
+},
+{
+"id": 268,
+"k": "폴로늄 결정",
+"en": "Polonium Crystal"
+},
+{
+"id": 269,
+"k": "프로트악티늄 덩어리",
+"en": "Protactinium Lump"
+},
+{
+"id": 270,
+"k": "가죽",
+"en": "Leather"
+},
+{
+"id": 271,
+"k": "강철",
+"en": "Steel"
+},
+{
+"id": 272,
+"k": "강철합금",
+"en": "Steel Alloy"
+},
+{
+"id": 273,
+"k": "구리 주괴",
+"en": "Copper Ingot"
+},
+{
+"id": 274,
+"k": "금 주괴",
+"en": "Gold Ingot"
+},
+{
+"id": 275,
+"k": "티타늄 주괴",
+"en": "Titanium Ingot"
+},
+{
+"id": 276,
+"k": "투구",
+"en": "Helmet"
+},
+{
+"id": 277,
+"k": "흉갑",
+"en": "Chestplate"
+},
+{
+"id": 278,
+"k": "각반",
+"en": "Leggings"
+},
+{
+"id": 279,
+"k": "장화",
+"en": "Boots"
+},
+{
+"id": 280,
+"k": "천",
+"en": "Cloth"
+},
+{
+"id": 281,
+"k": "거북",
+"en": "Turtle"
+},
+{
+"id": 282,
+"k": "방독",
+"en": "Hazmat"
+},
+{
+"id": 283,
+"k": "방독면",
+"en": "Gas Mask"
+},
+{
+"id": 284,
+"k": "방독복",
+"en": "Hazmat Suit"
+},
+{
+"id": 285,
+"k": "방독복 바지",
+"en": "Hazmat Pants"
+},
+{
+"id": 286,
+"k": "방독 장화",
+"en": "Hazmat Boots"
+},
+{
+"id": 287,
+"k": "로고를 그리지 못했습니다",
+"en": "Couldn't draw the logo"
+},
+{
+"id": 288,
+"k": "프론티어",
+"en": "Frontier"
+},
+{
+"id": 289,
+"k": "판데모니움",
+"en": "Pandemonium"
+},
+{
+"id": 290,
+"k": "타이틀 배경을 그리지 못했습니다",
+"en": "Couldn't draw the title background"
+},
+{
+"id": 291,
+"k": "레일건",
+"en": "Railgun"
+},
+{
+"id": 292,
+"k": "궁니르",
+"en": "Gungnir"
+},
+{
+"id": 293,
+"k": "칠성",
+"en": "Seven Stars"
+},
+{
+"id": 294,
+"k": "핵미사일",
+"en": "nuclear missiles"
+},
+{
+"id": 295,
+"k": "빨간 레이저",
+"en": "red lasers"
+},
+{
+"id": 296,
+"k": "폭파",
+"en": "blow up"
+},
+{
+"id": 297,
+"k": "두베",
+"en": "Dubhe"
+},
+{
+"id": 298,
+"k": "메라크",
+"en": "Merak"
+},
+{
+"id": 299,
+"k": "페크다",
+"en": "Phecda"
+},
+{
+"id": 300,
+"k": "메그레즈",
+"en": "Megrez"
+},
+{
+"id": 301,
+"k": "알리오스",
+"en": "Alioth"
+},
+{
+"id": 302,
+"k": "미자르",
+"en": "Mizar"
+},
+{
+"id": 303,
+"k": "알카이드",
+"en": "Alkaid"
+},
+{
+"id": 304,
+"k": "발동 중",
+"en": "active"
+},
+{
+"id": 305,
+"k": "선택",
+"en": " selected"
+},
+{
+"id": 306,
+"k": "🎬 스텔라 연출을 껐어요 (땅에서 카운트다운만 봐요)",
+"en": "🎬 Stellar cutscenes OFF (you'll only see the countdown)"
+},
+{
+"id": 307,
+"k": "🎬 스텔라 연출을 켰어요",
+"en": "🎬 Stellar cutscenes ON"
+},
+{
+"id": 308,
+"k": "🎬 연출: 끔",
+"en": "🎬 Cutscenes: OFF"
+},
+{
+"id": 309,
+"k": "CB-TSR · 레일건 — 레이저 조준 고정",
+"en": "CB-TSR · Railgun — laser locked"
+},
+{
+"id": 310,
+"k": "지구 대기권을 지나",
+"en": "Through Earth's atmosphere"
+},
+{
+"id": 311,
+"k": "토성을 지나",
+"en": "Past Saturn"
+},
+{
+"id": 312,
+"k": "태양계 너머 — 우리 은하를 지나",
+"en": "Beyond the Solar System — across the Milky Way"
+},
+{
+"id": 313,
+"k": "레일건 엔진 속 — 별의 힘 결정 회전",
+"en": "Inside the railgun engine — the Star Power crystal spins"
+},
+{
+"id": 314,
+"k": "밖으로 — 에너지 충전",
+"en": "Outside — charging"
+},
+{
+"id": 315,
+"k": "빨간 레이저 발사",
+"en": "Red laser fired"
+},
+{
+"id": 316,
+"k": "CB-NM · 궁니르 — 불씨 표식 고정",
+"en": "CB-NM · Gungnir — ember mark locked"
+},
+{
+"id": 317,
+"k": "화성 궤도 위성 — 핵미사일 발사",
+"en": "Mars orbit satellites — missiles away"
+},
+{
+"id": 318,
+"k": "목성 궤도 위성 — 핵미사일 발사",
+"en": "Jupiter orbit satellites — missiles away"
+},
+{
+"id": 319,
+"k": "핵미사일 편대 — 지구를 향해",
+"en": "Missile fleet — heading for Earth"
+},
+{
+"id": 320,
+"k": "대기권 돌입",
+"en": "Atmospheric entry"
+},
+{
+"id": 321,
+"k": "CB-SL · 칠성 — 북두칠성을 땅에 투영",
+"en": "CB-SL · Seven Stars — Big Dipper projected"
+},
+{
+"id": 322,
+"k": "큰곰자리로",
+"en": "To Ursa Major"
+},
+{
+"id": 323,
+"k": "일곱 별이 별의 배열로 깨어나요",
+"en": "The seven stars wake as a stellar array"
+},
+{
+"id": 324,
+"k": "일곱 별이 빨간 레이저 발사",
+"en": "The seven stars fire red lasers"
+},
+{
+"id": 325,
+"k": "별이 하나씩 떨어져요",
+"en": "The stars strike one by one"
+},
+{
+"id": 326,
+"k": "별자리 점화",
+"en": "The constellation ignites"
+},
+{
+"id": 327,
+"k": "이미 발동 중이에요",
+"en": "Already active"
+},
+{
+"id": 328,
+"k": "충전 중…",
+"en": "Recharging…"
+},
+{
+"id": 329,
+"k": "초",
+"en": "s"
+},
+{
+"id": 330,
+"k": "궁니르와 칠성은 프론티어 하늘 아래에서만 쓸 수 있어요",
+"en": "Gungnir and Seven Stars only work under the Frontier sky"
+},
+{
+"id": 331,
+"k": "조준할 땅이 없어요 (땅을 바라보세요)",
+"en": "Nothing to aim at (look at the ground)"
+},
+{
+"id": 332,
+"k": "⚠ 지금 서 있는 곳도",
+"en": "⚠ You are standing inside the"
+},
+{
+"id": 333,
+"k": "범위 안이에요! 4초 안에 한 번 더 누르면 그래도 발동해요",
+"en": " blast zone! Press again within 4s to fire anyway"
+},
+{
+"id": 334,
+"k": "⚠ 스텔라 리모컨은",
+"en": "⚠ The Stellar Remote"
+},
+{
+"id": 335,
+"k": "세계를 영원히 바꿔요",
+"en": " changes the world forever"
+},
+{
+"id": 336,
+"k": ". 저장 파일을 내보내 두는 걸 추천해요",
+"en": ". Exporting your save first is recommended"
+},
+{
+"id": 337,
+"k": "칸 앞 조준 고정",
+"en": " blocks away — target locked"
+},
+{
+"id": 338,
+"k": "🛰 크리에이티브: 광선 밖으로 대피했어요",
+"en": "🛰 Creative: evacuated out of the beam"
+},
+{
+"id": 339,
+"k": "궤도에서 지워졌습니다",
+"en": "was erased from orbit"
+},
+{
+"id": 340,
+"k": "궁니르의 충격파에 휩쓸렸습니다",
+"en": "was swept away by Gungnir's shockwave"
+},
+{
+"id": 341,
+"k": "칠성의 레이저에 맞았습니다",
+"en": "was hit by the Seven Stars' laser"
+},
+{
+"id": 342,
+"k": "핵미사일 발사!",
+"en": "Nuclear missile launched!"
+},
+{
+"id": 343,
+"k": "하늘로 솟았다가",
+"en": " It rises into the sky and"
+},
+{
+"id": 344,
+"k": "이 자리로 떨어져요",
+"en": " falls back right here"
+},
+{
+"id": 345,
+"k": "— 8초 안에 멀리 도망치세요 (반경 40칸 소멸 · 80칸까지 충격파)",
+"en": "— run far away within 8 seconds (40-block blast · shockwave to 80)"
+},
+{
+"id": 346,
+"k": "☢ 떨어진다!",
+"en": "☢ Incoming!"
+},
+{
+"id": 347,
+"k": "핵폭발에 휘말렸습니다",
+"en": "was caught in a nuclear blast"
+},
+{
+"id": 348,
+"k": "핵폭발의 충격파에 휩쓸렸습니다",
+"en": "was swept away by the nuclear shockwave"
+},
+{
+"id": 349,
+"k": "✨ 낚싯줄에",
+"en": "✨ You caught"
+},
+{
+"id": 350,
+"k": "이 걸려 올라왔어요!",
+"en": " on the line!"
+},
+{
+"id": 351,
+"k": "워커를 쓸 수 없어 메인 스레드로 처리합니다",
+"en": "Worker unavailable, using main thread"
+},
+{
+"id": 352,
+"k": "이(가) 부서졌습니다!",
+"en": " broke!"
+},
+{
+"id": 353,
+"k": "나무꾼의 첫걸음",
+"en": "Lumberjack's First Step"
+},
+{
+"id": 354,
+"k": "장인의 시작",
+"en": "Crafter's Start"
+},
+{
+"id": 355,
+"k": "광부 입문",
+"en": "Novice Miner"
+},
+{
+"id": 356,
+"k": "석기 시대",
+"en": "Stone Age"
+},
+{
+"id": 357,
+"k": "불의 발견",
+"en": "Discovering Fire"
+},
+{
+"id": 358,
+"k": "철기 시대",
+"en": "Iron Age"
+},
+{
+"id": 359,
+"k": "반짝이는 보물",
+"en": "Shiny Treasure"
+},
+{
+"id": 360,
+"k": "편안한 밤",
+"en": "A Good Night's Sleep"
+},
+{
+"id": 361,
+"k": "사냥꾼",
+"en": "Hunter"
+},
+{
+"id": 362,
+"k": "열린 문",
+"en": "Open Door"
+},
+{
+"id": 363,
+"k": "물과 불",
+"en": "Water and Fire"
+},
+{
+"id": 364,
+"k": "첫 거래",
+"en": "First Trade"
+},
+{
+"id": 365,
+"k": "마을 발견",
+"en": "Village Found"
+},
+{
+"id": 366,
+"k": "수호자 탄생",
+"en": "Guardian Born"
+},
+{
+"id": 367,
+"k": "차원문 건축가",
+"en": "Portal Builder"
+},
+{
+"id": 368,
+"k": "타오르는 돌",
+"en": "Burning Stone"
+},
+{
+"id": 369,
+"k": "철벽 방어",
+"en": "Iron Defense"
+},
+{
+"id": 370,
+"k": "⚡ 전기의 발견",
+"en": "⚡ Discovering Electricity"
+},
+{
+"id": 371,
+"k": "어둠 퇴치",
+"en": "Banish the Dark"
+},
+{
+"id": 372,
+"k": "요리사",
+"en": "Cook"
+},
+{
+"id": 373,
+"k": "좀비 퇴치반",
+"en": "Zombie Squad"
+},
+{
+"id": 374,
+"k": "명사수",
+"en": "Sharpshooter"
+},
+{
+"id": 375,
+"k": "완전 무장",
+"en": "Fully Armed"
+},
+{
+"id": 376,
+"k": "어비스 입성",
+"en": "Into the Abyss"
+},
+{
+"id": 377,
+"k": "네크로폴리스 입성",
+"en": "Into the Necropolis"
+},
+{
+"id": 378,
+"k": "세계의 끝에 서다",
+"en": "At the World's End"
+},
+{
+"id": 379,
+"k": "불멸을 넘어서",
+"en": "Beyond Immortality"
+},
+{
+"id": 380,
+"k": "어둠의 기사 격파",
+"en": "Dark Knight Defeated"
+},
+{
+"id": 381,
+"k": "엔딩을 보다",
+"en": "The End"
+},
+{
+"id": 382,
+"k": "강태공",
+"en": "Master Angler"
+},
+{
+"id": 383,
+"k": "🏆 도전과제 달성:",
+"en": "🏆 Achievement:"
+},
+{
+"id": 384,
+"k": "1인칭",
+"en": "1st person"
+},
+{
+"id": 385,
+"k": "3인칭 (앞)",
+"en": "3rd person (front)"
+},
+{
+"id": 386,
+"k": "3인칭 (뒤)",
+"en": "3rd person (back)"
+},
+{
+"id": 387,
+"k": "👁 시점:",
+"en": "👁 View:"
+},
+{
+"id": 388,
+"k": "뭉게",
+"en": "Fluffy"
+},
+{
+"id": 389,
+"k": "수풀꼬꼬",
+"en": "Bush Chick"
+},
+{
+"id": 390,
+"k": "돌거북",
+"en": "Stone Tortoise"
+},
+{
+"id": 391,
+"k": "돌거북에게 받혔습니다",
+"en": "was rammed by a Stone Tortoise"
+},
+{
+"id": 392,
+"k": "어둠덩이에게 당했습니다",
+"en": "was killed by a Gloomling"
+},
+{
+"id": 393,
+"k": "좀비에게 당했습니다",
+"en": "was killed by a Zombie"
+},
+{
+"id": 394,
+"k": "가시벌레",
+"en": "Spikebug"
+},
+{
+"id": 395,
+"k": "가시벌레에게 찔렸습니다",
+"en": "was stung by a Spikebug"
+},
+{
+"id": 396,
+"k": "명사수 해골의 화살에 맞았습니다",
+"en": "was shot by a Skeleton Archer"
+},
+{
+"id": 397,
+"k": "명사수 해골의 주먹에 맞았습니다",
+"en": "was punched by a Skeleton Archer"
+},
+{
+"id": 398,
+"k": "불씨방울 폭발에 휘말렸습니다",
+"en": "was blown up by an Ember Blob"
+},
+{
+"id": 399,
+"k": "! 돌고래 곁에서 헤엄치면 더 빨라져요",
+"en": "! Swim next to dolphins to go faster"
+},
+{
+"id": 400,
+"k": "나침반은 프론티어에서만 작동합니다",
+"en": "Compasses only work in the Frontier"
+},
+{
+"id": 401,
+"k": "차원문이 바로 아래에 있습니다! (약",
+"en": "The portal is right below you! (about"
+},
+{
+"id": 402,
+"k": "칸 아래",
+"en": " blocks down"
+},
+{
+"id": 403,
+"k": "차원문에 도착했습니다!",
+"en": "You reached the portal!"
+},
+{
+"id": 404,
+"k": "차원문 ·",
+"en": "Portal ·"
+},
+{
+"id": 405,
+"k": "에 도착했습니다. 깊은 곳(높이 4~6)에",
+"en": " reached. Deep down (height 4~6) there is"
+},
+{
+"id": 406,
+"k": "이 있습니다.",
+"en": "."
+},
+{
+"id": 407,
+"k": "가장 가까운 곳: X",
+"en": "Nearest: X"
+},
+{
+"id": 408,
+"k": "... 옥좌는 비어 있습니다.",
+"en": "... The throne is empty."
+},
+{
+"id": 409,
+"k": "... 옥좌 앞에",
+"en": "... Before the throne,"
+},
+{
+"id": 410,
+"k": "불멸의 악마",
+"en": "Immortal Demon"
+},
+{
+"id": 411,
+"k": "가 기다립니다.",
+"en": " awaits."
+},
+{
+"id": 412,
+"k": "... 광장은 조용합니다.",
+"en": "... The plaza is quiet."
+},
+{
+"id": 413,
+"k": "... 광장 중앙에",
+"en": "... In the plaza stands"
+},
+{
+"id": 414,
+"k": "다크가디언",
+"en": "Dark Guardian"
+},
+{
+"id": 415,
+"k": "이 서 있습니다. 레이저 조준선을 피하세요!",
+"en": ". Dodge its laser sight!"
+},
+{
+"id": 416,
+"k": "... 드래곤은 더 이상 없습니다.",
+"en": "... The dragon is gone."
+},
+{
+"id": 417,
+"k": "... 기둥 위",
+"en": "... Break the"
+},
+{
+"id": 418,
+"k": "엔딩 수정",
+"en": "End Crystals"
+},
+{
+"id": 419,
+"k": "을 부수세요! 수정이 남아 있으면 제단에 앉은 드래곤이 회복합니다.",
+"en": " on the pillars! While crystals remain, the dragon heals on its altar."
+},
+{
+"id": 420,
+"k": "로 돌아왔습니다.",
+"en": " — you're back."
+},
+{
+"id": 421,
+"k": "🔫 총알이 없어요 (철 주괴 1 + 석탄 1 → 총알 16)",
+"en": "🔫 Out of bullets (1 Iron Ingot + 1 Coal → 16 bullets)"
+},
+{
+"id": 422,
+"k": "🎯 헤드샷!",
+"en": "🎯 Headshot!"
+},
+{
+"id": 423,
+"k": "을(를) 쓰러뜨렸습니다!",
+"en": " defeated!"
+},
+{
+"id": 424,
+"k": "불멸의 악마에게 찢겼습니다",
+"en": "was torn apart by the Immortal Demon"
+},
+{
+"id": 425,
+"k": "악마의 화염구에 맞았습니다",
+"en": "was hit by a demon fireball"
+},
+{
+"id": 426,
+"k": "불멸의 악마가",
+"en": "The Immortal Demon"
+},
+{
+"id": 427,
+"k": "을 소환했습니다!",
+"en": " summoned minions!"
+},
+{
+"id": 428,
+"k": "다크가디언의 대검에 베였습니다",
+"en": "was slashed by the Dark Guardian's greatsword"
+},
+{
+"id": 429,
+"k": "다크가디언의 레이저에 맞았습니다",
+"en": "was hit by the Dark Guardian's laser"
+},
+{
+"id": 430,
+"k": "엔딩 수정 파괴! 남은 수정",
+"en": "End Crystal destroyed! Crystals left:"
+},
+{
+"id": 431,
+"k": "모든",
+"en": "All"
+},
+{
+"id": 432,
+"k": "을 부쉈습니다! 이제 드래곤이 회복할 수 없습니다.",
+"en": " destroyed! The dragon can no longer heal."
+},
+{
+"id": 433,
+"k": "엔딩드래곤",
+"en": "Ender Dragon"
+},
+{
+"id": 434,
+"k": "엔딩드래곤의 브레스에 맞았습니다",
+"en": "was hit by the Ender Dragon's breath"
+},
+{
+"id": 435,
+"k": "엔딩드래곤이 제단에서",
+"en": "The Ender Dragon heals on its altar"
+},
+{
+"id": 436,
+"k": "로 회복합니다! 회복하는 동안엔 공격하지 못하니 지금 공격하세요!",
+"en": "! It can't attack while healing — strike now!"
+},
+{
+"id": 437,
+"k": "엔딩드래곤이 제단에 내려앉았습니다!",
+"en": "The Ender Dragon landed on its altar!"
+},
+{
+"id": 438,
+"k": "지금이 기회!",
+"en": "Now's your chance!"
+},
+{
+"id": 439,
+"k": "엔딩드래곤에게 들이받혔습니다",
+"en": "was rammed by the Ender Dragon"
+},
+{
+"id": 440,
+"k": "엔딩드래곤에게 물렸습니다",
+"en": "was bitten by the Ender Dragon"
+},
+{
+"id": 441,
+"k": "어비스 깊은 곳 판데모니움에서",
+"en": "Deep in the Abyss, in Pandemonium, you"
+},
+{
+"id": 442,
+"k": "를 넘어섰고,",
+"en": " were overcome,"
+},
+{
+"id": 443,
+"k": "에서",
+"en": " in"
+},
+{
+"id": 444,
+"k": "을 쓰러뜨렸으며,",
+"en": " was defeated,"
+},
+{
+"id": 445,
+"k": "CAVEBUILD · 케이브빌드",
+"en": "CAVEBUILD"
+},
+{
+"id": 446,
+"k": "당신은 끝없는 들판에서 첫 나무를 베었고,",
+"en": "You felled your first tree in endless fields,"
+},
+{
+"id": 447,
+"k": "어둠 속에서 등불을 밝혔습니다.",
+"en": "and lit a lantern in the dark."
+},
+{
+"id": 448,
+"k": "마침내 세계의 끝, 호라이즌에서",
+"en": "At last, at the end of the world in the Horizon,"
+},
+{
+"id": 449,
+"k": "을 잠재웠습니다.",
+"en": " was laid to rest."
+},
+{
+"id": 450,
+"k": "— 하지만 세계는 끝나지 않습니다 —",
+"en": "— but the world does not end —"
+},
+{
+"id": 451,
+"k": "돌아갈 집이 있고,",
+"en": "There is a home to return to,"
+},
+{
+"id": 452,
+"k": "아직 가 보지 못한 땅이 끝없이 펼쳐져 있으니까요.",
+"en": "and endless lands you have yet to explore."
+},
+{
+"id": 453,
+"k": "기록",
+"en": "Stats"
+},
+{
+"id": 454,
+"k": "생존한 날:",
+"en": "Days survived:"
+},
+{
+"id": 455,
+"k": "일",
+"en": " days"
+},
+{
+"id": 456,
+"k": "처치한 몹:",
+"en": "Mobs defeated:"
+},
+{
+"id": 457,
+"k": "쓰러진 횟수:",
+"en": "Deaths:"
+},
+{
+"id": 458,
+"k": "플레이 시간:",
+"en": "Play time:"
+},
+{
+"id": 459,
+"k": "분",
+"en": " min"
+},
+{
+"id": 460,
+"k": "플레이해 주셔서 감사합니다!",
+"en": "Thanks for playing!"
+},
+{
+"id": 461,
+"k": "🏠 스폰 지점으로 돌아왔습니다. 모험은 계속됩니다!",
+"en": "🏠 Back at your spawn point. The adventure continues!"
+},
+{
+"id": 462,
+"k": "물이 순식간에 증발했습니다",
+"en": "The water evaporated instantly"
+},
+{
+"id": 463,
+"k": "이 열렸습니다!",
+"en": " opened!"
+},
+{
+"id": 464,
+"k": "이 깨어났습니다! 주변의 적을 물리쳐 줄 거예요.",
+"en": " awakened! It will fight nearby enemies."
+},
+{
+"id": 465,
+"k": "빌리저 가디언에게 맞았습니다",
+"en": "was hit by a Villager Guardian"
+},
+{
+"id": 466,
+"k": "을 발견했습니다! 주민을 괴롭히면 빌리저 가디언이 화를 냅니다.",
+"en": " discovered! Hurting villagers angers the Villager Guardian."
+},
+{
+"id": 467,
+"k": "농부",
+"en": "Farmer"
+},
+{
+"id": 468,
+"k": "대장장이",
+"en": "Blacksmith"
+},
+{
+"id": 469,
+"k": "광부",
+"en": "Miner"
+},
+{
+"id": 470,
+"k": "현자",
+"en": "Sage"
+},
+{
+"id": 471,
+"k": "좀비 주민",
+"en": "Zombie Villager"
+},
+{
+"id": 472,
+"k": "좀비 주민에게 당했습니다",
+"en": "was killed by a Zombie Villager"
+},
+{
+"id": 473,
+"k": "주민",
+"en": "Villager"
+},
+{
+"id": 474,
+"k": "🧟 주민이",
+"en": "🧟 A villager became a"
+},
+{
+"id": 475,
+"k": "이 되었습니다!",
+"en": "!"
+},
+{
+"id": 476,
+"k": "🌳 묘목이",
+"en": "🌳 The sapling grew into a"
+},
+{
+"id": 477,
+"k": "로 자랐어요!",
+"en": "!"
+},
+{
+"id": 478,
+"k": "열쇠",
+"en": "keys"
+},
+{
+"id": 479,
+"k": "가 필요합니다 (",
+"en": " needed ("
+},
+{
+"id": 480,
+"k": "/12) · 텔레포터가 떨어뜨려요",
+"en": "/12) · Teleporters drop them"
+},
+{
+"id": 481,
+"k": "🌀 12개의 열쇠가 모두 꽂혔습니다!",
+"en": "🌀 All 12 keys are in place!"
+},
+{
+"id": 482,
+"k": "이 열렸습니다.",
+"en": " opened."
+},
+{
+"id": 483,
+"k": "포탈 열쇠를 꽂았습니다 (",
+"en": "Portal key inserted ("
+},
+{
+"id": 484,
+"k": "텔레포터에게 당했습니다",
+"en": "was killed by a Teleporter"
+},
+{
+"id": 485,
+"k": "텔레포터",
+"en": "Teleporter"
+},
+{
+"id": 486,
+"k": "쓰러졌습니다",
+"en": "died"
+},
+{
+"id": 487,
+"k": "방패가 부서졌습니다!",
+"en": "Your shield broke!"
+},
+{
+"id": 488,
+"k": "강한 일격에 방패가 밀렸습니다! (5초간 막기 불가)",
+"en": "A heavy blow broke your guard! (can't block for 5s)"
+},
+{
+"id": 489,
+"k": "이 발동했습니다! (1초 무적)",
+"en": " activated! (1s invincible)"
+},
+{
+"id": 490,
+"k": "💀 하드코어 세계는 다시 살아날 수 없어요",
+"en": "💀 You can't respawn in a Hardcore world"
+},
+{
+"id": 491,
+"k": "세계를 지우고 타이틀로",
+"en": "Delete world & return to title"
+},
+{
+"id": 492,
+"k": "가시 덤불에 찔렸습니다",
+"en": "was pricked by a thornbush"
+},
+{
+"id": 493,
+"k": "용암에 빠졌습니다",
+"en": "tried to swim in lava"
+},
+{
+"id": 494,
+"k": "겉날개가 너무 낡아서 더 이상 날 수 없어요",
+"en": "Your elytra is too worn to fly"
+},
+{
+"id": 495,
+"k": "날다가 벽에 부딪혔습니다",
+"en": "flew into a wall"
+},
+{
+"id": 496,
+"k": "높은 곳에서 떨어졌습니다",
+"en": "fell from a high place"
+},
+{
+"id": 497,
+"k": "세계 밖으로 떨어졌습니다",
+"en": "fell out of the world"
+},
+{
+"id": 498,
+"k": "에 노출됐어요! 갑옷(천·가죽 제외)이나",
+"en": " exposure! Armor (not cloth/leather) or a"
+},
+{
+"id": 499,
+"k": "을 입으면 막을 수 있어요",
+"en": " will protect you"
+},
+{
+"id": 500,
+"k": "방사능에 노출되었습니다",
+"en": "died of radiation"
+},
+{
+"id": 501,
+"k": "굶주림으로 쓰러졌습니다",
+"en": "starved to death"
+},
+{
+"id": 502,
+"k": "물에 빠졌습니다",
+"en": "drowned"
+},
+{
+"id": 503,
+"k": "🌱 나무를 다 베었더니",
+"en": "🌱 The tree is gone — a"
+},
+{
+"id": 504,
+"k": "이 떨어졌어요!",
+"en": " dropped!"
+},
+{
+"id": 505,
+"k": "를 그물로 잡았어요! 물에 대고 누르면 풀어 줄 수 있어요",
+"en": " caught in the net! Use it on water to release it"
+},
+{
+"id": 506,
+"k": "물에 대고 눌러야 오징어를 풀어 줄 수 있어요",
+"en": "Use it on water to release the squid"
+},
+{
+"id": 507,
+"k": "그물을 든 채",
+"en": "Hold the net and use it on a"
+},
+{
+"id": 508,
+"k": "에 대고 누르면 잡을 수 있어요",
+"en": " to catch it"
+},
+{
+"id": 509,
+"k": "보트에 탔습니다 (스페이스: 내리기)",
+"en": "You got in the boat (Space: get out)"
+},
+{
+"id": 510,
+"k": "불사의 마법 물약은 가지고만 있으면 쓰러질 때 자동으로 발동합니다",
+"en": "The Potion of Undying activates automatically when you would die — just carry it"
+},
+{
+"id": 511,
+"k": "배가 부릅니다",
+"en": "You're full"
+},
+{
+"id": 512,
+"k": "윽... 속이 좀 안 좋다",
+"en": "Ugh... you feel sick"
+},
+{
+"id": 513,
+"k": "사다리는 벽에 붙여야 해요",
+"en": "Ladders must be placed on a wall"
+},
+{
+"id": 514,
+"k": "문을 놓으려면 위로 2칸이 비어 있어야 해요",
+"en": "Doors need 2 empty blocks of height"
+},
+{
+"id": 515,
+"k": "묘목은 잔디나 흙 위에 심어야 해요",
+"en": "Saplings must be planted on grass or dirt"
+},
+{
+"id": 516,
+"k": "화살이 없습니다 (막대기+깃털+가시)",
+"en": "No arrows (Stick + Feather + Spike)"
+},
+{
+"id": 517,
+"k": "이곳에서는 잘 수 없습니다",
+"en": "You can't sleep here"
+},
+{
+"id": 518,
+"k": "스폰 지점이 설정되었습니다. (밤에만 잘 수 있어요)",
+"en": "Spawn point set. (You can only sleep at night)"
+},
+{
+"id": 519,
+"k": "근처에 적이 있어서 잘 수 없습니다!",
+"en": "You can't sleep — enemies nearby!"
+},
+{
+"id": 520,
+"k": "상쾌한 아침입니다! 스폰 지점이 설정되었습니다.",
+"en": "Good morning! Spawn point set."
+},
+{
+"id": 521,
+"k": "💥 철퇴 내려찍기!",
+"en": "💥 Mace smash!"
+},
+{
+"id": 522,
+"k": "칸",
+"en": " blocks"
+},
+{
+"id": 523,
+"k": "Shift+클릭: 빠르게 옮기기",
+"en": "Shift+click: quick move"
+},
+{
+"id": 524,
+"k": "거래 —",
+"en": "Trade —"
+},
+{
+"id": 525,
+"k": "누를 때마다 한 번씩 거래",
+"en": "Each click makes one trade"
+},
+{
+"id": 526,
+"k": "🛠 크리에이티브 아이템",
+"en": "🛠 Creative Items"
+},
+{
+"id": 527,
+"k": "누르면 한 묶음",
+"en": "Click for a full stack"
+},
+{
+"id": 528,
+"k": "들고 있는 아이템을 여기 놓으면 버려요",
+"en": "Drop the held item here to delete it"
+},
+{
+"id": 529,
+"k": "근처(4칸)에 있어야 함",
+"en": "must be within 4 blocks"
+},
+{
+"id": 530,
+"k": "검색 결과가 없습니다",
+"en": "No results"
+},
+{
+"id": 531,
+"k": "· 작업대",
+"en": "· Crafting Table"
+},
+{
+"id": 532,
+"k": "· 가마",
+"en": "· Kiln"
+},
+{
+"id": 533,
+"k": "연료1",
+"en": "Fuel 1"
+},
+{
+"id": 534,
+"k": "마우스 잠금을 쓸 수 없는 화면이에요 —",
+"en": "Mouse lock isn't available here —"
+},
+{
+"id": 535,
+"k": "창 안에서 마우스를 움직여",
+"en": "move the mouse inside the window"
+},
+{
+"id": 536,
+"k": "둘러보세요",
+"en": "to look around"
+},
+{
+"id": 537,
+"k": "✕ 도움말 닫기",
+"en": "✕ Close Help"
+},
+{
+"id": 538,
+"k": "✕ 업데이트 목록 닫기",
+"en": "✕ Close Update Notes"
+},
+{
+"id": 539,
+"k": "저장 실패: 저장 공간이 부족합니다. 저장 파일로 내보내 두세요",
+"en": "Save failed: not enough storage. Export a save file instead"
+},
+{
+"id": 540,
+"k": "내보내기 실패",
+"en": "Export failed"
+},
+{
+"id": 541,
+"k": "저장 파일을 내보냈습니다 (cavebuild-save.json)",
+"en": "Save file exported (cavebuild-save.json)"
+},
+{
+"id": 542,
+"k": "내보내기를 취소했습니다",
+"en": "Export canceled"
+},
+{
+"id": 543,
+"k": "잠시 후 다시 시도하세요",
+"en": "Please try again in a moment"
+},
+{
+"id": 544,
+"k": "이 환경에서는 파일로 내보낼 수 없습니다",
+"en": "Files can't be exported here"
+},
+{
+"id": 545,
+"k": "올바른 저장 파일이 아닙니다 (기존 세계는 그대로 둡니다)",
+"en": "Not a valid save file (your world is unchanged)"
+},
+{
+"id": 546,
+"k": "기존 세계를 덮어씁니다 · 한 번 더 누르면 불러오기",
+"en": "This overwrites your world · click again to load"
+},
+{
+"id": 547,
+"k": "저장 파일을 불러왔습니다",
+"en": "Save file loaded"
+},
+{
+"id": 548,
+"k": "쓰러진 채로 저장되어 있어서",
+"en": "You were saved while dead, so we"
+},
+{
+"id": 549,
+"k": "체력을 회복",
+"en": "restored your health"
+},
+{
+"id": 550,
+"k": "크리에이티브",
+"en": "Creative"
+},
+{
+"id": 551,
+"k": ": 🎒에서 모든 아이템을 꺼낼 수 있어요 · ⤒ 두 번 → 날기",
+"en": ": take any item from 🎒 · double-tap ⤒ to fly"
+},
+{
+"id": 552,
+"k": ": E에서 모든 아이템을 꺼낼 수 있어요 · 스페이스 두 번 → 날기 (C: 내려가기)",
+"en": ": take any item from E · double-tap Space to fly (C: down)"
+},
+{
+"id": 553,
+"k": "하드코어",
+"en": "Hardcore"
+},
+{
+"id": 554,
+"k": ": 목숨은 하나뿐이에요. 조심하세요!",
+"en": ": you only have one life. Be careful!"
+},
+{
+"id": 555,
+"k": "나무를 캐서 판자와 작업대를 만들어 보세요! (🎒: 인벤토리)",
+"en": "Chop trees to make planks and a crafting table! (🎒: inventory)"
+},
+{
+"id": 556,
+"k": "나무를 캐서 판자와 작업대를 만들어 보세요! (E: 인벤토리)",
+"en": "Chop trees to make planks and a crafting table! (E: inventory)"
+},
+{
+"id": 557,
+"k": "📱 가로 모드로 돌리면 더 편하게 플레이할 수 있어요",
+"en": "📱 Rotate to landscape for easier play"
+},
+{
+"id": 558,
+"k": "세계를 여는 중 문제가 생겼습니다. 기존 저장은 그대로 있어요.",
+"en": "Something went wrong opening the world. Your save is safe."
+},
+{
+"id": 559,
+"k": "저장된 세계를 확인하는 중이에요. 잠시 뒤에 다시 눌러 주세요",
+"en": "Checking your saved world. Please click again in a moment"
+},
+{
+"id": 560,
+"k": "기존 세계를 덮어씁니다 · 한 번 더 누르면 시작",
+"en": "This overwrites your world · click again to start"
+},
+{
+"id": 561,
+"k": "🌱 세계 코드",
+"en": "🌱 World code"
+},
+{
+"id": 562,
+"k": "로 세계를 만들었습니다",
+"en": " — world created"
+},
+{
+"id": 563,
+"k": "다치지 않고 배고프지 않아요. 모든 아이템을 마음대로 꺼내 쓰고, 블록을 한 번에 부수고, 스페이스를 두 번 눌러 날 수 있어요.",
+"en": "No damage, no hunger. Take any item, break blocks instantly and double-tap Space to fly."
+},
+{
+"id": 564,
+"k": "몹이 1.5배 아프게 때려요. 목숨은 단 하나! 쓰러지면 세계가 사라져요.",
+"en": "Mobs hit 1.5× harder. Only one life — if you die, the world is deleted!"
+},
+{
+"id": 565,
+"k": "적대 몹이 나오지 않고, 배고프지 않으며, 체력이 저절로 차요. 마음 편히 짓고 탐험해요.",
+"en": "No hostile mobs, no hunger, health regenerates. Build and explore in peace."
+},
+{
+"id": 566,
+"k": "다치지 않고 블록을 뚫고 자유롭게 날아다니며 구경만 해요 (스페이스: 위 · C: 아래). 블록·몹과 상호작용할 수 없어요.",
+"en": "Fly freely through blocks and just watch (Space: up · C: down). You can't interact with blocks or mobs."
+},
+{
+"id": 567,
+"k": "⚙ 서버 설정 ·",
+"en": "⚙ Server Settings ·"
+},
+{
+"id": 568,
+"k": "게임 모드:",
+"en": "Game mode:"
+},
+{
+"id": 569,
+"k": "🕊 날기 시작 (스페이스: 위 · C: 아래)",
+"en": "🕊 Flying (Space: up · C: down)"
+},
+{
+"id": 570,
+"k": "날기 그만",
+"en": "Stopped flying"
+},
+{
+"id": 571,
+"k": "를 복사했습니다",
+"en": " copied"
+},
+{
+"id": 572,
+"k": "🌱 이 세계의 코드는",
+"en": "🌱 This world's code is"
+},
+{
+"id": 573,
+"k": "입니다 (직접 적어 두세요)",
+"en": " (write it down)"
+},
+{
+"id": 574,
+"k": "저장되었습니다",
+"en": "Saved"
+},
+{
+"id": 575,
+"k": "문제가 생겼습니다:",
+"en": "Something went wrong:"
+},
+{
+"id": 576,
+"k": "알 수 없는 오류",
+"en": "unknown error"
+},
+{
+"id": 577,
+"k": "모드를 저장할 공간이 부족해요",
+"en": "Not enough space to store mods"
+},
+{
+"id": 578,
+"k": "모드 오류",
+"en": "Mod error"
+},
+{
+"id": 579,
+"k": "🧩 모드 오류(",
+"en": "🧩 Mod error ("
+},
+{
+"id": 580,
+"k": "모드 블록 칸이 다 찼어요 (최대 8개)",
+"en": "Mod block slots are full (max 8)"
+},
+{
+"id": 581,
+"k": "그림 칸이 다 찼어요",
+"en": "Texture slots are full"
+},
+{
+"id": 582,
+"k": "모드 폭발에 휘말렸습니다",
+"en": "was caught in a mod explosion"
+},
+{
+"id": 583,
+"k": "모드 실패",
+"en": "Mod failed"
+},
+{
+"id": 584,
+"k": "삭제",
+"en": "Delete"
+},
+{
+"id": 585,
+"k": "아직 넣은 모드가 없어요",
+"en": "No mods added yet"
+},
+{
+"id": 586,
+"k": "🧩 모드를 넣었어요.",
+"en": "🧩 Mod added."
+},
+{
+"id": 587,
+"k": "새로고침",
+"en": "Reload"
+},
+{
+"id": 588,
+"k": "하면 적용돼요",
+"en": " to apply"
+},
+{
+"id": 589,
+"k": "이 모드를 지울까요?",
+"en": "Delete this mod?"
+},
+{
+"id": 590,
+"k": "틱",
+"en": "tick"
+},
+{
+"id": 591,
+"k": "차원:",
+"en": "Dimension:"
+},
+{
+"id": 592,
+"k": "청크:",
+"en": "Chunks:"
+},
+{
+"id": 593,
+"k": "몹:",
+"en": "Mobs:"
+},
+{
+"id": 594,
+"k": "시간:",
+"en": "Time:"
+},
+{
+"id": 595,
+"k": "시  시드:",
+"en": "h  Seed:"
+},
+{
+"id": 596,
+"k": "바라보는 블록:",
+"en": "Looking at:"
+},
+{
+"id": 597,
+"k": "켜짐",
+"en": "On"
+},
+{
+"id": 598,
+"k": "꺼짐",
+"en": "Off"
+},
+{
+"id": 599,
+"k": "오류",
+"en": "Error"
+},
+{
+"id": 600,
+"k": "돌 곡괭이",
+"en": "Stone Pickaxe"
+},
+{
+"id": 601,
+"k": "수정 곡괭이",
+"en": "Crystal Pickaxe"
+},
+{
+"id": 602,
+"k": "누런 티타늄",
+"en": "Yellow Titanium"
+},
+{
+"id": 603,
+"k": "강철초고합금",
+"en": "Steel Superalloy"
+},
+{
+"id": 604,
+"k": "별의 힘 결정",
+"en": "Star Power crystal"
+},
+{
+"id": 605,
+"k": "에너지",
+"en": "Energy"
+},
+{
+"id": 606,
+"k": "스톤",
+"en": "Stone"
+},
+{
+"id": 607,
+"k": "우라늄",
+"en": "Uranium"
+},
+{
+"id": 608,
+"k": "라듐",
+"en": "Radium"
+},
+{
+"id": 609,
+"k": "플루토늄",
+"en": "Plutonium"
+},
+{
+"id": 610,
+"k": "폴로늄",
+"en": "Polonium"
+},
+{
+"id": 611,
+"k": "프로트악티늄",
+"en": "Protactinium"
+},
+{
+"id": 612,
+"k": "엔딩 수정 파괴!",
+"en": "End Crystal destroyed!"
+},
+{
+"id": 613,
+"k": "남은 수정",
+"en": "Crystals left:"
+},
+{
+"id": 614,
+"k": "충전",
+"en": "Recharge"
+},
+{
+"id": 615,
+"k": "발동",
+"en": "Fire"
+},
+{
+"id": 616,
+"k": "다음",
+"en": "Next"
+},
+{
+"id": 617,
+"k": "메뉴",
+"en": "Menu"
+},
+{
+"id": 618,
+"k": "연출",
+"en": "Cutscene"
+},
+{
+"id": 619,
+"k": "켜기",
+"en": "on"
+},
+{
+"id": 620,
+"k": "끄기",
+"en": "off"
+},
+{
+"id": 621,
+"k": "넘기기",
+"en": "skip"
+},
+{
+"id": 622,
+"k": "(지하)",
+"en": "(underground)"
+},
+{
+"id": 623,
+"k": ", 감염된 폐허 마을",
+"en": ", infected ruined village"
+},
+{
+"id": 624,
+"k": ", 표식 돌 방",
+"en": ", Marker Stone room"
+},
+{
+"id": 625,
+"k": "· 위의 아이템을 빨아들여 아래 상자로 보냄",
+"en": "· pulls items from above into the chest below"
+},
+{
+"id": 626,
+"k": "· 회복 중",
+"en": "· healing"
+},
+{
+"id": 627,
+"k": "· 🎬 연출 끔",
+"en": " · 🎬 cutscenes off"
+},
+{
+"id": 628,
+"k": "끔",
+"en": "off"
+},
+{
+"id": 629,
+"k": "켬",
+"en": "on"
+},
+{
+"id": 630,
+"k": "✋ 발동 · 🧎+✋ 다음 · 여기를 눌러 메뉴",
+"en": "✋ fire · 🧎+✋ next · tap here for menu"
+},
+{
+"id": 631,
+"k": "우클릭 발동 · C+우클릭 다음 · K/I/U 선택 · H 메뉴 · J 연출 켜기/끄기 · 넘기기",
+"en": "Right click: fire · C+right click: next · K/I/U: select · H: menu · J: cutscenes on/off · skip"
+},
+{
+"id": 632,
+"k": "가장 가까운 곳",
+"en": "Nearest"
+},
+{
+"id": 633,
+"k": "🌐 English",
+"en": "🌐 English"
+},
+{
+"id": 634,
+"k": "🌐 한국어",
+"en": "🌐 한국어"
+},
+{
+"id": 635,
+"k": "한국어",
+"en": "한국어"
+},
+{
+"id": 636,
+"k": "🌐 Language / 언어",
+"en": "🌐 Language"
+},
+{
+"id": 637,
+"k": "원자폭탄",
+"en": "Atomic Bomb"
+},
+{
+"id": 638,
+"k": "차르 봄바",
+"en": "Tsar Bomba"
+},
+{
+"id": 639,
+"k": "대륙간 핵탄두 미사일",
+"en": "ICBM"
+},
+{
+"id": 640,
+"k": "💣 폭탄이 꺼졌어요",
+"en": "💣 The bomb was defused"
+},
+{
+"id": 641,
+"k": "차르 봄바 점화!",
+"en": "Tsar Bomba armed!"
+},
+{
+"id": 642,
+"k": "15초 안에 아주 멀리 도망치세요 (반경 120칸 소멸 · 240칸까지 충격파)",
+"en": " Run very far within 15s (120-block blast · shockwave to 240)"
+},
+{
+"id": 643,
+"k": "원자폭탄 점화!",
+"en": "Atomic bomb armed!"
+},
+{
+"id": 644,
+"k": "10초 안에 멀리 도망치세요 (반경 70칸 소멸 · 140칸까지 충격파)",
+"en": " Run far within 10s (70-block blast · shockwave to 140)"
+},
+{
+"id": 645,
+"k": "대륙간 핵탄두 미사일 발사!",
+"en": "ICBM launched!"
+},
+{
+"id": 646,
+"k": "칸 앞 · 9초 뒤 도착 (반경 60칸)",
+"en": " blocks away · impact in 9s (60-block blast)"
+},
+{
+"id": 647,
+"k": "CB-SL · 칠성 — 하늘에 북두칠성",
+"en": "CB-SL · Seven Stars — the Big Dipper rises"
+},
+{
+"id": 648,
+"k": "미사일 리모컨",
+"en": "Missile Remote"
+},
+{
+"id": 649,
+"k": "🎮 미사일 조종 중 · 속도",
+"en": "🎮 Piloting missile · speed"
+},
+{
+"id": 650,
+"k": "· 높이",
+"en": "· height"
+},
+{
+"id": 651,
+"k": "· 남은 시간",
+"en": "· time left"
+},
+{
+"id": 652,
+"k": "마우스 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파",
+"en": "Mouse: steer · W: boost · S: slow · Right click/Space: detonate"
+},
+{
+"id": 653,
+"k": "미사일 조종 시작!",
+"en": "Missile control engaged!"
+},
+{
+"id": 654,
+"k": "마우스로 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파",
+"en": " Mouse: steer · W: boost · S: slow · Right click/Space: detonate"
+},
+{
+"id": 655,
+"k": "이 있어야 조종할 수 있어요",
+"en": " is needed to pilot"
+},
+{
+"id": 656,
+"k": "🎮 미사일 조종 중",
+"en": "🎮 Piloting missile"
+},
+{
+"id": 657,
+"k": "속도",
+"en": "speed"
+},
+{
+"id": 658,
+"k": "높이",
+"en": "height"
+},
+{
+"id": 659,
+"k": "남은 시간",
+"en": "time left"
+},
+{
+"id": 660,
+"k": "🎮 조종할 무기:",
+"en": "🎮 Weapon to pilot:"
+},
+{
+"id": 661,
+"k": "(반경",
+"en": "(radius"
+},
+{
+"id": 662,
+"k": "칸)",
+"en": " blocks)"
+},
+{
+"id": 663,
+"k": "조종 시작!",
+"en": " — piloting!"
+},
+{
+"id": 664,
+"k": "조종 중 · 반경",
+"en": " — piloting · radius"
+},
+{
+"id": 665,
+"k": "칸 · 속도",
+"en": " blocks · speed"
+},
+{
+"id": 666,
+"k": "이(가) 있어야 조종할 수 있어요 (웅크리고 쓰면 무기 바꾸기)",
+"en": " is needed to pilot (crouch + use to switch weapon)"
+},
+{
+"id": 667,
+"k": "핵폭탄 리모컨",
+"en": "Nuke Remote"
+},
+{
+"id": 668,
+"k": "원자폭탄 리모컨",
+"en": "Atomic Bomb Remote"
+},
+{
+"id": 669,
+"k": "차르 봄바 리모컨",
+"en": "Tsar Bomba Remote"
+},
+{
+"id": 670,
+"k": "이(가) 있어야 조종할 수 있어요",
+"en": " is needed to pilot"
+},
+{
+"id": 671,
+"k": "📰 패치 노트",
+"en": "📰 Patch Notes"
+},
+{
+"id": 672,
+"k": "⚙ 설정",
+"en": "⚙ Settings"
+},
+{
+"id": 673,
+"k": "플레이",
+"en": "PLAY"
+},
+{
+"id": 674,
+"k": "패치 노트",
+"en": "Patch Notes"
+},
+{
+"id": 675,
+"k": "설치 설정",
+"en": "Settings"
+},
+{
+"id": 676,
+"k": "🎬 스텔라 연출",
+"en": "🎬 Stellar cutscenes"
+},
+{
+"id": 677,
+"k": "스텔라 리모컨을 든 채 J로 켜고 끌 수 있어요.",
+"en": "Hold the Stellar Remote and press J to toggle them."
+},
+{
+"id": 678,
+"k": "버전",
+"en": "Version"
+},
+{
+"id": 679,
+"k": "플레이어",
+"en": "Player"
+},
+{
+"id": 680,
+"k": "© CAVEBUILD · 동아리 발표게임",
+"en": "© CAVEBUILD"
+},
+{
+"id": 681,
+"k": "▶ 플레이",
+"en": "▶ Play"
+},
+{
+"id": 682,
+"k": "🌍 새 세계 만들기",
+"en": "🌍 Create New World"
+},
+{
+"id": 683,
+"k": "세계 이름 (비우면 자동)",
+"en": "World name (auto if empty)"
+},
+{
+"id": 684,
+"k": "🗂 전에 하던 서버",
+"en": "🗂 Your Worlds"
+},
+{
+"id": 685,
+"k": "📂 저장 파일 불러오기",
+"en": "📂 Load save file"
+},
+{
+"id": 686,
+"k": "🎮 모드",
+"en": "🎮 Mode"
+},
+{
+"id": 687,
+"k": "🔥 난이도",
+"en": "🔥 Difficulty"
+},
+{
+"id": 688,
+"k": "난이도",
+"en": "Difficulty"
+},
+{
+"id": 689,
+"k": "모드 · 난이도는 새로 만드는 세계에 쓰여요. 게임 중에는 일시정지 → ⚙ 서버 설정에서 바꿀 수 있어요.",
+"en": "Mode and difficulty apply to new worlds. In game, change them from Pause → ⚙ Server Settings."
+},
+{
+"id": 690,
+"k": "몹이 절반만 아프게 때려요.",
+"en": "Mobs deal half damage."
+},
+{
+"id": 691,
+"k": "보통 난이도예요.",
+"en": "Normal difficulty."
+},
+{
+"id": 692,
+"k": "몹이 1.5배 아프게 때려요.",
+"en": "Mobs deal 1.5× damage."
+},
+{
+"id": 693,
+"k": "몹이 1.5배 아프게 때리고, 목숨은 단 하나! 쓰러지면 세계가 사라져요.",
+"en": "Mobs deal 1.5× damage and you only have one life — if you die, the world is deleted!"
+},
+{
+"id": 694,
+"k": "▶ 접속",
+"en": "▶ Join"
+},
+{
+"id": 695,
+"k": "정말?",
+"en": "Sure?"
+},
+{
+"id": 696,
+"k": "아직 만든 세계가 없어요",
+"en": "No worlds yet"
+},
+{
+"id": 697,
+"k": "(⚙ 설정에서 바꾸기)",
+"en": "(change in ⚙ Settings)"
+},
+{
+"id": 698,
+"k": "이 세계를 불러오지 못했어요",
+"en": "Couldn't load this world"
+},
+{
+"id": 699,
+"k": "세계를 지웠어요",
+"en": "World deleted"
+},
+{
+"id": 700,
+"k": "난이도:",
+"en": "Difficulty:"
+},
+{
+"id": 701,
+"k": "불러온 세계",
+"en": "Imported world"
+},
+{
+"id": 702,
+"k": "세계",
+"en": "World"
+},
+{
+"id": 703,
+"k": "💀 하드코어 세계에서는 다시 살아날 수 없어요 — 이제 관전만 할 수 있어요",
+"en": "💀 You can't respawn in Hardcore — you can only spectate now"
+},
+{
+"id": 704,
+"k": "👁 관전하기",
+"en": "👁 Spectate world"
+},
+{
+"id": 705,
+"k": "👁 하드코어에서 쓰러졌어요. 이 세계는 이제",
+"en": "👁 You died in Hardcore. This world is now"
+},
+{
+"id": 706,
+"k": "만 할 수 있어요",
+"en": " only"
+},
+{
+"id": 707,
+"k": "💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요",
+"en": "💀 This Hardcore world is spectator-only after your death"
+},
+{
+"id": 708,
+"k": "몹이 1.5배 아프게 때리고, 목숨은 단 하나! 쓰러지면 그 세계는 관전만 할 수 있어요.",
+"en": "Mobs deal 1.5× damage and you only have one life — after you die you can only spectate that world."
+},
+{
+"id": 709,
+"k": "관전",
+"en": "Spectator"
+},
+{
+"id": 710,
+"k": "아끼는 세계라면 조심해서 쓰세요",
+"en": ". Use it carefully on worlds you care about"
+},
+{
+"id": 711,
+"k": "조심해서 쓰세요!",
+"en": "so use it carefully!"
+},
+{
+"id": 712,
+"k": "L:PLAY",
+"en": "PLAY"
+},
+{
+"id": 713,
+"k": "L:PATCH NOTES",
+"en": "PATCH NOTES"
+},
+{
+"id": 714,
+"k": "L:SETTINGS",
+"en": "SETTINGS"
+},
+{
+"id": 715,
+"k": "L:📰 Patch Notes",
+"en": "📰 Patch Notes"
+},
+{
+"id": 716,
+"k": "L:⚙ Settings",
+"en": "⚙ Settings"
+},
+{
+"id": 717,
+"k": "L:Version",
+"en": "Version"
+},
+{
+"id": 718,
+"k": "L:Player",
+"en": "Player"
+},
+{
+"id": 719,
+"k": "L:Latest release",
+"en": "Latest release"
+},
+{
+"id": 720,
+"k": "L:🌐 Language",
+"en": "🌐 Language"
+},
+{
+"id": 721,
+"k": "L:🎬 Stellar cutscenes",
+"en": "🎬 Stellar cutscenes"
+},
+{
+"id": 722,
+"k": "L:Hold the Stellar Remote and press J to toggle them.",
+"en": "Hold the Stellar Remote and press J to toggle them."
+},
+{
+"id": 723,
+"k": "L:Search languages…",
+"en": "Search languages…"
+},
+{
+"id": 724,
+"k": "L:No matching language",
+"en": "No matching language"
+},
+{
+"id": 725,
+"k": "L:Back to launcher",
+"en": "Back to launcher"
+},
+{
+"id": 726,
+"k": "L:Save & Quit to Launcher",
+"en": "Save & Quit to Launcher"
+},
+{
+"id": 727,
+"k": "S:CB-TSR",
+"en": "A red laser marks the ground under your crosshair. The camera flies past Earth\\'s atmosphere, Saturn and across the Milky Way to the railgun <b>The Shooting Star</b> at the galaxy\\'s rim, which spins its <b>Star Power</b> crystal and fires a red laser. 15 seconds later it arrives and blasts a <b>50-block radius</b> from the sky down to the void. Anyone standing inside vanishes with it (Creative players are evacuated first).',\n  'CB-NM':'An ember mark is burned onto your target, and <b>satellites orbiting Mars and Jupiter</b> launch <b>nuclear missiles</b>. 14 seconds later the fleet falls on the mark with a mushroom cloud, and the shockwave planes <b>400 blocks</b> around it flat. The center becomes a molten crater, and the boom only arrives after the shockwave has passed.',\n  'CB-SL':'The <b>Big Dipper</b> rises in the sky and the seven stars of Ursa Major wake as a stellar array and fire <b>red lasers</b>. One by one they all strike <b>the exact spot you chose</b>, each blast bigger than the last, and a final explosion leaves a <b>26-block</b> crater with a Star Core Crystal (Creative players keep the ground under their feet)."
+},
+{
+"id": 728,
+"k": "HELP",
+"en": "\n    <div class=\"deskonly\"><h4>🖥 PC Controls</h4>\n      <span class=\"k\">Move</span><b>WASD</b> move · <b>Space</b> jump/swim · <b>Shift</b> sprint (in water: <b>swim</b>) · <b>C</b> crouch (won't fall off edges)<br>\n      <span class=\"k\">View</span><b>Mouse</b> look around · <b>P</b> change view (3rd front → 3rd back → 1st person)<br>\n      <span class=\"k\">Attack · Mine</span><b>Left click</b> attack · <b>Hold left click</b> mine a block<br>\n      <span class=\"k\">Use</span><b>Right click</b> place / eat / use / trade · with a weapon, <b>hold right click</b> to block with a shield<br>\n      <span class=\"k\">Items</span><b>1~9 / wheel</b> select · <b>E</b> inventory & crafting · <b>Q</b> drop (<b>Ctrl+Q</b> whole stack)<br>\n      <span class=\"k\">Inventory</span><b>Left click</b> pick up/place · <b>Right click</b> split half/place one · <b>Shift+click</b> quick move / equip armor<br>\n      <span class=\"k\">Other</span><b>F3</b> debug info · <b>Esc</b> pause\n    </div>\n    <div class=\"mobonly\"><h4>📱 Mobile Controls</h4>\n      <span class=\"k\">Move</span><b>Left side</b> joystick (push all the way to sprint) · <b>⤒</b> jump/swim · <b>🏃</b> sprint (in water: <b>swim</b>) · <b>🧎</b> crouch<br>\n      <span class=\"k\">View</span><b>Drag the right side</b> to look around · <b>👁</b> change view<br>\n      <span class=\"k\">Attack · Mine</span><b>⛏</b> tap to attack · hold to mine<br>\n      <span class=\"k\">Use</span><b>✋</b> place / eat / use / trade · with a weapon, <b>hold ✋</b> to block with a shield<br>\n      <span class=\"k\">Items</span>Tap a slot below to select · <b>🎒</b> inventory & crafting · <b>🗑</b> drop (hold for whole stack)<br>\n      <span class=\"k\">Other</span><b>⏸</b> pause\n    </div>\n    <h4>📖 Tips</h4>\n    • Wood → Planks → Crafting Table → Pickaxe! At night <b>Gloomlings</b> appear.<br>\n    • Caves and nights are dark — craft a <b>Lantern</b> (Coal + Stick + Planks) and sleep through the night in a <b>Bed</b>.<br>\n    • At night <b>Zombies</b> and bow-wielding <b>Skeleton Archers</b> roam, and <b>Ember Blobs</b> hide in deep caves. Prepare with <b>armor</b>, a bow and a <b>Shield</b> (6 Planks + 1 Iron Ingot).<br>\n    • Use a <b>Dimension Compass</b> (3 Iron Ingots + 1 <b>Energy Stone</b>) to find the Frontier's portals and challenge the bosses of the <b>Abyss</b> (Pandemonium lies deep below), the <b>Horizon</b> and the <b>Necropolis</b>.<br>\n    &nbsp;&nbsp;The Horizon portal is in an underground <b>Marker Stone</b> room and opens with 12 <b>Portal Keys</b> dropped by Teleporters. The Necropolis portal is in an infected ruined village deep underground.<br>\n    • Water and lava <b>flow</b>. Still water meeting still lava makes <b>Obsidian</b>; if either is flowing you get <b>Cobblestone</b>. Obsidian needs an <b>Iron Pickaxe</b> or better.<br>\n    • A village <b>Blacksmith's House</b> has enough lava on its floor (10 blocks) for one portal. Build a 4×5 frame from 10~14 <b>Obsidian</b> to open an <b>Abyss Portal</b>.<br>\n    • Stack <b>Iron Blocks</b> in a T shape and put <b>Wooden Planks</b> on top to awaken a <b>Villager Guardian</b>.<br>\n    • Trade with villagers in <b>Villages</b> using <b>Coins</b>. Hurt a villager and the Guardian will chase you until you leave!<br>\n    • <b>Doors</b> (6 Planks → 3) are 2 blocks tall and open with <span class=\"deskonly\">right click</span><span class=\"mobonly\">✋</span>. Chop a whole tree and a <b>Sapling</b> drops — plant it on grass or dirt and it grows in a few minutes.<br>\n    • Climb <b>Ladders</b> (7 Sticks) placed on walls, store things in <b>Chests</b> (8 Planks), and <b>Hoppers</b> (5 Iron Ingots + Chest) suck up items from above into the chest below.<br>\n    • <b>Mace</b> = <b>Iron Rod</b> (8 Iron Ingots + 1 Stick) + <b>Mace Head</b> (1 Iron Ingot + 8 Spikes). One hit every 2.5s for <b>20</b>! It hits harder the <b>higher you fall from</b>, and <b>sprinting headshots</b> deal 1.5×.<br>\n    • Wear <b>Elytra</b> (10 Feathers + 4 Sticky Silk + 2 Crystals, also dropped by the Ender Dragon) in the chest slot and press <b>Jump</b> again while falling to glide. Look down to speed up, up to climb. Use a <b>Firework</b> (1 Coal + 1 Stick → 3) while flying to boost forward!<br>\n    • <b>🛰 Stellar Remote</b> (8 Energy Stones around 1 <b>Star Power</b>) — The Shooting Star! Reshape the world with <b>CB-TSR Railgun</b> (50-block radius) · <b>CB-NM Gungnir</b> (400 blocks) · <b>CB-SL Seven Stars</b> (1,440 blocks), each with a space cutscene through Earth, Saturn, the galaxy, Mars, Jupiter and Ursa Major (K/I/U select · <span class=\"deskonly\">right click</span><span class=\"mobonly\">✋</span> fire · crouch-use for next skill · H menu · J skip / hold the remote and press J to toggle cutscenes). <b>It changes the world forever</b> — use it carefully!<br>\n    • Deep <b>radioactive ores</b> (Uranium · Radium · Plutonium · Polonium · Protactinium) deal <b>Radiation</b> damage when nearby or carried. Armor (except cloth and leather) blocks 20% per piece, and a <b>Gas mask & hazmat suit</b> (made from leather) block 25% per piece — all four pieces block it completely.<br>\n    • New ores: <b>Copper</b>·<b>Gold</b> (stone pickaxe) · <b>Titanium</b> (iron pickaxe) · <b>Diamond</b>·<b>Red Diamond</b> (crystal pickaxe) · <b>Black Diamond</b> (blazestone pickaxe). Deeper means rarer. Smelt ores in a kiln into ingots and gems, then craft <b>tools</b> and <b>armor</b>, or 9 of them into <b>Copper · Gold · Titanium · Diamond blocks</b>.<br>\n    • Choose <b>Survival · Creative · Hardcore · Safe · Spectator</b> when creating a world, and change it any time in the pause menu's <b>⚙ Server Settings</b>.<br>\n    • Pods of <b>Dolphins</b> leap in the deep sea. Swim next to them for <b>Dolphin's Grace</b> and faster swimming.<br>\n    • <b>Sea Turtles</b> rest on sandy beaches and swim out to sea. Make a <b>Turtle Shell Helmet</b> from 5 <b>Turtle Scutes</b> to hold your breath 3× longer.<br>\n    • <b>Squid</b> live in the deep sea and drop <b>Ink Sacs</b>, which the Sage villager buys for coins. Hold a <b>Net</b> (2 Sticks + 4 Sticky Silk) and use it on a squid to catch it <b>alive</b>; use it on water to release it.<br>\n    • <b>Fish</b> swim in the sea. Catch them or use a <b>Fishing Rod</b> (3 Sticks + 2 Sticky Silk), then cook them in a kiln for <b>Cooked Fish</b>. Cast the bobber and when it dips, <span class=\"deskonly\">right click</span><span class=\"mobonly\">✋</span> again! Fish out of water suffocate.<br>\n    • <b>🔫 Guns</b>: Pistol (3 Steel + 2 Iron Ingots + 1 Stick) · Assault Rifle (3 Steel Alloy + 2 Steel + 2 Iron Ingots) · Bullets (1 Iron Ingot + 1 Coal → 16). Headshots deal 2×!<br>\n    • <b>☢ Nuke</b> (nuclear missile) = 1 Uranium + 1 Plutonium + 1 Steel Superalloy Block (Superalloy Block = Steel + Steel Alloy + Iron Ingot, Steel = Iron Ingot + Stone, Steel Alloy = Steel + Stone). Place it and use it — it rockets into the sky, falls back on the same spot and wipes out a 40-block radius!<br>\n    • Upgrade crystal gear with <b>Blazestone</b> from deep in the Abyss. <b>Energy Stone</b> is this world's electricity, mined from Energy Stone Ore in deep caves. Very deep down (below height 9) you may find rare, red-glowing <b>Star Power Ore</b> (diamond pickaxe or better).\n"
+}
+]
