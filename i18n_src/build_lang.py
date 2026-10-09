@@ -20,6 +20,12 @@ for fn in sorted(os.listdir(os.path.join(D,'out'))):
             for code2,txt in zip(['CB-TSR','CB-NM','CB-SL'],parts):out['S:'+code2]=txt.replace("\\'","'")
             continue
         out[k]=v
+    p2=os.path.join(D,'out2',fn) # 2차: 재료+도구/갑옷 이름 통째로 · 난이도 이름
+    if os.path.exists(p2):
+        T2=json.load(open(p2,encoding='utf-8'));S2=json.load(open(os.path.join(D,'source2_en.json'),encoding='utf-8'))
+        for x in S2:
+            v=T2.get(str(x['id']))
+            if isinstance(v,str) and v.strip():out[x['k']]=v
     json.dump(out,open(os.path.join(ROOT,'lang',code+'.json'),'w',encoding='utf-8'),ensure_ascii=False,separators=(',',':'))
     done.append(f"{code}:{len(out)}")
 print(' '.join(done))

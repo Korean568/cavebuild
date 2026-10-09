@@ -1,0 +1,457 @@
+[
+{
+"k": "나무 곡괭이",
+"en": "Wooden Pickaxe",
+"id": 0
+},
+{
+"k": "나무 도끼",
+"en": "Wooden Axe",
+"id": 1
+},
+{
+"k": "나무 삽",
+"en": "Wooden Shovel",
+"id": 2
+},
+{
+"k": "나무 검",
+"en": "Wooden Sword",
+"id": 3
+},
+{
+"k": "돌 곡괭이",
+"en": "Stone Pickaxe",
+"id": 4
+},
+{
+"k": "돌 도끼",
+"en": "Stone Axe",
+"id": 5
+},
+{
+"k": "돌 삽",
+"en": "Stone Shovel",
+"id": 6
+},
+{
+"k": "돌 검",
+"en": "Stone Sword",
+"id": 7
+},
+{
+"k": "철 곡괭이",
+"en": "Iron Pickaxe",
+"id": 8
+},
+{
+"k": "철 도끼",
+"en": "Iron Axe",
+"id": 9
+},
+{
+"k": "철 삽",
+"en": "Iron Shovel",
+"id": 10
+},
+{
+"k": "철 검",
+"en": "Iron Sword",
+"id": 11
+},
+{
+"k": "수정 곡괭이",
+"en": "Crystal Pickaxe",
+"id": 12
+},
+{
+"k": "수정 도끼",
+"en": "Crystal Axe",
+"id": 13
+},
+{
+"k": "수정 삽",
+"en": "Crystal Shovel",
+"id": 14
+},
+{
+"k": "수정 검",
+"en": "Crystal Sword",
+"id": 15
+},
+{
+"k": "블레이즈스톤 곡괭이",
+"en": "Blazestone Pickaxe",
+"id": 16
+},
+{
+"k": "블레이즈스톤 도끼",
+"en": "Blazestone Axe",
+"id": 17
+},
+{
+"k": "블레이즈스톤 삽",
+"en": "Blazestone Shovel",
+"id": 18
+},
+{
+"k": "블레이즈스톤 검",
+"en": "Blazestone Sword",
+"id": 19
+},
+{
+"k": "구리 곡괭이",
+"en": "Copper Pickaxe",
+"id": 20
+},
+{
+"k": "구리 도끼",
+"en": "Copper Axe",
+"id": 21
+},
+{
+"k": "구리 삽",
+"en": "Copper Shovel",
+"id": 22
+},
+{
+"k": "구리 검",
+"en": "Copper Sword",
+"id": 23
+},
+{
+"k": "금 곡괭이",
+"en": "Gold Pickaxe",
+"id": 24
+},
+{
+"k": "금 도끼",
+"en": "Gold Axe",
+"id": 25
+},
+{
+"k": "금 삽",
+"en": "Gold Shovel",
+"id": 26
+},
+{
+"k": "금 검",
+"en": "Gold Sword",
+"id": 27
+},
+{
+"k": "티타늄 곡괭이",
+"en": "Titanium Pickaxe",
+"id": 28
+},
+{
+"k": "티타늄 도끼",
+"en": "Titanium Axe",
+"id": 29
+},
+{
+"k": "티타늄 삽",
+"en": "Titanium Shovel",
+"id": 30
+},
+{
+"k": "티타늄 검",
+"en": "Titanium Sword",
+"id": 31
+},
+{
+"k": "다이아몬드 곡괭이",
+"en": "Diamond Pickaxe",
+"id": 32
+},
+{
+"k": "다이아몬드 도끼",
+"en": "Diamond Axe",
+"id": 33
+},
+{
+"k": "다이아몬드 삽",
+"en": "Diamond Shovel",
+"id": 34
+},
+{
+"k": "다이아몬드 검",
+"en": "Diamond Sword",
+"id": 35
+},
+{
+"k": "레드 다이아몬드 곡괭이",
+"en": "Red Diamond Pickaxe",
+"id": 36
+},
+{
+"k": "레드 다이아몬드 도끼",
+"en": "Red Diamond Axe",
+"id": 37
+},
+{
+"k": "레드 다이아몬드 삽",
+"en": "Red Diamond Shovel",
+"id": 38
+},
+{
+"k": "레드 다이아몬드 검",
+"en": "Red Diamond Sword",
+"id": 39
+},
+{
+"k": "블랙 다이아몬드 곡괭이",
+"en": "Black Diamond Pickaxe",
+"id": 40
+},
+{
+"k": "블랙 다이아몬드 도끼",
+"en": "Black Diamond Axe",
+"id": 41
+},
+{
+"k": "블랙 다이아몬드 삽",
+"en": "Black Diamond Shovel",
+"id": 42
+},
+{
+"k": "블랙 다이아몬드 검",
+"en": "Black Diamond Sword",
+"id": 43
+},
+{
+"k": "천 투구",
+"en": "Cloth Helmet",
+"id": 44
+},
+{
+"k": "천 흉갑",
+"en": "Cloth Chestplate",
+"id": 45
+},
+{
+"k": "천 각반",
+"en": "Cloth Leggings",
+"id": 46
+},
+{
+"k": "천 장화",
+"en": "Cloth Boots",
+"id": 47
+},
+{
+"k": "철 투구",
+"en": "Iron Helmet",
+"id": 48
+},
+{
+"k": "철 흉갑",
+"en": "Iron Chestplate",
+"id": 49
+},
+{
+"k": "철 각반",
+"en": "Iron Leggings",
+"id": 50
+},
+{
+"k": "철 장화",
+"en": "Iron Boots",
+"id": 51
+},
+{
+"k": "수정 투구",
+"en": "Crystal Helmet",
+"id": 52
+},
+{
+"k": "수정 흉갑",
+"en": "Crystal Chestplate",
+"id": 53
+},
+{
+"k": "수정 각반",
+"en": "Crystal Leggings",
+"id": 54
+},
+{
+"k": "수정 장화",
+"en": "Crystal Boots",
+"id": 55
+},
+{
+"k": "블레이즈스톤 투구",
+"en": "Blazestone Helmet",
+"id": 56
+},
+{
+"k": "블레이즈스톤 흉갑",
+"en": "Blazestone Chestplate",
+"id": 57
+},
+{
+"k": "블레이즈스톤 각반",
+"en": "Blazestone Leggings",
+"id": 58
+},
+{
+"k": "블레이즈스톤 장화",
+"en": "Blazestone Boots",
+"id": 59
+},
+{
+"k": "구리 투구",
+"en": "Copper Helmet",
+"id": 60
+},
+{
+"k": "구리 흉갑",
+"en": "Copper Chestplate",
+"id": 61
+},
+{
+"k": "구리 각반",
+"en": "Copper Leggings",
+"id": 62
+},
+{
+"k": "구리 장화",
+"en": "Copper Boots",
+"id": 63
+},
+{
+"k": "금 투구",
+"en": "Gold Helmet",
+"id": 64
+},
+{
+"k": "금 흉갑",
+"en": "Gold Chestplate",
+"id": 65
+},
+{
+"k": "금 각반",
+"en": "Gold Leggings",
+"id": 66
+},
+{
+"k": "금 장화",
+"en": "Gold Boots",
+"id": 67
+},
+{
+"k": "티타늄 투구",
+"en": "Titanium Helmet",
+"id": 68
+},
+{
+"k": "티타늄 흉갑",
+"en": "Titanium Chestplate",
+"id": 69
+},
+{
+"k": "티타늄 각반",
+"en": "Titanium Leggings",
+"id": 70
+},
+{
+"k": "티타늄 장화",
+"en": "Titanium Boots",
+"id": 71
+},
+{
+"k": "다이아몬드 투구",
+"en": "Diamond Helmet",
+"id": 72
+},
+{
+"k": "다이아몬드 흉갑",
+"en": "Diamond Chestplate",
+"id": 73
+},
+{
+"k": "다이아몬드 각반",
+"en": "Diamond Leggings",
+"id": 74
+},
+{
+"k": "다이아몬드 장화",
+"en": "Diamond Boots",
+"id": 75
+},
+{
+"k": "레드 다이아몬드 투구",
+"en": "Red Diamond Helmet",
+"id": 76
+},
+{
+"k": "레드 다이아몬드 흉갑",
+"en": "Red Diamond Chestplate",
+"id": 77
+},
+{
+"k": "레드 다이아몬드 각반",
+"en": "Red Diamond Leggings",
+"id": 78
+},
+{
+"k": "레드 다이아몬드 장화",
+"en": "Red Diamond Boots",
+"id": 79
+},
+{
+"k": "블랙 다이아몬드 투구",
+"en": "Black Diamond Helmet",
+"id": 80
+},
+{
+"k": "블랙 다이아몬드 흉갑",
+"en": "Black Diamond Chestplate",
+"id": 81
+},
+{
+"k": "블랙 다이아몬드 각반",
+"en": "Black Diamond Leggings",
+"id": 82
+},
+{
+"k": "블랙 다이아몬드 장화",
+"en": "Black Diamond Boots",
+"id": 83
+},
+{
+"k": "가죽 투구",
+"en": "Leather Helmet",
+"id": 84
+},
+{
+"k": "가죽 흉갑",
+"en": "Leather Chestplate",
+"id": 85
+},
+{
+"k": "가죽 각반",
+"en": "Leather Leggings",
+"id": 86
+},
+{
+"k": "가죽 장화",
+"en": "Leather Boots",
+"id": 87
+},
+{
+"k": "🙂 쉬움",
+"en": "🙂 Easy",
+"id": 88
+},
+{
+"k": "⚖ 보통",
+"en": "⚖ Normal",
+"id": 89
+},
+{
+"k": "😈 어려움",
+"en": "😈 DIFFICULT",
+"id": 90
+}
+]
