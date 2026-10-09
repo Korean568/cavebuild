@@ -2,10 +2,6 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<script>/* korean568.github.io/cavebuild 로 바로 들어오면 먼저 런처로 (런처의 PLAY는 ?play=1 로 들어옴) */
-(function(){if(location.hostname!=='korean568.github.io')return;var q=/[?&]play=1/.test(location.search),ok=false;
-try{if(q)sessionStorage.setItem('cb-play','1');ok=q||sessionStorage.getItem('cb-play')==='1';}catch(e){ok=q;}
-if(!ok)location.replace('https://korean568.github.io/cavebuildhome/');})();</script>
 <title>CAVEBUILD</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
@@ -104,22 +100,6 @@ body.mobile .help div.mobonly{display:block}
 #stellarMenu .sk{background:rgba(20,20,30,.85);border:2px solid #555;padding:8px 12px;cursor:pointer;font-size:14px}
 #stellarMenu .sk.on{border-color:#e03030;background:rgba(80,10,10,.85)}
 #stellarMenu .sk small{color:#ccc}
-.lpick{width:min(760px,92vw);margin:0 auto}.lpick .lsearch{font:inherit;font-size:14px;width:100%;box-sizing:border-box;padding:7px 10px;background:rgba(0,0,0,.45);color:#fff;border:2px solid #333;outline:none;margin-bottom:5px}
-.lpick .llist{max-height:min(56vh,460px);overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:4px;border:2px solid rgba(255,255,255,.08);padding:4px;background:rgba(0,0,0,.25)}
-.lpick .llist button{font:inherit;text-align:left;padding:5px 8px;background:#3a3a3a;color:#fff;border:2px solid #222;cursor:pointer;display:flex;flex-direction:column;line-height:1.25}
-.lpick .llist button.on{background:#3c8d2f}.lpick .llist small{color:#bbb;font-size:11px}.lpick .lnone{color:#999;padding:8px;grid-column:1/-1}
-#tSettings .ppbox{width:min(820px,96vw)}
-@media (max-height:820px){#settings,#pause,#tSettings,#playPanel,#stellarMenu,#modPanel{justify-content:flex-start;overflow-y:auto;padding:16px 0 40px;box-sizing:border-box}} /* 휴대폰: 아래 닫기 버튼까지 스크롤 */
-#playPanel,#tSettings{z-index:12}.ppbox{background:rgba(10,12,18,.86);padding:16px 22px;border:3px solid #222;width:min(560px,92vw);max-height:90vh;overflow:auto;box-sizing:border-box;text-align:center}
-.ppbox h3.sub{font-size:14px;color:#cfe;margin:10px 0 4px}
-.ppbox h2{margin:0 0 8px;font-size:30px;text-shadow:3px 3px 0 #222}.ppbox h3{margin:14px 0 6px;font-size:16px;color:#9fe0ff;text-align:left}
-.ppbox input{font:inherit;font-size:15px;width:100%;padding:8px 10px;margin:3px 0;box-sizing:border-box;background:rgba(0,0,0,.45);color:#fff;border:2px solid #333;outline:none}
-.ppsec{background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.08);padding:4px 12px 10px;margin-bottom:8px}.ppbox .btn{min-width:200px}
-.ppinfo{font-size:13px;color:#bbb;margin:6px 0}
-#worldList .wi{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:2px solid #333;padding:7px 10px;margin:5px 0;text-align:left}
-#worldList .wi div{flex:1;min-width:0}#worldList .wi b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#worldList .wi small{color:#aaa;font-size:12px}
-#worldList .wi button{font:inherit;font-size:14px;padding:6px 10px;background:#3c8d2f;color:#fff;border:2px solid #222;cursor:pointer}#worldList .wi button.del{background:#6a2a2a}
-#worldList .empty{color:#999;font-size:14px;padding:8px}
 #modPanel h2{font-size:32px;margin:0 0 8px;text-shadow:3px 3px 0 #222}#modPanel .mwarn{max-width:480px;font-size:13px;background:rgba(90,40,10,.8);border:2px solid #c87a30;padding:6px 10px;margin-bottom:8px}
 #modList{display:flex;flex-direction:column;gap:5px;width:min(480px,92vw);margin-bottom:8px}#modList .mi{display:flex;align-items:center;gap:8px;background:rgba(20,20,30,.85);border:2px solid #555;padding:6px 10px;font-size:14px}
 #modList .mi b{flex:1}#modList .mi.off{opacity:.55}#modList .mi small{color:#f88}#modList button{font:inherit;font-size:12px;padding:3px 8px}#modPanel .mrow{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
@@ -212,11 +192,16 @@ body.mobile #toasts{top:72px}
   <h1>CAVEBUILD</h1>
   <div class="en">케 이 브 빌 드</div>
   <div class="sub">캐고, 짓고, 살아남으세요</div>
-  <button class="btn" id="btnPlay">▶ 플레이</button>
-  <button class="btn" id="btnTSet">⚙ 설정</button>
+  <button class="btn" id="btnNew">새 세계 만들기</button>
+  <input id="seedIn" type="text" placeholder="🌱 세계 코드 (비우면 무작위)" autocomplete="off" maxlength="40">
+  <div id="modeSel"><button data-m="survival" class="on">⚔ 서바이벌</button><button data-m="creative">🛠 크리에이티브</button><button data-m="hardcore">💀 하드코어</button><button data-m="safe">🕊 세이프</button><button data-m="spectator">👁 관전</button></div>
+  <div id="modeDesc">배고픔·체력을 챙기며 살아남아요. 쓰러져도 스폰 지점에서 다시 시작해요.</div>
+  <button class="btn" id="btnCont">이어하기</button>
+  <button class="btn" id="btnImport">저장 파일 불러오기</button><input type="file" id="fileImport" accept=".json,application/json" hidden>
   <button class="btn" id="btnHelp">❓ 도움말 보기</button>
   <button class="btn" id="btnUpd">📜 업데이트 목록</button>
   <button class="btn" id="btnMods">🧩 모드</button>
+  <button class="btn" id="btnLang">🌐 English</button>
   <div class="help">
     <div class="deskonly"><h4>🖥 PC 조작법</h4>
       <span class="k">이동</span><b>WASD</b> 이동 · <b>스페이스</b> 점프/수영 · <b>Shift</b> 달리기 (물속에선 <b>수영</b>) · <b>C</b> 웅크리기 (모서리에서 안 떨어짐)<br>
@@ -249,7 +234,7 @@ body.mobile #toasts{top:72px}
     • <b>사다리</b>(막대기 7)는 벽에 붙여 오르고, <b>상자</b>(판자 8)에 물건을 보관하고, <b>호퍼</b>(철 주괴 5 + 상자)는 위에 떨어진 아이템을 빨아들여 아래 상자로 보내요.<br>
     • <b>철퇴</b> = <b>철막대기</b>(철 주괴 8 + 막대기 1) + <b>메이스 헤드</b>(철 주괴 1 + 가시 8). 2.5초마다 한 방에 <b>20</b>! <b>높은 곳에서 떨어지며</b> 칠수록 더 세지고, <b>달리면서 머리</b>를 치면 1.5배예요.<br>
     • <b>겉날개</b>(깃털 10 + 끈적실 4 + 수정 2, 엔딩드래곤도 떨어뜨림)를 흉갑 칸에 입고 떨어지는 중에 <b>점프</b>를 다시 누르면 활공해요. 아래를 보면 빨라지고 위를 보면 올라가요. 날면서 <b>폭죽</b>(석탄 1 + 막대기 1 → 3개)을 쓰면 앞으로 쭉 날아가요!<br>
-    • <b>🛰 스텔라 리모컨</b>(에너지 스톤 8 테두리 + 가운데 <b>별의 힘</b> 1) — The Shooting Star! <b>CB-TSR 레일건</b>(CAVEBUILD-The Shooting Star Railgun · 반경 50칸) · <b>CB-NM 궁니르</b>(CAVEBUILD-Nuclear Missile · 400칸) · <b>CB-SL 칠성</b>(CAVEBUILD-Star Light · 고른 위치에 일곱 레이저)으로 세계를 바꿔요. 발동하면 지구 · 토성 · 은하 · 목성 · 큰곰자리를 오가는 우주 연출이 나와요 (K/I/U 선택 · <span class="deskonly">우클릭</span><span class="mobonly">✋</span> 발동 · 웅크리고 쓰면 다음 기술 · H 메뉴 · J 연출 넘기기 / 들고 J 연출 켜기·끄기). <b>세계를 영원히 바꾸니</b> 조심해서 쓰세요!<br>
+    • <b>🛰 스텔라 리모컨</b>(에너지 스톤 8 테두리 + 가운데 <b>별의 힘</b> 1) — The Shooting Star! <b>CB-TSR 레일건</b>(CAVEBUILD-The Shooting Star Railgun · 반경 50칸) · <b>CB-NM 궁니르</b>(CAVEBUILD-Nuclear Missile · 400칸) · <b>CB-SL 칠성</b>(CAVEBUILD-Star Light · 고른 위치에 일곱 레이저)으로 세계를 바꿔요. 발동하면 지구 · 토성 · 은하 · 목성 · 큰곰자리를 오가는 우주 연출이 나와요 (K/I/U 선택 · <span class="deskonly">우클릭</span><span class="mobonly">✋</span> 발동 · 웅크리고 쓰면 다음 기술 · H 메뉴 · J 연출 넘기기 / 들고 J 연출 켜기·끄기). <b>세계를 영원히 바꾸니</b> 저장 파일을 내보내 두세요!<br>
     • 깊은 곳의 <b>방사성 광석</b>(우라늄 · 라듐 · 플루토늄 · 폴로늄 · 프로트악티늄)은 가까이 있거나 들고 다니면 <b>방사능</b> 피해를 줘요. 천·가죽을 뺀 갑옷은 한 부위당 20%, <b>방독면·방독복</b>(가죽으로 만듦)은 25%씩 막아서 네 부위를 다 입으면 완전히 막혀요.<br>
     • 새 광석: <b>구리</b>·<b>금</b>(돌 곡괭이) · <b>티타늄</b>(철 곡괭이) · <b>다이아몬드</b>·<b>레드 다이아몬드</b>(수정 곡괭이) · <b>블랙 다이아몬드</b>(블레이즈스톤 곡괭이). 깊을수록 귀한 광석이 나오고, 캔 광석을 가마에서 녹이면 주괴·보석이 돼요. 주괴·보석으로 <b>도구</b>와 <b>갑옷</b>, 9개로 <b>구리 · 금 · 티타늄 · 다이아몬드 블록</b>을 만들 수 있어요.<br>
     • 새 세계를 만들 때 <b>서바이벌 · 크리에이티브 · 하드코어 · 세이프 · 관전</b> 중에 고를 수 있고, 일시정지의 <b>⚙ 서버 설정</b>에서 언제든 바꿀 수 있어요.<br>
@@ -258,39 +243,14 @@ body.mobile #toasts{top:72px}
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
     • <b>🔫 총</b>: 권총(강철 3 + 철 주괴 2 + 막대기 1) · 돌격소총(강철합금 3 + 강철 2 + 철 주괴 2) · 총알(철 주괴 1 + 석탄 1 → 16). 머리를 맞히면 2배!<br>
-    • <b>🎮 미사일 리모컨</b>(에너지 스톤 2 + 철 주괴 3 + 수정 1): 들고 우클릭하면 가진 대륙간 핵탄두 미사일을 <b>직접 조종</b>해요 (마우스 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파). 전용 리모컨: <b>핵폭탄 리모컨</b>(+ 우라늄) · <b>원자폭탄 리모컨</b>(+ 라듐) · <b>차르 봄바 리모컨</b>(+ 폴로늄) — 모두 에너지 스톤 2 + 철 주괴 3 + 표시된 재료.<br>
+    • <b>🎮 미사일 리모컨</b>(에너지 스톤 2 + 철 주괴 3 + 수정 1): 들고 우클릭하면 가진 <b>대륙간 핵탄두 미사일 · 핵폭탄 · 원자폭탄 · 차르 봄바</b>를 <b>직접 조종</b>해요 (웅크리고 우클릭으로 무기 고르기 · 마우스 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파).<br>
     • <b>🚀 대륙간 핵탄두 미사일</b>(우라늄 + 플루토늄 + 라듐): 들고 멀리 조준해서 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>하면 9초 뒤 그곳에 떨어져 반경 60칸 폭발! <b>💣 원자폭탄</b>(+ 폴로늄): 놓고 누르면 10초 뒤 반경 70칸. <b>☢ 차르 봄바</b>(+ 폴로늄 + 프로트악티늄): 15초 뒤 반경 120칸!<br>
     • <b>☢ 핵폭탄</b>(핵미사일) = 우라늄 1 + 플루토늄 1 + 강철초고합금 블록 1 (강철초고합금 블록 = 강철 + 강철합금 + 철 주괴, 강철 = 철 주괴 + 돌, 강철합금 = 강철 + 돌). 놓고 누르면 하늘로 솟았다가 그 자리로 떨어져 반경 40칸이 날아가요!<br>
     • 어비스 깊은 곳의 <b>블레이즈스톤</b>으로 수정 장비를 강화할 수 있어요. <b>에너지 스톤</b>은 이 세계의 전기이며, 깊은 동굴의 에너지 스톤 광석에서 캘 수 있어요. 아주 깊은 곳(높이 9 아래)에는 빨갛게 빛나는 <b>별의 힘 광석</b>이 드물게 있어요 (다이아몬드 곡괭이 이상).
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.57 — 옛 버전으로 플레이</h4>
-    • 런처에서 <b>버전</b>을 고르고 플레이를 누르면 <b>그 버전 그대로</b> 실행돼요 (v26.1 ~ 최신). 가장 최근에 한 세계로 들어가며, 그 버전에 없던 아이템 · 블록은 잠시 사라지지만 <b>최신 버전으로 돌아오면 다시 나타나요</b> (옛 버전에서 한 플레이는 최신 세계에 저장되지 않아요).
-    <h4>v26.56 — 언어 바로 바꾸기 · 세계 만들 때 모드/난이도</h4>
-    • 설정 창과 언어 목록을 크게 키워 50개 언어가 한눈에 보여요.<br>
-    • 언어를 바꿔도 <b>튕기지 않고 그 자리에서 바로</b> 바뀌어요 (게임 중에도).<br>
-    • <b>모드 · 난이도</b>는 이제 ▶ 플레이 → <b>새 세계 만들기</b>에서 골라요. 난이도 이름이 <b>세이프 · 쉬움 · 보통 · 어려움 · 하드코어</b>로 바뀌고, 고른 언어로 번역돼요.
-    <h4>v26.55 — 🌐 50개 언어 · 런처 분리</h4>
-    • 언어를 <b>50개</b>로 늘렸어요 (영어 · 중국어 · 힌디어 · 스페인어 · 아랍어 · 프랑스어 · 일본어 · 한국어 …). 설정의 <b>언어 검색</b>으로 찾아 고르세요. 기본은 영어예요.<br>
-    • 런처가 따로 떨어져 나갔어요 (<b>korean568.github.io/cavebuildhome</b>). 게임 주소로 바로 들어와도 런처가 먼저 열리고, <b>저장 후 타이틀로</b>를 누르면 런처로 돌아가요.<br>
-    • 휴대폰에서 설정 창 아래의 닫기 버튼이 안 보이던 문제를 고쳤어요 (창을 스크롤할 수 있어요).
-    <h4>v26.54 — 하드코어: 쓰러지면 관전</h4>
-    • 일시정지 메뉴의 <b>저장 파일 내보내기</b>도 없앴어요.<br>
-    • <b>HARDCORE</b>에서 쓰러지면 세계가 지워지는 대신 <b>👁 관전하기</b>로 바뀌어, 그 세계는 관전만 할 수 있어요 (모드 · 난이도를 다시 바꿀 수 없음). 세계 목록에 💀 표시가 붙어요.
-    <h4>v26.53 — ▶ 플레이 · ⚙ 설정 · 세계 여러 개</h4>
-    • 플레이 화면의 <b>저장 파일 불러오기</b>는 없앴어요.<br>
-    • 타이틀이 <b>▶ 플레이</b>와 <b>⚙ 설정</b>으로 정리됐어요. 플레이에서 <b>새 세계 만들기</b>(이름 · 세계 코드)와 <b>전에 하던 서버</b>(세계 목록 · 접속 · 삭제)를 한곳에서 해요.<br>
-    • 이제 <b>세계를 여러 개</b> 저장해요 — 새 세계를 만들어도 예전 세계가 지워지지 않아요. 지금까지 하던 세계는 목록의 첫 세계로 옮겨졌어요.<br>
-    • 설정: <b>모드</b>(크리에이티브 · 서바이벌 · 관전), <b>난이도</b>(SAFE · EASY · COMMONLY · DIFFICULTY · HARDCORE), <b>언어</b>. 게임 중에도 ⚙ 서버 설정에서 모드와 난이도를 따로 바꿀 수 있어요.
-    <h4>v26.52 — 🚀 런처</h4>
-    • 런처 화면은 실제 런처처럼 항상 <b>영어</b>로 나와요 (패치 노트 내용만 고른 언어를 따라가요).<br>
-    • 게임을 켜면 <b>마인크래프트 런처</b>처럼 생긴 화면이 먼저 나와요: 왼쪽 메뉴 · 플레이 / 패치 노트 / 설치 설정 탭 · 버전 선택 · 큰 초록색 <b>플레이</b> 버튼! 플레이를 누르면 타이틀로 가요.<br>
-    • 크레이지 게임즈 같은 게임 포털 안에서도 런처가 나와요.
-    <h4>v26.51 — 무기별 전용 리모컨</h4>
-    • <b>🔴 핵폭탄 리모컨</b>(에너지 스톤 2 + 철 주괴 3 + 우라늄 1) · <b>🟡 원자폭탄 리모컨</b>(… + 라듐 1) · <b>⚪ 차르 봄바 리모컨</b>(… + 폴로늄 1)을 만들 수 있어요. 들고 우클릭하면 그 무기를 직접 조종해요.<br>
-    • <b>🔵 미사일 리모컨</b>은 이제 대륙간 핵탄두 미사일 전용이에요 (웅크리고 바꾸기 없음).
-    <h4>v26.50 — 원자폭탄 · 차르 봄바 모양 고침</h4>
+    <h4>🆕 v26.50 — 원자폭탄 · 차르 봄바 모양 고침</h4>
     • 놓은 <b>원자폭탄 · 차르 봄바</b>가 투명하게 보이던 문제를 고쳤어요. 이제 통통한 원자폭탄과 거대한 차르 봄바 모양이 보여요.
     <h4>v26.49 — 3D 아이템 · 스텔라 메뉴 마우스 잠금 고침</h4>
     • 2D 그림으로 나오던 <b>총알 · 별의 힘 · 미사일 리모컨 · 철막대기</b>가 이제 3D 모델로 보여요 (손에 든 모습 · 아이콘 모두).<br>
@@ -468,18 +428,16 @@ body.mobile #toasts{top:72px}
   <button class="btn" id="btnSave">저장하기</button>
   <button class="btn" id="btnSeed">🌱 세계 코드 복사</button>
   <button class="btn" id="btnMode">⚙ 서버 설정</button>
+  <button class="btn" id="btnExport">저장 파일 내보내기</button>
   <button class="btn" id="btnQuit">저장 후 타이틀로</button>
 </div>
 <div id="settings" class="overlay">
   <h2>⚙ 서버 설정</h2>
   <div style="margin-bottom:6px;text-shadow:2px 2px 0 #222">게임 모드</div>
-  <div id="setMode" class="modeRow"><button data-m="creative">🛠 크리에이티브</button><button data-m="survival">⚔ 서바이벌</button><button data-m="spectator">👁 관전</button></div>
+  <div id="setMode" class="modeRow"><button data-m="survival">⚔ 서바이벌</button><button data-m="creative">🛠 크리에이티브</button><button data-m="hardcore">💀 하드코어</button><button data-m="safe">🕊 세이프</button><button data-m="spectator">👁 관전</button></div>
   <div id="setDesc" class="modeDesc"></div>
-  <div style="margin:10px 0 6px;text-shadow:2px 2px 0 #222">난이도</div>
-  <div id="setDiff" class="modeRow"><button data-d="safe">🕊 세이프</button><button data-d="easy">🙂 쉬움</button><button data-d="normal">⚖ 보통</button><button data-d="hard">😈 어려움</button><button data-d="hardcore">💀 하드코어</button></div>
-  <div id="setDiffDesc" class="modeDesc"></div>
   <div style="margin:10px 0 6px;text-shadow:2px 2px 0 #222">🌐 Language / 언어</div>
-  <div id="setLang" class="lpick"></div>
+  <div id="setLang" class="modeRow"><button data-l="en">English</button><button data-l="ko">한국어</button></div>
   <button class="btn" id="btnSetClose">닫기</button>
 </div>
 <div id="dead" class="overlay">
@@ -510,20 +468,6 @@ body.mobile #toasts{top:72px}
   <div class="mrow"><button class="btn" id="btnModReload">🔄 새로고침해서 적용</button><button class="btn" id="btnModClose">닫기</button></div>
   <input type="file" id="modFile" accept=".js,text/javascript" multiple hidden>
 </div>
-<div id="playPanel" class="overlay"><div class="ppbox">
-  <h2>▶ 플레이</h2>
-  <div class="ppsec"><h3>🌍 새 세계 만들기</h3>
-    <input id="worldName" type="text" maxlength="24" placeholder="세계 이름 (비우면 자동)" autocomplete="off">
-    <input id="seedIn" type="text" placeholder="🌱 세계 코드 (비우면 무작위)" autocomplete="off" maxlength="40">
-  <h3 class="sub">🎮 모드</h3><div id="tMode" class="modeRow"><button data-m="creative">🛠 크리에이티브</button><button data-m="survival">⚔ 서바이벌</button><button data-m="spectator">👁 관전</button></div><div class="modeDesc" id="tModeDesc"></div>
-  <h3 class="sub">🔥 난이도</h3><div id="tDiff" class="modeRow"><button data-d="safe">🕊 세이프</button><button data-d="easy">🙂 쉬움</button><button data-d="normal">⚖ 보통</button><button data-d="hard">😈 어려움</button><button data-d="hardcore">💀 하드코어</button></div><div class="modeDesc" id="tDiffDesc"></div>
-    <button class="btn" id="btnNew">새 세계 만들기</button></div>
-  <div class="ppsec"><h3>🗂 전에 하던 서버</h3><div id="worldList"></div></div>
-  <button class="btn" id="btnPlayClose">닫기</button></div></div>
-<div id="tSettings" class="overlay"><div class="ppbox">
-  <h2>⚙ 설정</h2>
-  <h3>🌐 Language / 언어</h3><div id="tLang" class="lpick"></div>
-  <button class="btn" id="btnTSetClose">닫기</button></div></div>
 <div id="ending" class="overlay"><div class="endwrap"><div id="endscroll"></div></div><button class="btn" id="btnEndCont">계속하기</button></div>
 <div id="touch"></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
@@ -1234,10 +1178,9 @@ function applyCarve(data,cx,cz,c){
 // 한국어로 쓰인 화면 글자를 영어 사전으로 바꿔 보여 줌. 도움말·업데이트 목록·스텔라 기술 설명은 영어 문서를 통째로 씀.
 // 언어를 바꾸면 저장 후 새로고침 (원래 한국어로 되돌리기 쉽게)
 const LANG_KEY='cavebuild-lang';
-const LANGS=[["en","English","English"],["zh","中文（普通话）","Mandarin Chinese"],["hi","हिन्दी","Hindi"],["es","Español","Spanish"],["ar","العربية","Arabic"],["fr","Français","French"],["bn","বাংলা","Bengali"],["pt","Português","Portuguese"],["id","Bahasa Indonesia","Indonesian"],["ur","اردو","Urdu"],["ru","Русский","Russian"],["de","Deutsch","German"],["ja","日本語","Japanese"],["pcm","Naijá","Nigerian Pidgin"],["arz","مصري","Egyptian Arabic"],["mr","मराठी","Marathi"],["vi","Tiếng Việt","Vietnamese"],["te","తెలుగు","Telugu"],["sw","Kiswahili","Swahili"],["ha","Hausa","Hausa"],["tr","Türkçe","Turkish"],["pnb","پنجابی","Western Punjabi"],["fil","Filipino","Filipino / Tagalog"],["ta","தமிழ்","Tamil"],["yue","粵語","Cantonese"],["wuu","吴语（上海话）","Wu / Shanghainese"],["fa","فارسی","Persian"],["ko","한국어","Korean"],["am","አማርኛ","Amharic"],["th","ไทย","Thai"],["jv","Basa Jawa","Javanese"],["it","Italiano","Italian"],["gu","ગુજરાતી","Gujarati"],["kn","ಕನ್ನಡ","Kannada"],["apc","شامي","Levantine Arabic"],["apd","سوداني","Sudanese Arabic"],["yo","Yorùbá","Yoruba"],["bho","भोजपुरी","Bhojpuri"],["pl","Polski","Polish"],["ml","മലയാളം","Malayalam"],["uk","Українська","Ukrainian"],["or","ଓଡ଼ିଆ","Odia"],["nan","閩南語","Min Nan / Hokkien"],["my","မြန်မာ","Burmese"],["az","Azərbaycanca","Azerbaijani"],["hak","客家話","Hakka"],["hsn","湘语","Xiang"],["pa","ਪੰਜਾਬੀ","Eastern Punjabi"],["su","Basa Sunda","Sundanese"],["ro","Română","Romanian"]]; // 50개 언어 [코드, 그 언어 이름, 영어 이름]
-let LANG=(()=>{try{const s=localStorage.getItem(LANG_KEY);if(LANGS.some(l=>l[0]===s))return s;}catch(e){}return 'en';})(); // 기본은 영어
+let LANG=(()=>{try{const s=localStorage.getItem(LANG_KEY);if(s==='ko'||s==='en')return s;}catch(e){}return 'en';})(); // 기본은 영어 · 설정에서 한국어로 바꿀 수 있음
 document.documentElement.lang=LANG;
-const I18N_EN={"🛰 스텔라 리모컨":"🛰 Stellar Remote","🎬 연출: 켬":"🎬 Cutscenes: ON","닫기":"Close","J · 연출 넘기기 ▶":"J · Skip cutscene ▶","보스":"Boss","케 이 브 빌 드":"VOXEL SURVIVAL","캐고, 짓고, 살아남으세요":"Mine, build and survive","새 세계 만들기":"Create New World","⚔ 서바이벌":"⚔ Survival","🛠 크리에이티브":"🛠 Creative","💀 하드코어":"💀 Hardcore","🕊 세이프":"🕊 Safe","👁 관전":"👁 Spectator","배고픔·체력을 챙기며 살아남아요. 쓰러져도 스폰 지점에서 다시 시작해요.":"Manage hunger and health to survive. If you fall, you restart at your spawn point.","이어하기":"Continue","저장 파일 불러오기":"Load Save File","❓ 도움말 보기":"❓ How to Play","📜 업데이트 목록":"📜 Update Notes","🧩 모드":"🧩 Mods","🖥 PC 조작법":"🖥 PC Controls","이동":"Move","이동 ·":"move ·","스페이스":"Space","점프/수영 ·":"jump/swim ·","달리기 (물속에선":"sprint (in water:","수영":"swim","웅크리기 (모서리에서 안 떨어짐)":"crouch (won't fall off edges)","시점":"View","마우스":"Mouse","둘러보기 ·":"look around ·","시점 변경 (3인칭 앞 → 3인칭 뒤 → 1인칭)":"change view (3rd front → 3rd back → 1st person)","공격 · 캐기":"Attack · Mine","좌클릭":"Left click","공격 (한 번씩 누르기) ·":"attack (click) ·","좌클릭 누르고 있기":"Hold left click","블록 캐기":"mine block","사용":"Use","우클릭":"Right click","설치 / 먹기 / 사용 / 거래 · 무기를 든 채":"place / eat / use / trade · with a weapon,","우클릭 누르고 있기":"hold right click","방패로 막기":"to block with a shield","아이템":"Items","1~9 / 휠":"1~9 / wheel","선택 ·":"select ·","인벤토리 & 제작 ·":"inventory & crafting ·","버리기 (":"drop (","한 묶음)":"whole stack)","인벤토리":"Inventory","집기/놓기 ·":"pick up/place ·","반 나누기/하나 놓기 ·":"split half/place one ·","Shift+클릭":"Shift+click","빠른 이동 / 갑옷 착용":"quick move / equip armor","기타":"Other","디버그 정보 ·":"debug info ·","일시정지":"pause","📱 모바일 조작법":"📱 Mobile Controls","왼쪽 화면":"Left screen","조이스틱 (끝까지 밀면 달리기) ·":"joystick (push all the way to sprint) ·","웅크리기":"crouch","오른쪽 화면 드래그":"Drag right screen","시점 변경":"change view","한 번씩 누르기 공격 · 누르고 있기 블록 캐기":"tap to attack · hold to mine","✋ 누르고 있기":"hold ✋","아래 칸을 눌러 선택 ·":"tap a slot to select ·","버리기 (길게 누르면 한 묶음)":"drop (hold for whole stack)","📖 게임 팁":"📖 Tips","어둠덩이":"Gloomling","등불":"Lantern","침대":"Bed","좀비":"Zombie","명사수 해골":"Skeleton Archer","불씨방울":"Ember Blob","갑옷":"armor","방패":"Shield","차원 나침반":"Dimension Compass","에너지 스톤":"Energy Stone","어비스":"Abyss","호라이즌":"Horizon","네크로폴리스":"Necropolis","표식 돌":"Marker Stone","포탈 열쇠":"Portal Key","흐릅니다":"flow","흑요석":"Obsidian","조약돌":"Cobblestone","철 곡괭이":"Iron Pickaxe","마을":"Village","대장장이 집":"Blacksmith's House","어비스 차원문":"Abyss Portal","철 블록":"Iron Block","나무 판자":"Wooden Planks","빌리저 가디언":"Villager Guardian","동전":"Coin","문":"Door","묘목":"Sapling","사다리":"Ladder","상자":"Chest","호퍼":"Hopper","철퇴":"Mace","철막대기":"Iron Rod","메이스 헤드":"Mace Head","높은 곳에서 떨어지며":"falling from higher","달리면서 머리":"sprinting headshots","겉날개":"Elytra","점프":"Jump","폭죽":"Firework","별의 힘":"Star Power","CB-TSR 레일건":"CB-TSR Railgun","CB-NM 궁니르":"CB-NM Gungnir","CB-SL 칠성":"CB-SL Seven Stars","세계를 영원히 바꾸니":"It changes the world forever,","저장 파일을 내보내 두세요!":"so export your save first!","방사성 광석":"radioactive ores","방사능":"Radiation","방독면·방독복":"Gas mask & hazmat suit","구리":"Copper","금":"Gold","티타늄":"Titanium","다이아몬드":"Diamond","레드 다이아몬드":"Red Diamond","블랙 다이아몬드":"Black Diamond","도구":"tools","와":" and","구리 · 금 · 티타늄 · 다이아몬드 블록":"Copper · Gold · Titanium · Diamond blocks","⚙ 서버 설정":"⚙ Server Settings","돌고래":"Dolphin","돌고래의 은총":"Dolphin's Grace","바다거북":"Sea Turtle","거북 비늘":"Turtle Scute","거북 등딱지 투구":"Turtle Shell Helmet","오징어":"Squid","먹물 주머니":"Ink Sac","그물":"Net","산 채로":"alive","물고기":"Fish","낚싯대":"Fishing Rod","구운 생선":"Cooked Fish","🔫 총":"🔫 Guns","☢ 핵폭탄":"☢ Nuke","블레이즈스톤":"Blazestone","별의 힘 광석":"Star Power Ore","계속하기":"Resume","저장하기":"Save","🌱 세계 코드 복사":"🌱 Copy World Code","저장 파일 내보내기":"Export Save File","저장 후 타이틀로":"Save & Quit to Title","게임 모드":"Game Mode","쓰러졌습니다!":"You died!","부활하기":"Respawn","집기":"Pick up","나누기":"Split","빠른 이동/착용":"Quick move/equip","✕ 닫기":"✕ Close","좌클릭: 집기/놓기 · 우클릭: 반 나누기/하나 놓기 · Shift+클릭: 빠른 이동 / 갑옷 착용":"Left click: pick up/place · Right click: split/place one · Shift+click: quick move / equip armor","위의 모드를 고른 뒤 칸을 누르세요 · 레시피를 누르면 제작":"Pick a mode above, then tap a slot · tap a recipe to craft","제작":"Crafting","⚠ 모드는 이 게임 안에서 마음대로 코드를 실행해요.":"⚠ Mods can run any code inside this game.","믿을 수 있는 사람이 만든 모드만":"Only add mods made by people you trust.","넣으세요. 바꾼 뒤에는 새로고침해야 적용돼요.":"Reload the page after changing mods.","➕ 모드 파일(.js) 추가":"➕ Add mod file (.js)","📄 예시 모드 받기":"📄 Download example mod","🔄 새로고침해서 적용":"🔄 Reload to apply","세계를 만드는 중...":"Creating world...","🌱 세계 코드 (비우면 무작위)":"🌱 World code (empty = random)","🔍 레시피 검색 (예: 철)":"🔍 Search recipes (e.g. iron)","잔디 블록":"Grass Block","흙":"Dirt","돌":"Stone","원목":"Log","나뭇잎":"Leaves","판자":"Planks","모래":"Sand","물":"Water","석탄 광석":"Coal Ore","철 광석":"Iron Ore","수정 광석":"Crystal Ore","심층암":"Bedrock","작업대":"Crafting Table","가마":"Kiln","유리":"Glass","돌벽돌":"Stone Bricks","눈 덮인 흙":"Snowy Dirt","가시 덤불":"Thornbush","어비스석":"Abyss Stone","용암":"Lava","악마 벽돌":"Demon Bricks","판데모니움 차원문":"Pandemonium Portal","네크로폴리스 차원문":"Necropolis Portal","호라이즌 차원문":"Horizon Portal","종말석":"End Stone","어둠돌":"Darkstone","빛나는 창":"Lit Window","도로":"Road","어비스 등석":"Abyss Glowstone","어두운 창":"Dark Window","에너지 스톤 광석":"Energy Stone Ore","열쇠 틀":"Key Frame","열쇠가 꽂힌 틀":"Filled Key Frame","심연 균사":"Void Moss","심연 등불":"Void Lamp","블레이즈스톤 광석":"Blazestone Ore","흐르는 물":"Flowing Water","흐르는 용암":"Flowing Lava","구리 광석":"Copper Ore","금 광석":"Gold Ore","티타늄 광석":"Titanium Ore","다이아몬드 광석":"Diamond Ore","레드 다이아몬드 광석":"Red Diamond Ore","블랙 다이아몬드 광석":"Black Diamond Ore","구리 블록":"Copper Block","다이아몬드 블록":"Diamond Block","레드 다이아몬드 블록":"Red Diamond Block","블랙 다이아몬드 블록":"Black Diamond Block","금 블록":"Gold Block","티타늄 블록":"Titanium Block","우라늄 광석":"Uranium Ore","라듐 광석":"Radium Ore","플루토늄 광석":"Plutonium Ore","폴로늄 광석":"Polonium Ore","프로트악티늄 광석":"Protactinium Ore","텅스텐 블록":"Tungsten Block","열 도관":"Thermal Conduit","별의 핵 결정":"Star Core Crystal","별의 흔적":"Star Trace","강철초고합금 블록":"Steel Superalloy Block","핵폭탄":"Nuke","막대기":"Stick","석탄":"Coal","철 주괴":"Iron Ingot","수정":"Crystal","생고기":"Raw Meat","구운 고기":"Cooked Meat","사과":"Apple","솜뭉치":"Fluff","깃털":"Feather","알":"Egg","생선":"Raw Fish","오징어가 든 그물":"Net with Squid","가시":"Spike","끈적실":"Sticky Silk","썩은 살점":"Rotten Flesh","활":"Bow","화살":"Arrow","불사의 마법 물약":"Potion of Undying","레이저 (일회용)":"Laser (single use)","권총":"Pistol","돌격소총":"Assault Rifle","총알":"Bullet","블레이즈스톤 조각":"Blazestone Shard","블레이즈스톤 주괴":"Blazestone Ingot","보트":"Boat","양동이":"Bucket","물 양동이":"Water Bucket","용암 양동이":"Lava Bucket","블레이즈스톤 방패":"Blazestone Shield","어비스 나침반":"Abyss Compass","호라이즌 나침반":"Horizon Compass","네크로폴리스 나침반":"Necropolis Compass","곡괭이":"Pickaxe","도끼":"Axe","삽":"Shovel","검":"Sword","나무":"Wooden","철":"Iron","다크나이트 검":"Dark Knight Sword","스텔라 리모컨":"Stellar Remote","우라늄 덩어리":"Uranium Lump","라듐 결정":"Radium Crystal","플루토늄 덩어리":"Plutonium Lump","폴로늄 결정":"Polonium Crystal","프로트악티늄 덩어리":"Protactinium Lump","가죽":"Leather","강철":"Steel","강철합금":"Steel Alloy","구리 주괴":"Copper Ingot","금 주괴":"Gold Ingot","티타늄 주괴":"Titanium Ingot","투구":"Helmet","흉갑":"Chestplate","각반":"Leggings","장화":"Boots","천":"Cloth","거북":"Turtle","방독":"Hazmat","방독면":"Gas Mask","방독복":"Hazmat Suit","방독복 바지":"Hazmat Pants","방독 장화":"Hazmat Boots","로고를 그리지 못했습니다":"Couldn't draw the logo","프론티어":"Frontier","판데모니움":"Pandemonium","타이틀 배경을 그리지 못했습니다":"Couldn't draw the title background","레일건":"Railgun","궁니르":"Gungnir","칠성":"Seven Stars","핵미사일":"nuclear missiles","빨간 레이저":"red lasers","폭파":"blow up","두베":"Dubhe","메라크":"Merak","페크다":"Phecda","메그레즈":"Megrez","알리오스":"Alioth","미자르":"Mizar","알카이드":"Alkaid","발동 중":"active","선택":" selected","🎬 스텔라 연출을 껐어요 (땅에서 카운트다운만 봐요)":"🎬 Stellar cutscenes OFF (you'll only see the countdown)","🎬 스텔라 연출을 켰어요":"🎬 Stellar cutscenes ON","🎬 연출: 끔":"🎬 Cutscenes: OFF","CB-TSR · 레일건 — 레이저 조준 고정":"CB-TSR · Railgun — laser locked","지구 대기권을 지나":"Through Earth's atmosphere","토성을 지나":"Past Saturn","태양계 너머 — 우리 은하를 지나":"Beyond the Solar System — across the Milky Way","레일건 엔진 속 — 별의 힘 결정 회전":"Inside the railgun engine — the Star Power crystal spins","밖으로 — 에너지 충전":"Outside — charging","빨간 레이저 발사":"Red laser fired","CB-NM · 궁니르 — 불씨 표식 고정":"CB-NM · Gungnir — ember mark locked","화성 궤도 위성 — 핵미사일 발사":"Mars orbit satellites — missiles away","목성 궤도 위성 — 핵미사일 발사":"Jupiter orbit satellites — missiles away","핵미사일 편대 — 지구를 향해":"Missile fleet — heading for Earth","대기권 돌입":"Atmospheric entry","CB-SL · 칠성 — 북두칠성을 땅에 투영":"CB-SL · Seven Stars — Big Dipper projected","큰곰자리로":"To Ursa Major","일곱 별이 별의 배열로 깨어나요":"The seven stars wake as a stellar array","일곱 별이 빨간 레이저 발사":"The seven stars fire red lasers","별이 하나씩 떨어져요":"The stars strike one by one","별자리 점화":"The constellation ignites","이미 발동 중이에요":"Already active","충전 중…":"Recharging…","초":"s","궁니르와 칠성은 프론티어 하늘 아래에서만 쓸 수 있어요":"Gungnir and Seven Stars only work under the Frontier sky","조준할 땅이 없어요 (땅을 바라보세요)":"Nothing to aim at (look at the ground)","⚠ 지금 서 있는 곳도":"⚠ You are standing inside the","범위 안이에요! 4초 안에 한 번 더 누르면 그래도 발동해요":" blast zone! Press again within 4s to fire anyway","⚠ 스텔라 리모컨은":"⚠ The Stellar Remote","세계를 영원히 바꿔요":" changes the world forever",". 저장 파일을 내보내 두는 걸 추천해요":". Exporting your save first is recommended","칸 앞 조준 고정":" blocks away — target locked","🛰 크리에이티브: 광선 밖으로 대피했어요":"🛰 Creative: evacuated out of the beam","궤도에서 지워졌습니다":"was erased from orbit","궁니르의 충격파에 휩쓸렸습니다":"was swept away by Gungnir's shockwave","칠성의 레이저에 맞았습니다":"was hit by the Seven Stars' laser","핵미사일 발사!":"Nuclear missile launched!","하늘로 솟았다가":" It rises into the sky and","이 자리로 떨어져요":" falls back right here","— 8초 안에 멀리 도망치세요 (반경 40칸 소멸 · 80칸까지 충격파)":"— run far away within 8 seconds (40-block blast · shockwave to 80)","☢ 떨어진다!":"☢ Incoming!","핵폭발에 휘말렸습니다":"was caught in a nuclear blast","핵폭발의 충격파에 휩쓸렸습니다":"was swept away by the nuclear shockwave","✨ 낚싯줄에":"✨ You caught","이 걸려 올라왔어요!":" on the line!","워커를 쓸 수 없어 메인 스레드로 처리합니다":"Worker unavailable, using main thread","이(가) 부서졌습니다!":" broke!","나무꾼의 첫걸음":"Lumberjack's First Step","장인의 시작":"Crafter's Start","광부 입문":"Novice Miner","석기 시대":"Stone Age","불의 발견":"Discovering Fire","철기 시대":"Iron Age","반짝이는 보물":"Shiny Treasure","편안한 밤":"A Good Night's Sleep","사냥꾼":"Hunter","열린 문":"Open Door","물과 불":"Water and Fire","첫 거래":"First Trade","마을 발견":"Village Found","수호자 탄생":"Guardian Born","차원문 건축가":"Portal Builder","타오르는 돌":"Burning Stone","철벽 방어":"Iron Defense","⚡ 전기의 발견":"⚡ Discovering Electricity","어둠 퇴치":"Banish the Dark","요리사":"Cook","좀비 퇴치반":"Zombie Squad","명사수":"Sharpshooter","완전 무장":"Fully Armed","어비스 입성":"Into the Abyss","네크로폴리스 입성":"Into the Necropolis","세계의 끝에 서다":"At the World's End","불멸을 넘어서":"Beyond Immortality","어둠의 기사 격파":"Dark Knight Defeated","엔딩을 보다":"The End","강태공":"Master Angler","🏆 도전과제 달성:":"🏆 Achievement:","1인칭":"1st person","3인칭 (앞)":"3rd person (front)","3인칭 (뒤)":"3rd person (back)","👁 시점:":"👁 View:","뭉게":"Fluffy","수풀꼬꼬":"Bush Chick","돌거북":"Stone Tortoise","돌거북에게 받혔습니다":"was rammed by a Stone Tortoise","어둠덩이에게 당했습니다":"was killed by a Gloomling","좀비에게 당했습니다":"was killed by a Zombie","가시벌레":"Spikebug","가시벌레에게 찔렸습니다":"was stung by a Spikebug","명사수 해골의 화살에 맞았습니다":"was shot by a Skeleton Archer","명사수 해골의 주먹에 맞았습니다":"was punched by a Skeleton Archer","불씨방울 폭발에 휘말렸습니다":"was blown up by an Ember Blob","! 돌고래 곁에서 헤엄치면 더 빨라져요":"! Swim next to dolphins to go faster","나침반은 프론티어에서만 작동합니다":"Compasses only work in the Frontier","차원문이 바로 아래에 있습니다! (약":"The portal is right below you! (about","칸 아래":" blocks down","차원문에 도착했습니다!":"You reached the portal!","차원문 ·":"Portal ·","에 도착했습니다. 깊은 곳(높이 4~6)에":" reached. Deep down (height 4~6) there is","이 있습니다.":".","가장 가까운 곳: X":"Nearest: X","... 옥좌는 비어 있습니다.":"... The throne is empty.","... 옥좌 앞에":"... Before the throne,","불멸의 악마":"Immortal Demon","가 기다립니다.":" awaits.","... 광장은 조용합니다.":"... The plaza is quiet.","... 광장 중앙에":"... In the plaza stands","다크가디언":"Dark Guardian","이 서 있습니다. 레이저 조준선을 피하세요!":". Dodge its laser sight!","... 드래곤은 더 이상 없습니다.":"... The dragon is gone.","... 기둥 위":"... Break the","엔딩 수정":"End Crystals","을 부수세요! 수정이 남아 있으면 제단에 앉은 드래곤이 회복합니다.":" on the pillars! While crystals remain, the dragon heals on its altar.","로 돌아왔습니다.":" — you're back.","🔫 총알이 없어요 (철 주괴 1 + 석탄 1 → 총알 16)":"🔫 Out of bullets (1 Iron Ingot + 1 Coal → 16 bullets)","🎯 헤드샷!":"🎯 Headshot!","을(를) 쓰러뜨렸습니다!":" defeated!","불멸의 악마에게 찢겼습니다":"was torn apart by the Immortal Demon","악마의 화염구에 맞았습니다":"was hit by a demon fireball","불멸의 악마가":"The Immortal Demon","을 소환했습니다!":" summoned minions!","다크가디언의 대검에 베였습니다":"was slashed by the Dark Guardian's greatsword","다크가디언의 레이저에 맞았습니다":"was hit by the Dark Guardian's laser","엔딩 수정 파괴! 남은 수정":"End Crystal destroyed! Crystals left:","개":"","모든":"All","을 부쉈습니다! 이제 드래곤이 회복할 수 없습니다.":" destroyed! The dragon can no longer heal.","엔딩드래곤":"Ender Dragon","엔딩드래곤의 브레스에 맞았습니다":"was hit by the Ender Dragon's breath","엔딩드래곤이 제단에서":"The Ender Dragon heals on its altar","로 회복합니다! 회복하는 동안엔 공격하지 못하니 지금 공격하세요!":"! It can't attack while healing — strike now!","엔딩드래곤이 제단에 내려앉았습니다!":"The Ender Dragon landed on its altar!","지금이 기회!":"Now's your chance!","엔딩드래곤에게 들이받혔습니다":"was rammed by the Ender Dragon","엔딩드래곤에게 물렸습니다":"was bitten by the Ender Dragon","어비스 깊은 곳 판데모니움에서":"Deep in the Abyss, in Pandemonium, you","를 넘어섰고,":" were overcome,","에서":" in","을 쓰러뜨렸으며,":" was defeated,","CAVEBUILD · 케이브빌드":"CAVEBUILD","당신은 끝없는 들판에서 첫 나무를 베었고,":"You felled your first tree in endless fields,","어둠 속에서 등불을 밝혔습니다.":"and lit a lantern in the dark.","마침내 세계의 끝, 호라이즌에서":"At last, at the end of the world in the Horizon,","을 잠재웠습니다.":" was laid to rest.","— 하지만 세계는 끝나지 않습니다 —":"— but the world does not end —","돌아갈 집이 있고,":"There is a home to return to,","아직 가 보지 못한 땅이 끝없이 펼쳐져 있으니까요.":"and endless lands you have yet to explore.","기록":"Stats","생존한 날:":"Days survived:","일":" days","처치한 몹:":"Mobs defeated:","마리":"","쓰러진 횟수:":"Deaths:","번":"","플레이 시간:":"Play time:","분":" min","플레이해 주셔서 감사합니다!":"Thanks for playing!","🏠 스폰 지점으로 돌아왔습니다. 모험은 계속됩니다!":"🏠 Back at your spawn point. The adventure continues!","물이 순식간에 증발했습니다":"The water evaporated instantly","이 열렸습니다!":" opened!","이 깨어났습니다! 주변의 적을 물리쳐 줄 거예요.":" awakened! It will fight nearby enemies.","빌리저 가디언에게 맞았습니다":"was hit by a Villager Guardian","을 발견했습니다! 주민을 괴롭히면 빌리저 가디언이 화를 냅니다.":" discovered! Hurting villagers angers the Villager Guardian.","농부":"Farmer","대장장이":"Blacksmith","광부":"Miner","현자":"Sage","좀비 주민":"Zombie Villager","좀비 주민에게 당했습니다":"was killed by a Zombie Villager","주민":"Villager","🧟 주민이":"🧟 A villager became a","이 되었습니다!":"!","🌳 묘목이":"🌳 The sapling grew into a","로 자랐어요!":"!","열쇠":"keys","가 필요합니다 (":" needed (","/12) · 텔레포터가 떨어뜨려요":"/12) · Teleporters drop them","🌀 12개의 열쇠가 모두 꽂혔습니다!":"🌀 All 12 keys are in place!","이 열렸습니다.":" opened.","포탈 열쇠를 꽂았습니다 (":"Portal key inserted (","텔레포터에게 당했습니다":"was killed by a Teleporter","텔레포터":"Teleporter","쓰러졌습니다":"died","방패가 부서졌습니다!":"Your shield broke!","강한 일격에 방패가 밀렸습니다! (5초간 막기 불가)":"A heavy blow broke your guard! (can't block for 5s)","이 발동했습니다! (1초 무적)":" activated! (1s invincible)","💀 하드코어 세계는 다시 살아날 수 없어요":"💀 You can't respawn in a Hardcore world","세계를 지우고 타이틀로":"Delete world & return to title","가시 덤불에 찔렸습니다":"was pricked by a thornbush","용암에 빠졌습니다":"tried to swim in lava","겉날개가 너무 낡아서 더 이상 날 수 없어요":"Your elytra is too worn to fly","날다가 벽에 부딪혔습니다":"flew into a wall","높은 곳에서 떨어졌습니다":"fell from a high place","세계 밖으로 떨어졌습니다":"fell out of the world","에 노출됐어요! 갑옷(천·가죽 제외)이나":" exposure! Armor (not cloth/leather) or a","을 입으면 막을 수 있어요":" will protect you","방사능에 노출되었습니다":"died of radiation","굶주림으로 쓰러졌습니다":"starved to death","물에 빠졌습니다":"drowned","🌱 나무를 다 베었더니":"🌱 The tree is gone — a","이 떨어졌어요!":" dropped!","를 그물로 잡았어요! 물에 대고 누르면 풀어 줄 수 있어요":" caught in the net! Use it on water to release it","물에 대고 눌러야 오징어를 풀어 줄 수 있어요":"Use it on water to release the squid","그물을 든 채":"Hold the net and use it on a","에 대고 누르면 잡을 수 있어요":" to catch it","보트에 탔습니다 (스페이스: 내리기)":"You got in the boat (Space: get out)","불사의 마법 물약은 가지고만 있으면 쓰러질 때 자동으로 발동합니다":"The Potion of Undying activates automatically when you would die — just carry it","배가 부릅니다":"You're full","윽... 속이 좀 안 좋다":"Ugh... you feel sick","사다리는 벽에 붙여야 해요":"Ladders must be placed on a wall","문을 놓으려면 위로 2칸이 비어 있어야 해요":"Doors need 2 empty blocks of height","묘목은 잔디나 흙 위에 심어야 해요":"Saplings must be planted on grass or dirt","화살이 없습니다 (막대기+깃털+가시)":"No arrows (Stick + Feather + Spike)","이곳에서는 잘 수 없습니다":"You can't sleep here","스폰 지점이 설정되었습니다. (밤에만 잘 수 있어요)":"Spawn point set. (You can only sleep at night)","근처에 적이 있어서 잘 수 없습니다!":"You can't sleep — enemies nearby!","상쾌한 아침입니다! 스폰 지점이 설정되었습니다.":"Good morning! Spawn point set.","💥 철퇴 내려찍기!":"💥 Mace smash!","칸":" blocks","Shift+클릭: 빠르게 옮기기":"Shift+click: quick move","거래 —":"Trade —","누를 때마다 한 번씩 거래":"Each click makes one trade","🛠 크리에이티브 아이템":"🛠 Creative Items","누르면 한 묶음":"Click for a full stack","들고 있는 아이템을 여기 놓으면 버려요":"Drop the held item here to delete it","근처(4칸)에 있어야 함":"must be within 4 blocks","검색 결과가 없습니다":"No results","· 작업대":"· Crafting Table","· 가마":"· Kiln","연료1":"Fuel 1","마우스 잠금을 쓸 수 없는 화면이에요 —":"Mouse lock isn't available here —","창 안에서 마우스를 움직여":"move the mouse inside the window","둘러보세요":"to look around","✕ 도움말 닫기":"✕ Close Help","✕ 업데이트 목록 닫기":"✕ Close Update Notes","저장 실패: 저장 공간이 부족합니다. 저장 파일로 내보내 두세요":"Save failed: not enough storage. Export a save file instead","내보내기 실패":"Export failed","저장 파일을 내보냈습니다 (cavebuild-save.json)":"Save file exported (cavebuild-save.json)","내보내기를 취소했습니다":"Export canceled","잠시 후 다시 시도하세요":"Please try again in a moment","이 환경에서는 파일로 내보낼 수 없습니다":"Files can't be exported here","올바른 저장 파일이 아닙니다 (기존 세계는 그대로 둡니다)":"Not a valid save file (your world is unchanged)","기존 세계를 덮어씁니다 · 한 번 더 누르면 불러오기":"This overwrites your world · click again to load","저장 파일을 불러왔습니다":"Save file loaded","쓰러진 채로 저장되어 있어서":"You were saved while dead, so we","체력을 회복":"restored your health","했습니다":"","크리에이티브":"Creative",": 🎒에서 모든 아이템을 꺼낼 수 있어요 · ⤒ 두 번 → 날기":": take any item from 🎒 · double-tap ⤒ to fly",": E에서 모든 아이템을 꺼낼 수 있어요 · 스페이스 두 번 → 날기 (C: 내려가기)":": take any item from E · double-tap Space to fly (C: down)","하드코어":"Hardcore",": 목숨은 하나뿐이에요. 조심하세요!":": you only have one life. Be careful!","나무를 캐서 판자와 작업대를 만들어 보세요! (🎒: 인벤토리)":"Chop trees to make planks and a crafting table! (🎒: inventory)","나무를 캐서 판자와 작업대를 만들어 보세요! (E: 인벤토리)":"Chop trees to make planks and a crafting table! (E: inventory)","📱 가로 모드로 돌리면 더 편하게 플레이할 수 있어요":"📱 Rotate to landscape for easier play","세계를 여는 중 문제가 생겼습니다. 기존 저장은 그대로 있어요.":"Something went wrong opening the world. Your save is safe.","저장된 세계를 확인하는 중이에요. 잠시 뒤에 다시 눌러 주세요":"Checking your saved world. Please click again in a moment","기존 세계를 덮어씁니다 · 한 번 더 누르면 시작":"This overwrites your world · click again to start","🌱 세계 코드":"🌱 World code","로 세계를 만들었습니다":" — world created","다치지 않고 배고프지 않아요. 모든 아이템을 마음대로 꺼내 쓰고, 블록을 한 번에 부수고, 스페이스를 두 번 눌러 날 수 있어요.":"No damage, no hunger. Take any item, break blocks instantly and double-tap Space to fly.","몹이 1.5배 아프게 때려요. 목숨은 단 하나! 쓰러지면 세계가 사라져요.":"Mobs hit 1.5× harder. Only one life — if you die, the world is deleted!","적대 몹이 나오지 않고, 배고프지 않으며, 체력이 저절로 차요. 마음 편히 짓고 탐험해요.":"No hostile mobs, no hunger, health regenerates. Build and explore in peace.","다치지 않고 블록을 뚫고 자유롭게 날아다니며 구경만 해요 (스페이스: 위 · C: 아래). 블록·몹과 상호작용할 수 없어요.":"Fly freely through blocks and just watch (Space: up · C: down). You can't interact with blocks or mobs.","⚙ 서버 설정 ·":"⚙ Server Settings ·","게임 모드:":"Game mode:","🕊 날기 시작 (스페이스: 위 · C: 아래)":"🕊 Flying (Space: up · C: down)","날기 그만":"Stopped flying","를 복사했습니다":" copied","🌱 이 세계의 코드는":"🌱 This world's code is","입니다 (직접 적어 두세요)":" (write it down)","저장되었습니다":"Saved","문제가 생겼습니다:":"Something went wrong:","알 수 없는 오류":"unknown error","모드를 저장할 공간이 부족해요":"Not enough space to store mods","모드 오류":"Mod error","🧩 모드 오류(":"🧩 Mod error (","모드 블록 칸이 다 찼어요 (최대 8개)":"Mod block slots are full (max 8)","그림 칸이 다 찼어요":"Texture slots are full","모드 폭발에 휘말렸습니다":"was caught in a mod explosion","모드 실패":"Mod failed","삭제":"Delete","아직 넣은 모드가 없어요":"No mods added yet","🧩 모드를 넣었어요.":"🧩 Mod added.","새로고침":"Reload","하면 적용돼요":" to apply","이 모드를 지울까요?":"Delete this mod?","틱":"tick","차원:":"Dimension:","청크:":"Chunks:","몹:":"Mobs:","시간:":"Time:","시  시드:":"h  Seed:","바라보는 블록:":"Looking at:","켜짐":"On","꺼짐":"Off","오류":"Error","돌 곡괭이":"Stone Pickaxe","수정 곡괭이":"Crystal Pickaxe","누런 티타늄":"Yellow Titanium","강철초고합금":"Steel Superalloy","별의 힘 결정":"Star Power crystal","에너지":"Energy","스톤":"Stone","우라늄":"Uranium","라듐":"Radium","플루토늄":"Plutonium","폴로늄":"Polonium","프로트악티늄":"Protactinium","엔딩 수정 파괴!":"End Crystal destroyed!","남은 수정":"Crystals left:","충전":"Recharge","발동":"Fire","다음":"Next","메뉴":"Menu","연출":"Cutscene","켜기":"on","끄기":"off","넘기기":"skip","(지하)":"(underground)",", 감염된 폐허 마을":", infected ruined village",", 표식 돌 방":", Marker Stone room","· 위의 아이템을 빨아들여 아래 상자로 보냄":"· pulls items from above into the chest below","· 회복 중":"· healing","· 🎬 연출 끔":" · 🎬 cutscenes off","끔":"off","켬":"on","✋ 발동 · 🧎+✋ 다음 · 여기를 눌러 메뉴":"✋ fire · 🧎+✋ next · tap here for menu","우클릭 발동 · C+우클릭 다음 · K/I/U 선택 · H 메뉴 · J 연출 켜기/끄기 · 넘기기":"Right click: fire · C+right click: next · K/I/U: select · H: menu · J: cutscenes on/off · skip","가장 가까운 곳":"Nearest","🌐 English":"🌐 English","🌐 한국어":"🌐 한국어","한국어":"한국어","🌐 Language / 언어":"🌐 Language","원자폭탄":"Atomic Bomb","차르 봄바":"Tsar Bomba","대륙간 핵탄두 미사일":"ICBM","💣 폭탄이 꺼졌어요":"💣 The bomb was defused","차르 봄바 점화!":"Tsar Bomba armed!","15초 안에 아주 멀리 도망치세요 (반경 120칸 소멸 · 240칸까지 충격파)":" Run very far within 15s (120-block blast · shockwave to 240)","원자폭탄 점화!":"Atomic bomb armed!","10초 안에 멀리 도망치세요 (반경 70칸 소멸 · 140칸까지 충격파)":" Run far within 10s (70-block blast · shockwave to 140)","대륙간 핵탄두 미사일 발사!":"ICBM launched!","칸 앞 · 9초 뒤 도착 (반경 60칸)":" blocks away · impact in 9s (60-block blast)","CB-SL · 칠성 — 하늘에 북두칠성":"CB-SL · Seven Stars — the Big Dipper rises","미사일 리모컨":"Missile Remote","🎮 미사일 조종 중 · 속도":"🎮 Piloting missile · speed","· 높이":"· height","· 남은 시간":"· time left","마우스 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파":"Mouse: steer · W: boost · S: slow · Right click/Space: detonate","미사일 조종 시작!":"Missile control engaged!","마우스로 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파":" Mouse: steer · W: boost · S: slow · Right click/Space: detonate","이 있어야 조종할 수 있어요":" is needed to pilot","🎮 미사일 조종 중":"🎮 Piloting missile","속도":"speed","높이":"height","남은 시간":"time left","🎮 조종할 무기:":"🎮 Weapon to pilot:","(반경":"(radius","칸)":" blocks)","조종 시작!":" — piloting!","조종 중 · 반경":" — piloting · radius","칸 · 속도":" blocks · speed","이(가) 있어야 조종할 수 있어요 (웅크리고 쓰면 무기 바꾸기)":" is needed to pilot (crouch + use to switch weapon)","핵폭탄 리모컨":"Nuke Remote","원자폭탄 리모컨":"Atomic Bomb Remote","차르 봄바 리모컨":"Tsar Bomba Remote","이(가) 있어야 조종할 수 있어요":" is needed to pilot","📰 패치 노트":"📰 Patch Notes","⚙ 설정":"⚙ Settings","플레이":"PLAY","패치 노트":"Patch Notes","설치 설정":"Settings","🎬 스텔라 연출":"🎬 Stellar cutscenes","스텔라 리모컨을 든 채 J로 켜고 끌 수 있어요.":"Hold the Stellar Remote and press J to toggle them.","버전":"Version","플레이어":"Player","© CAVEBUILD · 동아리 발표게임":"© CAVEBUILD","▶ 플레이":"▶ Play","🌍 새 세계 만들기":"🌍 Create New World","세계 이름 (비우면 자동)":"World name (auto if empty)","🗂 전에 하던 서버":"🗂 Your Worlds","📂 저장 파일 불러오기":"📂 Load save file","🎮 모드":"🎮 Mode","🔥 난이도":"🔥 Difficulty","난이도":"Difficulty","모드 · 난이도는 새로 만드는 세계에 쓰여요. 게임 중에는 일시정지 → ⚙ 서버 설정에서 바꿀 수 있어요.":"Mode and difficulty apply to new worlds. In game, change them from Pause → ⚙ Server Settings.","몹이 절반만 아프게 때려요.":"Mobs deal half damage.","보통 난이도예요.":"Normal difficulty.","몹이 1.5배 아프게 때려요.":"Mobs deal 1.5× damage.","몹이 1.5배 아프게 때리고, 목숨은 단 하나! 쓰러지면 세계가 사라져요.":"Mobs deal 1.5× damage and you only have one life — if you die, the world is deleted!","▶ 접속":"▶ Join","정말?":"Sure?","아직 만든 세계가 없어요":"No worlds yet","(⚙ 설정에서 바꾸기)":"(change in ⚙ Settings)","이 세계를 불러오지 못했어요":"Couldn't load this world","세계를 지웠어요":"World deleted","난이도:":"Difficulty:","불러온 세계":"Imported world","세계":"World","💀 하드코어 세계에서는 다시 살아날 수 없어요 — 이제 관전만 할 수 있어요":"💀 You can't respawn in Hardcore — you can only spectate now","👁 관전하기":"👁 Spectate world","👁 하드코어에서 쓰러졌어요. 이 세계는 이제":"👁 You died in Hardcore. This world is now","만 할 수 있어요":" only","💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요":"💀 This Hardcore world is spectator-only after your death","몹이 1.5배 아프게 때리고, 목숨은 단 하나! 쓰러지면 그 세계는 관전만 할 수 있어요.":"Mobs deal 1.5× damage and you only have one life — after you die you can only spectate that world.","관전":"Spectator","아끼는 세계라면 조심해서 쓰세요":". Use it carefully on worlds you care about","조심해서 쓰세요!":"so use it carefully!","🙂 쉬움":"🙂 Easy","⚖ 보통":"⚖ Normal","😈 어려움":"😈 DIFFICULT"};
+const I18N_EN={"🛰 스텔라 리모컨":"🛰 Stellar Remote","🎬 연출: 켬":"🎬 Cutscenes: ON","닫기":"Close","J · 연출 넘기기 ▶":"J · Skip cutscene ▶","보스":"Boss","케 이 브 빌 드":"VOXEL SURVIVAL","캐고, 짓고, 살아남으세요":"Mine, build and survive","새 세계 만들기":"Create New World","⚔ 서바이벌":"⚔ Survival","🛠 크리에이티브":"🛠 Creative","💀 하드코어":"💀 Hardcore","🕊 세이프":"🕊 Safe","👁 관전":"👁 Spectator","배고픔·체력을 챙기며 살아남아요. 쓰러져도 스폰 지점에서 다시 시작해요.":"Manage hunger and health to survive. If you fall, you restart at your spawn point.","이어하기":"Continue","저장 파일 불러오기":"Load Save File","❓ 도움말 보기":"❓ How to Play","📜 업데이트 목록":"📜 Update Notes","🧩 모드":"🧩 Mods","🖥 PC 조작법":"🖥 PC Controls","이동":"Move","이동 ·":"move ·","스페이스":"Space","점프/수영 ·":"jump/swim ·","달리기 (물속에선":"sprint (in water:","수영":"swim","웅크리기 (모서리에서 안 떨어짐)":"crouch (won't fall off edges)","시점":"View","마우스":"Mouse","둘러보기 ·":"look around ·","시점 변경 (3인칭 앞 → 3인칭 뒤 → 1인칭)":"change view (3rd front → 3rd back → 1st person)","공격 · 캐기":"Attack · Mine","좌클릭":"Left click","공격 (한 번씩 누르기) ·":"attack (click) ·","좌클릭 누르고 있기":"Hold left click","블록 캐기":"mine block","사용":"Use","우클릭":"Right click","설치 / 먹기 / 사용 / 거래 · 무기를 든 채":"place / eat / use / trade · with a weapon,","우클릭 누르고 있기":"hold right click","방패로 막기":"to block with a shield","아이템":"Items","1~9 / 휠":"1~9 / wheel","선택 ·":"select ·","인벤토리 & 제작 ·":"inventory & crafting ·","버리기 (":"drop (","한 묶음)":"whole stack)","인벤토리":"Inventory","집기/놓기 ·":"pick up/place ·","반 나누기/하나 놓기 ·":"split half/place one ·","Shift+클릭":"Shift+click","빠른 이동 / 갑옷 착용":"quick move / equip armor","기타":"Other","디버그 정보 ·":"debug info ·","일시정지":"pause","📱 모바일 조작법":"📱 Mobile Controls","왼쪽 화면":"Left screen","조이스틱 (끝까지 밀면 달리기) ·":"joystick (push all the way to sprint) ·","웅크리기":"crouch","오른쪽 화면 드래그":"Drag right screen","시점 변경":"change view","한 번씩 누르기 공격 · 누르고 있기 블록 캐기":"tap to attack · hold to mine","✋ 누르고 있기":"hold ✋","아래 칸을 눌러 선택 ·":"tap a slot to select ·","버리기 (길게 누르면 한 묶음)":"drop (hold for whole stack)","📖 게임 팁":"📖 Tips","어둠덩이":"Gloomling","등불":"Lantern","침대":"Bed","좀비":"Zombie","명사수 해골":"Skeleton Archer","불씨방울":"Ember Blob","갑옷":"armor","방패":"Shield","차원 나침반":"Dimension Compass","에너지 스톤":"Energy Stone","어비스":"Abyss","호라이즌":"Horizon","네크로폴리스":"Necropolis","표식 돌":"Marker Stone","포탈 열쇠":"Portal Key","흐릅니다":"flow","흑요석":"Obsidian","조약돌":"Cobblestone","철 곡괭이":"Iron Pickaxe","마을":"Village","대장장이 집":"Blacksmith's House","어비스 차원문":"Abyss Portal","철 블록":"Iron Block","나무 판자":"Wooden Planks","빌리저 가디언":"Villager Guardian","동전":"Coin","문":"Door","묘목":"Sapling","사다리":"Ladder","상자":"Chest","호퍼":"Hopper","철퇴":"Mace","철막대기":"Iron Rod","메이스 헤드":"Mace Head","높은 곳에서 떨어지며":"falling from higher","달리면서 머리":"sprinting headshots","겉날개":"Elytra","점프":"Jump","폭죽":"Firework","별의 힘":"Star Power","CB-TSR 레일건":"CB-TSR Railgun","CB-NM 궁니르":"CB-NM Gungnir","CB-SL 칠성":"CB-SL Seven Stars","세계를 영원히 바꾸니":"It changes the world forever,","저장 파일을 내보내 두세요!":"so export your save first!","방사성 광석":"radioactive ores","방사능":"Radiation","방독면·방독복":"Gas mask & hazmat suit","구리":"Copper","금":"Gold","티타늄":"Titanium","다이아몬드":"Diamond","레드 다이아몬드":"Red Diamond","블랙 다이아몬드":"Black Diamond","도구":"tools","와":" and","구리 · 금 · 티타늄 · 다이아몬드 블록":"Copper · Gold · Titanium · Diamond blocks","⚙ 서버 설정":"⚙ Server Settings","돌고래":"Dolphin","돌고래의 은총":"Dolphin's Grace","바다거북":"Sea Turtle","거북 비늘":"Turtle Scute","거북 등딱지 투구":"Turtle Shell Helmet","오징어":"Squid","먹물 주머니":"Ink Sac","그물":"Net","산 채로":"alive","물고기":"Fish","낚싯대":"Fishing Rod","구운 생선":"Cooked Fish","🔫 총":"🔫 Guns","☢ 핵폭탄":"☢ Nuke","블레이즈스톤":"Blazestone","별의 힘 광석":"Star Power Ore","계속하기":"Resume","저장하기":"Save","🌱 세계 코드 복사":"🌱 Copy World Code","저장 파일 내보내기":"Export Save File","저장 후 타이틀로":"Save & Quit to Title","게임 모드":"Game Mode","쓰러졌습니다!":"You died!","부활하기":"Respawn","집기":"Pick up","나누기":"Split","빠른 이동/착용":"Quick move/equip","✕ 닫기":"✕ Close","좌클릭: 집기/놓기 · 우클릭: 반 나누기/하나 놓기 · Shift+클릭: 빠른 이동 / 갑옷 착용":"Left click: pick up/place · Right click: split/place one · Shift+click: quick move / equip armor","위의 모드를 고른 뒤 칸을 누르세요 · 레시피를 누르면 제작":"Pick a mode above, then tap a slot · tap a recipe to craft","제작":"Crafting","⚠ 모드는 이 게임 안에서 마음대로 코드를 실행해요.":"⚠ Mods can run any code inside this game.","믿을 수 있는 사람이 만든 모드만":"Only add mods made by people you trust.","넣으세요. 바꾼 뒤에는 새로고침해야 적용돼요.":"Reload the page after changing mods.","➕ 모드 파일(.js) 추가":"➕ Add mod file (.js)","📄 예시 모드 받기":"📄 Download example mod","🔄 새로고침해서 적용":"🔄 Reload to apply","세계를 만드는 중...":"Creating world...","🌱 세계 코드 (비우면 무작위)":"🌱 World code (empty = random)","🔍 레시피 검색 (예: 철)":"🔍 Search recipes (e.g. iron)","잔디 블록":"Grass Block","흙":"Dirt","돌":"Stone","원목":"Log","나뭇잎":"Leaves","판자":"Planks","모래":"Sand","물":"Water","석탄 광석":"Coal Ore","철 광석":"Iron Ore","수정 광석":"Crystal Ore","심층암":"Bedrock","작업대":"Crafting Table","가마":"Kiln","유리":"Glass","돌벽돌":"Stone Bricks","눈 덮인 흙":"Snowy Dirt","가시 덤불":"Thornbush","어비스석":"Abyss Stone","용암":"Lava","악마 벽돌":"Demon Bricks","판데모니움 차원문":"Pandemonium Portal","네크로폴리스 차원문":"Necropolis Portal","호라이즌 차원문":"Horizon Portal","종말석":"End Stone","어둠돌":"Darkstone","빛나는 창":"Lit Window","도로":"Road","어비스 등석":"Abyss Glowstone","어두운 창":"Dark Window","에너지 스톤 광석":"Energy Stone Ore","열쇠 틀":"Key Frame","열쇠가 꽂힌 틀":"Filled Key Frame","심연 균사":"Void Moss","심연 등불":"Void Lamp","블레이즈스톤 광석":"Blazestone Ore","흐르는 물":"Flowing Water","흐르는 용암":"Flowing Lava","구리 광석":"Copper Ore","금 광석":"Gold Ore","티타늄 광석":"Titanium Ore","다이아몬드 광석":"Diamond Ore","레드 다이아몬드 광석":"Red Diamond Ore","블랙 다이아몬드 광석":"Black Diamond Ore","구리 블록":"Copper Block","다이아몬드 블록":"Diamond Block","레드 다이아몬드 블록":"Red Diamond Block","블랙 다이아몬드 블록":"Black Diamond Block","금 블록":"Gold Block","티타늄 블록":"Titanium Block","우라늄 광석":"Uranium Ore","라듐 광석":"Radium Ore","플루토늄 광석":"Plutonium Ore","폴로늄 광석":"Polonium Ore","프로트악티늄 광석":"Protactinium Ore","텅스텐 블록":"Tungsten Block","열 도관":"Thermal Conduit","별의 핵 결정":"Star Core Crystal","별의 흔적":"Star Trace","강철초고합금 블록":"Steel Superalloy Block","핵폭탄":"Nuke","막대기":"Stick","석탄":"Coal","철 주괴":"Iron Ingot","수정":"Crystal","생고기":"Raw Meat","구운 고기":"Cooked Meat","사과":"Apple","솜뭉치":"Fluff","깃털":"Feather","알":"Egg","생선":"Raw Fish","오징어가 든 그물":"Net with Squid","가시":"Spike","끈적실":"Sticky Silk","썩은 살점":"Rotten Flesh","활":"Bow","화살":"Arrow","불사의 마법 물약":"Potion of Undying","레이저 (일회용)":"Laser (single use)","권총":"Pistol","돌격소총":"Assault Rifle","총알":"Bullet","블레이즈스톤 조각":"Blazestone Shard","블레이즈스톤 주괴":"Blazestone Ingot","보트":"Boat","양동이":"Bucket","물 양동이":"Water Bucket","용암 양동이":"Lava Bucket","블레이즈스톤 방패":"Blazestone Shield","어비스 나침반":"Abyss Compass","호라이즌 나침반":"Horizon Compass","네크로폴리스 나침반":"Necropolis Compass","곡괭이":"Pickaxe","도끼":"Axe","삽":"Shovel","검":"Sword","나무":"Wooden","철":"Iron","다크나이트 검":"Dark Knight Sword","스텔라 리모컨":"Stellar Remote","우라늄 덩어리":"Uranium Lump","라듐 결정":"Radium Crystal","플루토늄 덩어리":"Plutonium Lump","폴로늄 결정":"Polonium Crystal","프로트악티늄 덩어리":"Protactinium Lump","가죽":"Leather","강철":"Steel","강철합금":"Steel Alloy","구리 주괴":"Copper Ingot","금 주괴":"Gold Ingot","티타늄 주괴":"Titanium Ingot","투구":"Helmet","흉갑":"Chestplate","각반":"Leggings","장화":"Boots","천":"Cloth","거북":"Turtle","방독":"Hazmat","방독면":"Gas Mask","방독복":"Hazmat Suit","방독복 바지":"Hazmat Pants","방독 장화":"Hazmat Boots","로고를 그리지 못했습니다":"Couldn't draw the logo","프론티어":"Frontier","판데모니움":"Pandemonium","타이틀 배경을 그리지 못했습니다":"Couldn't draw the title background","레일건":"Railgun","궁니르":"Gungnir","칠성":"Seven Stars","핵미사일":"nuclear missiles","빨간 레이저":"red lasers","폭파":"blow up","두베":"Dubhe","메라크":"Merak","페크다":"Phecda","메그레즈":"Megrez","알리오스":"Alioth","미자르":"Mizar","알카이드":"Alkaid","발동 중":"active","선택":" selected","🎬 스텔라 연출을 껐어요 (땅에서 카운트다운만 봐요)":"🎬 Stellar cutscenes OFF (you'll only see the countdown)","🎬 스텔라 연출을 켰어요":"🎬 Stellar cutscenes ON","🎬 연출: 끔":"🎬 Cutscenes: OFF","CB-TSR · 레일건 — 레이저 조준 고정":"CB-TSR · Railgun — laser locked","지구 대기권을 지나":"Through Earth's atmosphere","토성을 지나":"Past Saturn","태양계 너머 — 우리 은하를 지나":"Beyond the Solar System — across the Milky Way","레일건 엔진 속 — 별의 힘 결정 회전":"Inside the railgun engine — the Star Power crystal spins","밖으로 — 에너지 충전":"Outside — charging","빨간 레이저 발사":"Red laser fired","CB-NM · 궁니르 — 불씨 표식 고정":"CB-NM · Gungnir — ember mark locked","화성 궤도 위성 — 핵미사일 발사":"Mars orbit satellites — missiles away","목성 궤도 위성 — 핵미사일 발사":"Jupiter orbit satellites — missiles away","핵미사일 편대 — 지구를 향해":"Missile fleet — heading for Earth","대기권 돌입":"Atmospheric entry","CB-SL · 칠성 — 북두칠성을 땅에 투영":"CB-SL · Seven Stars — Big Dipper projected","큰곰자리로":"To Ursa Major","일곱 별이 별의 배열로 깨어나요":"The seven stars wake as a stellar array","일곱 별이 빨간 레이저 발사":"The seven stars fire red lasers","별이 하나씩 떨어져요":"The stars strike one by one","별자리 점화":"The constellation ignites","이미 발동 중이에요":"Already active","충전 중…":"Recharging…","초":"s","궁니르와 칠성은 프론티어 하늘 아래에서만 쓸 수 있어요":"Gungnir and Seven Stars only work under the Frontier sky","조준할 땅이 없어요 (땅을 바라보세요)":"Nothing to aim at (look at the ground)","⚠ 지금 서 있는 곳도":"⚠ You are standing inside the","범위 안이에요! 4초 안에 한 번 더 누르면 그래도 발동해요":" blast zone! Press again within 4s to fire anyway","⚠ 스텔라 리모컨은":"⚠ The Stellar Remote","세계를 영원히 바꿔요":" changes the world forever",". 저장 파일을 내보내 두는 걸 추천해요":". Exporting your save first is recommended","칸 앞 조준 고정":" blocks away — target locked","🛰 크리에이티브: 광선 밖으로 대피했어요":"🛰 Creative: evacuated out of the beam","궤도에서 지워졌습니다":"was erased from orbit","궁니르의 충격파에 휩쓸렸습니다":"was swept away by Gungnir's shockwave","칠성의 레이저에 맞았습니다":"was hit by the Seven Stars' laser","핵미사일 발사!":"Nuclear missile launched!","하늘로 솟았다가":" It rises into the sky and","이 자리로 떨어져요":" falls back right here","— 8초 안에 멀리 도망치세요 (반경 40칸 소멸 · 80칸까지 충격파)":"— run far away within 8 seconds (40-block blast · shockwave to 80)","☢ 떨어진다!":"☢ Incoming!","핵폭발에 휘말렸습니다":"was caught in a nuclear blast","핵폭발의 충격파에 휩쓸렸습니다":"was swept away by the nuclear shockwave","✨ 낚싯줄에":"✨ You caught","이 걸려 올라왔어요!":" on the line!","워커를 쓸 수 없어 메인 스레드로 처리합니다":"Worker unavailable, using main thread","이(가) 부서졌습니다!":" broke!","나무꾼의 첫걸음":"Lumberjack's First Step","장인의 시작":"Crafter's Start","광부 입문":"Novice Miner","석기 시대":"Stone Age","불의 발견":"Discovering Fire","철기 시대":"Iron Age","반짝이는 보물":"Shiny Treasure","편안한 밤":"A Good Night's Sleep","사냥꾼":"Hunter","열린 문":"Open Door","물과 불":"Water and Fire","첫 거래":"First Trade","마을 발견":"Village Found","수호자 탄생":"Guardian Born","차원문 건축가":"Portal Builder","타오르는 돌":"Burning Stone","철벽 방어":"Iron Defense","⚡ 전기의 발견":"⚡ Discovering Electricity","어둠 퇴치":"Banish the Dark","요리사":"Cook","좀비 퇴치반":"Zombie Squad","명사수":"Sharpshooter","완전 무장":"Fully Armed","어비스 입성":"Into the Abyss","네크로폴리스 입성":"Into the Necropolis","세계의 끝에 서다":"At the World's End","불멸을 넘어서":"Beyond Immortality","어둠의 기사 격파":"Dark Knight Defeated","엔딩을 보다":"The End","강태공":"Master Angler","🏆 도전과제 달성:":"🏆 Achievement:","1인칭":"1st person","3인칭 (앞)":"3rd person (front)","3인칭 (뒤)":"3rd person (back)","👁 시점:":"👁 View:","뭉게":"Fluffy","수풀꼬꼬":"Bush Chick","돌거북":"Stone Tortoise","돌거북에게 받혔습니다":"was rammed by a Stone Tortoise","어둠덩이에게 당했습니다":"was killed by a Gloomling","좀비에게 당했습니다":"was killed by a Zombie","가시벌레":"Spikebug","가시벌레에게 찔렸습니다":"was stung by a Spikebug","명사수 해골의 화살에 맞았습니다":"was shot by a Skeleton Archer","명사수 해골의 주먹에 맞았습니다":"was punched by a Skeleton Archer","불씨방울 폭발에 휘말렸습니다":"was blown up by an Ember Blob","! 돌고래 곁에서 헤엄치면 더 빨라져요":"! Swim next to dolphins to go faster","나침반은 프론티어에서만 작동합니다":"Compasses only work in the Frontier","차원문이 바로 아래에 있습니다! (약":"The portal is right below you! (about","칸 아래":" blocks down","차원문에 도착했습니다!":"You reached the portal!","차원문 ·":"Portal ·","에 도착했습니다. 깊은 곳(높이 4~6)에":" reached. Deep down (height 4~6) there is","이 있습니다.":".","가장 가까운 곳: X":"Nearest: X","... 옥좌는 비어 있습니다.":"... The throne is empty.","... 옥좌 앞에":"... Before the throne,","불멸의 악마":"Immortal Demon","가 기다립니다.":" awaits.","... 광장은 조용합니다.":"... The plaza is quiet.","... 광장 중앙에":"... In the plaza stands","다크가디언":"Dark Guardian","이 서 있습니다. 레이저 조준선을 피하세요!":". Dodge its laser sight!","... 드래곤은 더 이상 없습니다.":"... The dragon is gone.","... 기둥 위":"... Break the","엔딩 수정":"End Crystals","을 부수세요! 수정이 남아 있으면 제단에 앉은 드래곤이 회복합니다.":" on the pillars! While crystals remain, the dragon heals on its altar.","로 돌아왔습니다.":" — you're back.","🔫 총알이 없어요 (철 주괴 1 + 석탄 1 → 총알 16)":"🔫 Out of bullets (1 Iron Ingot + 1 Coal → 16 bullets)","🎯 헤드샷!":"🎯 Headshot!","을(를) 쓰러뜨렸습니다!":" defeated!","불멸의 악마에게 찢겼습니다":"was torn apart by the Immortal Demon","악마의 화염구에 맞았습니다":"was hit by a demon fireball","불멸의 악마가":"The Immortal Demon","을 소환했습니다!":" summoned minions!","다크가디언의 대검에 베였습니다":"was slashed by the Dark Guardian's greatsword","다크가디언의 레이저에 맞았습니다":"was hit by the Dark Guardian's laser","엔딩 수정 파괴! 남은 수정":"End Crystal destroyed! Crystals left:","개":"","모든":"All","을 부쉈습니다! 이제 드래곤이 회복할 수 없습니다.":" destroyed! The dragon can no longer heal.","엔딩드래곤":"Ender Dragon","엔딩드래곤의 브레스에 맞았습니다":"was hit by the Ender Dragon's breath","엔딩드래곤이 제단에서":"The Ender Dragon heals on its altar","로 회복합니다! 회복하는 동안엔 공격하지 못하니 지금 공격하세요!":"! It can't attack while healing — strike now!","엔딩드래곤이 제단에 내려앉았습니다!":"The Ender Dragon landed on its altar!","지금이 기회!":"Now's your chance!","엔딩드래곤에게 들이받혔습니다":"was rammed by the Ender Dragon","엔딩드래곤에게 물렸습니다":"was bitten by the Ender Dragon","어비스 깊은 곳 판데모니움에서":"Deep in the Abyss, in Pandemonium, you","를 넘어섰고,":" were overcome,","에서":" in","을 쓰러뜨렸으며,":" was defeated,","CAVEBUILD · 케이브빌드":"CAVEBUILD","당신은 끝없는 들판에서 첫 나무를 베었고,":"You felled your first tree in endless fields,","어둠 속에서 등불을 밝혔습니다.":"and lit a lantern in the dark.","마침내 세계의 끝, 호라이즌에서":"At last, at the end of the world in the Horizon,","을 잠재웠습니다.":" was laid to rest.","— 하지만 세계는 끝나지 않습니다 —":"— but the world does not end —","돌아갈 집이 있고,":"There is a home to return to,","아직 가 보지 못한 땅이 끝없이 펼쳐져 있으니까요.":"and endless lands you have yet to explore.","기록":"Stats","생존한 날:":"Days survived:","일":" days","처치한 몹:":"Mobs defeated:","마리":"","쓰러진 횟수:":"Deaths:","번":"","플레이 시간:":"Play time:","분":" min","플레이해 주셔서 감사합니다!":"Thanks for playing!","🏠 스폰 지점으로 돌아왔습니다. 모험은 계속됩니다!":"🏠 Back at your spawn point. The adventure continues!","물이 순식간에 증발했습니다":"The water evaporated instantly","이 열렸습니다!":" opened!","이 깨어났습니다! 주변의 적을 물리쳐 줄 거예요.":" awakened! It will fight nearby enemies.","빌리저 가디언에게 맞았습니다":"was hit by a Villager Guardian","을 발견했습니다! 주민을 괴롭히면 빌리저 가디언이 화를 냅니다.":" discovered! Hurting villagers angers the Villager Guardian.","농부":"Farmer","대장장이":"Blacksmith","광부":"Miner","현자":"Sage","좀비 주민":"Zombie Villager","좀비 주민에게 당했습니다":"was killed by a Zombie Villager","주민":"Villager","🧟 주민이":"🧟 A villager became a","이 되었습니다!":"!","🌳 묘목이":"🌳 The sapling grew into a","로 자랐어요!":"!","열쇠":"keys","가 필요합니다 (":" needed (","/12) · 텔레포터가 떨어뜨려요":"/12) · Teleporters drop them","🌀 12개의 열쇠가 모두 꽂혔습니다!":"🌀 All 12 keys are in place!","이 열렸습니다.":" opened.","포탈 열쇠를 꽂았습니다 (":"Portal key inserted (","텔레포터에게 당했습니다":"was killed by a Teleporter","텔레포터":"Teleporter","쓰러졌습니다":"died","방패가 부서졌습니다!":"Your shield broke!","강한 일격에 방패가 밀렸습니다! (5초간 막기 불가)":"A heavy blow broke your guard! (can't block for 5s)","이 발동했습니다! (1초 무적)":" activated! (1s invincible)","💀 하드코어 세계는 다시 살아날 수 없어요":"💀 You can't respawn in a Hardcore world","세계를 지우고 타이틀로":"Delete world & return to title","가시 덤불에 찔렸습니다":"was pricked by a thornbush","용암에 빠졌습니다":"tried to swim in lava","겉날개가 너무 낡아서 더 이상 날 수 없어요":"Your elytra is too worn to fly","날다가 벽에 부딪혔습니다":"flew into a wall","높은 곳에서 떨어졌습니다":"fell from a high place","세계 밖으로 떨어졌습니다":"fell out of the world","에 노출됐어요! 갑옷(천·가죽 제외)이나":" exposure! Armor (not cloth/leather) or a","을 입으면 막을 수 있어요":" will protect you","방사능에 노출되었습니다":"died of radiation","굶주림으로 쓰러졌습니다":"starved to death","물에 빠졌습니다":"drowned","🌱 나무를 다 베었더니":"🌱 The tree is gone — a","이 떨어졌어요!":" dropped!","를 그물로 잡았어요! 물에 대고 누르면 풀어 줄 수 있어요":" caught in the net! Use it on water to release it","물에 대고 눌러야 오징어를 풀어 줄 수 있어요":"Use it on water to release the squid","그물을 든 채":"Hold the net and use it on a","에 대고 누르면 잡을 수 있어요":" to catch it","보트에 탔습니다 (스페이스: 내리기)":"You got in the boat (Space: get out)","불사의 마법 물약은 가지고만 있으면 쓰러질 때 자동으로 발동합니다":"The Potion of Undying activates automatically when you would die — just carry it","배가 부릅니다":"You're full","윽... 속이 좀 안 좋다":"Ugh... you feel sick","사다리는 벽에 붙여야 해요":"Ladders must be placed on a wall","문을 놓으려면 위로 2칸이 비어 있어야 해요":"Doors need 2 empty blocks of height","묘목은 잔디나 흙 위에 심어야 해요":"Saplings must be planted on grass or dirt","화살이 없습니다 (막대기+깃털+가시)":"No arrows (Stick + Feather + Spike)","이곳에서는 잘 수 없습니다":"You can't sleep here","스폰 지점이 설정되었습니다. (밤에만 잘 수 있어요)":"Spawn point set. (You can only sleep at night)","근처에 적이 있어서 잘 수 없습니다!":"You can't sleep — enemies nearby!","상쾌한 아침입니다! 스폰 지점이 설정되었습니다.":"Good morning! Spawn point set.","💥 철퇴 내려찍기!":"💥 Mace smash!","칸":" blocks","Shift+클릭: 빠르게 옮기기":"Shift+click: quick move","거래 —":"Trade —","누를 때마다 한 번씩 거래":"Each click makes one trade","🛠 크리에이티브 아이템":"🛠 Creative Items","누르면 한 묶음":"Click for a full stack","들고 있는 아이템을 여기 놓으면 버려요":"Drop the held item here to delete it","근처(4칸)에 있어야 함":"must be within 4 blocks","검색 결과가 없습니다":"No results","· 작업대":"· Crafting Table","· 가마":"· Kiln","연료1":"Fuel 1","마우스 잠금을 쓸 수 없는 화면이에요 —":"Mouse lock isn't available here —","창 안에서 마우스를 움직여":"move the mouse inside the window","둘러보세요":"to look around","✕ 도움말 닫기":"✕ Close Help","✕ 업데이트 목록 닫기":"✕ Close Update Notes","저장 실패: 저장 공간이 부족합니다. 저장 파일로 내보내 두세요":"Save failed: not enough storage. Export a save file instead","내보내기 실패":"Export failed","저장 파일을 내보냈습니다 (cavebuild-save.json)":"Save file exported (cavebuild-save.json)","내보내기를 취소했습니다":"Export canceled","잠시 후 다시 시도하세요":"Please try again in a moment","이 환경에서는 파일로 내보낼 수 없습니다":"Files can't be exported here","올바른 저장 파일이 아닙니다 (기존 세계는 그대로 둡니다)":"Not a valid save file (your world is unchanged)","기존 세계를 덮어씁니다 · 한 번 더 누르면 불러오기":"This overwrites your world · click again to load","저장 파일을 불러왔습니다":"Save file loaded","쓰러진 채로 저장되어 있어서":"You were saved while dead, so we","체력을 회복":"restored your health","했습니다":"","크리에이티브":"Creative",": 🎒에서 모든 아이템을 꺼낼 수 있어요 · ⤒ 두 번 → 날기":": take any item from 🎒 · double-tap ⤒ to fly",": E에서 모든 아이템을 꺼낼 수 있어요 · 스페이스 두 번 → 날기 (C: 내려가기)":": take any item from E · double-tap Space to fly (C: down)","하드코어":"Hardcore",": 목숨은 하나뿐이에요. 조심하세요!":": you only have one life. Be careful!","나무를 캐서 판자와 작업대를 만들어 보세요! (🎒: 인벤토리)":"Chop trees to make planks and a crafting table! (🎒: inventory)","나무를 캐서 판자와 작업대를 만들어 보세요! (E: 인벤토리)":"Chop trees to make planks and a crafting table! (E: inventory)","📱 가로 모드로 돌리면 더 편하게 플레이할 수 있어요":"📱 Rotate to landscape for easier play","세계를 여는 중 문제가 생겼습니다. 기존 저장은 그대로 있어요.":"Something went wrong opening the world. Your save is safe.","저장된 세계를 확인하는 중이에요. 잠시 뒤에 다시 눌러 주세요":"Checking your saved world. Please click again in a moment","기존 세계를 덮어씁니다 · 한 번 더 누르면 시작":"This overwrites your world · click again to start","🌱 세계 코드":"🌱 World code","로 세계를 만들었습니다":" — world created","다치지 않고 배고프지 않아요. 모든 아이템을 마음대로 꺼내 쓰고, 블록을 한 번에 부수고, 스페이스를 두 번 눌러 날 수 있어요.":"No damage, no hunger. Take any item, break blocks instantly and double-tap Space to fly.","몹이 1.5배 아프게 때려요. 목숨은 단 하나! 쓰러지면 세계가 사라져요.":"Mobs hit 1.5× harder. Only one life — if you die, the world is deleted!","적대 몹이 나오지 않고, 배고프지 않으며, 체력이 저절로 차요. 마음 편히 짓고 탐험해요.":"No hostile mobs, no hunger, health regenerates. Build and explore in peace.","다치지 않고 블록을 뚫고 자유롭게 날아다니며 구경만 해요 (스페이스: 위 · C: 아래). 블록·몹과 상호작용할 수 없어요.":"Fly freely through blocks and just watch (Space: up · C: down). You can't interact with blocks or mobs.","⚙ 서버 설정 ·":"⚙ Server Settings ·","게임 모드:":"Game mode:","🕊 날기 시작 (스페이스: 위 · C: 아래)":"🕊 Flying (Space: up · C: down)","날기 그만":"Stopped flying","를 복사했습니다":" copied","🌱 이 세계의 코드는":"🌱 This world's code is","입니다 (직접 적어 두세요)":" (write it down)","저장되었습니다":"Saved","문제가 생겼습니다:":"Something went wrong:","알 수 없는 오류":"unknown error","모드를 저장할 공간이 부족해요":"Not enough space to store mods","모드 오류":"Mod error","🧩 모드 오류(":"🧩 Mod error (","모드 블록 칸이 다 찼어요 (최대 8개)":"Mod block slots are full (max 8)","그림 칸이 다 찼어요":"Texture slots are full","모드 폭발에 휘말렸습니다":"was caught in a mod explosion","모드 실패":"Mod failed","삭제":"Delete","아직 넣은 모드가 없어요":"No mods added yet","🧩 모드를 넣었어요.":"🧩 Mod added.","새로고침":"Reload","하면 적용돼요":" to apply","이 모드를 지울까요?":"Delete this mod?","틱":"tick","차원:":"Dimension:","청크:":"Chunks:","몹:":"Mobs:","시간:":"Time:","시  시드:":"h  Seed:","바라보는 블록:":"Looking at:","켜짐":"On","꺼짐":"Off","오류":"Error","돌 곡괭이":"Stone Pickaxe","수정 곡괭이":"Crystal Pickaxe","누런 티타늄":"Yellow Titanium","강철초고합금":"Steel Superalloy","별의 힘 결정":"Star Power crystal","에너지":"Energy","스톤":"Stone","우라늄":"Uranium","라듐":"Radium","플루토늄":"Plutonium","폴로늄":"Polonium","프로트악티늄":"Protactinium","엔딩 수정 파괴!":"End Crystal destroyed!","남은 수정":"Crystals left:","충전":"Recharge","발동":"Fire","다음":"Next","메뉴":"Menu","연출":"Cutscene","켜기":"on","끄기":"off","넘기기":"skip","(지하)":"(underground)",", 감염된 폐허 마을":", infected ruined village",", 표식 돌 방":", Marker Stone room","· 위의 아이템을 빨아들여 아래 상자로 보냄":"· pulls items from above into the chest below","· 회복 중":"· healing","· 🎬 연출 끔":" · 🎬 cutscenes off","끔":"off","켬":"on","✋ 발동 · 🧎+✋ 다음 · 여기를 눌러 메뉴":"✋ fire · 🧎+✋ next · tap here for menu","우클릭 발동 · C+우클릭 다음 · K/I/U 선택 · H 메뉴 · J 연출 켜기/끄기 · 넘기기":"Right click: fire · C+right click: next · K/I/U: select · H: menu · J: cutscenes on/off · skip","가장 가까운 곳":"Nearest","🌐 English":"🌐 English","🌐 한국어":"🌐 한국어","한국어":"한국어","🌐 Language / 언어":"🌐 Language","원자폭탄":"Atomic Bomb","차르 봄바":"Tsar Bomba","대륙간 핵탄두 미사일":"ICBM","💣 폭탄이 꺼졌어요":"💣 The bomb was defused","차르 봄바 점화!":"Tsar Bomba armed!","15초 안에 아주 멀리 도망치세요 (반경 120칸 소멸 · 240칸까지 충격파)":" Run very far within 15s (120-block blast · shockwave to 240)","원자폭탄 점화!":"Atomic bomb armed!","10초 안에 멀리 도망치세요 (반경 70칸 소멸 · 140칸까지 충격파)":" Run far within 10s (70-block blast · shockwave to 140)","대륙간 핵탄두 미사일 발사!":"ICBM launched!","칸 앞 · 9초 뒤 도착 (반경 60칸)":" blocks away · impact in 9s (60-block blast)","CB-SL · 칠성 — 하늘에 북두칠성":"CB-SL · Seven Stars — the Big Dipper rises","미사일 리모컨":"Missile Remote","🎮 미사일 조종 중 · 속도":"🎮 Piloting missile · speed","· 높이":"· height","· 남은 시간":"· time left","마우스 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파":"Mouse: steer · W: boost · S: slow · Right click/Space: detonate","미사일 조종 시작!":"Missile control engaged!","마우스로 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파":" Mouse: steer · W: boost · S: slow · Right click/Space: detonate","이 있어야 조종할 수 있어요":" is needed to pilot","🎮 미사일 조종 중":"🎮 Piloting missile","속도":"speed","높이":"height","남은 시간":"time left","🎮 조종할 무기:":"🎮 Weapon to pilot:","(반경":"(radius","칸)":" blocks)","조종 시작!":" — piloting!","조종 중 · 반경":" — piloting · radius","칸 · 속도":" blocks · speed","이(가) 있어야 조종할 수 있어요 (웅크리고 쓰면 무기 바꾸기)":" is needed to pilot (crouch + use to switch weapon)"};
 const HELP_EN=`
     <div class="deskonly"><h4>🖥 PC Controls</h4>
       <span class="k">Move</span><b>WASD</b> move · <b>Space</b> jump/swim · <b>Shift</b> sprint (in water: <b>swim</b>) · <b>C</b> crouch (won't fall off edges)<br>
@@ -1270,7 +1213,7 @@ const HELP_EN=`
     • Climb <b>Ladders</b> (7 Sticks) placed on walls, store things in <b>Chests</b> (8 Planks), and <b>Hoppers</b> (5 Iron Ingots + Chest) suck up items from above into the chest below.<br>
     • <b>Mace</b> = <b>Iron Rod</b> (8 Iron Ingots + 1 Stick) + <b>Mace Head</b> (1 Iron Ingot + 8 Spikes). One hit every 2.5s for <b>20</b>! It hits harder the <b>higher you fall from</b>, and <b>sprinting headshots</b> deal 1.5×.<br>
     • Wear <b>Elytra</b> (10 Feathers + 4 Sticky Silk + 2 Crystals, also dropped by the Ender Dragon) in the chest slot and press <b>Jump</b> again while falling to glide. Look down to speed up, up to climb. Use a <b>Firework</b> (1 Coal + 1 Stick → 3) while flying to boost forward!<br>
-    • <b>🛰 Stellar Remote</b> (8 Energy Stones around 1 <b>Star Power</b>) — The Shooting Star! Reshape the world with <b>CB-TSR Railgun</b> (50-block radius) · <b>CB-NM Gungnir</b> (400 blocks) · <b>CB-SL Seven Stars</b> (1,440 blocks), each with a space cutscene through Earth, Saturn, the galaxy, Mars, Jupiter and Ursa Major (K/I/U select · <span class="deskonly">right click</span><span class="mobonly">✋</span> fire · crouch-use for next skill · H menu · J skip / hold the remote and press J to toggle cutscenes). <b>It changes the world forever</b> — use it carefully!<br>
+    • <b>🛰 Stellar Remote</b> (8 Energy Stones around 1 <b>Star Power</b>) — The Shooting Star! Reshape the world with <b>CB-TSR Railgun</b> (50-block radius) · <b>CB-NM Gungnir</b> (400 blocks) · <b>CB-SL Seven Stars</b> (1,440 blocks), each with a space cutscene through Earth, Saturn, the galaxy, Mars, Jupiter and Ursa Major (K/I/U select · <span class="deskonly">right click</span><span class="mobonly">✋</span> fire · crouch-use for next skill · H menu · J skip / hold the remote and press J to toggle cutscenes). <b>It changes the world forever</b> — export your save first!<br>
     • Deep <b>radioactive ores</b> (Uranium · Radium · Plutonium · Polonium · Protactinium) deal <b>Radiation</b> damage when nearby or carried. Armor (except cloth and leather) blocks 20% per piece, and a <b>Gas mask & hazmat suit</b> (made from leather) block 25% per piece — all four pieces block it completely.<br>
     • New ores: <b>Copper</b>·<b>Gold</b> (stone pickaxe) · <b>Titanium</b> (iron pickaxe) · <b>Diamond</b>·<b>Red Diamond</b> (crystal pickaxe) · <b>Black Diamond</b> (blazestone pickaxe). Deeper means rarer. Smelt ores in a kiln into ingots and gems, then craft <b>tools</b> and <b>armor</b>, or 9 of them into <b>Copper · Gold · Titanium · Diamond blocks</b>.<br>
     • Choose <b>Survival · Creative · Hardcore · Safe · Spectator</b> when creating a world, and change it any time in the pause menu's <b>⚙ Server Settings</b>.<br>
@@ -1284,19 +1227,7 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.57 — Play old versions</h4>
-    • Pick a <b>version</b> in the launcher to play exactly that version. Items that didn't exist yet are hidden there, and come back when you return to the latest version.
-    <h4>v26.56 — Instant language switch</h4>
-    • Changing the language now applies instantly without reloading. Mode and difficulty (Safe · Easy · Normal · DIFFICULT · Hardcore) are chosen when you create a world.
-    <h4>v26.55 — 🌐 50 languages · separate launcher</h4>
-    • The game now speaks <b>50 languages</b> — search for yours in Settings. The launcher moved to <b>korean568.github.io/cavebuildhome</b>, and Save & Quit takes you back to it.
-    <h4>v26.53 — Play · Settings · multiple worlds</h4>
-    • The title now has <b>▶ Play</b> (create a world or join one of your saved worlds) and <b>⚙ Settings</b> (mode, difficulty SAFE/EASY/COMMONLY/DIFFICULTY/HARDCORE, language). Worlds are saved separately, so creating a new world no longer deletes the old one.
-    <h4>v26.52 — 🚀 Launcher</h4>
-    • A Minecraft-style launcher now greets you with tabs, patch notes, a version picker and a big green PLAY button.
-    <h4>v26.51 — A remote for every weapon</h4>
-    • New <b>Nuke Remote</b> (2 Energy Stones + 3 Iron Ingots + 1 Uranium), <b>Atomic Bomb Remote</b> (+ Radium) and <b>Tsar Bomba Remote</b> (+ Polonium). The Missile Remote now pilots ICBMs only.
-    <h4>v26.50 — Bomb models fix</h4>
+    <h4>🆕 v26.50 — Bomb models fix</h4>
     • Placed Atomic Bombs and Tsar Bombas are no longer invisible.
     <h4>v26.49 — 3D items · menu mouse lock fix</h4>
     • Bullets, Star Power, the Missile Remote and the Iron Rod now have 3D models. The Stellar Remote menu (H) no longer breaks the mouse lock.
@@ -1363,39 +1294,29 @@ const STELLAR_EN={
   'CB-SL':'The <b>Big Dipper</b> rises in the sky and the seven stars of Ursa Major wake as a stellar array and fire <b>red lasers</b>. One by one they all strike <b>the exact spot you chose</b>, each blast bigger than the last, and a final explosion leaves a <b>26-block</b> crater with a Star Core Crystal (Creative players keep the ground under their feet).'};
 const HANGUL=/[가-힣]/,trCache=new Map();let I18N_KEYS=null;
 const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-let LD={},I18N=I18N_EN; // 고른 언어의 사전 (영어 · 한국어 말고는 lang/<코드>.json 을 불러옴, 빠진 말은 영어로)
-function loadDict(l){LD={};I18N=I18N_EN;if(l==='en'||l==='ko')return;
-  try{const x=new XMLHttpRequest();x.open('GET','lang/'+l+'.json',false);x.send();if(x.status===200||x.status===0&&x.responseText){LD=JSON.parse(x.responseText);I18N=Object.assign({},I18N_EN);for(const k in LD)if(!/^(L:|S:|HELP$)/.test(k))I18N[k]=LD[k];}}catch(e){LD={};}}
-loadDict(LANG);
-const LT=en=>LANG==='ko'?(LKO[en]||en):(LD['L:'+en]||en); // 런처 · 메뉴 글자 (원문 영어)
-const LKO={'Search languages…':'언어 검색…','No matching language':'맞는 언어가 없어요','🌐 Language':'🌐 언어'};
-function tr(s){ // 한국어 원문 글자를 고른 언어로 (같은 글자는 한 번만 계산)
-  if(LANG==='ko'||!s||!HANGUL.test(s))return s;let r=trCache.get(s);if(r!==undefined)return r;
+function tr(s){ // 한국어 글자를 영어로 (같은 글자는 한 번만 계산)
+  if(LANG!=='en'||!s||!HANGUL.test(s))return s;let r=trCache.get(s);if(r!==undefined)return r;
   const core=s.trim();
-  if(I18N[core]!==undefined)r=s.replace(core,I18N[core]);
-  else{if(!I18N_KEYS)I18N_KEYS=Object.keys(I18N).sort((a,b)=>b.length-a.length);r=s;
+  if(I18N_EN[core]!==undefined)r=s.replace(core,I18N_EN[core]);
+  else{if(!I18N_KEYS)I18N_KEYS=Object.keys(I18N_EN).sort((a,b)=>b.length-a.length);r=s;
     for(const k of I18N_KEYS){if(r.indexOf(k)<0)continue;
-      if(k.length<=2)r=r.replace(new RegExp('(^|[^\\uac00-\\ud7a3])'+reEsc(k)+'(?=$|[^\\uac00-\\ud7a3])','g'),(m,p)=>p+I18N[k]);else r=r.split(k).join(I18N[k]);
+      if(k.length<=2)r=r.replace(new RegExp('(^|[^\\uac00-\\ud7a3])'+reEsc(k)+'(?=$|[^\\uac00-\\ud7a3])','g'),(m,p)=>p+I18N_EN[k]);else r=r.split(k).join(I18N_EN[k]);
       if(!HANGUL.test(r))break;}
     r=r.replace(/([A-Za-z0-9)\]]) ?(을|를|이|가|은|는|으로|로|와|과|의|에|에서)(?=[\s.,!?·)]|$)/g,'$1');}
   if(trCache.size>5000)trCache.clear();trCache.set(s,r);return r;}
 function nameHas(id,q){const n=info(id).name;return n.includes(q)||tr(n).toLowerCase().includes(q.toLowerCase());} // 검색: 한국어 · 영어 이름 모두
-const SRC=new WeakMap(),OUT=new WeakMap(); // 화면 글자의 한국어 원문 · 마지막으로 바꿔 넣은 글자 (언어를 바꾸면 원문에서 다시 번역)
 function trNode(n){
-  if(n.nodeType===3){const v=n.nodeValue;let src=SRC.get(n);if(src===undefined||OUT.get(n)!==v){if(!v||!HANGUL.test(v))return;src=v;SRC.set(n,src);}
-    const t=tr(src);OUT.set(n,t);if(t!==v)n.nodeValue=t;return;}
+  if(n.nodeType===3){const v=n.nodeValue;if(v&&HANGUL.test(v)){const t=tr(v);if(t!==v)n.nodeValue=t;}return;}
   if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE')return;
-  for(const a of ['placeholder','title','aria-label'])if(n.hasAttribute&&n.hasAttribute(a)){const k='src_'+a,v=n.getAttribute(a);let src=n.dataset&&n.dataset[k.replace('-','')];if(HANGUL.test(v)){src=v;n.dataset[k.replace('-','')]=v;}if(src)n.setAttribute(a,tr(src));}
+  for(const a of ['placeholder','title','aria-label'])if(n.hasAttribute&&n.hasAttribute(a)){const v=n.getAttribute(a);if(HANGUL.test(v))n.setAttribute(a,tr(v));}
   for(let c=n.firstChild;c;c=c.nextSibling)trNode(c);}
-const HELP_KO=(document.querySelector('#title .help:not(.upd)')||{}).innerHTML||'',UPD_KO=(document.querySelector('#title .help.upd')||{}).innerHTML||'';
-function applyHelp(){const h=document.querySelector('#title .help:not(.upd)'),u=document.querySelector('#title .help.upd');if(h)h.innerHTML=LANG==='ko'?HELP_KO:(LD.HELP||HELP_EN);if(u)u.innerHTML=LANG==='ko'?UPD_KO:UPD_EN;}
-function setLang(l){ // 새로고침 없이 바로 바꿈 (게임 중이어도 튕기지 않음)
-  try{localStorage.setItem(LANG_KEY,l);}catch(e){}if(l===LANG)return;LANG=l;document.documentElement.lang=l;loadDict(l);trCache.clear();I18N_KEYS=null;
-  applyHelp();trNode(document.body);try{if($('title').classList.contains('show'))drawTitleBg();}catch(e){}
-  try{langPicker($('tLang'));langPicker($('setLang'));renderWorlds();renderTSettings();if($('settings').classList.contains('show'))renderSettings();if(running)updModeBtn();}catch(e){}}
-applyHelp();trNode(document.body);
-new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')trNode(m.target);else for(const n of m.addedNodes)trNode(n);}}).observe(document.body,{childList:true,subtree:true,characterData:true});
-{const oc=window.confirm.bind(window),oa=window.alert.bind(window);window.confirm=m=>oc(tr(m));window.alert=m=>oa(tr(m));}
+function setLang(l){try{localStorage.setItem(LANG_KEY,l);}catch(e){}const go=()=>location.reload();if(typeof running!=='undefined'&&running&&typeof saveGame==='function')saveGame().then(go,go);else go();}
+if(LANG==='en'){
+  const h=document.querySelector('#title .help:not(.upd)'),u=document.querySelector('#title .help.upd');if(h)h.innerHTML=HELP_EN;if(u)u.innerHTML=UPD_EN;
+  trNode(document.body);
+  new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')trNode(m.target);else for(const n of m.addedNodes)trNode(n);}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+  const oc=window.confirm.bind(window),oa=window.alert.bind(window);window.confirm=m=>oc(tr(m));window.alert=m=>oa(tr(m));
+}
 'use strict';
 // =====================================================================
 //  CAVEBUILD (케이브빌드) — 오리지널 복셀 생존 게임 (모든 텍스처/사운드는 코드로 생성)
@@ -1837,8 +1758,6 @@ IT[URANIUM]={name:'우라늄 덩어리',stack:64};IT[RADIUM]={name:'라듐 결�
 IT[POLONIUM]={name:'폴로늄 결정',stack:64};IT[PROTACTINIUM]={name:'프로트악티늄 덩어리',stack:64};IT[LEATHER]={name:'가죽',stack:64};
 const ICBM=284,MISSILE_REMOTE=285;IT[ICBM]={name:'대륙간 핵탄두 미사일',stack:4,use:true}; // 들고 멀리 조준해서 쏨
 IT[MISSILE_REMOTE]={name:'미사일 리모컨',stack:1,use:true}; // 대륙간 핵탄두 미사일을 직접 조종
-const NUKE_REMOTE=286,ATOM_REMOTE=287,TSAR_REMOTE=288; // 무기마다 전용 리모컨
-IT[NUKE_REMOTE]={name:'핵폭탄 리모컨',stack:1,use:true};IT[ATOM_REMOTE]={name:'원자폭탄 리모컨',stack:1,use:true};IT[TSAR_REMOTE]={name:'차르 봄바 리모컨',stack:1,use:true};
 IT[STEEL]={name:'강철',stack:64};IT[STEEL_ALLOY]={name:'강철합금',stack:64};IT[COPPER_INGOT]={name:'구리 주괴',stack:64};IT[GOLD_INGOT]={name:'금 주괴',stack:64};IT[TITANIUM_INGOT]={name:'티타늄 주괴',stack:64};
 IT[DIAMOND]={name:'다이아몬드',stack:64};IT[RED_DIAMOND]={name:'레드 다이아몬드',stack:64};IT[BLACK_DIAMOND]={name:'블랙 다이아몬드',stack:64};
 const ARMOR_PARTS=['투구','흉갑','각반','장화'];
@@ -1915,8 +1834,7 @@ RECIPES.push(
   {out:STEEL,n:1,in:[[IRON_INGOT,1],[STONE,1]],st:'bench'},{out:STEEL_ALLOY,n:1,in:[[STEEL,1],[STONE,1]],st:'bench'},
   {out:BULLET,n:16,in:[[IRON_INGOT,1],[COAL,1]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
   {out:SUPER_ALLOY,n:1,in:[[STEEL,1],[STEEL_ALLOY,1],[IRON_INGOT,1]],st:'bench'},{out:NUKE,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[SUPER_ALLOY,1]],st:'bench'},
-  {out:ICBM,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1]],st:'bench'},{out:MISSILE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[CRYSTAL,1]],st:'bench'},
-  {out:NUKE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[URANIUM,1]],st:'bench'},{out:ATOM_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[RADIUM,1]],st:'bench'},{out:TSAR_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[POLONIUM,1]],st:'bench'},{out:ATOM_BOMB,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1],[POLONIUM,1]],st:'bench'},
+  {out:ICBM,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1]],st:'bench'},{out:MISSILE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[CRYSTAL,1]],st:'bench'},{out:ATOM_BOMB,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1],[POLONIUM,1]],st:'bench'},
   {out:TSAR_BOMBA,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1],[POLONIUM,1],[PROTACTINIUM,1]],st:'bench'},
   {out:TITANIUM_BLOCK,n:1,in:[[TITANIUM_INGOT,9]],st:'bench'},{out:TITANIUM_INGOT,n:9,in:[[TITANIUM_BLOCK,1]]},{out:BLACK_DIAMOND,n:9,in:[[BLACKDIA_BLOCK,1]]},
   {out:HS_SCRAP,n:1,in:[[HS_ORE,1]],st:'kiln',fuel:true},
@@ -2014,8 +1932,8 @@ function itemIcon(id){
     case POTION:return pixelIcon((X,Y,x,y)=>{if(y===2&&x>=7&&x<=8)return '#8a5a2a';if(y>=3&&y<=5&&x>=7&&x<=8)return '#d8ecff';const d=Math.hypot(X-8,Y-10.5);if(d<4.6){if(d>3.9)return '#d8ecff';if(Y<8.2)return '#e8f4ff';return Math.hypot(X-6.5,Y-9.5)<1?'#fff6c0':'#ffc830';}return null;});
     case STAR_POWER:return pixelIcon((X,Y,x,y)=>{const d=Math.abs((x-y)); // 별의 힘: 빨간 레이저 줄기 결정
       if(y<1||y>14||x<1||x>14)return null;if(d===0)return '#ffe8e8';if(d===1)return '#ff3040';if(d===2)return '#b01828';if((x===3&&y===11)||(x===12&&y===4)||(x===11&&y===13))return '#ff7080';return null;});
-    case MISSILE_REMOTE:case NUKE_REMOTE:case ATOM_REMOTE:case TSAR_REMOTE:{const ac={[MISSILE_REMOTE]:'#2a5ad0',[NUKE_REMOTE]:'#c82020',[ATOM_REMOTE]:'#e0b828',[TSAR_REMOTE]:'#cfd3da'}[id];return pixelIcon((X,Y,x,y)=>{if(x>=3&&x<=12&&y>=5&&y<=13){if(y===6&&x>=4&&x<=11)return ac;if(x>=5&&x<=7&&y>=8&&y<=10)return '#3a3a44';if(x===10&&y===8||x===11&&y===10)return '#ff3040';return (x===3||x===12||y===13)?'#1c1c22':'#4a5060';}
-      if(x===6&&y>=2&&y<=7)return '#9aa0aa';if(x===6&&y===1)return '#ff3040';return null;});}
+    case MISSILE_REMOTE:return pixelIcon((X,Y,x,y)=>{if(x>=3&&x<=12&&y>=5&&y<=13){if(x>=5&&x<=7&&y>=8&&y<=10)return '#3a3a44';if(x===10&&y===8||x===11&&y===10)return '#ff3040';return (x===3||x===12||y===13)?'#1c1c22':'#4a5060';}
+      if(x===6&&y>=2&&y<=7)return '#9aa0aa';if(x===6&&y===1)return '#ff3040';return null;});
     case ICBM:return pixelIcon((X,Y,x,y)=>{const d=x-y;if(Math.abs(d)>1||x<2||x>14)return null;if(x<=4)return '#c82020';if(x>=12)return Math.abs(d)===1?'#30323a':'#ffa040';if(x>=7&&x<=8)return '#2a5ad0';return Math.abs(d)===1?'#b8bcc6':'#eef0f4';});
     case ATOM_BOMB:return pixelIcon((X,Y,x,y)=>{const e=((X-7)/5.2)**2+((Y-8.5)/4.2)**2;if(e<1)return Math.abs(X-8)<.8?'#20201a':e<.5?'#f2cc30':'#c89a18';if(x>=12&&x<=14&&y>=5&&y<=12)return (y===5||y===12||x===14)?'#30323a':null;return null;});
     case TSAR_BOMBA:return pixelIcon((X,Y,x,y)=>{if(y<6||y>11)return (x>=12&&x<=14&&(y===4||y===13))?'#30323a':null;if(x<1)return null;if(x<=2)return y<7||y>10?null:'#9aa0aa';if(x>=12)return (x===14||y===6||y===11)?'#30323a':null;return y===6?'#f4f5f8':x===7?'#c82020':'#cfd3da';});
@@ -2352,7 +2270,7 @@ function stSelect(i){stSkill=i;SFX.click();toast(`🛰 <b>${STELLAR[i].code} · 
 function stCineToggle(){world.flags.stCine=world.flags.stCine===0?1:0;toast(world.flags.stCine===0?'🎬 스텔라 연출을 껐어요 (땅에서 카운트다운만 봐요)':'🎬 스텔라 연출을 켰어요');stHud();const b=$('stCineBtn');if(b)b.textContent=world.flags.stCine===0?'🎬 연출: 끔':'🎬 연출: 켬';}
 let stMenuOpen=false; // 인벤토리의 invOpen처럼: 메뉴가 열려 있으면 마우스 잠금이 풀려도 일시정지를 띄우지 않음
 function stMenu(open){const m=$('stellarMenu');if(open===undefined)open=!m.classList.contains('show');stMenuOpen=open;mouseL=mouseR=false;
-  if(open){m.querySelector('.list').innerHTML=STELLAR.map((k,i)=>`<div class="sk${i===stSkill?' on':''}" data-i="${i}"><b>[${k.key}] ${k.code} · ${k.name}</b> <span style="opacity:.7;font-size:12px">${k.full}</span><br><small>${LANG==='ko'?k.desc:(LD['S:'+k.code]||STELLAR_EN[k.code]||k.desc)}</small></div>`).join('');$('stCineBtn').textContent=world.flags.stCine===0?'🎬 연출: 끔':'🎬 연출: 켬';m.classList.add('show');if(document.pointerLockElement)document.exitPointerLock();}
+  if(open){m.querySelector('.list').innerHTML=STELLAR.map((k,i)=>`<div class="sk${i===stSkill?' on':''}" data-i="${i}"><b>[${k.key}] ${k.code} · ${k.name}</b> <span style="opacity:.7;font-size:12px">${k.full}</span><br><small>${(LANG==='en'&&STELLAR_EN[k.code])||k.desc}</small></div>`).join('');$('stCineBtn').textContent=world.flags.stCine===0?'🎬 연출: 끔':'🎬 연출: 켬';m.classList.add('show');if(document.pointerLockElement)document.exitPointerLock();}
   else{m.classList.remove('show');lockPointer();}}
 function flash(o=1,t=600,col='#fff'){const f=$('flash');f.style.background=col;f.style.transition='none';f.style.opacity=o;void f.offsetWidth;f.style.transition=`opacity ${t}ms ease-out`;f.style.opacity=0;}
 function shake(a,t){shakeAmp=Math.max(shakeAmp,a);shakeT=Math.max(shakeT,t);}
@@ -2580,7 +2498,7 @@ function useRemote(s){
   if(!stSafe()&&stInZone(o,k.code,player.pos.x,player.pos.z)){const now=performance.now(); // 서바이벌: 내가 범위 안이면 한 번 더 확인
     if(!stConfirm||stConfirm.k!==k.code||now-stConfirm.t>4000){stConfirm={k:k.code,t:now};SFX.hmm();toast(`⚠ 지금 서 있는 곳도 <b>${k.name}</b> 범위 안이에요! 4초 안에 한 번 더 누르면 그래도 발동해요`);return;}}
   stConfirm=null;
-  if(!world.flags.stWarn){world.flags.stWarn=1;toast('⚠ 스텔라 리모컨은 <b>세계를 영원히 바꿔요</b>. 아끼는 세계라면 조심해서 쓰세요');}
+  if(!world.flags.stWarn){world.flags.stWarn=1;toast('⚠ 스텔라 리모컨은 <b>세계를 영원히 바꿔요</b>. 저장 파일을 내보내 두는 걸 추천해요');}
   swing=1;SFX.stArm();toast(`🛰 <b>${k.code} · ${k.name}</b> — ${Math.round(Math.hypot(P.x-player.pos.x,P.z-player.pos.z))}칸 앞 조준 고정`);
   Object.assign(o,{type:k.code,T:k.T,end:k.end,cd:k.cd,t:0,objs:[],ev:{},fired:false,cine:world.flags.stCine!==0});
   {let bx=player.pos.x-o.x,bz=player.pos.z-o.z,L=Math.hypot(bx,bz);if(L<1){const d=viewDir();bx=-d.x;bz=-d.z;L=Math.hypot(bx,bz)||1;}o.back=V3(bx/L,0,bz/L);}
@@ -2685,11 +2603,11 @@ const GM_T=[ // 조종할 수 있는 핵무기: 위력 · 모델 · 모델이 �
   {id:NUKE,R:40,S:1,ax:V3(0,1,0),mk:()=>{const m=nukeMissile();m.scale.setScalar(1.3);return m;}},
   {id:ATOM_BOMB,R:70,S:2.6,ax:V3(1,0,0),mk:()=>{const m=fatMan();m.scale.setScalar(1.8);return m;}},
   {id:TSAR_BOMBA,R:120,S:4.5,ax:V3(1,0,0),mk:()=>{const m=tsarModel();m.scale.setScalar(1.3);return m;}}];
-const REMOTE_OF={[MISSILE_REMOTE]:0,[NUKE_REMOTE]:1,[ATOM_REMOTE]:2,[TSAR_REMOTE]:3};
-function launchGuided(k){
+function launchGuided(){
   if(rodLock||gm)return;rodLock=true;
-  const T=GM_T[k],nm=info(T.id).name;
-  if(!isCreative()&&!inv.some(q=>q&&q.id===T.id)){toast(`🎮 <b>${nm}</b>이(가) 있어야 조종할 수 있어요`);SFX.click();return;}
+  if(player.crouch||mobileCrouch){gmSel=(gmSel+1)%GM_T.length;SFX.click();toast(`🎮 조종할 무기: <b>${info(GM_T[gmSel].id).name}</b> (반경 ${GM_T[gmSel].R}칸)`);return;} // 웅크리고 쓰면 무기 바꾸기
+  const T=GM_T[gmSel],nm=info(T.id).name;
+  if(!isCreative()&&!inv.some(q=>q&&q.id===T.id)){toast(`🎮 <b>${nm}</b>이(가) 있어야 조종할 수 있어요 (웅크리고 쓰면 무기 바꾸기)`);SFX.click();return;}
   if(!isCreative()){removeItem(T.id,1);invChanged();}
   const m=T.mk();scene.add(m);
   gm={T,m,t:0,pos:player.pos.clone().add(V3(0,2.5,0)),home:player.pos.clone(),yaw:player.yaw,pitch:player.pitch,speed:30,boom:false};
@@ -3467,7 +3385,7 @@ function buildItemModel(id){
   if(id===STAR_POWER){const cr=new THREE.MeshStandardMaterial({color:0xff3040,emissive:0xb00018,emissiveIntensity:.9,roughness:.15,metalness:.1}); // 별의 힘: 빨갛게 빛나는 결정
     const m=new THREE.Mesh(new THREE.OctahedronGeometry(.08,0),cr);m.scale.set(1,1.7,1);m.rotation.y=.4;g.add(m);
     const w=new THREE.Mesh(new THREE.OctahedronGeometry(.082,0),new THREE.MeshBasicMaterial({color:0xffc0c8,wireframe:true,transparent:true,opacity:.55}));w.scale.copy(m.scale);w.rotation.copy(m.rotation);g.add(w);return {g,grip};}
-  if(id===MISSILE_REMOTE||id===NUKE_REMOTE||id===ATOM_REMOTE||id===TSAR_REMOTE){const ac={[MISSILE_REMOTE]:0x2a5ad0,[NUKE_REMOTE]:0xc82020,[ATOM_REMOTE]:0xe0b828,[TSAR_REMOTE]:0xcfd3da}[id],bd=imat('mrB',0x2a2e38,'rough',.5,.2),bl=imat('mrBl'+id,ac,'rough',.4,.2),rd=imat('mrR',0xff2a2a,null,.3,0,0xff1010,.8),an=imat('mrA',0x9aa0aa,'metal',.3,.8); // 미사일 리모컨
+  if(id===MISSILE_REMOTE){const bd=imat('mrB',0x2a2e38,'rough',.5,.2),bl=imat('mrBl',0x2a5ad0,'rough',.4,.2),rd=imat('mrR',0xff2a2a,null,.3,0,0xff1010,.8),an=imat('mrA',0x9aa0aa,'metal',.3,.8); // 미사일 리모컨
     iBox(g,.14,.04,.2,bd,0,0,0);iBox(g,.12,.006,.06,bl,0,.023,.05);iMesh(g,IGEO.cyl,an,-.04,.035,-.02,0,0,0,.012,.03,.012);iMesh(g,IGEO.sph,bd,-.04,.055,-.02,0,0,0,.018,.018,.018);
     iMesh(g,IGEO.cyl,rd,.04,.025,-.03,0,0,0,.015,.012,.015);iMesh(g,IGEO.cyl,an,.05,.1,.09,0,0,0,.005,.16,.005);iMesh(g,IGEO.sph,rd,.05,.185,.09,0,0,0,.012,.012,.012);return {g,grip};}
   if(it&&it.tool){
@@ -4012,7 +3930,7 @@ class Mob{
     if(d.init)d.init(this);
     this.g=new THREE.Group();this.u=d.build(this.g,this);scene.add(this.g);mobs.push(this);
     if(!d.noclip){this.shadow=new THREE.Mesh(SHADOW_GEO,SHADOW_MAT.clone());const r=Math.max(.5,d.w*1.25);this.shadow.scale.set(r,r,1);this.shadow.rotation.x=-Math.PI/2;scene.add(this.shadow);}
-    if(d.hostile&&!d.boss&&isSafe())this.remove();} // 세이프 모드에선 적대 몹이 나오지 않음
+    if(d.hostile&&!d.boss&&world.mode==='safe')this.remove();} // 세이프 모드에선 적대 몹이 나오지 않음
   updShadow(){const s=this.shadow;if(!s)return;const x=Math.floor(this.pos.x),z=Math.floor(this.pos.z);let y=Math.floor(this.pos.y+.01),k=0; // 발밑 땅을 찾아 그림자를 깔고, 높이 뜰수록 옅게
     while(k<6){const b=getBlock(x,y-1,z);if(b<0||SOLID[b])break;y--;k++;}
     const h=this.pos.y-y;s.visible=k<6;s.position.set(this.pos.x,y+.02,this.pos.z);s.material.opacity=.42*Math.max(0,1-h/5)*Math.min(1,light+.3);}
@@ -4868,7 +4786,7 @@ Object.assign(MOBDEF,{
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
   if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec())return; // 크리에이티브·관전: 다치지 않음
   if(!bypass&&(stFrozen()||gm))return; // 스텔라 연출 · 미사일 조종 중엔 몹에게 맞지 않음
-  if(!bypass)dmg*=DIFF_MUL[world.diff||'normal']||1; // 난이도: EASY 0.5배 · DIFFICULTY · HARDCORE 1.5배
+  if(isHardcore()&&!bypass)dmg*=1.5; // 하드코어: 몹이 1.5배 아프게 때림
   // 방패: 정면(약 ±70°)에서 오는 공격을 막음. 대미지 30 이상은 절반만 막고 5초간 막기 불가
   if(!bypass&&player.blocking&&armor[4]&&(kx||kz)){
     const l=Math.hypot(kx,kz),fx=-Math.sin(player.yaw),fz=-Math.cos(player.yaw);
@@ -4900,8 +4818,7 @@ function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
 }
 function die(cause){
   player.dead=true;world.stats.deaths++;invOpen&&closeInv(true);$('deadMsg').textContent=cause;$('dead').classList.add('show');
-  if(isHardcore()){$('deadMsg').innerHTML=cause+'<br><b style="color:#ff9a9a">💀 하드코어 세계에서는 다시 살아날 수 없어요 — 이제 관전만 할 수 있어요</b>';$('btnRespawn').textContent='👁 관전하기';}
-  else $('btnRespawn').textContent='부활하기';
+  if(isHardcore()){$('deadMsg').innerHTML=cause+'<br><b style="color:#ff9a9a">💀 하드코어 세계는 다시 살아날 수 없어요</b>';$('btnRespawn').textContent='세계를 지우고 타이틀로';}
   if(document.pointerLockElement)document.exitPointerLock();
 }
 function respawn(){
@@ -5117,7 +5034,7 @@ function useItem(){
   if(s&&s.id===FISHING_ROD){useRod();return;}
   if(s&&MOD_USE[s.id]){try{MOD_USE[s.id](s,target);}catch(e){modErr('사용',e);}rodLock=true;return;} // 모드 아이템
   if(s&&s.id===ICBM){launchICBM(s);return;}
-  if(s&&REMOTE_OF[s.id]!==undefined){launchGuided(REMOTE_OF[s.id]);return;} // 리모컨마다 정해진 무기를 조종
+  if(s&&s.id===MISSILE_REMOTE){launchGuided();return;}
   if(s&&s.id===STELLAR_REMOTE){useRemote(s);return;}
   if(s&&s.id===FIREWORK){ // 날고 있으면 앞으로 쭉 밀어 줌 · 아니면 바라본 곳에서 쏘아 올림
     if(player.gliding){player.boostT=1.3;SFX.launch();}
@@ -5486,7 +5403,7 @@ function encodeMods(){
 }
 function saveSnapshot(){
   syncGolems();
-  return {v:2,t:Date.now(),name:world.name||'',diff:world.diff||'normal',seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,carves:world.carves||{},mode:world.mode||'survival',containers:world.containers||{},saplings:world.saplings||[],items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
+  return {v:2,t:Date.now(),seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,carves:world.carves||{},mode:world.mode||'survival',containers:world.containers||{},saplings:world.saplings||[],items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
     p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};
 }
 // 파일/localStorage용: 압축 배열을 base64 문자열로
@@ -5498,20 +5415,11 @@ function fromPortable(sv){ // 예전 형식([[인덱스,블록],...])도 읽음
   for(const d in src){md[d]={};for(const k in src[d]){const v=src[d][k];md[d][k]=v instanceof Uint16Array?v:typeof v==='string'?b64ToU16(v):Uint16Array.from(v.flat());}}
   return {...sv,md};
 }
-// 세계 목록: IndexedDB 'worlds'(+ localStorage 사본)에 [{id,name,seed,mode,diff,t}], 각 세계는 'w:아이디'에 저장
-let WORLDS=[],CUR=null;const wKey=id=>'w:'+id,WL_LS='cavebuild-worlds';
-function worldsSave(){idbPut('worlds',WORLDS).catch(()=>{});try{localStorage.setItem(WL_LS,JSON.stringify(WORLDS));}catch(e){}}
-function worldsLoad(){let ls=null;try{ls=JSON.parse(localStorage.getItem(WL_LS)||'null');}catch(e){}return idbGet('worlds').catch(()=>null).then(l=>l||ls||[]).catch(()=>ls||[]);}
-function loadWorld(id){let ls=null;try{const t=localStorage.getItem(SAVE_KEY+':'+id);if(t)ls=fromPortable(JSON.parse(t));}catch(e){}
-  return idbGet(wKey(id)).catch(()=>null).then(sv=>{let db=null;try{db=sv?fromPortable(sv):null;}catch(e){}if(db&&ls)return (ls.t||0)>(db.t||0)?ls:db;return db||ls;});}
-function newWorldId(){return 'w'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36);}
 function saveGame(){
-  if(!CUR)return Promise.resolve(false);let snap;try{snap=saveSnapshot();}catch(e){return Promise.resolve(false);}
-  const w=WORLDS.find(q=>q.id===CUR);const info={id:CUR,name:world.name||'World',seed,mode:world.mode,diff:world.diff,t:snap.t,hcDead:!!world.flags.hcDead};if(w)Object.assign(w,info);else WORLDS.push(info);worldsSave();
-  return idbPut(wKey(CUR),snap).then(()=>{try{localStorage.removeItem(SAVE_KEY+':'+CUR);}catch(e){}SAVED=snap;return true;})
-    .catch(()=>{try{localStorage.setItem(SAVE_KEY+':'+CUR,JSON.stringify(toPortable(snap)));SAVED=snap;return true;}catch(e){toast('저장 실패: 저장 공간이 부족합니다. 저장 파일로 내보내 두세요');return false;}});
+  let snap;try{snap=saveSnapshot();}catch(e){return Promise.resolve(false);}
+  return idbPut('main',snap).then(()=>{try{localStorage.removeItem(SAVE_KEY);}catch(e){}SAVED=snap;return true;})
+    .catch(()=>{try{localStorage.setItem(SAVE_KEY,JSON.stringify(toPortable(snap)));SAVED=snap;return true;}catch(e){toast('저장 실패: 저장 공간이 부족합니다. 저장 파일로 내보내 두세요');return false;}});
 }
-function deleteWorld(id){WORLDS=WORLDS.filter(q=>q.id!==id);worldsSave();idbPut(wKey(id),null).catch(()=>{});try{localStorage.removeItem(SAVE_KEY+':'+id);}catch(e){}}
 function loadSaveAsync(){
   let ls=null;try{const t=localStorage.getItem(SAVE_KEY);if(t)ls=fromPortable(JSON.parse(t));}catch(e){ls=null;}
   return idbGet('main').catch(()=>null).then(sv=>{
@@ -5536,13 +5444,22 @@ function validSave(sv){ // 불러오기 전에 꼭 필요한 항목을 확인 (�
   if(!Array.isArray(sv.inv))return false;
   return true;
 }
-function importSave(file){ // 저장 파일 → 세계 목록에 새 세계로 추가하고 바로 접속 (기존 세계는 그대로)
+function importSave(file){
   const r=new FileReader();
   r.onload=()=>{let sv;try{sv=fromPortable(JSON.parse(r.result));}catch(e){sv=null;}
     if(!validSave(sv)){toast('올바른 저장 파일이 아닙니다 (기존 세계는 그대로 둡니다)');return;}
-    const id=newWorldId();sv.name=sv.name||('불러온 세계 '+(WORLDS.length+1));
-    audio();goFull();startWorld(sv,()=>{CUR=id;saveGame().then(()=>renderWorlds());toast('저장 파일을 불러왔습니다');});};
+    const b=$('btnImport');
+    if(SAVED&&!b.dataset.sure){ // 기존 세계가 있으면 한 번 더 눌러 확정
+      b.dataset.sure='1';b.textContent='기존 세계를 덮어씁니다 · 한 번 더 누르면 불러오기';
+      pendingImport=sv;setTimeout(()=>{delete b.dataset.sure;b.textContent='저장 파일 불러오기';pendingImport=null;},6000);return;}
+    applyImport(sv);};
   r.readAsText(file);
+}
+let pendingImport=null;
+function applyImport(sv){
+  const b=$('btnImport');delete b.dataset.sure;b.textContent='저장 파일 불러오기';pendingImport=null;
+  // 먼저 게임을 띄워 보고, 문제가 없을 때만 저장소에 덮어씀
+  SAVED=sv;audio();goFull();startWorld(sv,()=>{idbPut('main',sv).catch(()=>{try{localStorage.setItem(SAVE_KEY,JSON.stringify(toPortable(sv)));}catch(e){}});toast('저장 파일을 불러왔습니다');});
 }
 
 // ---------- 시작 ----------
@@ -5559,8 +5476,7 @@ function startWorld(save,onOk){
       save=fromPortable(save);modsByDim={};
       for(const d in save.md){const mm=new Map();for(const k in save.md[d]){const a=save.md[d][k],m=new Map();for(let i=0;i+1<a.length;i+=2)m.set(a[i],a[i+1]);mm.set(k,m);}modsByDim[d]=mm;}
       for(const k in modCache)delete modCache[k];Object.assign(modCache,save.md);modDirty.clear();
-      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.carves=save.carves||{};world.containers=save.containers||{};world.saplings=save.saplings||[];world.mode=save.mode||'survival';world.name=save.name||world.name||'World';
-      world.diff=save.diff||(world.mode==='hardcore'?'hardcore':world.mode==='safe'?'safe':'normal');if(!MODE_INFO[world.mode])world.mode='survival';if(save.flags&&save.flags.hcDead)world.mode='spectator';VCACHE.clear();
+      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.carves=save.carves||{};world.containers=save.containers||{};world.saplings=save.saplings||[];world.mode=save.mode||'survival';VCACHE.clear();
       world.stats=Object.assign({kills:0,deaths:0,play:0,days:0},save.stats||{});
       if(!modsByDim[world.dim])modsByDim[world.dim]=new Map();mods=modsByDim[world.dim];caveB=world.dim==='over'?.38:DIM[world.dim].caveB;
       Object.assign(player,{hp:save.p.hp,food:save.p.food,yaw:save.p.yaw,pitch:save.p.pitch});player.pos.set(save.p.x,save.p.y,save.p.z);
@@ -5572,7 +5488,7 @@ function startWorld(save,onOk){
       }
     }else{
       seed=(wantSeed!==null?wantSeed:(Math.random()*1e9)|0);wantSeed=null;initNoise();mods=new Map();modsByDim={over:mods};for(const k in modCache)delete modCache[k];modDirty.clear();armor=[null,null,null,null,null];
-      Object.assign(world,{dim:'over',mode:wantMode,diff:wantDiff,name:wantName||'World',golems:[],homeVillage:null,carves:{},containers:{},saplings:[],flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
+      Object.assign(world,{dim:'over',mode:wantMode,golems:[],homeVillage:null,carves:{},containers:{},saplings:[],flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
       const s=findSpawn();world.spawn={x:s.x,y:s.h+1,z:s.z};player.pos.set(s.x,s.h+1,s.z);
       VCACHE.clear();world.homeVillage=findHomeVillage(s.x,s.z);
     }
@@ -5593,7 +5509,7 @@ function startWorld(save,onOk){
     camera.position.set(player.pos.x,player.pos.y+1.62,player.pos.z);
     player.flying=false;updModeBtn();
     if(world.mode==='creative')toast(MOBILE?'🛠 <b>크리에이티브</b>: 🎒에서 모든 아이템을 꺼낼 수 있어요 · ⤒ 두 번 → 날기':'🛠 <b>크리에이티브</b>: E에서 모든 아이템을 꺼낼 수 있어요 · 스페이스 두 번 → 날기 (C: 내려가기)');
-    else if(isHardcore())toast('💀 <b>하드코어</b>: 목숨은 하나뿐이에요. 조심하세요!');
+    else if(world.mode==='hardcore')toast('💀 <b>하드코어</b>: 목숨은 하나뿐이에요. 조심하세요!');
     if(!save)toast(MOBILE?'나무를 캐서 판자와 작업대를 만들어 보세요! (🎒: 인벤토리)':'나무를 캐서 판자와 작업대를 만들어 보세요! (E: 인벤토리)');
     if(MOBILE&&innerHeight>innerWidth)toast('📱 가로 모드로 돌리면 더 편하게 플레이할 수 있어요');
     lockPointer();
@@ -5605,56 +5521,43 @@ function startWorld(save,onOk){
    }
   },30);
 }
-let saveChecked=false;
-function fmtDate(t){try{const loc=LANG==='ko'?'ko-KR':(Intl.DateTimeFormat.supportedLocalesOf([LANG])[0]||'en-US');return new Date(t).toLocaleString(loc,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return '';}} // 날짜도 고른 언어 형식으로
-function renderWorlds(){const L=[...WORLDS].sort((a,b)=>(b.t||0)-(a.t||0));
-  $('worldList').innerHTML=L.length?L.map(w=>`<div class="wi"><div><b>${(w.name||'World').replace(/</g,'&lt;')}</b><small>${w.hcDead?'💀 ':''}${(MODE_INFO[w.mode]||MODE_INFO.survival)[0]} · ${(DIFF_INFO[w.diff]||DIFF_INFO.normal)[0]} · ${fmtDate(w.t)} · 🌱${w.seed}</small></div><button data-play="${w.id}">▶ 접속</button><button class="del" data-del="${w.id}">🗑</button></div>`).join(''):'<div class="empty">아직 만든 세계가 없어요</div>';}
-function renderNewInfo(){renderTSettings();}
-function renderTSettings(){for(const b of $('tMode').children)b.classList.toggle('on',b.dataset.m===wantMode);$('tModeDesc').textContent=MODE_INFO[wantMode][1];
-  for(const b of $('tDiff').children)b.classList.toggle('on',b.dataset.d===wantDiff);$('tDiffDesc').textContent=DIFF_INFO[wantDiff][1];}
-function saveWant(){try{localStorage.setItem('cavebuild-newworld',JSON.stringify({m:wantMode,d:wantDiff}));}catch(e){}}
-$('btnPlay').onclick=()=>{audio();SFX.click();renderWorlds();renderNewInfo();$('playPanel').classList.add('show');};
-$('btnPlayClose').onclick=()=>$('playPanel').classList.remove('show');
-$('btnTSet').onclick=()=>{SFX.click();renderTSettings();$('tSettings').classList.add('show');};
-$('btnTSetClose').onclick=()=>$('tSettings').classList.remove('show');
-$('tMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;wantMode=b.dataset.m;saveWant();renderTSettings();};
-$('tDiff').onclick=e=>{const b=e.target.closest('button');if(!b)return;wantDiff=b.dataset.d;saveWant();renderTSettings();};
-$('btnNew').onclick=()=>{audio();if(!saveChecked){toast('저장된 세계를 확인하는 중이에요. 잠시 뒤에 다시 눌러 주세요');return;}
-  wantSeed=parseSeed($('seedIn').value);wantName=$('worldName').value.trim()||(LANG==='en'?'World ':'세계 ')+(WORLDS.length+1);const id=newWorldId();
-  $('playPanel').classList.remove('show');goFull();startWorld(null,()=>{CUR=id;saveGame();});
+let saveChecked=false; // 저장된 세계를 다 확인하기 전에는 덮어쓰지 않음
+$('btnNew').onclick=()=>{audio();const b=$('btnNew');
+  if(!saveChecked){toast('저장된 세계를 확인하는 중이에요. 잠시 뒤에 다시 눌러 주세요');return;}
+  if(SAVED&&!b.dataset.sure){ // 확인창 대신 한 번 더 눌러 확정
+    b.dataset.sure='1';b.textContent='기존 세계를 덮어씁니다 · 한 번 더 누르면 시작';
+    setTimeout(()=>{delete b.dataset.sure;b.textContent='새 세계 만들기';},4000);return;}
+  wantSeed=parseSeed($('seedIn').value);
+  goFull();startWorld(null);
   if(wantSeed!==null)setTimeout(()=>toast(`🌱 세계 코드 <b>${seed}</b> 로 세계를 만들었습니다`),900);};
-$('worldList').onclick=e=>{const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.play){const id=b.dataset.play,ent=WORLDS.find(q=>q.id===id);audio();loadWorld(id).then(sv=>{if(!sv||!validSave(sv)){toast('이 세계를 불러오지 못했어요');return;}if(ent)sv.name=ent.name;$('playPanel').classList.remove('show');goFull();startWorld(sv,()=>{CUR=id;});});}
-  else if(b.dataset.del){if(!b.dataset.sure){b.dataset.sure='1';b.textContent='정말?';setTimeout(()=>{delete b.dataset.sure;b.textContent='🗑';},3000);return;}deleteWorld(b.dataset.del);renderWorlds();toast('세계를 지웠어요');}};
-worldsLoad().then(L=>{WORLDS=Array.isArray(L)?L.filter(w=>w&&w.id):[];
-  if(WORLDS.length)return;return loadSaveAsync().then(sv=>{if(!sv||!validSave(sv))return; // 예전(세계 하나) 저장을 첫 번째 세계로 옮김
-    const id=newWorldId();WORLDS.push({id,name:sv.name||(LANG==='en'?'World 1':'세계 1'),seed:sv.seed,mode:sv.mode||'survival',diff:sv.diff||(sv.mode==='hardcore'?'hardcore':sv.mode==='safe'?'safe':'normal'),t:sv.t||Date.now()});
-    return idbPut(wKey(id),sv).catch(()=>{try{localStorage.setItem(SAVE_KEY+':'+id,JSON.stringify(toPortable(sv)));}catch(e){}}).then(()=>worldsSave());});})
-  .catch(()=>{}).finally(()=>{saveChecked=true;renderWorlds();});
+$('btnCont').onclick=()=>{audio();goFull();if(SAVED)startWorld(SAVED);};
+$('btnCont').disabled=true;$('btnNew').disabled=true;
+loadSaveAsync().then(sv=>{SAVED=sv;saveChecked=true;$('btnCont').disabled=!sv;$('btnNew').disabled=false;})
+  .catch(()=>{saveChecked=true;$('btnNew').disabled=false;});
+$('btnImport').onclick=()=>{if(pendingImport){applyImport(pendingImport);return;}$('fileImport').click();};
+$('fileImport').onchange=e=>{const f=e.target.files[0];if(f)importSave(f);e.target.value='';};
 let wantSeed=null; // 새 세계에 쓸 세계 코드 (null이면 무작위)
-let wantMode='survival',wantDiff='normal',wantName='';
-try{const q=JSON.parse(localStorage.getItem('cavebuild-newworld')||'{}');if(['creative','survival','spectator'].includes(q.m))wantMode=q.m;if(['safe','easy','normal','hard','hardcore'].includes(q.d))wantDiff=q.d;}catch(e){}
+let wantMode='survival';
 const MODE_INFO={survival:['⚔ 서바이벌','배고픔·체력을 챙기며 살아남아요. 쓰러져도 스폰 지점에서 다시 시작해요.'],
   creative:['🛠 크리에이티브','다치지 않고 배고프지 않아요. 모든 아이템을 마음대로 꺼내 쓰고, 블록을 한 번에 부수고, 스페이스를 두 번 눌러 날 수 있어요.'],
+  hardcore:['💀 하드코어','몹이 1.5배 아프게 때려요. 목숨은 단 하나! 쓰러지면 세계가 사라져요.'],
+  safe:['🕊 세이프','적대 몹이 나오지 않고, 배고프지 않으며, 체력이 저절로 차요. 마음 편히 짓고 탐험해요.'],
   spectator:['👁 관전','다치지 않고 블록을 뚫고 자유롭게 날아다니며 구경만 해요 (스페이스: 위 · C: 아래). 블록·몹과 상호작용할 수 없어요.']};
-const DIFF_INFO={safe:['🕊 세이프','적대 몹이 나오지 않고, 배고프지 않으며, 체력이 저절로 차요. 마음 편히 짓고 탐험해요.'],easy:['🙂 쉬움','몹이 절반만 아프게 때려요.'],
-  normal:['⚖ 보통','보통 난이도예요.'],hard:['😈 어려움','몹이 1.5배 아프게 때려요.'],hardcore:['💀 하드코어','몹이 1.5배 아프게 때리고, 목숨은 단 하나! 쓰러지면 그 세계는 관전만 할 수 있어요.']};
-const isCreative=()=>world.mode==='creative',isHardcore=()=>world.diff==='hardcore',isSafe=()=>world.diff==='safe',isSpec=()=>world.mode==='spectator';
-const DIFF_MUL={safe:.5,easy:.5,normal:1,hard:1.5,hardcore:1.5}; // 몹에게 맞는 피해 배율
-function setDiff(d){world.diff=d;if(d==='safe'){player.hp=20;player.food=20;for(const o of [...mobs])if(o.def.hostile&&!o.def.boss)o.remove();}lastStats='';renderStats();updModeBtn();} // 난이도 바꾸기
+$('modeSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;wantMode=b.dataset.m;
+  for(const x of $('modeSel').children)x.classList.toggle('on',x===b);$('modeDesc').textContent=MODE_INFO[wantMode][1];});
+const isCreative=()=>world.mode==='creative',isHardcore=()=>world.mode==='hardcore',isSafe=()=>world.mode==='safe',isSpec=()=>world.mode==='spectator';
 function setMode(m){const was=world.mode;world.mode=m;player.flying=false;player.gliding=false;
-  if(m==='creative'||m==='spectator'){player.hp=20;player.food=20;player.air=10;}
+  if(m==='creative'||m==='spectator'||m==='safe'){player.hp=20;player.food=20;player.air=10;}
   if(m==='spectator'){if(player.boat){player.boat.passenger=null;player.boat=null;}if(invOpen)closeInv(true);}
   if(was==='spectator'&&m!=='spectator'){player.vel.set(0,0,0);while(entHits(player)&&player.pos.y<CH)player.pos.y+=1;player.peakY=player.pos.y;} // 블록 속에서 나오면 위로 올려 줌
+  if(m==='safe')for(const o of [...mobs])if(o.def.hostile&&!o.def.boss)o.remove(); // 세이프: 적대 몹이 사라짐
   lastStats='';renderStats();updModeBtn();if(invOpen)renderInv();}
-function updModeBtn(){$('btnMode').textContent='⚙ 서버 설정 · '+(MODE_INFO[world.mode]||MODE_INFO.survival)[0]+' · '+(DIFF_INFO[world.diff]||DIFF_INFO.normal)[0];document.body.classList.toggle('spec',isSpec());}
+function updModeBtn(){$('btnMode').textContent='⚙ 서버 설정 · '+MODE_INFO[world.mode||'survival'][0];document.body.classList.toggle('spec',isSpec());}
 // 서버 설정: 일시정지에서 언제든 5가지 모드 중 하나로 바꿈
-function renderSettings(){const m=world.mode||'survival',d=world.diff||'normal';for(const b of $('setMode').children)b.classList.toggle('on',b.dataset.m===m);$('setDesc').textContent=MODE_INFO[m][1];
-  for(const b of $('setDiff').children)b.classList.toggle('on',b.dataset.d===d);$('setDiffDesc').textContent=DIFF_INFO[d][1];}
-$('setDiff').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.d===world.diff)return;if(world.flags.hcDead){toast('💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setDiff(b.dataset.d);renderSettings();toast('난이도: <b>'+DIFF_INFO[world.diff][0]+'</b>');});
+function renderSettings(){const m=world.mode||'survival';for(const b of $('setMode').children)b.classList.toggle('on',b.dataset.m===m);$('setDesc').textContent=MODE_INFO[m][1];}
 $('btnMode').onclick=()=>{renderSettings();$('pause').classList.remove('show');$('settings').classList.add('show');};
 $('btnSetClose').onclick=()=>{$('settings').classList.remove('show');$('pause').classList.add('show');};
-$('setMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.m===world.mode)return;if(world.flags.hcDead){toast('💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setMode(b.dataset.m);renderSettings();toast('게임 모드: <b>'+MODE_INFO[world.mode][0]+'</b>');});
+$('setMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.m===world.mode)return;setMode(b.dataset.m);renderSettings();toast('게임 모드: <b>'+MODE_INFO[world.mode][0]+'</b>');});
 let lastSpaceT=0;function spaceTap(){const n=performance.now();if(isCreative()&&n-lastSpaceT<300&&!player.boat){player.flying=!player.flying;if(player.flying)player.vel.y=Math.max(player.vel.y,5);toast(player.flying?'🕊 날기 시작 (스페이스: 위 · C: 아래)':'날기 그만');lastSpaceT=0;}else lastSpaceT=n;}
 function parseSeed(t){ // 숫자는 그대로, 글자는 같은 글자면 늘 같은 숫자로
   t=(t||'').trim();if(!t)return null;
@@ -5674,13 +5577,12 @@ function copySeed(){
 }
 $('btnSeed').onclick=()=>copySeed();
 $('seedIn').addEventListener('keydown',e=>{if(e.code==='Enter')$('btnNew').click();e.stopPropagation();});
-$('worldName').addEventListener('keydown',e=>{if(e.code==='Enter')$('btnNew').click();e.stopPropagation();});
+$('btnExport').onclick=()=>exportSave();
 $('btnResume').onclick=()=>lockPointer();
 $('btnSave').onclick=()=>{saveGame().then(ok=>{if(ok)toast('저장되었습니다');});};
-const HOME_URL='https://korean568.github.io/cavebuildhome/';
-$('btnQuit').onclick=()=>{saveGame().then(()=>{if(location.hostname==='korean568.github.io'){try{sessionStorage.removeItem('cb-play');}catch(e){}location.href=HOME_URL;}else location.reload();});}; // 저장하고 런처로
+$('btnQuit').onclick=()=>{saveGame().then(()=>location.reload());};
 $('btnRespawn').onclick=()=>{
-  if(isHardcore()){world.flags.hcDead=1;player.dead=false;player.hp=20;player.food=20;player.air=10;player.vel.set(0,0,0);$('dead').classList.remove('show');setMode('spectator');saveGame();lockPointer();toast('👁 하드코어에서 쓰러졌어요. 이 세계는 이제 <b>관전</b>만 할 수 있어요');return;} // 하드코어: 삭제 대신 관전만
+  if(isHardcore()){running=false;SAVED=null;idbPut('main',null).catch(()=>{}).finally(()=>{try{localStorage.removeItem(SAVE_KEY);}catch(e){}location.reload();});return;} // 하드코어: 세계 삭제
   respawn();};
 $('btnEndCont').onclick=()=>closeEnding();
 addEventListener('beforeunload',()=>{if(running)saveGame();});
@@ -5748,13 +5650,8 @@ const WAND=CB.item({key:'wand',name:'루비 지팡이',icon:'🪄',stack:1,use:(
 CB.recipe(WAND,1,[[RUBY,2],[CB.ids.STICK,1]],'bench');
 CB.toast('💎 루비 모드가 켜졌어요!');
 `;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));a.download='ruby-mod.js';a.click();};
-function langPicker(el){ // 언어 검색 + 50개 언어 목록
-  el.innerHTML=`<input class="lsearch" type="text" placeholder="🔍 ${LT('Search languages…')}" autocomplete="off"><div class="llist"></div>`;
-  const inp=el.querySelector('input'),list=el.querySelector('.llist');
-  const draw=()=>{const q=inp.value.trim().toLowerCase();const L=LANGS.filter(l=>!q||l.some(t=>t.toLowerCase().includes(q)));
-    list.innerHTML=L.length?L.map(l=>`<button data-l="${l[0]}" class="${l[0]===LANG?'on':''}"><b>${l[1]}</b><small>${l[2]}</small></button>`).join(''):`<div class="lnone">${LT('No matching language')}</div>`;};
-  inp.oninput=draw;inp.onkeydown=e=>e.stopPropagation();list.onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.l!==LANG)setLang(b.dataset.l);};draw();}
-langPicker($('tLang'));langPicker($('setLang'));
+{const b=$('btnLang');b.textContent=LANG==='en'?'🌐 한국어':'🌐 English';b.onclick=()=>setLang(LANG==='en'?'ko':'en');} // 언어 바꾸기 (타이틀)
+for(const b of document.querySelectorAll('#setLang button')){b.classList.toggle('on',b.dataset.l===LANG);b.onclick=()=>{if(b.dataset.l!==LANG)setLang(b.dataset.l);};} // 설정 화면의 언어 선택
 initWorker();
 // ---------- 메인 루프 ----------
 let last=performance.now(),saveT=0,fpsA=0,fpsN=0,fps=0;
@@ -5791,5 +5688,14 @@ function frame(now){
 requestAnimationFrame(frame);
 </script>
 
+<script>/* 옛 버전 실행기: 이 버전에 없는 아이템 · 블록은 잠시 숨김 (최신 버전의 세계는 그대로) */
+(function(){try{if(typeof startWorld!=='function')return;var _sw=startWorld;
+startWorld=function(sv,ok){try{if(sv){if(typeof fromPortable==='function')sv=fromPortable(sv);
+ var hasI=function(id){try{return id>0&&!!info(id);}catch(e){return false;}},hasB=function(id){return id===0||(typeof BL!=='undefined'&&!!BL[id]);};
+ var fx=function(a){return (a||[]).map(function(s){return s&&hasI(s.id)?s:null;});};
+ sv.inv=fx(sv.inv);if(sv.armor)sv.armor=fx(sv.armor);
+ if(sv.md)for(var d in sv.md)for(var k in sv.md[d]){var a=sv.md[d][k];if(a&&a.length)for(var i=1;i<a.length;i+=2)if(!hasB(a[i]))a[i]=0;}
+ if(sv.containers)for(var c in sv.containers){var C=sv.containers[c];if(Array.isArray(C))sv.containers[c]=fx(C);else if(C&&Array.isArray(C.slots))C.slots=fx(C.slots);}
+ sv.items=(sv.items||[]).filter(function(it){return it&&it.s&&hasI(it.s.id);});}}catch(e){}return _sw(sv,ok);};}catch(e){}})();</script>
 </body>
 </html>
