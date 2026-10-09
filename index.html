@@ -253,7 +253,6 @@ body.mobile #toasts{top:72px}
   <button class="btn" id="btnHelp">❓ 도움말 보기</button>
   <button class="btn" id="btnUpd">📜 업데이트 목록</button>
   <button class="btn" id="btnMods">🧩 모드</button>
-  <input type="file" id="fileImport" accept=".json,application/json" hidden>
   <div class="help">
     <div class="deskonly"><h4>🖥 PC 조작법</h4>
       <span class="k">이동</span><b>WASD</b> 이동 · <b>스페이스</b> 점프/수영 · <b>Shift</b> 달리기 (물속에선 <b>수영</b>) · <b>C</b> 웅크리기 (모서리에서 안 떨어짐)<br>
@@ -303,7 +302,8 @@ body.mobile #toasts{top:72px}
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
     <h4>🆕 v26.53 — ▶ 플레이 · ⚙ 설정 · 세계 여러 개</h4>
-    • 타이틀이 <b>▶ 플레이</b>와 <b>⚙ 설정</b>으로 정리됐어요. 플레이에서 <b>새 세계 만들기</b>(이름 · 세계 코드)와 <b>전에 하던 서버</b>(세계 목록 · 접속 · 삭제 · 저장 파일 불러오기)를 한곳에서 해요.<br>
+    • 플레이 화면의 <b>저장 파일 불러오기</b>는 없앴어요.<br>
+    • 타이틀이 <b>▶ 플레이</b>와 <b>⚙ 설정</b>으로 정리됐어요. 플레이에서 <b>새 세계 만들기</b>(이름 · 세계 코드)와 <b>전에 하던 서버</b>(세계 목록 · 접속 · 삭제)를 한곳에서 해요.<br>
     • 이제 <b>세계를 여러 개</b> 저장해요 — 새 세계를 만들어도 예전 세계가 지워지지 않아요. 지금까지 하던 세계는 목록의 첫 세계로 옮겨졌어요.<br>
     • 설정: <b>모드</b>(크리에이티브 · 서바이벌 · 관전), <b>난이도</b>(SAFE · EASY · COMMONLY · DIFFICULTY · HARDCORE), <b>언어</b>. 게임 중에도 ⚙ 서버 설정에서 모드와 난이도를 따로 바꿀 수 있어요.
     <h4>v26.52 — 🚀 런처</h4>
@@ -541,8 +541,7 @@ body.mobile #toasts{top:72px}
     <input id="seedIn" type="text" placeholder="🌱 세계 코드 (비우면 무작위)" autocomplete="off" maxlength="40">
     <div class="ppinfo" id="newInfo"></div>
     <button class="btn" id="btnNew">새 세계 만들기</button></div>
-  <div class="ppsec"><h3>🗂 전에 하던 서버</h3><div id="worldList"></div>
-    <button class="btn" id="btnImport">📂 저장 파일 불러오기</button></div>
+  <div class="ppsec"><h3>🗂 전에 하던 서버</h3><div id="worldList"></div></div>
   <button class="btn" id="btnPlayClose">닫기</button></div></div>
 <div id="tSettings" class="overlay"><div class="ppbox">
   <h2>⚙ 설정</h2>
@@ -5641,8 +5640,6 @@ worldsLoad().then(L=>{WORLDS=Array.isArray(L)?L.filter(w=>w&&w.id):[];
     const id=newWorldId();WORLDS.push({id,name:sv.name||(LANG==='en'?'World 1':'세계 1'),seed:sv.seed,mode:sv.mode||'survival',diff:sv.diff||(sv.mode==='hardcore'?'hardcore':sv.mode==='safe'?'safe':'normal'),t:sv.t||Date.now()});
     return idbPut(wKey(id),sv).catch(()=>{try{localStorage.setItem(SAVE_KEY+':'+id,JSON.stringify(toPortable(sv)));}catch(e){}}).then(()=>worldsSave());});})
   .catch(()=>{}).finally(()=>{saveChecked=true;renderWorlds();});
-$('btnImport').onclick=()=>$('fileImport').click();
-$('fileImport').onchange=e=>{const f=e.target.files[0];if(f){$('playPanel').classList.remove('show');importSave(f);}e.target.value='';};
 let wantSeed=null; // 새 세계에 쓸 세계 코드 (null이면 무작위)
 let wantMode='survival',wantDiff='normal',wantName='';
 try{const q=JSON.parse(localStorage.getItem('cavebuild-newworld')||'{}');if(['creative','survival','spectator'].includes(q.m))wantMode=q.m;if(['safe','easy','normal','hard','hardcore'].includes(q.d))wantDiff=q.d;}catch(e){}
