@@ -265,7 +265,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.62 — 🧴 접착제 · 항상 최신 버전</h4>
+    <h4>🆕 v26.63 — 둥근 바퀴</h4>
+    • <b>바퀴</b>가 이제 네모가 아니라 <b>동그란 바퀴</b> 모양이에요 (땅에 놓아도 · 손에 들어도 · 탈것에서도). 자동차가 달리면 바퀴가 굴러가요.
+    <h4>v26.62 — 🧴 접착제 · 항상 최신 버전</h4>
     • 새 아이템 <b>접착제</b> (끈적실 2 · 솜뭉치 1 → 4개). 블록에 우클릭으로 바르면 <b>심층암 같은 원래 지형 블록도</b> 엔진과 이어져 탈것에 같이 붙어요.<br>
     • 이제 옛 버전을 골라도 <b>무조건 최신 버전</b>으로 실행돼요.
     <h4>v26.61 — 🛋 쿠션</h4>
@@ -707,7 +709,7 @@ defB(TSAR_BOMBA,'차르 봄바',TILE.nuke,{hard:3,tool:'pick',tier:1,opaque:fals
 const CAR_ENGINE=219,PLANE_ENGINE=248,WHEEL=249;
 defB(CAR_ENGINE,'자동차 엔진',{side:TILE.car_engine,top:TILE.super_alloy,bottom:TILE.super_alloy},{hard:3,tool:'pick',tier:1});
 defB(PLANE_ENGINE,'비행기 엔진',{side:TILE.plane_engine,top:TILE.super_alloy,bottom:TILE.super_alloy},{hard:3,tool:'pick',tier:1});
-defB(WHEEL,'바퀴',{side:TILE.wheel_side,top:TILE.wheel_tread,bottom:TILE.wheel_tread},{hard:1,tool:'axe'});
+defB(WHEEL,'바퀴',{side:TILE.wheel_side,top:TILE.wheel_tread,bottom:TILE.wheel_tread},{hard:1,tool:'axe',opaque:false}); // 둥근 바퀴 (옆 블록 면을 가리지 않음)
 const CUSHION=255; // 쿠션: 위에 떨어지면 낙하 피해 없이 튕김 (웅크리면 안 튕김)
 defB(CUSHION,'쿠션',TILE.cushion,{hard:.4});
 const OPAQUE=new Uint8Array(256),SOLID=new Uint8Array(256);
@@ -824,6 +826,16 @@ function logGeom(P,U,C,I,x,y,z,ts,tt,top,bot,sl,bl){ // 원목 기둥을 배열�
     for(let k=0;k<=LOG_S;k++){const [c,sn]=LOG_CS[k];P.push(x+.5+c*LOG_R,y+yy,z+.5+sn*LOG_R);U.push(...uv(tt,.5+c*.47,.5+sn*.47));C.push(sl,bl,sh);}
     for(let k=0;k<LOG_S;k++)if(yy)I.push(base,base+2+k,base+1+k);else I.push(base,base+1+k,base+2+k);}
 }
+function wheelGeom(P,U,C,I,x,y,z,ax,tt,ts,sl,bl){ // 둥근 바퀴를 배열에 추가 (ax: 'x'면 x축으로 굴러감 · tt: 타이어 홈 타일, ts: 바퀴 옆면 타일)
+  const uv=(t,u,v)=>[((t%ATW)+.002+u*.996)/ATW,1-(Math.floor(t/ATW)+1-(.002+v*.996))/ATH],R=.5,H=.8;
+  const pt=(c,sn,a)=>ax==='x'?[x+.5+(a-.5)*H,y+.5+sn*R,z+.5+c*R]:[x+.5+sn*R,y+.5+c*R,z+.5+(a-.5)*H];
+  for(let k=0;k<LOG_S;k++){const [c0,s0]=LOG_CS[k],[c1,s1]=LOG_CS[k+1],u0=(k%4)/4,u1=u0+.25,base=P.length/3;
+    for(const [c,sn,u,a] of [[c0,s0,u0,0],[c1,s1,u1,0],[c0,s0,u0,1],[c1,s1,u1,1]]){P.push(...pt(c,sn,a));U.push(...uv(tt,u,a));C.push(sl,bl,.6+.3*Math.max(0,ax==='x'?sn:c));}
+    I.push(base,base+2,base+1,base+1,base+2,base+3);}
+  for(const a of [1,0]){const base=P.length/3;P.push(...pt(0,0,a));U.push(...uv(ts,.5,.5));C.push(sl,bl,.85);
+    for(let k=0;k<=LOG_S;k++){const [c,sn]=LOG_CS[k];P.push(...pt(c,sn,a));U.push(...uv(ts,.5+c*.49,.5+sn*.49));C.push(sl,bl,.85);}
+    for(let k=0;k<LOG_S;k++)if(a)I.push(base,base+2+k,base+1+k);else I.push(base,base+1+k,base+2+k);}
+}
 const DOOR_T=.1875,DOOR_BOX={0:[0,0,0,DOOR_T,1,1],1:[1-DOOR_T,0,0,1,1,1],4:[0,0,0,1,1,DOOR_T],5:[0,0,1-DOOR_T,1,1,1]},DOOR_OPEN=[4,5,1,0]; // 닫힘: 앞쪽 면에 붙은 판 · 열림: 90도 돌아간 판
 const HOPPER_BOXES=[[0,.625,0,1,1,1],[.25,.25,.25,.75,.625,.75],[.375,0,.375,.625,.25,.625]]; // 호퍼 깔때기: 넓은 통 · 가운데 · 주둥이
 
@@ -871,6 +883,8 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0;
       for(const c of f.c){P.push(x+c[0]-f.dir[0]*.06,y+c[1],z+c[2]-f.dir[2]*.06);U.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);C.push(sl,bl,.9);}
       I.push(base,base+1,base+2,base+2,base+1,base+3,base,base+2,base+1,base+2,base+3,base+1);continue;}
+    if(id===WHEEL){const sl=y>=hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,sx=OPAQUE[get(x+1,y,z)]||OPAQUE[get(x-1,y,z)]||get(x+1,y,z)===CAR_ENGINE||get(x-1,y,z)===CAR_ENGINE;
+      wheelGeom(P,U,C,I,x,y,z,sx||!(OPAQUE[get(x,y,z+1)]||OPAQUE[get(x,y,z-1)])?'x':'z',B.tiles[3],B.tiles[0],sl,bl);continue;} // 옆에 붙은 블록 쪽이 굴대
     if(id===LOG){const sl=y>=hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,up=get(x,y+1,z),dn=get(x,y-1,z);
       logGeom(P,U,C,I,x,y,z,B.tiles[0],B.tiles[3],up!==LOG&&!OPAQUE[up],dn!==LOG&&!OPAQUE[dn],sl,bl);continue;}
     if(DOOR_OF[id]||id===SAPLING){const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,t=B.tiles[0],tx=t%ATW,ty=Math.floor(t/ATW);
@@ -1305,7 +1319,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.62 — 🧴 Glue · always latest</h4>
+    <h4>🆕 v26.63 — Round wheels</h4>
+    • Wheels are now round (placed, held and on vehicles) and spin while a car drives.
+    <h4>v26.62 — 🧴 Glue · always latest</h4>
     • New item: Glue (2 Silk + 1 Fluff → 4). Right-click a block to glue it — even terrain like bedrock then attaches to a vehicle when connected to an engine. Old versions now always open the latest version.
     <h4>v26.61 — 🛋 Cushion</h4>
     • New block: Cushion (4 Fluff + 1 Silk → 2). Landing on it causes no fall damage and bounces you back up (crouch to land softly).
@@ -3487,6 +3503,11 @@ function blockCube(id,s){ // 실제 블록 텍스처를 입힌 작은 큐브
     if(EMIT[id]){m.emissive=new THREE.Color(0xffffff);m.emissiveMap=atlasTex;m.emissiveIntensity=.7;}}
   const grp=new THREE.Group();grp.add(new THREE.Mesh(g,m));return grp;
 }
+function wheelModel(s){ // 둥근 바퀴 모델 (손에 든 모양 · 탈것)
+  const P=[],U=[],C=[],I=[],B=BL[WHEEL];wheelGeom(P,U,C,I,-.5,-.5,-.5,'x',B.tiles[3],B.tiles[0],1,0);
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(P.map(v=>v*s),3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
+  geo.setIndex(I);geo.computeVertexNormals();
+  const m=IMAT.blkWheel||(IMAT.blkWheel=new THREE.MeshStandardMaterial({map:atlasTex,roughness:.9}));const grp=new THREE.Group();grp.add(new THREE.Mesh(geo,m));return grp;}
 function logModel(s){ // 둥근 원목 (지형과 같은 모양 · 같은 텍스처)
   const P=[],U=[],C=[],I=[],B=BL[LOG];logGeom(P,U,C,I,-.5,-.5,-.5,B.tiles[0],B.tiles[3],true,true,1,0);
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(P.map(v=>v*s),3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
@@ -3512,7 +3533,7 @@ function buildItemModel(id){
   const it=IT[id];
   if(id===NUKE||id===ICBM){const m=nukeMissile();m.scale.setScalar(.12);m.position.y=-.16;if(id===ICBM)m.userData.band.material.color.setHex(0x2a5ad0);g.add(m);return {g,grip};}
   if(id===ATOM_BOMB||id===TSAR_BOMBA){const m=id===ATOM_BOMB?fatMan():tsarModel();m.scale.setScalar(id===ATOM_BOMB?.16:.08);m.position.y=-.1;g.add(m);return {g,grip};}
-  if(isBlk(id)){g.add(id===HOPPER?hopperModel(.2):id===LOG?logModel(.2):DOOR_OF[id]?doorModel(.2):id===SAPLING?tileBox(.2,.2,.001,TILE.sapling,true):blockCube(id,.2));return {g,grip};}
+  if(isBlk(id)){g.add(id===HOPPER?hopperModel(.2):id===LOG?logModel(.2):id===WHEEL?wheelModel(.2):DOOR_OF[id]?doorModel(.2):id===SAPLING?tileBox(.2,.2,.001,TILE.sapling,true):blockCube(id,.2));return {g,grip};}
   if(id===IRON_ROD){const st=imat('maceS',0x6a6a74,'metal',.4,.7);iBox(g,.034,.5,.034,st,0,.2,0);iBox(g,.045,.03,.045,st,0,-.05,0);iBox(g,.045,.03,.045,st,0,.45,0);return {g,grip:true};} // 철막대기
   if(id===BULLET){const br=imat('bulB',0xd8a040,'metal',.3,.85),cu=imat('bulC',0xb87333,'metal',.35,.8); // 총알: 놋쇠 탄피 세 발 · 구리 탄두
     for(const [x,z] of [[-.045,0],[.045,0],[0,.06]]){iMesh(g,IGEO.cyl,br,x,0,z,0,0,0,.022,.11,.022);iMesh(g,IGEO.cone,cu,x,.075,z,0,0,0,.022,.04,.022);}return {g,grip};}
@@ -4887,12 +4908,12 @@ function buildVehicle(t){
   const d={t:type,b,x:cx,y:y0,z:cz,yaw,pitch:0,d:world.dim,seat:[e[0],top+1,e[2]],eng:type==='plane'?peng:eng,wh};
   (world.vehicles||(world.vehicles=[])).push(d);SFX.place();mountVeh(spawnVeh(d));
 }
-function vehMesh(id){let m=VGEO[id];if(!m)m=VGEO[id]=blockCube(id,1).children[0];return new THREE.Mesh(m.geometry,m.material);}
+function vehMesh(id){let m=VGEO[id];if(!m)m=VGEO[id]=(id===WHEEL?wheelModel(1):id===LOG?logModel(1):blockCube(id,1)).children[0];return new THREE.Mesh(m.geometry,m.material);}
 function spawnVeh(d){
   const g=new THREE.Group();g.rotation.order='YXZ';let R=0;
-  for(const [x,y,z,id] of d.b){const m=vehMesh(id);m.position.set(x,y+.5,z);g.add(m);R=Math.max(R,Math.hypot(x,z),y);}
+  const wheels=[];for(const [x,y,z,id] of d.b){const m=vehMesh(id);m.position.set(x,y+.5,z);g.add(m);if(id===WHEEL)wheels.push(m);R=Math.max(R,Math.hypot(x,z),y);}
   const bottom=d.b.filter(o=>!d.b.some(w=>w[0]===o[0]&&w[2]===o[2]&&w[1]===o[1]-1));
-  scene.add(g);const v={d,g,pos:new THREE.Vector3(d.x,d.y,d.z),yaw:d.yaw||0,pitch:d.pitch||0,roll:0,speed:0,thr:0,vy:0,hp:3,hpT:0,R:R+1,bottom,q:new THREE.Quaternion(),onGround:false};
+  scene.add(g);const v={d,g,pos:new THREE.Vector3(d.x,d.y,d.z),yaw:d.yaw||0,pitch:d.pitch||0,roll:0,speed:0,thr:0,vy:0,hp:3,hpT:0,R:R+1,bottom,wheels,q:new THREE.Quaternion(),onGround:false};
   VEH.push(v);vehPose(v);return v;}
 function vehPose(v){v.q.setFromEuler(new THREE.Euler(v.pitch,v.yaw,v.roll,'YXZ'));v.g.position.copy(v.pos);v.g.quaternion.copy(v.q);}
 const solidAt=p=>SOLID[getBlock(Math.floor(p.x),Math.floor(p.y),Math.floor(p.z))]===1;
@@ -4951,6 +4972,7 @@ function updateVehicles(dt){
       if(me&&Math.abs(v.speed)>10){toast('쿵!');SFX.dig();}v.speed=plane?0:v.speed*-.2;if(plane)v.thr=0;break;}
     if(v.pos.y<-30){removeVeh(v);continue;}
     if(me&&!plane)P.yaw+=v.yaw-o.yaw; // 자동차가 돌면 시선도 같이 돔
+    if(v.onGround)for(const w of v.wheels)w.rotation.x-=v.speed*dt/.5; // 바퀴가 굴러감
     vehPose(v);
   }
 }
