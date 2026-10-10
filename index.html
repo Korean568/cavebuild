@@ -266,7 +266,7 @@ body.mobile #toasts{top:72px}
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
     <h4>🆕 v26.63 — 둥근 바퀴</h4>
-    • <b>바퀴</b>가 이제 네모가 아니라 <b>동그란 바퀴</b> 모양이에요 (땅에 놓아도 · 손에 들어도 · 탈것에서도). 자동차가 달리면 바퀴가 굴러가요.
+    • <b>바퀴</b>가 이제 네모가 아니라 <b>동그란 바퀴</b> 모양이에요 (땅에 놓아도 · 손에 들어도 · 탈것에서도 · <b>인벤토리 아이콘</b>도). 자동차가 달리면 바퀴가 굴러가요.
     <h4>v26.62 — 🧴 접착제 · 항상 최신 버전</h4>
     • 새 아이템 <b>접착제</b> (끈적실 2 · 솜뭉치 1 → 4개). 블록에 우클릭으로 바르면 <b>심층암 같은 원래 지형 블록도</b> 엔진과 이어져 탈것에 같이 붙어요.<br>
     • 이제 옛 버전을 골라도 <b>무조건 최신 버전</b>으로 실행돼요.
@@ -2157,6 +2157,9 @@ function buildIcons(){
   for(let i=100;i<IT.length;i++)if(IT[i]){ICON_CANVAS[i]=itemIcon(i);ICON[i]=ICON_CANVAS[i].toDataURL();}
   for(const i of LADDER_IDS){const c=makeCanvas(48,48),g=c.getContext('2d'),t=TILE.ladder;g.drawImage(atlas,(t%ATW)*TS,Math.floor(t/ATW)*TS,TS,TS,4,4,40,40);ICON_CANVAS[i]=c;ICON[i]=c.toDataURL();} // 사다리는 납작하게
   for(const b of [NUKE,ATOM_BOMB,TSAR_BOMBA]){ICON_CANVAS[b]=itemIcon(b);ICON[b]=ICON_CANVAS[b].toDataURL();}
+  ICON_CANVAS[WHEEL]=pixelIcon((X,Y,x,y)=>{const dx=X-8,dy=Y-8,r=Math.hypot(dx,dy),a=Math.atan2(dy,dx); // 바퀴 아이콘: 동그란 타이어 · 휠 · 바큇살
+    if(r>7.6)return null;if(r>5.2)return (Math.floor((a+Math.PI)*6/Math.PI)&1)?'#2a2a2e':'#18181a';if(r>4.4)return '#80848c';if(r<1.4)return '#d8dce4';return Math.abs(Math.sin(a*2.5))<.32?'#b8bcc6':'#44464e';});
+  ICON[WHEEL]=ICON_CANVAS[WHEEL].toDataURL();
   ICON_CANVAS[CHEST]=ICON_CANVAS[CHEST_IDS[3]];ICON[CHEST]=ICON[CHEST_IDS[3]]; // 상자 아이콘은 앞면(걸쇠)이 보이게
 }
 buildIcons();
@@ -3684,6 +3687,7 @@ function setHeldModel(id){
 // ---------- 3D 아이템 아이콘 (핫바 · 인벤토리 · 제작창) — 실제 3D 모델을 조명과 함께 렌더링 ----------
 function iconPose(id,g){ // 아이콘에서 보이는 각도
   const it=IT[id],w=new THREE.Group();w.add(g);
+  if(id===WHEEL){w.rotation.set(.18,-Math.PI/2+.4,0);return w;} // 바퀴는 둥근 옆면이 보이게
   if(isBlk(id)){if(LADDER_OF[id]||DOOR_OF[id]||id===SAPLING)w.rotation.set(.12,.35,0);else w.rotation.set(.52,Math.PI/4,0);return w;} // 블록은 위·두 옆면이 보이게
   if(it&&it.tool||[STICK,ARROW,FEATHER,FISHING_ROD,NET,NET_SQUID,IRON_ROD].includes(id)){g.rotation.y=.45;w.rotation.z=-Math.PI/4;return w;} // 손잡이 왼쪽 아래 → 머리 오른쪽 위
   switch(id){
