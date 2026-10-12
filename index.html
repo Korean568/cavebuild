@@ -3571,9 +3571,17 @@ function bladeQuat(d,up,out){ // 칼날(+y)이 d를 향하고, 칼의 얇은 쪽
   _by.copy(d).normalize();_bz.copy(up).addScaledVector(_by,-up.dot(_by)).normalize();_bx.crossVectors(_by,_bz);
   return out.setFromRotationMatrix(_bm.makeBasis(_bx,_by,_bz));}
 let handCol='';
+let gauntGems=null;const GAUNT_GOLD=new THREE.MeshStandardMaterial({color:0xf0b830,metalness:.3,roughness:.4,emissive:0x4a3000}),SKIN_HEX=[0xd8a07c,0xc48c6a,0xf0c8b8];
+function setHandGauntlet(st){ // st<0: 맨손으로 되돌림
+  handArm.traverse(o=>{if(!o.isMesh||o.userData.gem)return;if(o.userData.orig===undefined){o.userData.orig=o.material;o.userData.isSkin=!!(o.material.userData.base&&SKIN_HEX.includes(o.material.userData.base.getHex()));}
+    o.material=st>=0&&o.userData.isSkin?GAUNT_GOLD:o.userData.orig;});
+  if(!gauntGems&&handPalm){gauntGems=STONES.map((sid,i)=>{const c=STONE_COL[i],m=new THREE.Mesh(new THREE.SphereGeometry(i===5?.034:.02,10,8),new THREE.MeshBasicMaterial({color:c}));m.userData.gem=1;
+    if(i<4)m.position.set(-.063+i*.043,-.058,-.14);else if(i===4)m.position.set(.088,-.05,-.04);else m.position.set(0,-.06,-.06);handPalm.add(m);return m;});}
+  if(gauntGems)gauntGems.forEach((m,i)=>m.visible=st>=0&&!!(st>>i&1));}
 function setHand(){
   const s=held(),id=s?s.id:0,col=(s&&s.col||'')+(s&&s.id===GAUNTLET?'|'+(s.st|0):'');if(id===handId&&col===handCol)return;handId=id;handCol=col;
-  handItem.visible=false;setHeldModel(id);if(s&&s.col&&heldModel)tintModel(heldModel,s.col);if(id===GAUNTLET&&heldModel)heldModel.traverse(o=>{if(o.userData.gi!==undefined)o.visible=!!((s.st|0)>>o.userData.gi&1);}); // 손에 쥔 3D 아이템
+  handItem.visible=false;setHeldModel(id);if(s&&s.col&&heldModel)tintModel(heldModel,s.col);
+  if(id===GAUNTLET){if(heldModel){itemHolder.remove(heldModel);heldModel=null;}setHandGauntlet(s.st|0);}else setHandGauntlet(-1); // 손에 쥔 3D 아이템
 }
 // 칼을 휘두를 때 칼끝을 따라 남는 잔상 (손 화면 공간)
 const TRAIL_N=12,trailPos=new Float32Array(TRAIL_N*6),trailCol=new Float32Array(TRAIL_N*6),trailPts=[];
@@ -4126,8 +4134,13 @@ function updateAvatar(dt){
     A.legs.forEach((l,i)=>{l.rotation.x=lerp(l.rotation.x,Math.sin(t*9+i*Math.PI)*.35,sk);});}
   if(A.wings)A.wings.forEach((w,i)=>{const sd=i?1:-1;w.rotation.set(-.2-.25*gk,0,sd*(.12+1.15*gk));}); // 겉날개: 활공하면 활짝 펼침
   // 오른손에 든 아이템
-  if(id!==A.itemId){A.itemId=id;A.hand.clear();
-    if(id){const it=itemModel(id);if(it.grip){it.g.rotation.set(-Math.PI/2,0,Math.PI/2,'ZXY');A.hand.add(it.g);} // 손잡이를 쥐고 앞을 향함
+  const hs0=held(),ik=id===GAUNTLET?id+':'+((hs0&&hs0.st)|0):id;
+  if(ik!==A.itemId){A.itemId=ik;A.hand.clear();
+    if(id===GAUNTLET){const G=imat('gauG',0xd8a428,'metal',.25,.85),st=(hs0&&hs0.st)|0; // 건틀렛을 끼면 팔에 보임
+      for(const [w,h,d,x,y,z] of [[.18,.4,.2,0,.15,.02],[.19,.12,.2,0,-.04,0]]){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),G);m.position.set(x,y,z);A.hand.add(m);}
+      STONES.forEach((sid,i)=>{if(!(st>>i&1))return;const m=new THREE.Mesh(new THREE.SphereGeometry(i===5?.035:.022,10,8),new THREE.MeshBasicMaterial({color:STONE_COL[i]}));
+        m.position.set(i<4?-.06+i*.04:i===4?.1:0,i<4?0:i===4?-.02:.06,i<4?-.1:i===4?-.04:-.105);A.hand.add(m);});}
+    else if(id){const it=itemModel(id);if(it.grip){it.g.rotation.set(-Math.PI/2,0,Math.PI/2,'ZXY');A.hand.add(it.g);} // 손잡이를 쥐고 앞을 향함
       else{const gm=groundModel(id);gm.position.set(0,-.06,-.1);A.hand.add(gm);}}}
   // 왼팔 방패
   const sid=armor[4]?armor[4].id:0;
