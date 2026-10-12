@@ -18,7 +18,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malg
 #crosshair:before{left:8px;top:0;width:2px;height:18px}
 #crosshair:after{left:0;top:8px;width:18px;height:2px}
 #hud{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);pointer-events:none;width:474px}
-#stats{display:flex;justify-content:space-between;margin-bottom:3px}
+#stats{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3px}
+#hearts{flex-direction:column-reverse;gap:2px}.hrow{display:flex;gap:1px} /* 늘어난 체력은 위 줄로 쌓임 */
 .row{display:flex;gap:1px}
 #foodrow{flex-direction:row-reverse}
 #airrow{flex-direction:row-reverse;height:18px;margin-bottom:2px}
@@ -5737,11 +5738,11 @@ function updateBossBar(){
 function renderStats(){
   const p=player,ap=armorPts();const key=p.hp+'|'+maxHp()+'|'+p.food+'|'+Math.ceil(p.air)+'|'+ap;if(key===lastStats)return;lastStats=key;
   let h='',f='',b='';
-  for(let i=0;i<maxHp()/2;i++){const v=p.hp-i*2;h+=`<div class="icon" style="background-image:url(${v>=2?IC.heart:v>0?IC.heartH:IC.heartE})"></div>`;if(i>=10)continue;
+  for(let i=0;i<maxHp()/2;i++){const v=p.hp-i*2;if(i%10===0)h+=(i?'</div>':'')+'<div class="hrow">';h+=`<div class="icon" style="background-image:url(${v>=2?IC.heart:v>0?IC.heartH:IC.heartE})"></div>`;if(i>=10)continue;
     const w=p.food-i*2;f+=`<div class="icon" style="background-image:url(${w>=2?IC.food:w===1?IC.foodH:IC.foodE})"></div>`;}
   if(p.air<10)for(let i=0;i<Math.ceil(p.air);i++)b+=`<div class="icon" style="background-image:url(${IC.bub})"></div>`;
   let a='';if(ap>0)for(let i=0;i<10;i++){const v=ap-i*2;a+=`<div class="icon" style="background-image:url(${v>=2?IC.arm:v===1?IC.armH:IC.armE})"></div>`;}
-  $('hearts').innerHTML=h;$('foodrow').innerHTML=f;$('airrow').innerHTML=b;$('armorrow').innerHTML=a;
+  $('hearts').innerHTML=h+'</div>';$('foodrow').innerHTML=f;$('airrow').innerHTML=b;$('armorrow').innerHTML=a;
 }
 function slotImg(s){const u=ICON[s.id];return `<img src="${u}">`+(s.col?`<i class="dye" style="background:${s.col};-webkit-mask-image:url(${u});mask-image:url(${u})"></i>`:'');}
 function slotHTML(s,i,isSel){
