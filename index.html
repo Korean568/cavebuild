@@ -4041,6 +4041,10 @@ const avatar=(()=>{const g=new THREE.Group(),skin=lam(0xd8a07c,0,'skin'),shirt=l
   const shadow=new THREE.Mesh(SHADOW_GEO,SHADOW_MAT.clone());shadow.scale.set(.75,.75,1);shadow.rotation.x=-Math.PI/2;
   g.visible=shadow.visible=false;scene.add(g,shadow);
   return {g,legs,up,head,arms,hand,shieldP,shadow,pos:new THREE.Vector3(),mats:[skin,shirt,cuff,pants,shoe,hair],itemId:-1,shieldId:-1,walk:0,yaw:0};})();
+function spWebMat(){if(!spWebMat.m){const c=makeCanvas(128,128),g=c.getContext('2d');g.fillStyle='#c81e28';g.fillRect(0,0,128,128);g.strokeStyle='#1a1014';g.lineWidth=2.5; // 거미줄 무늬 천
+    for(let k=0;k<8;k++){const a=k/8*Math.PI*2;g.beginPath();g.moveTo(64,64);g.lineTo(64+Math.cos(a)*100,64+Math.sin(a)*100);g.stroke();}
+    for(const r of [18,36,54,72]){g.beginPath();for(let k=0;k<=8;k++){const a=k/8*Math.PI*2,x=64+Math.cos(a)*r,y=64+Math.sin(a)*r;k?g.quadraticCurveTo(64+Math.cos(a-Math.PI/8)*r*.82,64+Math.sin(a-Math.PI/8)*r*.82,x,y):g.moveTo(x,y);}g.stroke();}
+    const t=new THREE.CanvasTexture(c);t.anisotropy=4;spWebMat.m=new THREE.MeshLambertMaterial({map:t});}return spWebMat.m;}
 function imFaceMat(){if(!imFaceMat.m){const t=new THREE.TextureLoader().load(IMFACE_ON);imFaceMat.m=new THREE.MeshBasicMaterial({map:t,transparent:true,alphaTest:.1,side:THREE.DoubleSide});}return imFaceMat.m;}
 function dressAvatar(A){ // 3인칭 몸에 갑옷 입히기 (몸보다 살짝 크게 덮음)
   for(const m of A.armorParts||[])m.parent&&m.parent.remove(m);A.armorParts=[];
@@ -4048,16 +4052,19 @@ function dressAvatar(A){ // 3인칭 몸에 갑옷 입히기 (몸보다 살짝 �
   A.wings=null;if(armor[1]&&armor[1].id===ELYTRA){const m=imat('ely',0x8c7cb4,'feather',.7),e=imat('elyE',0x4a3e62,'feather',.7);A.wings=[]; // 등에 접힌 겉날개
     for(const sd of [-1,1]){const w=pivot(A.up,sd*.1,.6,.16);part(w,.36,.7,.04,m,sd*.18,-.33,0);part(w,.04,.8,.05,e,sd*.36,-.38,0);part(w,.24,.2,.045,m,sd*.12,-.75,0);A.wings.push(w);A.armorParts.push(w);}}
   const w0=armor[0],w1=armor[1],suit=!!(w1&&w1.id===IM_SUIT),body=suit||!!(w1&&w1.id===IM_BODY),helm=suit||!!(w0&&w0.id===IM_HEAD);
-  if(spiderOn()){const MR=imat('spR',0xc81e28,'cloth',.95),W=imat('spW',0xffffff,null,.3),K=imat('spK',0x111114,null,.6); // 스파이더맨: 빨간 가면 · 흰 눈 · 가슴 거미
-    add(A.head,.5,.46,.02,MR,0,.22,-.255);for(const sd of [-1,1]){add(A.head,.16,.11,.02,K,sd*.1,.27,-.264);add(A.head,.12,.08,.02,W,sd*.1,.27,-.268);}
-    add(A.up,.08,.16,.01,K,0,.42,-.17);for(const sd of [-1,1])add(A.up,.12,.02,.01,K,sd*.05,.44,-.171);add(A.up,.1,.2,.01,MR,0,.4,.17);}
+  if(spiderOn()){const MR=spWebMat(),MB=imat('spBl',0x2a4fc0,'cloth',.95),W=imat('spW',0xffffff,null,.3),K=imat('spK',0x111114,null,.6); // 스파이더맨 슈트: 거미줄 무늬 빨강 · 파랑 옆구리/다리 · 흰 눈 · 가슴 거미
+    add(A.head,.5,.5,.5,MR,0,.22,0);for(const sd of [-1,1]){add(A.head,.17,.12,.02,K,sd*.1,.27,-.255);add(A.head,.13,.085,.02,W,sd*.1,.27,-.262);} // 가면 · 눈
+    add(A.up,.54,.68,.31,MR,0,.33,0);for(const sd of [-1,1])add(A.up,.03,.5,.32,MB,sd*.27,.25,0);add(A.up,.55,.08,.32,MB,0,.03,0); // 몸통 · 파란 옆구리 · 허리
+    add(A.up,.06,.18,.01,K,0,.43,-.161);for(const sd of [-1,1])for(const yy of [.47,.4])add(A.up,.1,.015,.01,K,sd*.06,yy,-.161);add(A.up,.12,.22,.01,MR,0,.42,.161); // 가슴 · 등 거미
+    for(const ar2 of A.arms){add(ar2,.21,.34,.23,MR,0,-.13,0);add(ar2,.19,.36,.21,MR,0,-.47,0);add(ar2,.05,.32,.215,MB,0,-.3,0);} // 팔
+    for(const L of A.legs){add(L,.28,.42,.3,MB,0,-.21,0);add(L,.29,.34,.33,MR,0,-.58,-.01);}} // 파란 다리 · 빨간 장화
   if(helm||body){const R=imat('imR',0xc81e28,'metal',.3,.6),G=imat('imG',0xe8b830,'metal',.25,.8),AR=imat('imA',0xe8fcff,null,.1,0,0x9ff0ff,1.2); // 아이언맨 슈트
     if(helm){add(A.head,.5,.5,.5,R,0,.22,.01);const fp=new THREE.Mesh(new THREE.PlaneGeometry(.41,.52),imFaceMat());fp.position.set(0,.21,-.258);fp.rotation.y=Math.PI;A.head.add(fp);A.armorParts.push(fp);} // 투구 · 금색 얼굴판
     if(body){add(A.up,.56,.62,.33,R,0,.35,0);add(A.up,.42,.1,.34,G,0,.1,0);for(const sd of [-1,1])add(A.up,.14,.22,.01,G,sd*.15,.28,-.168); // 몸통 · 금색 배 · 옆구리
       const rc=new THREE.Mesh(new THREE.CylinderGeometry(.065,.065,.03,20),AR);rc.rotation.x=Math.PI/2;rc.position.set(0,.47,-.17);A.up.add(rc);A.armorParts.push(rc); // 가슴 원자로
       for(const ar2 of A.arms){add(ar2,.22,.34,.24,R,0,-.14,0);add(ar2,.2,.36,.22,G,0,-.47,0);add(ar2,.08,.03,.08,AR,0,-.66,0);} // 팔: 빨강 · 금색 팔뚝 · 손바닥 리펄서
       for(const L of A.legs){add(L,.28,.32,.3,R,0,-.16,0);add(L,.27,.22,.29,G,0,-.42,0);add(L,.29,.22,.34,R,0,-.64,-.02);}}} // 다리 · 금색 정강이 · 장화
-  for(let pi=0;pi<4;pi++){const a=armor[pi],ar=a&&IT[a.id]&&IT[a.id].armor;if(!ar||ar.elytra)continue;if(pi===0&&helm||pi>=1&&body)continue; // 슈트가 덮은 곳은 일반 갑옷을 안 그림
+  for(let pi=0;pi<4;pi++){const a=armor[pi],ar=a&&IT[a.id]&&IT[a.id].armor;if(!ar||ar.elytra)continue;if(pi===0&&helm||pi>=1&&body||spiderOn())continue; // 슈트가 덮은 곳은 일반 갑옷을 안 그림
     const mi=ar.mat,M=ARMOR_MATS[mi],cloth=mi===0,
       m=a.col?imat('armD'+mi+a.col,new THREE.Color(M.c).lerp(new THREE.Color(a.col),.8).getHex(),cloth?'cloth':'metal',cloth?.95:.35,cloth?0:.6) // 염색한 갑옷
         :imat('arm'+mi,new THREE.Color(M.c).getHex(),cloth?'cloth':'metal',cloth?.95:.35,cloth?0:.6),
