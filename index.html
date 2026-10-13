@@ -274,7 +274,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.80 — 🤯 뇌절모드 로고</h4>
+    <h4>🆕 v26.81 — 뇌절모드 아픔 소리 길이</h4>
+    • 뇌절모드 아픔 소리가 원래 아픔 소리와 <b>똑같은 길이</b>(0.22초)로 나와요.
+    <h4>v26.80 — 🤯 뇌절모드 로고</h4>
     • <b>뇌절모드</b>에서는 로고가 거꾸로 <b>DLIUBEVAC</b>로 나와요.
     <h4>v26.79 — 🤯 뇌절모드 아픔 소리</h4>
     • <b>뇌절모드</b>에서 다치면 전용 아픔 효과음이 나와요.
@@ -1418,7 +1420,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.80 — 🤯 Overkill Mode logo</h4>
+    <h4>🆕 v26.81 — Overkill hurt sound length</h4>
+    • The Overkill Mode hurt sound now lasts exactly as long as the normal one.
+    <h4>v26.80 — 🤯 Overkill Mode logo</h4>
     • In Overkill Mode the logo is written backwards: DLIUBEVAC.
     <h4>v26.79 — 🤯 Overkill Mode hurt sound</h4>
     • Overkill Mode now has its own hurt sound effect.
@@ -2531,7 +2535,7 @@ const SFX={
   door:open=>{if(open){creak(46,.5,.32);bnoise(.09,1100,1.2,.12,0,.004);}
     else{creak(60,.22,.25);bnoise(.16,260,.7,.4,.2,.003,'lowpass');tone(115,58,.18,.2,'sine',.2);bnoise(.035,4200,3,.14,.21,.002);}},
   break:()=>noise(.2,1300,.35),dig:()=>noise(.06,900,.14),place:()=>noise(.1,480,.45),
-  step:()=>noise(.05,300+Math.random()*150,.07),hurt:()=>tone(320,110,.22,.18,'square'),
+  step:()=>noise(.05,300+Math.random()*150,.07),hurt:()=>tone(320,110,HURT_DUR,.18,'square'),
   pop:()=>tone(520,1040,.08,.12),eat:()=>{for(let i=0;i<3;i++)noise(.07,1900,.22,i*.13);},
   craft:()=>{tone(660,660,.08,.1,'triangle');tone(990,990,.14,.1,'triangle',.08);},
   mobhit:()=>tone(240,90,.16,.2,'sawtooth'),bleat:()=>tone(430+Math.random()*80,300,.35,.07,'triangle'),
@@ -5465,7 +5469,9 @@ Object.assign(MOBDEF,{
 
 // ---------- 플레이어 로직 ----------
 const NOEJEOL=/\/noejeol\//.test(location.pathname); // 뇌절모드 (cavebuild/noejeol/)
-let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a');const a=njHurtA.cloneNode();a.playbackRate=2;a.volume=.9;a.play().catch(()=>SFX.hurt());}catch(e){SFX.hurt();}} // 뇌절모드 아픔 소리: 녹음을 2배속으로
+const HURT_DUR=.22; // 원래 아픔 소리 길이 (SFX.hurt의 tone 길이와 같음)
+let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 녹음의 목소리 부분(0.2~1.07초)을 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
+    const a=njHurtA.cloneNode(),S0=.2,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
   if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec())return; // 크리에이티브·관전: 다치지 않음
   if(!bypass&&(stFrozen()||gm))return; // 스텔라 연출 · 미사일 조종 중엔 몹에게 맞지 않음
