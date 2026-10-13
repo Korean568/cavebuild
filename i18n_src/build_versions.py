@@ -12,3 +12,10 @@ for n in vers:
     d=os.path.join(ROOT,'versions',f'v26.{n}');os.makedirs(d,exist_ok=True)
     open(os.path.join(d,'index.html'),'w',encoding='utf-8',newline='\n').write(STUB)
 print('stubs',len(vers))
+
+# 뇌절모드: 같은 게임을 다른 주소(cavebuild/noejeol/)로 (상대 경로는 한 칸 위를 보게)
+g=open(os.path.join(ROOT,'index.html'),encoding='utf-8').read()
+g=g.replace('<meta charset="utf-8">','<meta charset="utf-8">\n<base href="../">',1)
+os.makedirs(os.path.join(ROOT,'noejeol'),exist_ok=True)
+open(os.path.join(ROOT,'noejeol','index.html'),'w',encoding='utf-8',newline='\n').write(g)
+print('noejeol ok')
