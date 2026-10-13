@@ -276,7 +276,7 @@ body.mobile #toasts{top:72px}
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
     <h4>🆕 v26.81 — 뇌절모드 아픔 소리 길이</h4>
-    • 뇌절모드 아픔 소리가 원래 아픔 소리와 <b>똑같은 길이</b>(0.22초)로 나와요.
+    • 뇌절모드 아픔 소리가 원래 아픔 소리와 <b>똑같은 길이</b>(0.22초)로 나와요. 앞의 숨 들이키는 소리는 뺐어요.
     <h4>v26.80 — 🤯 뇌절모드 로고</h4>
     • <b>뇌절모드</b>에서는 로고가 거꾸로 <b>DLIUBEVAC</b>로 나와요.
     <h4>v26.79 — 🤯 뇌절모드 아픔 소리</h4>
@@ -5471,8 +5471,8 @@ Object.assign(MOBDEF,{
 // ---------- 플레이어 로직 ----------
 const NOEJEOL=/\/noejeol\//.test(location.pathname); // 뇌절모드 (cavebuild/noejeol/)
 const HURT_DUR=.22; // 원래 아픔 소리 길이 (SFX.hurt의 tone 길이와 같음)
-let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 녹음의 목소리 부분(0.2~1.07초)을 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
-    const a=njHurtA.cloneNode(),S0=.2,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
+let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 앞의 숨 들이키는 소리(0.2~0.5초)는 빼고 목소리 부분(0.5~1.07초)만, 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
+    const a=njHurtA.cloneNode(),S0=.5,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
   if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec())return; // 크리에이티브·관전: 다치지 않음
   if(!bypass&&(stFrozen()||gm))return; // 스텔라 연출 · 미사일 조종 중엔 몹에게 맞지 않음
