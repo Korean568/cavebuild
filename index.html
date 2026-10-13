@@ -274,7 +274,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.78 — 🤯 CAVEBUILD 뇌절모드</h4>
+    <h4>🆕 v26.79 — 🤯 뇌절모드 아픔 소리</h4>
+    • <b>뇌절모드</b>에서 다치면 전용 아픔 효과음이 나와요.
+    <h4>v26.78 — 🤯 CAVEBUILD 뇌절모드</h4>
     • 허브(런처) 왼쪽 목록에 <b>CAVEBUILD 뇌절모드</b>가 생겼어요 (주소: korean568.github.io/cavebuild/noejeol).
     <h4>v26.77 — 바라 간판 · 엔딩 로고</h4>
     • 마을 가게 간판이 <b>김도윤의 구름 바라</b> 로고로 바뀌었어요.<br>
@@ -1414,7 +1416,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.78 — 🤯 CAVEBUILD Overkill Mode</h4>
+    <h4>🆕 v26.79 — 🤯 Overkill Mode hurt sound</h4>
+    • Overkill Mode now has its own hurt sound effect.
+    <h4>v26.78 — 🤯 CAVEBUILD Overkill Mode</h4>
     • The hub now lists CAVEBUILD Overkill Mode on the left (its own link: /cavebuild/noejeol).
     <h4>v26.77 — Shop sign · ending logos</h4>
     • The village shop now shows the Kim Doyun's Cloud BaRa logo, and the ending credits show the GAME BUILDING TEAM and BaRa logos.
@@ -5456,6 +5460,8 @@ Object.assign(MOBDEF,{
 });
 
 // ---------- 플레이어 로직 ----------
+const NOEJEOL=/\/noejeol\//.test(location.pathname); // 뇌절모드 (cavebuild/noejeol/)
+let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a');const a=njHurtA.cloneNode();a.playbackRate=2;a.volume=.9;a.play().catch(()=>SFX.hurt());}catch(e){SFX.hurt();}} // 뇌절모드 아픔 소리: 녹음을 2배속으로
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
   if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec())return; // 크리에이티브·관전: 다치지 않음
   if(!bypass&&(stFrozen()||gm))return; // 스텔라 연출 · 미사일 조종 중엔 몹에게 맞지 않음
@@ -5479,7 +5485,7 @@ function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
     const r=dmg*(1-cut);dmg=dmg<1?r:Math.max(1,Math.round(r));damageArmor();}}
   player.hp=Math.max(0,player.hp-dmg);player.hurtCD=.5;
   const kr=1-armorBonus('kb');player.vel.x+=kx*7*kr;player.vel.z+=kz*7*kr;if(kx||kz)player.vel.y=Math.max(player.vel.y,5*kr);
-  SFX.hurt();$('hurt').style.opacity=1;setTimeout(()=>$('hurt').style.opacity=0,180);
+  if(NOEJEOL)noejeolHurt();else SFX.hurt();$('hurt').style.opacity=1;setTimeout(()=>$('hurt').style.opacity=0,180);
   if(player.hp<=0){
     if(countItem(POTION)>0){ // 불사의 마법 물약: 쓰러질 때 체력을 모두 회복하고 1초 무적
       removeItem(POTION,1);player.hp=20;player.invulnT=1;SFX.revive();
