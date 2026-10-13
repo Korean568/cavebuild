@@ -275,7 +275,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.79 — 🤯 뇌절모드 아픔 소리</h4>
+    <h4>🆕 v26.80 — 🤯 뇌절모드 로고</h4>
+    • <b>뇌절모드</b>에서는 로고가 거꾸로 <b>DLIUBEVAC</b>로 나와요.
+    <h4>v26.79 — 🤯 뇌절모드 아픔 소리</h4>
     • <b>뇌절모드</b>에서 다치면 전용 아픔 효과음이 나와요.
     <h4>v26.78 — 🤯 CAVEBUILD 뇌절모드</h4>
     • 허브(런처) 왼쪽 목록에 <b>CAVEBUILD 뇌절모드</b>가 생겼어요 (주소: korean568.github.io/cavebuild/noejeol).
@@ -1417,7 +1419,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.79 — 🤯 Overkill Mode hurt sound</h4>
+    <h4>🆕 v26.80 — 🤯 Overkill Mode logo</h4>
+    • In Overkill Mode the logo is written backwards: DLIUBEVAC.
+    <h4>v26.79 — 🤯 Overkill Mode hurt sound</h4>
     • Overkill Mode now has its own hurt sound effect.
     <h4>v26.78 — 🤯 CAVEBUILD Overkill Mode</h4>
     • The hub now lists CAVEBUILD Overkill Mode on the left (its own link: /cavebuild/noejeol).
@@ -2394,8 +2398,8 @@ const LOGO_G={
   L:['#....','#....','#....','#....','#....','#....','#####'],
   D:['####.','#...#','#...#','#...#','#...#','#...#','####.'],
 };
-function makeLogo(S=28,D=10){
-  const word='CAVEBUILD',cells=[];let col=0;
+function makeLogo(S=28,D=10,word=/\/noejeol\//.test(location.pathname)?'DLIUBEVAC':'CAVEBUILD'){ // 뇌절모드는 로고를 거꾸로
+  const cells=[];let col=0;
   for(const ch of word){const g=LOGO_G[ch];
     for(let r=0;r<7;r++)for(let c=0;c<5;c++)if(g[r][c]==='#')cells.push([col+c,r]);
     col+=6;}
