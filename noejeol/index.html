@@ -275,7 +275,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.81 — 뇌절모드 아픔 소리 길이</h4>
+    <h4>🆕 v26.82 — 🤯 뇌절모드 물 소리</h4>
+    • <b>뇌절모드</b>에서 물에 뛰어들 때와 양동이로 물 · 용암을 풀 때 전용 소리가 나요.
+    <h4>v26.81 — 뇌절모드 아픔 소리 길이</h4>
     • 뇌절모드 아픔 소리가 원래 아픔 소리와 <b>똑같은 길이</b>(0.22초)로 나와요. 앞의 숨 들이키는 소리는 뺐어요.
     <h4>v26.80 — 🤯 뇌절모드 로고</h4>
     • <b>뇌절모드</b>에서는 로고가 거꾸로 <b>DLIUBEVAC</b>로 나와요.
@@ -1421,7 +1423,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.81 — Overkill hurt sound length</h4>
+    <h4>🆕 v26.82 — 🤯 Overkill water sounds</h4>
+    • In Overkill Mode, jumping into water and scooping water or lava with a bucket play their own sound.
+    <h4>v26.81 — Overkill hurt sound length</h4>
     • The Overkill Mode hurt sound now lasts exactly as long as the normal one.
     <h4>v26.80 — 🤯 Overkill Mode logo</h4>
     • In Overkill Mode the logo is written backwards: DLIUBEVAC.
@@ -4995,7 +4999,7 @@ function useBucket(s){
   const it=IT[s.id];
   if(s.id===BUCKET){ // 물/용암 뜨기
     const h=raycast(camera.position,viewDir(),5,true);if(!h||(h.id!==LAVA&&LIQ_KIND[h.id]!==1))return; // 물은 얕은(흐르는) 물도 뜰 수 있음 · 용암은 흐르지 않는 것만
-    setBlock(h.x,h.y,h.z,AIR);const nid=LIQ_KIND[h.id]===1?WATER_BUCKET:LAVA_BUCKET;SFX.splash();swing=1;
+    setBlock(h.x,h.y,h.z,AIR);const nid=LIQ_KIND[h.id]===1?WATER_BUCKET:LAVA_BUCKET;njSplash();swing=1;
     if(s.count>1){s.count--;dropAtPlayer(nid,addItem(nid,1));}else inv[sel]={id:nid,count:1};
     invChanged();return;
   }
@@ -5471,6 +5475,10 @@ Object.assign(MOBDEF,{
 // ---------- 플레이어 로직 ----------
 const NOEJEOL=/\/noejeol\//.test(location.pathname); // 뇌절모드 (cavebuild/noejeol/)
 const HURT_DUR=.22; // 원래 아픔 소리 길이 (SFX.hurt의 tone 길이와 같음)
+const NJ_SND={},NJ_SPLASH_DUR=.8; // 뇌절모드 녹음 소리: 파일 · 쓸 구간(초) · 원래 소리와 같은 길이로 맞춰 재생
+function njPlay(file,S0,S1,dur,fb){try{const A=NJ_SND[file]||(NJ_SND[file]=new Audio('noejeol/'+file)),a=A.cloneNode();a.currentTime=S0;a.playbackRate=Math.min(16,Math.max(.5,(S1-S0)/dur));a.volume=.9;
+  a.play().then(()=>setTimeout(()=>a.pause(),dur*1000)).catch(()=>fb&&fb());}catch(e){fb&&fb();}}
+const njSplash=()=>NOEJEOL?njPlay('rec.mp3',.05,.95,NJ_SPLASH_DUR,SFX.splash):SFX.splash(); // 물에 들어감 · 물/용암 푸기
 let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 앞의 숨 들이키는 소리(0.2~0.5초)는 빼고 목소리 부분(0.5~1.07초)만, 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
     const a=njHurtA.cloneNode(),S0=.5,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
@@ -5629,7 +5637,7 @@ function updatePlayer(dt){
   if(p.gliding&&p.hitH&&glideSp>11){hurtPlayer(Math.round((glideSp-11)*.7),0,0,'날다가 벽에 부딪혔습니다',true);p.gliding=false;} // 빠르게 날다 벽에 부딪히면 다침
   if(edgeSafe&&p.vel.y<=0){const hw=p.w/2,y=p.pos.y,gr=(x,z)=>aabbSolid(x-hw,y-.6,z-hw,x+hw,y,z+hw); // 웅크리면 모서리 밖으로 밀려나지 않음
     if(!gr(p.pos.x,p.pos.z)){if(!gr(p.pos.x,oz)){p.pos.x=ox;p.vel.x=0;}if(!gr(p.pos.x,p.pos.z)){p.pos.z=oz;p.vel.z=0;}if(gr(p.pos.x,p.pos.z)){p.onGround=true;p.vel.y=0;}}}
-  if(p.inWater&&!wasWater&&p.vel.y<-3)SFX.splash();
+  if(p.inWater&&!wasWater&&p.vel.y<-3)njSplash();
   // 낙하 대미지
   if(p.onGround&&getBlock(Math.floor(p.pos.x),Math.floor(p.pos.y-.05),Math.floor(p.pos.z))===CUSHION){const fall=p.peakY-p.pos.y; // 쿠션: 낙하 피해 없음 · 떨어진 높이의 40%만큼 튕겨 오름
     if(fall>1.5&&!p.crouch&&!keys.KeyC){p.vel.y=Math.sqrt(2*28*fall*.4);p.onGround=false;SFX.place();}p.peakY=p.pos.y;}
