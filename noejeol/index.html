@@ -5483,12 +5483,14 @@ const NJ_SND={},NJ_SPLASH_DUR=.8; // 뇌절모드 녹음 소리: 파일 · 쓸 �
 function njPlay(file,S0,S1,dur,fb){try{const A=NJ_SND[file]||(NJ_SND[file]=new Audio('noejeol/'+file)),a=A.cloneNode();a.currentTime=S0;a.playbackRate=Math.min(16,Math.max(.5,(S1-S0)/dur));a.volume=.9;
   a.play().then(()=>setTimeout(()=>a.pause(),dur*1000)).catch(()=>fb&&fb());}catch(e){fb&&fb();}}
 const njSplash=()=>NOEJEOL?njPlay('rec.mp3',.05,.95,NJ_SPLASH_DUR,SFX.splash):SFX.splash(); // 물에 들어감 · 물/용암 푸기
-function njEggVideo(){if($('njVid'))return; // 뇌절모드 영상 (끝나거나 닫으면 게임으로)
-  const o=document.createElement('div');o.id='njVid';o.style.cssText='position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px';
-  const v=document.createElement('video');v.src='noejeol/egg.mp4';v.autoplay=true;v.playsInline=true;v.controls=true;v.style.cssText='max-width:94vw;max-height:84vh;background:#000';
-  const b=document.createElement('button');b.className='btn';b.textContent='✕ 닫기';o.append(v,b);document.body.appendChild(o);
+function njEggVideo(){if($('njVid'))return; // 뇌절모드 영상: 끝까지 봐야 끝남 (넘기기 · 닫기 없음, 보는 동안 ESC 포함 모든 키가 먹통)
+  const o=document.createElement('div');o.id='njVid';o.style.cssText='position:fixed;inset:0;z-index:60;background:#000;display:flex;align-items:center;justify-content:center';
+  const v=document.createElement('video');v.src='noejeol/egg.mp4';v.autoplay=true;v.playsInline=true;v.controls=false;v.disablePictureInPicture=true;v.style.cssText='max-width:100vw;max-height:100vh;pointer-events:none';
+  o.appendChild(v);document.body.appendChild(o);
+  const block=e=>{e.preventDefault();e.stopImmediatePropagation();};for(const ev of ['keydown','keyup','keypress'])window.addEventListener(ev,block,true);
   stMenuOpen=true;mouseL=mouseR=false;for(const c in keys)keys[c]=false;if(document.pointerLockElement)document.exitPointerLock();
-  const close=()=>{v.pause();o.remove();stMenuOpen=false;lockPointer();};b.onclick=close;v.onended=close;v.play().catch(()=>{});}
+  const close=()=>{for(const ev of ['keydown','keyup','keypress'])window.removeEventListener(ev,block,true);v.pause();o.remove();stMenuOpen=false;lockPointer();};
+  v.onended=close;v.onerror=close;v.play().catch(()=>{v.muted=true;v.play().catch(close);});}
 let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 앞의 숨 들이키는 소리(0.2~0.5초)는 빼고 목소리 부분(0.5~1.07초)만, 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
     const a=njHurtA.cloneNode(),S0=.5,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
