@@ -274,7 +274,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.91 — 🥄 숟가락</h4>
+    <h4>🆕 v26.92 — 🍽 요리마다 다른 모양</h4>
+    • 요리마다 생김새가 달라졌어요: 계란 프라이(흰자 4조각 + 노른자) · 스테이크(썬 조각 · 굽기 자국) · 사과 파이(조각 파이 · 격자) · 고기 계란 볶음(고기 · 계란 · 파) · 카라멜 사과(막대 꽂힌 사과) · 어둠의 요리(보랏빛 거품).<br>
+    • 수프도 건더기가 달라요: 고기 덩이 · 흰 생선살 · 풀어진 계란 · 사과 조각 · 불도장(다 들어감) · 어둠의 스튜(거품). 먹을수록 한 조각씩 줄어요.
+    <h4>v26.91 — 🥄 숟가락</h4>
     • 새 아이템 <b>숟가락</b>(철 주괴 1 · 막대기 1). <b>그릇 요리(수프)</b>는 왼손에 그릇, 오른손 숟가락으로 한 숟갈씩 떠먹어요. 접시 요리는 그대로 젓가락으로 먹어요.<br>
     • 젓가락을 짧게 다듬고, 쉴 때는 끝이 접시 가장자리까지만 오고 집을 때 <b>끝으로</b> 한 점을 집어요.
     <h4>v26.90 — 🥢 젓가락 고침</h4>
@@ -1452,7 +1455,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.91 — 🥄 Spoon</h4>
+    <h4>🆕 v26.92 — 🍽 Unique dish looks</h4>
+    • Every dish and soup now has its own 3D look (fried egg, sliced steak, pie wedges, stir-fry, caramel apple, soups with their own ingredients) and shrinks bite by bite.
+    <h4>v26.91 — 🥄 Spoon</h4>
     • New Spoon (1 iron ingot + 1 stick): soups are now eaten spoonful by spoonful. Chopsticks were shortened and pick food with their tips.
     <h4>v26.90 — 🥢 Chopsticks fix</h4>
     • Food is now picked up with the tips of the chopsticks and carried to your mouth.
@@ -3098,8 +3103,7 @@ function updateStoves(dt){if(!world.stoves)return;const pre=world.dim+':';
     if(st.ing.length&&Math.random()<dt*(st.dark?8:3))spawnParticles(x+.5,y+1.2,z+.5,new THREE.Color(st.dark?0x303030:0xe8e8e8),1,.25,.8);}} // 김 · 연기
 function stoveModel(st){const g=new THREE.Group(),pan=imat('pan',0x2a2a30,'metal',.35,.6),hd=imat('panH',0x3a2618,'wood',.8);
   const P=new THREE.Mesh(new THREE.CylinderGeometry(.34,.3,.07,24),pan);P.position.y=1.06;g.add(P);const H=new THREE.Mesh(new THREE.BoxGeometry(.32,.04,.06),hd);H.position.set(.5,1.08,0);g.add(H);
-  if(st.done&&!st.dark){const [c1,c2]=DISH_COL[stoveResult(st)]||['#c08048','#ffd040'];const f=new THREE.Mesh(new THREE.SphereGeometry(.2,16,10),new THREE.MeshStandardMaterial({color:c1,roughness:.6}));f.scale.set(1,.3,1);f.position.y=1.12;g.add(f);
-    const t=new THREE.Mesh(new THREE.SphereGeometry(.08,12,8),new THREE.MeshStandardMaterial({color:c2,roughness:.5}));t.scale.set(1,.6,1);t.position.y=1.15;g.add(t);}
+  if(st.done&&!st.dark){const d=dishModel(stoveResult(st),4);d.scale.setScalar(1.15);d.position.y=1.03;g.add(d);} // 팬 위에 완성된 그 요리
   else st.ing.forEach((id,i)=>{try{const o=itemModel(id).g;o.scale.setScalar(.9);o.position.set(Math.cos(i*1.6)*.12,1.1,Math.sin(i*1.6)*.12);o.rotation.y=i;if(st.dark)tintModel(o,'#2a2030');g.add(o);}catch(e){}});
   if(st.on)for(let i=0;i<8;i++){const a=i/8*Math.PI*2,fl=new THREE.Mesh(new THREE.ConeGeometry(.035,.1,6),new THREE.MeshBasicMaterial({color:0x4aa0ff,transparent:true,opacity:.8}));fl.position.set(Math.cos(a)*.22,1.03,Math.sin(a)*.22);g.add(fl);}
   return g;}
@@ -3146,13 +3150,40 @@ function syncPots(){const want=new Set();
 // 차린 음식: world.plates['차원:x,y,z']={id 음식, bites 먹은 횟수} · 4번에 나눠 먹음
 const plateKey=(x,y,z)=>world.dim+':'+x+','+y+','+z,plateModels=new Map(),PLATE_BITES=4;
 function foodCol(id){const d=DISH_COL[id]||(SOUP_COL[id]?[SOUP_COL[id],SOUP_COL[id]]:null);if(d)return [new THREE.Color(d[0]),new THREE.Color(d[1])];const c=eatColor(id);return [c,c.clone().multiplyScalar(.8)];}
-function plateModel(st){const g=new THREE.Group(),pl=imat('plate',0xf4f4f8,null,.4),left=PLATE_BITES-st.bites,[c1,c2]=foodCol(st.id),soup=!!SOUP_COL[st.id];
-  if(soup){const b=new THREE.Mesh(new THREE.CylinderGeometry(.24,.16,.16,24,1,true),imat('bowlW',0x8a5a30,'wood',.8));b.material.side=THREE.DoubleSide;b.position.y=.09;g.add(b);
-    if(left>0){const sp=new THREE.Mesh(new THREE.CircleGeometry(.08+.15*left/PLATE_BITES,20),new THREE.MeshStandardMaterial({color:c1,roughness:.25}));sp.rotation.x=-Math.PI/2;sp.position.y=.04+.11*left/PLATE_BITES;g.add(sp);}return g;}
-  const P=new THREE.Mesh(new THREE.CylinderGeometry(.36,.3,.04,28),pl);P.position.y=.02;g.add(P);
-  for(let i=0;i<left;i++){const a=i/PLATE_BITES*Math.PI*2+.4,m=new THREE.Mesh(new THREE.BoxGeometry(.16,.07,.12),new THREE.MeshStandardMaterial({color:i%2?c1:c2,roughness:.45})); // 한 점씩
-    m.position.set(Math.cos(a)*.13,.075,Math.sin(a)*.13);m.rotation.y=-a;g.add(m);const t=new THREE.Mesh(new THREE.BoxGeometry(.14,.025,.1),new THREE.MeshStandardMaterial({color:c2,roughness:.4}));t.position.set(Math.cos(a)*.13,.122,Math.sin(a)*.13);t.rotation.y=-a;g.add(t);}
+const DM={}; // 요리 재질 (색마다 하나)
+function dmat(c,o={}){const k=c+JSON.stringify(o);return DM[k]||(DM[k]=new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.5},o)));}
+function dbox(g,w,h,d,c,x,y,z,ry=0,o){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),dmat(c,o));m.position.set(x,y,z);m.rotation.y=ry;g.add(m);return m;}
+function dsph(g,r,c,x,y,z,sx=1,sy=1,sz=1,o){const m=new THREE.Mesh(new THREE.SphereGeometry(r,14,10),dmat(c,o));m.position.set(x,y,z);m.scale.set(sx,sy,sz);g.add(m);return m;}
+function dwedge(g,r,h,c,q,y,o){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,10,1,false,q*Math.PI/2+.05,Math.PI/2-.1),dmat(c,o));m.position.y=y;g.add(m);return m;} // 4등분 조각
+const dh=(i,k)=>{let h=Math.imul(i+1,374761393)^Math.imul(k+7,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
+function dishModel(id,left){const g=new THREE.Group(); // 접시 윗면(y≈.04) 위에 놓이는 요리
+  if(id===331){for(let q=0;q<left;q++)dwedge(g,.22,.025,'#fbf8ee',q,.055); // 계란 프라이: 흰자 4조각 · 노른자
+    if(left>=2)dsph(g,.075,'#ffb818',0,.07,0,1,.55,1,{roughness:.25});}
+  else if(id===332){for(let i=0;i<left;i++){const x=-.15+i*.1;dbox(g,.09,.07,.3,'#6a3418',x,.075,0);dbox(g,.088,.012,.28,'#9a5a30',x,.112,0); // 스테이크: 썬 조각 · 굽기 자국
+      for(const z of [-.08,.04])dbox(g,.092,.008,.02,'#2a1208',x,.118,z,.5);}}
+  else if(id===333){for(let q=0;q<left;q++){dwedge(g,.24,.07,'#e0a050',q,.075);dwedge(g,.2,.02,'#c03030',q,.115); // 사과 파이: 껍질 · 사과 속 · 격자
+      const a=q*Math.PI/2+Math.PI/4;dbox(g,.02,.012,.18,'#f0c070',Math.sin(a)*.1,.13,Math.cos(a)*.1,a);}}
+  else if(id===334){const n=left*6;for(let i=0;i<n;i++){const a=dh(i,1)*Math.PI*2,r=Math.sqrt(dh(i,2))*.2,egg=i%3===0; // 고기 계란 볶음: 고기 조각 + 계란 + 파
+      dbox(g,egg?.06:.055,.035,egg?.05:.055,egg?'#ffd848':i%5===1?'#4a9a3a':'#8a4a28',Math.cos(a)*r,.065+dh(i,3)*.04,Math.sin(a)*r,dh(i,4)*3);}}
+  else if(id===335){if(left>0){const k=.55+.45*left/4;dsph(g,.13*k,'#c81e28',0,.04+.13*k,0,1,1,1,{roughness:.3}); // 카라멜 사과: 빨간 사과 · 카라멜 · 막대
+      dsph(g,.135*k,'#c07a2a',0,.06+.15*k,0,1,.55,1,{roughness:.2});dbox(g,.018,.2,.018,'#d8b880',0,.2+.2*k,0);}}
+  else if(id===336){for(let i=0;i<left;i++)dsph(g,.09,'#2a1a2e',Math.cos(i*1.7)*.09,.08,Math.sin(i*1.7)*.09,1.2,.7,1,{emissive:0x401060,emissiveIntensity:.5}); // 어둠의 요리: 보랏빛 덩어리 · 거품
+    for(let i=0;i<left*2;i++)dsph(g,.025,'#8a3aba',Math.cos(i*2.4)*.12,.13,Math.sin(i*2.4)*.12,1,1,1,{emissive:0x8a3aba,emissiveIntensity:.8});}
+  else{const [c1]=foodCol(id);for(let i=0;i<left;i++)dbox(g,.14,.06,.11,'#'+c1.getHexString(),Math.cos(i*1.6)*.12,.07,Math.sin(i*1.6)*.12,i);}
   return g;}
+function soupChunks(g,id,left,y){const n=left*3; // 국물 위에 뜬 건더기
+  for(let i=0;i<n;i++){const a=dh(i,5)*Math.PI*2,r=Math.sqrt(dh(i,6))*.15,x=Math.cos(a)*r,z=Math.sin(a)*r;
+    if(id===340)dbox(g,.045,.03,.045,'#7a3a1a',x,y,z,dh(i,7)*3); // 고기 수프: 고기 덩이
+    else if(id===341)dbox(g,.06,.015,.035,'#f4ede0',x,y,z,dh(i,7)*3); // 생선 수프: 흰 살
+    else if(id===342)dbox(g,.07,.01,.02,'#fff4c0',x,y,z,dh(i,7)*3); // 계란탕: 풀어진 계란
+    else if(id===343)dbox(g,.06,.012,.03,i%2?'#f0e0b0':'#c03030',x,y,z,dh(i,7)*3); // 사과 수프: 사과 조각
+    else if(id===344)dbox(g,.04,.03,.04,['#7a3a1a','#f4ede0','#ffd848','#c03030'][i%4],x,y,z,dh(i,7)*3); // 불도장: 다 들어감
+    else dsph(g,.022,'#8a3aba',x,y+.005,z,1,1,1,{emissive:0x8a3aba,emissiveIntensity:.8});}} // 어둠의 스튜: 거품
+function plateModel(st){const g=new THREE.Group(),pl=imat('plate',0xf4f4f8,null,.4),left=PLATE_BITES-st.bites,[c1]=foodCol(st.id),soup=!!SOUP_COL[st.id];
+  if(soup){const b=new THREE.Mesh(new THREE.CylinderGeometry(.24,.16,.16,24,1,true),imat('bowlW',0x8a5a30,'wood',.8));b.material.side=THREE.DoubleSide;b.position.y=.09;g.add(b);
+    const bt=new THREE.Mesh(new THREE.CircleGeometry(.16,20),imat('bowlW',0x8a5a30,'wood',.8));bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);
+    if(left>0){const y=.04+.11*left/PLATE_BITES,sp=new THREE.Mesh(new THREE.CircleGeometry(.16+.07*left/PLATE_BITES,22),new THREE.MeshStandardMaterial({color:c1,roughness:.2}));sp.rotation.x=-Math.PI/2;sp.position.y=y;g.add(sp);soupChunks(g,st.id,left,y+.01);}return g;}
+  const P=new THREE.Mesh(new THREE.CylinderGeometry(.36,.3,.04,28),pl);P.position.y=.02;g.add(P);g.add(dishModel(st.id,left));return g;}
 function syncPlates(){const want=new Set();
   for(const ch of chunks.values())if(ch.fp)for(const [x,y,z] of ch.fp){const st=(world.plates||{})[plateKey(x,y,z)];if(!st)continue;const k=x+','+y+','+z+'|'+st.id+'|'+st.bites;want.add(k);
     if(!plateModels.has(k)){const m=plateModel(st);m.position.set(x+.5,y,z+.5);scene.add(m);plateModels.set(k,m);}}
@@ -4212,13 +4243,10 @@ function buildItemModel(id){
       const cg=new THREE.Group();g.add(cg); // 젓가락 끝(음식 집는 쪽)이 앞쪽(-z)
       for(const s2 of [-1,1]){const c=new THREE.Mesh(new THREE.BoxGeometry(.011,.011,.22),W);c.position.set(s2*.01,.05,-.08);c.rotation.y=-s2*.045;cg.add(c);}break;}
     case POT_LID:{const M=imat('lidM',0xd8dce4,'metal',.25,.7),H=imat('lidH',0x3a2618,'wood',.8);const l=new THREE.Mesh(new THREE.CylinderGeometry(.04,.15,.05,24),M);l.position.y=.04;g.add(l);iBox(g,.06,.03,.03,H,0,.08,0);break;}
-    case BOWL:case 340:case 341:case 342:case 343:case 344:case 345:{const W=imat('bowlW',0x8a5a30,'wood',.8),b=new THREE.Mesh(new THREE.CylinderGeometry(.11,.07,.08,20,1,true),W);b.material.side=THREE.DoubleSide;b.position.y=.05;g.add(b); // 그릇 (+ 수프)
-      const bt=new THREE.Mesh(new THREE.CircleGeometry(.07,16),W);bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);
-      if(id!==BOWL){const sp=new THREE.Mesh(new THREE.CircleGeometry(.1,20),new THREE.MeshStandardMaterial({color:SOUP_COL[id],roughness:.25,emissive:id===345?0x401060:0,emissiveIntensity:.5}));sp.rotation.x=-Math.PI/2;sp.position.y=.075;g.add(sp);}break;}
+    case BOWL:case 340:case 341:case 342:case 343:case 344:case 345:{if(id===BOWL){const W=imat('bowlW',0x8a5a30,'wood',.8),b=new THREE.Mesh(new THREE.CylinderGeometry(.11,.07,.08,20,1,true),W);b.material.side=THREE.DoubleSide;b.position.y=.05;g.add(b);
+      const bt=new THREE.Mesh(new THREE.CircleGeometry(.07,16),W);bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);}else{const m=plateModel({id,bites:0});m.scale.setScalar(.46);g.add(m);}break;} // 그릇 (수프는 건더기까지)
     case SPATULA:{const M=imat('spatM',0xc8ccd4,'metal',.3,.7),H=imat('spatH',0x5a3a22,'wood',.8);iBox(g,.11,.01,.12,M,0,.27,0);iBox(g,.015,.18,.015,M,0,.15,.02);iBox(g,.03,.09,.03,H,0,.04,.02);break;}
-    case 331:case 332:case 333:case 334:case 335:case 336:{const [c1,c2]=DISH_COL[id],pl=imat('plate',0xf4f4f8,null,.4),a=new THREE.MeshStandardMaterial({color:c1,roughness:.6}),b=new THREE.MeshStandardMaterial({color:c2,roughness:.5,emissive:id===336?0x401060:0,emissiveIntensity:.6}); // 접시 + 요리 3D
-      const P=new THREE.Mesh(new THREE.CylinderGeometry(.13,.1,.02,24),pl);P.position.y=.01;g.add(P);
-      const f=new THREE.Mesh(new THREE.SphereGeometry(.08,16,10),a);f.scale.set(1,.35,1);f.position.y=.04;g.add(f);const t=new THREE.Mesh(new THREE.SphereGeometry(.035,12,8),b);t.scale.set(1,.6,1);t.position.set(.01,.06,.01);g.add(t);break;}
+    case 331:case 332:case 333:case 334:case 335:case 336:{const m=plateModel({id,bites:0});m.scale.setScalar(.36);g.add(m);break;} // 접시째 (요리마다 다른 모양)
     case ICE:{const m=imat('ice',0xb8e0f8,null,.1,0,0x406080,.15,.8);iBox(g,.15,.15,.15,m,0,.075,0);break;}
     case CARAMEL:{const m=imat('caramel',0xb8742a,null,.3),w=imat('caramelW',0xf0e0c0,null,.6);iBox(g,.1,.07,.07,m,0,.035,0);iBox(g,.04,.04,.06,w,-.07,.035,0);iBox(g,.04,.04,.06,w,.07,.035,0);break;}
     case SORBET:{const cup=imat('sbCup',0xe8e0f0,null,.5),sc=imat('sbScoop',0xd8f0a0,null,.5);const c=new THREE.Mesh(new THREE.CylinderGeometry(.065,.045,.08,14),cup);c.position.y=.04;g.add(c);
