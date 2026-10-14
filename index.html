@@ -3820,7 +3820,7 @@ function updateHand(dt){
     const lift=ph>.36&&ph<.75?Math.sin((ph-.36)/.39*Math.PI)*.025:0,ch=ph>.68&&ph<.9?Math.sin(ph*90)*.008:0; // 먹을 때 접시를 살짝 들어 올림 · 씹기
     leftArm.position.set(-.3,-.38+.04*k0+lift+Math.sin(t*1.7)*.004,-.5);leftArm.rotation.set(.15,-.3,-.1);
     handArm.position.set(L(1),L(2)+ch,L(3));handArm.rotation.set(L(4),L(5),L(6));
-    if(heldModel){let pc=heldModel.userData.piece;if(!pc){pc=new THREE.Mesh(new THREE.BoxGeometry(.045,.028,.035),new THREE.MeshStandardMaterial({color:0xffffff}));pc.position.set(0,.05,-.235);(heldModel.children[0]||heldModel).add(pc);heldModel.userData.piece=pc;}
+    if(heldModel){let pc=heldModel.userData.piece;if(!pc){pc=new THREE.Mesh(new THREE.BoxGeometry(.06,.035,.045),new THREE.MeshStandardMaterial({color:0xffffff}));pc.position.set(0,.05,-.235);(heldModel.children[0]||heldModel).add(pc);heldModel.userData.piece=pc;}
       pc.material.color.copy(foodCol(player.dine.id)[0]);pc.visible=ph>.32&&ph<.68;}}
   else if(player.bite){const b=player.bite,t=b.t,ease=v=>v*v*(3-2*v);let px=.44,py=-.3,pz=-.52,rx=-.02,ry=.42,rz=.16; // 한 입: 앞으로 뻗어 집기 → 입으로 → 오물오물
     if(t<.45){const k=ease(Math.min(1,t/.45)),dip=Math.sin(k*Math.PI);px=.44-.14*k;py=-.3-.12*dip;pz=-.52-.22*dip;rx=-.02-.5*dip;}
@@ -4195,7 +4195,7 @@ function buildItemModel(id){
       iBox(g,.22,.2,.1,red,0,.12,0);iBox(g,.23,.03,.11,gold,0,.03,0);const c=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.02,16),arc);c.rotation.x=Math.PI/2;c.position.set(0,.15,.055);g.add(c);
       if(id===IM_CF)for(const sd of [-1,1]){iBox(g,.08,.08,.1,red,sd*.06,-.06,0);iBox(g,.085,.02,.105,gold,sd*.06,-.1,0);}break;}
     case CHOPSTICKS:{const W=imat('chopW',0xc8965a,'wood',.7),R=imat('chopR',0xc03030,null,.5); // 젓가락 3D (끝을 앞으로)
-      const cg=new THREE.Group();cg.rotation.y=-Math.PI/2;g.add(cg); // 끝이 앞(화면 안쪽)을 보게
+      const cg=new THREE.Group();cg.rotation.y=Math.PI/2;g.add(cg); // 젓가락 끝(음식 집는 쪽)이 접시 쪽을 보게
       for(const s2 of [-1,1]){const c=new THREE.Mesh(new THREE.BoxGeometry(.012,.012,.3),W);c.position.set(s2*.012,.05,-.08);c.rotation.y=s2*.04;cg.add(c);const r=new THREE.Mesh(new THREE.BoxGeometry(.014,.014,.05),R);r.position.set(s2*.012,.05,.06);cg.add(r);}break;}
     case POT_LID:{const M=imat('lidM',0xd8dce4,'metal',.25,.7),H=imat('lidH',0x3a2618,'wood',.8);const l=new THREE.Mesh(new THREE.CylinderGeometry(.04,.15,.05,24),M);l.position.y=.04;g.add(l);iBox(g,.06,.03,.03,H,0,.08,0);break;}
     case BOWL:case 340:case 341:case 342:case 343:case 344:case 345:{const W=imat('bowlW',0x8a5a30,'wood',.8),b=new THREE.Mesh(new THREE.CylinderGeometry(.11,.07,.08,20,1,true),W);b.material.side=THREE.DoubleSide;b.position.y=.05;g.add(b); // 그릇 (+ 수프)
