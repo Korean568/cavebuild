@@ -275,7 +275,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.82 — 🤯 뇌절모드 물 소리</h4>
+    <h4>🆕 v26.83 — 🤯 뇌절모드 🥚</h4>
+    • <b>뇌절모드</b>에서 수풀꼬꼬에게 알을 주면…?
+    <h4>v26.82 — 🤯 뇌절모드 물 소리</h4>
     • <b>뇌절모드</b>에서 물에 뛰어들 때와 양동이로 물 · 용암을 풀 때 전용 소리가 나요.
     <h4>v26.81 — 뇌절모드 아픔 소리 길이</h4>
     • 뇌절모드 아픔 소리가 원래 아픔 소리와 <b>똑같은 길이</b>(0.22초)로 나와요. 앞의 숨 들이키는 소리는 뺐어요.
@@ -1423,7 +1425,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.82 — 🤯 Overkill water sounds</h4>
+    <h4>🆕 v26.83 — 🤯 Overkill 🥚</h4>
+    • In Overkill Mode, try giving an egg to a Cluck…
+    <h4>v26.82 — 🤯 Overkill water sounds</h4>
     • In Overkill Mode, jumping into water and scooping water or lava with a bucket play their own sound.
     <h4>v26.81 — Overkill hurt sound length</h4>
     • The Overkill Mode hurt sound now lasts exactly as long as the normal one.
@@ -5479,6 +5483,12 @@ const NJ_SND={},NJ_SPLASH_DUR=.8; // 뇌절모드 녹음 소리: 파일 · 쓸 �
 function njPlay(file,S0,S1,dur,fb){try{const A=NJ_SND[file]||(NJ_SND[file]=new Audio('noejeol/'+file)),a=A.cloneNode();a.currentTime=S0;a.playbackRate=Math.min(16,Math.max(.5,(S1-S0)/dur));a.volume=.9;
   a.play().then(()=>setTimeout(()=>a.pause(),dur*1000)).catch(()=>fb&&fb());}catch(e){fb&&fb();}}
 const njSplash=()=>NOEJEOL?njPlay('rec.mp3',.05,.95,NJ_SPLASH_DUR,SFX.splash):SFX.splash(); // 물에 들어감 · 물/용암 푸기
+function njEggVideo(){if($('njVid'))return; // 뇌절모드 영상 (끝나거나 닫으면 게임으로)
+  const o=document.createElement('div');o.id='njVid';o.style.cssText='position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px';
+  const v=document.createElement('video');v.src='noejeol/egg.mp4';v.autoplay=true;v.playsInline=true;v.controls=true;v.style.cssText='max-width:94vw;max-height:84vh;background:#000';
+  const b=document.createElement('button');b.className='btn';b.textContent='✕ 닫기';o.append(v,b);document.body.appendChild(o);
+  stMenuOpen=true;mouseL=mouseR=false;for(const c in keys)keys[c]=false;if(document.pointerLockElement)document.exitPointerLock();
+  const close=()=>{v.pause();o.remove();stMenuOpen=false;lockPointer();};b.onclick=close;v.onended=close;v.play().catch(()=>{});}
 let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 앞의 숨 들이키는 소리(0.2~0.5초)는 빼고 목소리 부분(0.5~1.07초)만, 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
     const a=njHurtA.cloneNode(),S0=.5,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
@@ -5732,6 +5742,7 @@ function breakBlock(x,y,z,id){
 function useItem(){
   if(player.dead||isSpec())return;const s=held();
   if(player.veh&&player.veh.btn){vehBoost(player.veh);return;} // 탄 채로 우클릭 = 버튼
+  if(NOEJEOL&&s&&s.id===EGG&&mobTarget&&mobTarget.kind==='cluck'&&!mobTarget.dead){s.count--;if(!s.count)inv[sel]=null;invChanged();swing=1;njEggVideo();return;} // 뇌절모드: 새에게 알을 주면 영상
   if(mobTarget&&mobTarget.kind==='villager'&&!mobTarget.dead){openTrade(mobTarget);return;}
   if(s&&s.id===NET&&mobTarget&&mobTarget.kind==='squid'&&!mobTarget.dead){ // 그물로 오징어를 산 채로 잡음
     const m=mobTarget;spawnParticles(m.pos.x,m.pos.y+.4,m.pos.z,new THREE.Color(0xcfeeff),12,.4,3);m.remove();
