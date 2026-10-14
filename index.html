@@ -274,7 +274,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.88 — 🥢 접시 요리는 젓가락으로</h4>
+    <h4>🆕 v26.89 — 먹는 모션 다듬기</h4>
+    • 접시 요리를 먹는 모션을 더 자연스럽게 다듬었어요 (오른손은 제자리에 두고 젓가락 끝만 접시 ↔ 입을 오가요 · 먹을 때 접시를 살짝 들어 올려요).<br>
+    • 이제 <b>배가 불러도</b> 먹을 수 있어요.
+    <h4>v26.88 — 🥢 접시 요리는 젓가락으로</h4>
     • <b>접시 · 그릇에 담긴 요리</b>(가스레인지 · 냄비 요리)는 우클릭을 누르고 있으면 <b>왼손으로 접시를 들고, 오른손 젓가락으로</b> 한 점씩 집어 먹어요 (젓가락 필요 · 4점). 중간에 멈춰도 먹은 만큼 남아요.<br>
     • 접시에 담기지 않은 음식(사과 · 고기 · 아이스크림 등)은 그대로 <b>손에 들고</b> 먹어요.
     <h4>v26.87 — 🥢 차려 먹기</h4>
@@ -1444,7 +1447,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.88 — 🥢 Plated dishes with chopsticks</h4>
+    <h4>🆕 v26.89 — Smoother eating</h4>
+    • Smoother chopstick eating animation, and you can now eat even when full.
+    <h4>v26.88 — 🥢 Plated dishes with chopsticks</h4>
     • Plated and bowl dishes are now eaten by holding right-click: plate in your left hand, chopsticks in your right, bite by bite. Other food is still eaten from the hand.
     <h4>v26.87 — 🥢 Served meals</h4>
     • Shift+right-click with food to serve it on the ground, then eat it bite by bite with Chopsticks (2 sticks) or your hand — four bites per plate.
@@ -3144,7 +3149,7 @@ function syncPlates(){const want=new Set();
 function plateDrop(x,y,z){const k=plateKey(x,y,z),st=world.plates&&world.plates[k];if(!st)return;delete world.plates[k];if(!st.bites)dropItem(st.id,1,x+.5,y+.4,z+.5);}
 function plateUse(x,y,z,s){const k=plateKey(x,y,z),st=world.plates&&world.plates[k];if(!st)return;
   if(s&&s.id!==CHOPSTICKS){toast('젓가락이나 맨손으로 한 입씩 먹어요');return;}
-  if(player.bite)return;if(player.food>=20){toast('배가 부릅니다');return;}
+  if(player.bite)return;
   player.bite={k,x,y,z,id:st.id,t:0,done:false,col:foodCol(st.id)[0]};}
 function updateBite(dt){const b=player.bite;if(!b)return;b.t+=dt; // 한 입: 접시로 손 뻗기 → 집어서 입으로 → 오물오물
   if(!b.done&&b.t>=.45){b.done=true;const st=world.plates&&world.plates[b.k];if(!st){player.bite=null;return;}
@@ -3810,14 +3815,13 @@ function updateHand(dt){
     handArm.position.set(.44,-.3+bob+br+toolLift*.13,-.52+toolLift*.06);handArm.rotation.set(-.02+br*.6+toolLift*1.05,.42+toolLift*.08,.16-toolLift*.1);}
   else toolLift=0;
   wasDigging=digging;
-  if(player.dine&&leftArm){const t=player.dine.t,P=.95,ph=(t%P)/P,ease=v=>v*v*(3-2*v),k0=Math.min(1,t/.25);
-    leftArm.position.set(-.34+.08*k0,-.36+.08*k0+Math.sin(t*2)*.006,-.5);leftArm.rotation.set(.1,-.35,-.12); // 왼손: 접시를 받쳐 듦
-    let px,py,pz,rx,ry,rz;if(ph<.38){const k=ease(ph/.38);px=.3-.32*k;py=-.24-.06*k;pz=-.5-.08*k;rx=.2-.75*k;ry=.6+.3*k;rz=.2;} // 접시로
-    else if(ph<.62){const k=ease((ph-.38)/.24);px=-.02+.14*k;py=-.3+.16*k;pz=-.58+.2*k;rx=-.55+1.1*k;ry=.9;rz=.2+.2*k;} // 입으로
-    else{const k=ease((ph-.62)/.38),ch=Math.sin(ph*60)*.012;px=.12+.18*k;py=-.14-.1*k+ch;pz=-.38-.12*k;rx=.55-.35*k;ry=.9-.3*k;rz=.4-.2*k;} // 오물오물 · 제자리로
-    handArm.position.set(px,py,pz);handArm.rotation.set(rx,ry,rz);
-    if(heldModel){let pc=heldModel.userData.piece;if(!pc){pc=new THREE.Mesh(new THREE.BoxGeometry(.05,.03,.04),new THREE.MeshStandardMaterial({color:0xffffff}));pc.position.set(0,.05,-.24);(heldModel.children[0]||heldModel).add(pc);heldModel.userData.piece=pc;}
-      pc.material.color.copy(foodCol(player.dine.id)[0]);pc.visible=ph>.36&&ph<.66;}}
+  if(player.dine&&leftArm){const t=player.dine.t,P=DINE_P,ph=(t%P)/P,k0=Math.min(1,t/.3),K=DINE_KF; // 접시 요리: 키프레임 사이를 부드럽게 (집기 → 입으로 → 오물오물)
+    let i=0;while(i<K.length-2&&ph>K[i+1][0])i++;const A=K[i],B=K[i+1],u=(ph-A[0])/Math.max(.001,B[0]-A[0]),e=.5-.5*Math.cos(Math.PI*Math.min(1,Math.max(0,u))),L=j=>A[j]+(B[j]-A[j])*e;
+    const lift=ph>.36&&ph<.75?Math.sin((ph-.36)/.39*Math.PI)*.025:0,ch=ph>.68&&ph<.9?Math.sin(ph*90)*.008:0; // 먹을 때 접시를 살짝 들어 올림 · 씹기
+    leftArm.position.set(-.3,-.38+.04*k0+lift+Math.sin(t*1.7)*.004,-.5);leftArm.rotation.set(.15,-.3,-.1);
+    handArm.position.set(L(1),L(2)+ch,L(3));handArm.rotation.set(L(4),L(5),L(6));
+    if(heldModel){let pc=heldModel.userData.piece;if(!pc){pc=new THREE.Mesh(new THREE.BoxGeometry(.045,.028,.035),new THREE.MeshStandardMaterial({color:0xffffff}));pc.position.set(0,.05,-.235);(heldModel.children[0]||heldModel).add(pc);heldModel.userData.piece=pc;}
+      pc.material.color.copy(foodCol(player.dine.id)[0]);pc.visible=ph>.32&&ph<.68;}}
   else if(player.bite){const b=player.bite,t=b.t,ease=v=>v*v*(3-2*v);let px=.44,py=-.3,pz=-.52,rx=-.02,ry=.42,rz=.16; // 한 입: 앞으로 뻗어 집기 → 입으로 → 오물오물
     if(t<.45){const k=ease(Math.min(1,t/.45)),dip=Math.sin(k*Math.PI);px=.44-.14*k;py=-.3-.12*dip;pz=-.52-.22*dip;rx=-.02-.5*dip;}
     else if(t<.8){const k=ease((t-.45)/.35);px=.3-.18*k;py=-.42+.24*k+(1-k)*.12;pz=-.52+.14*k;rx=-.52+1.1*k;ry=.42+.5*k;rz=.16+.3*k;}
@@ -5938,6 +5942,8 @@ function breakBlock(x,y,z,id){
   player.hungerAcc+=.3;
 }
 function eatColor(id){const c=ICON_CANVAS[id];if(!c)return new THREE.Color(0xc89058);if(!c._ec){try{const d=c.getContext('2d').getImageData(c.width/2-4,c.height/2-4,8,8).data;let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=4)if(d[i+3]>100){r+=d[i];g+=d[i+1];b+=d[i+2];n++;}c._ec=n?new THREE.Color(r/n/255,g/n/255,b/n/255):new THREE.Color(0xc89058);}catch(e){c._ec=new THREE.Color(0xc89058);}}return c._ec;}
+let DINE_P=1.3,DINE_KF=[ // 오른손(젓가락) 키프레임: [단계, x, y, z, 회전x, 회전y, 회전z]
+  [0,.34,-.3,-.52,0,.7,.12],[.28,.22,-.29,-.55,-.15,.8,.1],[.36,.22,-.28,-.55,-.12,.8,.1],[.55,.18,-.2,-.44,.2,.7,.18],[.66,.16,-.32,-.32,.3,.65,.18],[.85,.28,-.31,-.48,.05,.7,.12],[1,.34,-.3,-.52,0,.7,.12]]; // 손은 오른쪽에 두고 젓가락 끝만 접시 ↔ 입을 오감
 const PLATED=id=>id>=331&&id<=336||id>=340&&id<=345; // 접시 · 그릇에 담긴 요리
 let leftArm=null,leftPlate=null,leftPlateKey='';
 function buildLeftArm(){leftArm=new THREE.Group(); // 왼손: 소매 · 손 · 손바닥 위 접시
@@ -5945,12 +5951,12 @@ function buildLeftArm(){leftArm=new THREE.Group(); // 왼손: 소매 · 손 · �
   part(leftArm,.2,.2,.2,cloth,0,0,.12);part(leftArm,.16,.15,.24,skin,0,-.004,-.1);part(leftArm,.18,.075,.16,skin,0,-.01,-.28);
   leftArm.visible=false;handGroup.add(leftArm);}
 function setLeftPlate(id,bites){const k=id+'|'+bites;if(k===leftPlateKey)return;leftPlateKey=k;if(leftPlate){leftArm.remove(leftPlate);leftPlate=null;}if(!id)return;
-  leftPlate=plateModel({id,bites});leftPlate.scale.setScalar(.55);leftPlate.position.set(0,.03,-.32);leftArm.add(leftPlate);}
+  leftPlate=plateModel({id,bites});leftPlate.scale.setScalar(.5);leftPlate.position.set(.02,.03,-.33);leftPlate.rotation.x=.25;leftArm.add(leftPlate);}
 function stopDine(){player.dine=null;if(leftArm)leftArm.visible=false;setHand();}
 function updateDine(dt){const d=player.dine;if(!d)return;const s=held();
   if(!mouseR||invOpen||!s||s.id!==d.id||sel!==d.sel||player.dead||!countItem(CHOPSTICKS)){stopDine();return;}
   if(!leftArm)buildLeftArm();leftArm.visible=true;setLeftPlate(s.id,s.bites|0);
-  const P=.95,prev=d.t;d.t+=dt;const ph=(d.t%P)/P,cycle=Math.floor(d.t/P);if(Math.floor(prev/P)!==cycle)d.picked=false;
+  const P=DINE_P,prev=d.t;d.t+=dt;const ph=(d.t%P)/P,cycle=Math.floor(d.t/P);if(Math.floor(prev/P)!==cycle)d.picked=false;
   if(!d.picked&&ph>.38){d.picked=true;s.bites=(s.bites|0)+1;const f=Math.max(1,Math.round(IT[s.id].food/PLATE_BITES));player.food=Math.min(20,player.food+f);tone(1300,900,.05,.04,'triangle');setLeftPlate(s.id,s.bites);renderStats();
     if(s.bites>=PLATE_BITES){s.bites=0;s.count--;if(!s.count)inv[sel]=null;if(IT[s.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(s.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}
       if(s.id===DARK_DISH||s.id===DARK_STEW){player.hungerAcc+=60;toast('🤢 맛이 이상해…');}SFX.eat();invChanged();stopDine();return;}}
@@ -6031,10 +6037,10 @@ function useItem(){
   if(s&&IT[s.id]&&IT[s.id].food&&keys.ShiftLeft&&target&&target.n[1]===1){const x=target.x,y=target.y+1,z=target.z; // 음식을 바닥에 차려 놓음 (젓가락으로 한 점씩)
     if(getBlock(x,y,z)!==AIR){return;}setBlock(x,y,z,FOOD_PLATE);(world.plates||(world.plates={}))[plateKey(x,y,z)]={id:s.id,bites:0};s.count--;if(!s.count)inv[sel]=null;invChanged();SFX.place();swing=1;return;}
   if(s&&IT[s.id]&&IT[s.id].food&&PLATED(s.id)){ // 접시(그릇)에 담긴 요리: 왼손에 접시, 오른손에 젓가락으로 한 점씩
-    if(player.food>=20){toast('배가 부릅니다');return;}if(!countItem(CHOPSTICKS)){toast('🥢 젓가락이 있어야 먹을 수 있어요 (막대기 2개)');return;}
+    if(!countItem(CHOPSTICKS)){toast('🥢 젓가락이 있어야 먹을 수 있어요 (막대기 2개)');return;}
     if(!player.dine||player.dine.id!==s.id||player.dine.sel!==sel){player.dine={id:s.id,sel,t:0,picked:false};setHand();}return;}
   if(s&&IT[s.id]&&IT[s.id].food){
-    if(player.food>=20){toast('배가 부릅니다');return;}
+    
     if(!player.eating||player.eating.id!==s.id||player.eating.sel!==sel)player.eating={id:s.id,sel,t:0,ct:.12,dur:1.25+Math.min(1,IT[s.id].food/10)*.75}; // 먹기 시작 (누르고 있어야 계속 먹음)
     return;
   }
