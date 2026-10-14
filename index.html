@@ -4259,7 +4259,7 @@ const MOBDEF={
     ai(m,c,dt){if(m.flee>0){m.flee-=dt;fleeFrom(m,c,4.2,dt);}else wander(m,1.5,dt);autoJump(m);if(!m.onGround&&!m.inWater&&m.vel.y<-2.2)m.vel.y=-2.2;},
     anim(m,dt,hs){legSwing(m.u.legs,m.walk*1.5,.7*Math.min(1,hs));const f=m.onGround?0:Math.sin(performance.now()/40)*.8;m.u.wings[0].rotation.z=-f;m.u.wings[1].rotation.z=f;m.u.head.rotation.x=m.onGround&&hs<.2?Math.max(0,Math.sin(performance.now()/300+m.pos.z))*.6:0;}},
 
-  buffcluck:{name:'근육질 수풀꼬꼬',w:.8,h:1.55,hp:60,hostile:true,keep:true,knock:.4,color:0x8cc060, // 뇌절모드: 알을 받은 수풀꼬꼬가 근육질로 변해 때림
+  buffcluck:{name:'근육질 수풀꼬꼬',w:.8,h:1.55,hp:100000000,hostile:true,boss:true,keep:true,knock:.4,color:0x8cc060, // 뇌절모드: 알을 받은 수풀꼬꼬가 근육질로 변해 때림
     sound:()=>SFX.cluck(),drops:()=>[[FEATHER,3+rnd(3)],[RAW_MEAT,2+rnd(2)],[EGG,1+rnd(2)]],ach:'hunt',
     build(g){const body=lam(0x6f9a4a,0,'feather'),head=lam(0x86b05a,0,'feather'),leaf=lam(0x3f7a2e,0,'feather'),beak=lam(0xf2c230,0,'bone'),leg=lam(0xd08a30,0,'skin'),eye=bas(0x111111),brow=bas(0x1e2a12),mus=lam(0x7aa852,0,'skin');
       const legs=[-.16,.16].map(x=>{const p=pivot(g,x,.5,0);part(p,.14,.5,.14,leg,0,-.25,0);part(p,.24,.06,.3,leg,0,-.48,-.05);return p;});
@@ -4269,7 +4269,8 @@ const MOBDEF={
       for(const s of [-1,1]){part(h,.07,.07,.02,eye,s*.1,.18,-.175);const b=part(h,.14,.03,.02,brow,s*.1,.24,-.18);b.rotation.z=s*.35;} // 화난 눈썹
       const arms=[-1,1].map(s=>{const p=pivot(g,s*.5,1.1,0);part(p,.26,.26,.26,mus,0,-.05,0);part(p,.24,.34,.24,mus,0,-.3,0);part(p,.3,.2,.28,body,0,-.24,-.05);part(p,.2,.36,.2,mus,0,-.6,0);part(p,.24,.22,.24,leg,0,-.86,0);return p;}); // 이두 · 팔뚝 · 주먹
       return {legs,arms,head:h,mats:[body,head,leaf,beak,leg,mus]};},
-    ai(m,c,dt){if(c.dist<32&&(m.victim||!player.dead)){toward(m,c,3.4,dt);melee(m,c,1.6,7,.9,'근육질 수풀꼬꼬에게 맞았습니다');}else wander(m,1,dt);autoJump(m);},
+    ai(m,c,dt){if(m.hp<m.def.hp){m.healing=true;m.healT=(m.healT??.5)-dt;if(m.healT<=0){m.hp=m.def.hp;m.healT=undefined;m.healing=false;spawnParticles(m.pos.x,m.pos.y+1,m.pos.z,new THREE.Color(0x7cff7a),14,.4,3);}} // 맞으면 0.5초 만에 다 회복
+      if(c.dist<32&&(m.victim||!player.dead)){toward(m,c,3.4,dt);melee(m,c,1.6,7,.9,'근육질 수풀꼬꼬에게 맞았습니다');}else wander(m,1,dt);autoJump(m);},
     anim(m,dt,hs){legSwing(m.u.legs,m.walk,.7*Math.min(1,hs));const t=performance.now()/180;m.u.arms.forEach((a,i)=>a.rotation.x=m.swingT>0?(i?1.6:.2):(.25+Math.sin(t+i*Math.PI)*.35*Math.min(1,hs+.3)));}},
 
   turtle:{name:'돌거북',w:1.2,h:.9,hp:30,neutral:true,knock:.3,color:0x7d7d82,
