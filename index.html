@@ -274,7 +274,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.99 — ⛰ 더 둥근 언덕 · 히트박스 · 둥근 침대</h4>
+    <h4>🆕 v26.100 — 🐞 둥근 지형 구멍 고침</h4>
+    • 물 위 얇은 모래 층 · 얇은 동굴 천장이 매끈하게 펴지다 <b>통째로 사라져 구멍이 나던 문제</b>를 고쳤어요 (흙 · 돌 칸은 절대 안 사라짐).<br>
+    • 땅이 메워진 오목한 곳에서 표면이 빠져 <b>하늘이 보이던 구멍</b>, 블록을 캐거나 폭발로 땅이 파였을 때 <b>청크 경계가 어긋나던 틈</b>도 고쳤어요.
+    <h4>v26.99 — ⛰ 더 둥근 언덕 · 히트박스 · 둥근 침대</h4>
     • 언덕이 훨씬 <b>완만하고 둥글게</b> 이어져요 (한 칸 계단이 넓은 비탈로).<br>
     • <b>히트박스가 보이는 모양에 맞게</b>: 둥근 땅을 겨누면 네모 테두리 대신 표면에 고리가 보이고, 걸을 때 눈높이가 땅 표면을 따라 오르내리고, 흙 · 돌의 한 칸 턱은 점프 없이 걸어서 올라가요. 침대는 매트리스 높이만큼만 단단해요.<br>
     • <b>침대</b>가 모서리가 둥근 나무 틀 · 푹신한 매트리스 · 베개로 바뀌었어요.<br>
@@ -1204,7 +1207,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
     for(let y=0;y<CH;y++)for(let z=-1;z<17;z++)for(let x=-1;x<17;x++){let f=0;for(let c=-1;c<=1&&!f;c++)for(let b=-1;b<=1&&!f;b++)for(let a=-1;a<=1;a++)if(NN[nn(x+a,y+b,z+c)]){f=1;break;}NV[nv(x,y,z)]=f;}
     for(let j=jLo;j<=jHi;j++)for(let k=-1;k<=16*R;k++)for(let i=-1;i<=16*R;i++){const bx=Math.floor((i+.5)/R),by=Math.floor((j+.5)/R),bz=Math.floor((k+.5)/R),t=get(bx,by,bz);let f;
       if(NV[nv(bx,by,bz)])f=(NATB[t]||OPAQUE[t])?.9:.1; // 건물 옆은 칸 모양 그대로 → 벽·바닥과 틈 없이 맞물림
-      else{f=fld((i+.5)/R,(j+.5)/R,(k+.5)/R);if(f<.62&&NATB[t]&&D[si(bx,by,bz)]<.55)f=.62;} // 혼자 있는 흙 · 얇은 기둥은 안 사라지게
+      else{f=fld((i+.5)/R,(j+.5)/R,(k+.5)/R);if(NATB[t]){const mn=D[si(bx,by,bz)]<.55?.62:.53;if(f<mn)f=mn;}} // 흙·돌 칸은 절대 안 사라짐 (얇은 층 · 혼자 있는 흙도)
       FN[fi_(i,j,k)]=f;}
     const CE=[0,1,2,3,4,5,6,7,0,2,1,3,4,6,5,7,0,4,1,5,2,6,3,7],VI=new Int32Array(FN.length).fill(-1),VX=[],VA=[];
     const cv=(i,j,k)=>{const ci=fi_(i,j,k);let v=VI[ci];if(v>=0)return v;const f=[];for(let c=0;c<8;c++)f.push(FN[fi_(i+(c&1),j+(c>>1&1),k+(c>>2&1))]);
@@ -1219,7 +1222,8 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       v=VX.length/3;VX.push(px,py,pz);VA.push(sl,bl,sh*ao);VI[ci]=v;return v;};
     const NB6=[[0,-1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1],[0,1,0]],NT6=[[1,0],[3,2],[5,4]];
     const NBk=(i,j,k)=>{const t=vox(i,j,k);if(NATB[t])return t;if(t&&OPAQUE[t])return 0; // 건물 블록 안은 안 그림 · 빈칸에 덮인 곡면은 옆 흙·돌 재질
-      const bx=Math.floor((i+.5)/R),by=Math.floor((j+.5)/R),bz=Math.floor((k+.5)/R);for(const o of NB6){const u=get(bx+o[0],by+o[1],bz+o[2]);if(NATB[u])return u;}return 0;};
+      const bx=Math.floor((i+.5)/R),by=Math.floor((j+.5)/R),bz=Math.floor((k+.5)/R);for(const o of NB6){const u=get(bx+o[0],by+o[1],bz+o[2]);if(NATB[u])return u;}
+      for(let rr=1;rr<=2;rr++)for(let c=-rr;c<=rr;c++)for(let b=-rr;b<=rr;b++)for(let a=-rr;a<=rr;a++){const u=get(bx+a,by+b,bz+c);if(NATB[u])return u;}return DIRT;}; // 구멍 대신 가까운 흙·돌 재질
     const pq=(v,a,tl)=>{const x=VX[v*3],y=VX[v*3+1],z=VX[v*3+2];NP.push(x,y,z);if(a===1)NU.push(x+ox,z+oz);else if(a===0)NU.push(z+oz,y);else NU.push(x+ox,y);NT.push(tl%ATW,Math.floor(tl/ATW));NC.push(VA[v*3],VA[v*3+1],VA[v*3+2]);};
     for(let j=jLo+1;j<jHi;j++)for(let k=0;k<16*R;k++)for(let i=0;i<16*R;i++){const in0=FN[fi_(i,j,k)]>.5;
       for(let a=0;a<3;a++){const i2=i+(a===0?1:0),j2=j+(a===1?1:0),k2=k+(a===2?1:0);if((FN[fi_(i2,j2,k2)]>.5)===in0)continue;
@@ -1582,7 +1586,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.99 — ⛰ Rounder hills · hitboxes · round bed</h4>
+    <h4>🆕 v26.100 — 🐞 Smooth terrain hole fixes</h4>
+    • Fixed holes where thin sand/cave ceilings vanished, see-through gaps in filled hollows, and seams between chunks after digging or explosions.
+    <h4>v26.99 — ⛰ Rounder hills · hitboxes · round bed</h4>
     • Hills are much smoother. Aiming at smooth ground shows a ring on the surface, your eye height follows the ground and 1-block natural steps can be walked up. Beds are rounded and only mattress-high. Fixed see-through gaps where building blocks meet smooth terrain.
     <h4>v26.98 — 🌳 Realistic trees · stone walls</h4>
     • Tree trunks taper, bend slightly and flare into roots; canopies are several leafy clumps with branches. Cobblestone is now made of bulging stones with recessed mortar. New BaRa logo.
@@ -3641,13 +3647,14 @@ function setBlock(x,y,z,id,batch){try{GDN.clear();}catch(e){} // 지형 높이 �
   const k=ckey(cx,cz);let m=mods.get(k);if(!m){m=new Map();mods.set(k,m);}m.set(i,id);modDirty.add(world.dim+'|'+k);
   if(LIGHT_SRC[old])c.lamps=c.lamps.filter(l=>l[0]!==x||l[1]!==y||l[2]!==z);
   if(LIGHT_SRC[id])c.lamps.push([x,y,z]);
-  if(batch){const r=(LIGHT_SRC[old]||LIGHT_SRC[id])?1:0,ex=lx===0?-1:lx===15?1:0,ez=lz===0?-1:lz===15?1:0;for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++)if(r||((dx===0||dx===ex)&&(dz===0||dz===ez)))batch.add(ckey(cx+dx,cz+dz));return;}
+  if(batch){const r=(LIGHT_SRC[old]||LIGHT_SRC[id])?1:0,ex=lx<=2?-1:lx>=13?1:0,ez=lz<=2?-1:lz>=13?1:0;for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++)if(r||((dx===0||dx===ex)&&(dz===0||dz===ez)))batch.add(ckey(cx+dx,cz+dz));return;}
   if(LIGHT_SRC[old]||LIGHT_SRC[id]){ // 내 청크만 바로 그리고 주변 8개는 다음 프레임들에 나눠서
     remeshAt(cx,cz);
     for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dz)continue;const c2=getChunk(cx+dx,cz+dz);if(c2)c2.needsMesh=true;}
     return;}
   remeshAt(cx,cz);
   if(lx===0)remeshAt(cx-1,cz);if(lx===15)remeshAt(cx+1,cz);if(lz===0)remeshAt(cx,cz-1);if(lz===15)remeshAt(cx,cz+1);
+  {const ex=lx<=2?-1:lx>=13?1:0,ez=lz<=2?-1:lz>=13?1:0;for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dz||(dx&&dx!==ex)||(dz&&dz!==ez))continue;const c2=getChunk(cx+dx,cz+dz);if(c2)c2.needsMesh=true;}} // 경계 근처: 이웃 곡면도 맞춤
   // 청크 모서리 블록은 대각선 청크의 음영도 바뀌므로 함께 다시 그림
   if((lx===0||lx===15)&&(lz===0||lz===15)){const c2=getChunk(cx+(lx===0?-1:1),cz+(lz===0?-1:1));if(c2)c2.needsMesh=true;}
 }
