@@ -275,7 +275,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.94 — ⛰ 진짜 같은 지형</h4>
+    <h4>🆕 v26.95 — 🎨 진짜 같은 텍스처</h4>
+    • 블록 텍스처가 더 이상 <b>픽셀 계단</b>으로 보이지 않고 부드럽게 보여요 (가까이 가도 네모 점이 안 보임).<br>
+    • 땅 · 돌 · 모래에 <b>넓은 얼룩과 잔무늬</b>가 자연스럽게 깔려서, 칸마다 똑같은 무늬가 바둑판처럼 반복돼 보이지 않아요.
+    <h4>v26.94 — ⛰ 진짜 같은 지형</h4>
     • 설치된 <b>흙 · 잔디 · 모래 · 눈 · 돌 · 광석</b>이 더 이상 네모 칸이 아니에요: 모서리와 턱이 둥글게 깎이고, 절벽 · 동굴 벽은 바위처럼 울퉁불퉁해요. 혼자 있는 흙 한 칸은 둥근 흙더미가 돼요.<br>
     • 평평한 땅은 그대로라 걷는 느낌은 똑같고, 판자 · 벽돌 · 조약돌 같은 <b>건축 블록</b>은 반듯하게 남아요 (건물과 닿는 곳도 틈 없이 맞물려요).
     <h4>v26.93 — 🪨 진짜 같은 블록 · 탄 요리</h4>
@@ -948,7 +951,7 @@ const FUV=FACES.map(f=>{const n=f.dir[0]?0:f.dir[1]?1:2,ax=[0,1,2].filter(a=>a!=
 const LOG_S=12,LOG_R=.47; // 둥근 원목: 12각 기둥, 반지름
 const LOG_CS=[...Array(LOG_S+1)].map((_,k)=>{const a=k/LOG_S*Math.PI*2;return [Math.cos(a),Math.sin(a)];});
 function logGeom(P,U,C,I,x,y,z,ts,tt,top,bot,sl,bl){ // 원목 기둥을 배열에 추가 (ts: 껍질 타일, tt: 나이테 타일)
-  const uv=(t,u,v)=>[((t%ATW)+.002+u*.996)/ATW,1-(Math.floor(t/ATW)+1-(.002+v*.996))/ATH];
+  const uv=(t,u,v)=>[((t%ATW)+.008+u*.984)/ATW,1-(Math.floor(t/ATW)+1-(.008+v*.984))/ATH];
   for(let k=0;k<LOG_S;k++){const [c0,s0]=LOG_CS[k],[c1,s1]=LOG_CS[k+1],u0=(k%4)/4,u1=u0+.25,base=P.length/3; // 둘레에 껍질 무늬 3번 반복
     for(const [c,sn,u,yy] of [[c0,s0,u0,0],[c1,s1,u1,0],[c0,s0,u0,1],[c1,s1,u1,1]]){P.push(x+.5+c*LOG_R,y+yy,z+.5+sn*LOG_R);U.push(...uv(ts,u,yy));C.push(sl,bl,.68+.12*Math.abs(c));}
     I.push(base,base+2,base+1,base+1,base+2,base+3);}
@@ -957,7 +960,7 @@ function logGeom(P,U,C,I,x,y,z,ts,tt,top,bot,sl,bl){ // 원목 기둥을 배열�
     for(let k=0;k<LOG_S;k++)if(yy)I.push(base,base+2+k,base+1+k);else I.push(base,base+1+k,base+2+k);}
 }
 function wheelGeom(P,U,C,I,x,y,z,ax,tt,ts,sl,bl,R=.5,H=.8){ // 둥근 바퀴를 배열에 추가 (ax: 'x'면 x축으로 굴러감 · tt: 타이어 홈 타일, ts: 바퀴 옆면 타일)
-  const uv=(t,u,v)=>[((t%ATW)+.002+u*.996)/ATW,1-(Math.floor(t/ATW)+1-(.002+v*.996))/ATH];
+  const uv=(t,u,v)=>[((t%ATW)+.008+u*.984)/ATW,1-(Math.floor(t/ATW)+1-(.008+v*.984))/ATH];
   const pt=(c,sn,a)=>ax==='x'?[x+.5+(a-.5)*H,y+.5+sn*R,z+.5+c*R]:[x+.5+sn*R,y+.5+c*R,z+.5+(a-.5)*H];
   for(let k=0;k<LOG_S;k++){const [c0,s0]=LOG_CS[k],[c1,s1]=LOG_CS[k+1],u0=(k%4)/4,u1=u0+.25,base=P.length/3;
     for(const [c,sn,u,a] of [[c0,s0,u0,0],[c1,s1,u1,0],[c0,s0,u0,1],[c1,s1,u1,1]]){P.push(...pt(c,sn,a));U.push(...uv(tt,u,a));C.push(sl,bl,.6+.3*Math.max(0,ax==='x'?sn:c));}
@@ -1021,7 +1024,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
     if(id===LEAVES&&covered.has((y*16+z)*16+x))continue; // 둥근 잎 덩어리에 포함된 잎
     if(LADDER_OF[id]){const f=FACES[LADDER_OF[id]-1],t=B.tiles[0],tx=t%ATW,ty=Math.floor(t/ATW),base=P.length/3;
       const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0;
-      for(const c of f.c){P.push(x+c[0]-f.dir[0]*.06,y+c[1],z+c[2]-f.dir[2]*.06);U.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);C.push(sl,bl,.9);}
+      for(const c of f.c){P.push(x+c[0]-f.dir[0]*.06,y+c[1],z+c[2]-f.dir[2]*.06);U.push((tx+.008+c[3]*.984)/ATW,1-(ty+1-(.008+c[4]*.984))/ATH);C.push(sl,bl,.9);}
       I.push(base,base+1,base+2,base+2,base+1,base+3,base,base+2,base+1,base+2,base+3,base+1);continue;}
     if(id===STEER){const sl=y>=hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0; // 핸들: 얇은 원판 (붙은 블록 쪽이 굴대)
       wheelGeom(P,U,C,I,x,y,z,OPAQUE[get(x+1,y,z)]||OPAQUE[get(x-1,y,z)]?'x':'z',B.tiles[3],B.tiles[0],sl,bl,.46,.12);continue;}
@@ -1033,13 +1036,13 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       if(id===SAPLING||FLOWER_OF[id]){const W=.42,H=.9; // 묘목 · 꽃: 엇갈린 판 두 장 (양면)
         for(const a of [Math.PI/4,-Math.PI/4]){const dx=Math.cos(a)*W,dz=Math.sin(a)*W,base=P.length/3;
           for(const [qx,qy,qz,u,v] of [[x+.5-dx,y,z+.5-dz,0,0],[x+.5+dx,y,z+.5+dz,1,0],[x+.5-dx,y+H,z+.5-dz,0,1],[x+.5+dx,y+H,z+.5+dz,1,1]]){
-            P.push(qx,qy,qz);U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);C.push(sl,bl,.95);}
+            P.push(qx,qy,qz);U.push((tx+.008+u*.984)/ATW,1-(ty+1-(.008+v*.984))/ATH);C.push(sl,bl,.95);}
           I.push(base,base+1,base+2,base+2,base+1,base+3,base,base+2,base+1,base+2,base+3,base+1);}
         continue;}
       const dd=B.door,b=DOOR_BOX[dd.o?DOOR_OPEN[dd.k]:DIR_FACES[dd.k]]; // 문: 두께 3/16의 판
       for(let fi=0;fi<6;fi++){const f=FACES[fi],ua=FUV[fi],base=P.length/3;
         for(const c of f.c){const q=[c[0]?b[3]:b[0],c[1]?b[4]:b[1],c[2]?b[5]:b[2]],u=ua[0][1]?1-q[ua[0][0]]:q[ua[0][0]],v=ua[1][1]?1-q[ua[1][0]]:q[ua[1][0]];
-          P.push(x+q[0],y+q[1],z+q[2]);U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);C.push(sl,bl,f.shade);}
+          P.push(x+q[0],y+q[1],z+q[2]);U.push((tx+.008+u*.984)/ATW,1-(ty+1-(.008+v*.984))/ATH);C.push(sl,bl,f.shade);}
         I.push(base,base+1,base+2,base+2,base+1,base+3);}
       continue;}
     if(id===HOPPER){const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0;
@@ -1048,7 +1051,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
         if(onEdge&&OPAQUE[get(x+f.dir[0],y+f.dir[1],z+f.dir[2])])continue; // 블록 경계에 붙은 면이 막혀 있으면 생략
         const t=B.tiles[fi],tx=t%ATW,ty=Math.floor(t/ATW),base=P.length/3;
         for(const c of f.c){const q=[c[0]?b[3]:b[0],c[1]?b[4]:b[1],c[2]?b[5]:b[2]],u=ua[0][1]?1-q[ua[0][0]]:q[ua[0][0]],v=ua[1][1]?1-q[ua[1][0]]:q[ua[1][0]];
-          P.push(x+q[0],y+q[1],z+q[2]);U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);C.push(sl,bl,f.shade);}
+          P.push(x+q[0],y+q[1],z+q[2]);U.push((tx+.008+u*.984)/ATW,1-(ty+1-(.008+v*.984))/ATH);C.push(sl,bl,f.shade);}
         I.push(base,base+1,base+2,base+2,base+1,base+3);}
       continue;}
     let tint=1;
@@ -1057,12 +1060,12 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
         const H=.32+.4*((hr>>>13)%100)/100,cx=x+.5+((hr>>>5)%30-15)/100,cz=z+.5+((hr>>>9)%30-15)/100,a0=(hr>>>17)%314/100,W=.45,sh=.9+.15*((hr>>>21)%10)/10;
         for(const a of [a0,a0+Math.PI/2]){const dx=Math.cos(a)*W,dz=Math.sin(a)*W,base=P.length/3;
           for(const [qx,qy,qz,u,v] of [[cx-dx,y+1,cz-dz,0,0],[cx+dx,y+1,cz+dz,1,0],[cx-dx,y+1+H,cz-dz,0,1],[cx+dx,y+1+H,cz+dz,1,1]]){
-            P.push(qx,qy,qz);U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);C.push(sl,bl,sh);}
+            P.push(qx,qy,qz);U.push((tx+.008+u*.984)/ATW,1-(ty+1-(.008+v*.984))/ATH);C.push(sl,bl,sh);}
           I.push(base,base+1,base+2,base+2,base+1,base+3,base,base+2,base+1,base+2,base+3,base+1);}}}
     if(id===LEAVES){const hr=Math.imul((x+ox)|0,73856093)^Math.imul(y,19349663)^Math.imul((z+oz)|0,83492791);tint=.84+.22*((hr>>>8)%100)/100; // 블록마다 색 차이
       if(!get(x+1,y,z)||!get(x-1,y,z)||!get(x,y+1,z)||!get(x,y,z+1)||!get(x,y,z-1)){ // 바깥쪽 잎: 엇갈린 잎 판 3장 (양면)
         const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,t=B.tiles[0],tx=t%ATW,ty=Math.floor(t/ATW),a0=(hr>>>4)%628/100,W=.5;
-        const uv=(u,v)=>U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);
+        const uv=(u,v)=>U.push((tx+.008+u*.984)/ATW,1-(ty+1-(.008+v*.984))/ATH);
         const quad=(q0,q1,q2,q3,sh)=>{const base=P.length/3;for(const [q,u,v] of [[q0,0,0],[q1,1,0],[q2,0,1],[q3,1,1]]){P.push(...q);uv(u,v);C.push(sl,bl,sh*tint);}
           I.push(base,base+1,base+2,base+2,base+1,base+3,base,base+2,base+1,base+2,base+3,base+1);};
         for(const a of [a0,a0+Math.PI/2]){const dx=Math.cos(a)*W,dz=Math.sin(a)*W,cx=x+.5,cz=z+.5,y0=y+.1,y1=y+.9;
@@ -1082,7 +1085,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       const sl=sky?1:caveB;
       if(isW){
         const base=WP.length/3;
-        for(const c of f.c){WP.push(x+c[0],y+(c[1]?wq[c[0]*2+c[2]]:0),z+c[2]);WU.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);
+        for(const c of f.c){WP.push(x+c[0],y+(c[1]?wq[c[0]*2+c[2]]:0),z+c[2]);WU.push((tx+.008+c[3]*.984)/ATW,1-(ty+1-(.008+c[4]*.984))/ATH);
           WC.push(sl,LV?Math.min(1,lightAt(x+f.dir[0],y+f.dir[1],z+f.dir[2])/LM*1.25):0,f.shade);}
         WI.push(base,base+1,base+2,base+2,base+1,base+3);
         continue;
@@ -1104,7 +1107,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
           bl=Math.min(1,sum/cnt/LM*1.25);}
         if(id===LEAVES){leafRound(x+c[0],y+c[1],z+c[2],_lo);P.push(x+c[0]+_lo[0],y+c[1]+_lo[1],z+c[2]+_lo[2]);}
         else if(NATB[id]){natRound(x+c[0],y+c[1],z+c[2],_lo);P.push(x+c[0]+_lo[0],y+c[1]+_lo[1],z+c[2]+_lo[2]);}
-        else P.push(x+c[0],y+(isL?(c[1]?wq[c[0]*2+c[2]]:0):c[1]),z+c[2]);U.push((tx+.002+c[3]*.996)/ATW,1-(ty+1-(.002+c[4]*.996))/ATH);C.push(sl,bl,AO_B[a]*f.shade*tint);
+        else P.push(x+c[0],y+(isL?(c[1]?wq[c[0]*2+c[2]]:0):c[1]),z+c[2]);U.push((tx+.008+c[3]*.984)/ATW,1-(ty+1-(.008+c[4]*.984))/ATH);C.push(sl,bl,AO_B[a]*f.shade*tint);
       }
       if(aoc[0]+aoc[3]>aoc[1]+aoc[2])I.push(base,base+1,base+3,base,base+3,base+2);
       else I.push(base,base+1,base+2,base+2,base+1,base+3);
@@ -1118,7 +1121,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
         const vtx=(i,j)=>{const th=j/RING*Math.PI,ph=(i%SEG)/SEG*Math.PI*2,bump=1+(R(i%SEG,j)-.5)*.16*(j>0&&j<RING?1:0),sy=Math.cos(th),sr=Math.sin(th);
           return [cx+sr*Math.cos(ph)*TREE_RX*sc*bump,cy-.2+sy*TREE_RY*sc*bump,cz+sr*Math.sin(ph)*TREE_RX*sc*bump,sy];};
         for(let j=0;j<RING;j++)for(let i=0;i<SEG;i++){const q=[vtx(i,j),vtx(i+1,j),vtx(i,j+1),vtx(i+1,j+1)],base=P.length/3;
-          for(const [v,u,w] of [[q[0],0,1],[q[1],1,1],[q[2],0,0],[q[3],1,0]]){P.push(v[0],v[1],v[2]);U.push((tx+.002+u*.996)/ATW,1-(ty+1-(.002+w*.996))/ATH);
+          for(const [v,u,w] of [[q[0],0,1],[q[1],1,1],[q[2],0,0],[q[3],1,0]]){P.push(v[0],v[1],v[2]);U.push((tx+.008+u*.984)/ATW,1-(ty+1-(.008+w*.984))/ATH);
             const tint=.9+.2*R(i+31,j+17);C.push(sl,bl,(.6+.4*(v[3]*.5+.5))*dark*tint);}
           I.push(base,base+1,base+2,base+1,base+3,base+2);}}}}
   const F=a=>new Float32Array(a),U32=a=>new Uint32Array(a);
@@ -1473,7 +1476,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.94 — ⛰ Natural terrain</h4>
+    <h4>🆕 v26.95 — 🎨 Realistic textures</h4>
+    • Block textures are smoothly filtered (no more pixel squares) and terrain gets large natural color variation so the same tile no longer repeats like a grid.
+    <h4>v26.94 — ⛰ Natural terrain</h4>
     • Placed dirt, grass, sand, snow, stone and ores are no longer cubes: edges and steps are rounded and cliffs/cave walls are rocky. Flat ground stays flat and building blocks stay straight.
     <h4>v26.93 — 🪨 Realistic blocks · Burnt food</h4>
     • Held, dropped and icon blocks are no longer cubes: dirt/sand/grass/snow are a handful of grains, stones and ores are lumpy rocks, planks are boards, bricks are bricks, metal blocks are ingot piles, diamond blocks are big gems, leaves are leafy twigs, glass is a pane.<br>
@@ -3715,9 +3720,14 @@ const skyDome=(()=>{const m=new THREE.ShaderMaterial({uniforms:{top:{value:new T
   fragmentShader:'uniform vec3 top;uniform vec3 hor;varying vec3 vP;void main(){float h=clamp(vP.y,0.,1.);gl_FragColor=vec4(mix(hor,top,pow(h,.5)),1.);}',
   side:THREE.BackSide,depthWrite:false,fog:false});const s=new THREE.Mesh(new THREE.SphereGeometry(460,32,16),m);s.renderOrder=-10;s.frustumCulled=false;scene.add(s);return s;})();
 scene.fog=new THREE.Fog(0x88bbff,RD*16*.55,RD*16-4);
-const atlasTex=new THREE.CanvasTexture(atlas);atlasTex.magFilter=THREE.NearestFilter;atlasTex.minFilter=THREE.NearestMipmapLinearFilter;atlasTex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+const atlasTex=new THREE.CanvasTexture(atlas);atlasTex.magFilter=THREE.LinearFilter;atlasTex.minFilter=THREE.LinearMipmapLinearFilter; // 픽셀 계단 없이 부드럽게
+atlasTex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
 terrainMat=new THREE.MeshBasicMaterial({map:atlasTex,vertexColors:true,alphaTest:.5});
 lightPatch(terrainMat);
+{const ob=terrainMat.onBeforeCompile;terrainMat.onBeforeCompile=s=>{ob(s); // 지형: 세계 위치에 따른 큰 얼룩 · 잔무늬 → 칸마다 같은 텍스처가 반복돼 보이지 않음
+  s.vertexShader='varying vec3 vWP;\n'+s.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvWP=(modelMatrix*vec4(transformed,1.)).xyz;');
+  s.fragmentShader='varying vec3 vWP;\nfloat th21(vec2 p){p=mod(p,289.);return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\nfloat tvn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(th21(i),th21(i+vec2(1.,0.)),f.x),mix(th21(i+vec2(0.,1.)),th21(i+vec2(1.,1.)),f.x),f.y);}\n'
+    +s.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n{vec2 q=vWP.xz+vec2(vWP.y*.7,-vWP.y*.4);float mv=tvn(q*.08)*.5+tvn(q*.37+3.1)*.32+tvn(q*1.9+7.7)*.18;diffuseColor.rgb*=.82+.36*mv;}');};}
 // ---------- 진짜 같은 물 · 용암 (셰이더) ----------
 const timeU={value:0},sunDirU={value:new THREE.Vector3(0,1,0)},skyU={value:skyColor};
 const NOISE_GLSL=`
@@ -4069,7 +4079,7 @@ const HANDLE=()=>imat('handle',0x7a5232,'wood',.85),GRIP=()=>imat('grip',0x3a261
 function blockCube(id,s){ // 실제 블록 텍스처를 입힌 작은 큐브
   const B=BL[id],g=new THREE.BoxGeometry(s,s,LADDER_OF[id]?.02:s),uv=g.attributes.uv,order=[1,0,3,2,5,4]; // 사다리는 얇은 판
   for(let f=0;f<6;f++){const t=B.tiles[order[f]],tx=t%ATW,ty=Math.floor(t/ATW);
-    for(let k=0;k<4;k++){const i=f*4+k,u=uv.getX(i),v=uv.getY(i);uv.setXY(i,(tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);}}
+    for(let k=0;k<4;k++){const i=f*4+k,u=uv.getX(i),v=uv.getY(i);uv.setXY(i,(tx+.008+u*.984)/ATW,1-(ty+1-(.008+v*.984))/ATH);}}
   const key='blk'+id;let m=IMAT[key];
   if(!m){m=IMAT[key]=new THREE.MeshStandardMaterial({map:atlasTex,roughness:id===GLASS?.1:.85,alphaTest:id===GLASS?.02:.5,transparent:!OPAQUE[id]&&id!==LEAVES,depthWrite:id!==GLASS});
     if(EMIT[id]){m.emissive=new THREE.Color(0xffffff);m.emissiveMap=atlasTex;m.emissiveIntensity=.7;}}
@@ -4084,7 +4094,7 @@ function mergeParts(parts){const P=[],C=[],v=new THREE.Vector3(); // [geo, matri
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(P,3));if(C.length)geo.setAttribute('color',new THREE.Float32BufferAttribute(C,3));geo.computeVertexNormals();return geo;}
 function triUV(geo,tile,sc){const p=geo.attributes.position,n=p.count,U=new Float32Array(n*2),tx=tile%ATW,ty=Math.floor(tile/ATW),a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3(),e=new THREE.Vector3(); // 면 방향대로 블록 텍스처를 투영
   for(let i=0;i<n;i+=3){a.fromBufferAttribute(p,i);b.fromBufferAttribute(p,i+1);c.fromBufferAttribute(p,i+2);e.subVectors(b,a).cross(c.clone().sub(a));const ax=Math.abs(e.x),ay=Math.abs(e.y),az=Math.abs(e.z),[i0,i1]=ax>=ay&&ax>=az?['z','y']:ay>=az?['x','z']:['x','y'];
-    [a,b,c].forEach((q,k)=>{const u=Math.min(1,Math.max(0,q[i0]/sc+.5)),w=Math.min(1,Math.max(0,q[i1]/sc+.5));U[(i+k)*2]=(tx+.002+u*.996)/ATW;U[(i+k)*2+1]=1-(ty+1-(.002+w*.996))/ATH;});}
+    [a,b,c].forEach((q,k)=>{const u=Math.min(1,Math.max(0,q[i0]/sc+.5)),w=Math.min(1,Math.max(0,q[i1]/sc+.5));U[(i+k)*2]=(tx+.008+u*.984)/ATW;U[(i+k)*2+1]=1-(ty+1-(.008+w*.984))/ATH;});}
   geo.setAttribute('uv',new THREE.BufferAttribute(U,2));return geo;}
 function rockGeo(r,seed,sx=1,sy=.8,sz=1){const g=new THREE.IcosahedronGeometry(r,1),p=g.attributes.position,J={},R=mul32(seed); // 울퉁불퉁한 돌 (밑은 평평)
   for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),k=x.toFixed(3)+','+y.toFixed(3)+','+z.toFixed(3),f=J[k]||(J[k]=.75+R()*.45);let Y=y*f*sy;if(Y<-.5*r*sy)Y=-.5*r*sy+(Y+.5*r*sy)*.25;p.setXYZ(i,x*f*sx,Y,z*f*sz);}return g;}
@@ -4146,7 +4156,7 @@ function logModel(s){ // 둥근 원목 (지형과 같은 모양 · 같은 텍스
 }
 function tileBox(w,h,d,tile,dbl){ // 모든 면에 타일 한 장을 입힌 상자 (문·묘목 아이템용)
   const g=new THREE.BoxGeometry(w,h,d),uv=g.attributes.uv,tx=tile%ATW,ty=Math.floor(tile/ATW);
-  for(let i=0;i<uv.count;i++)uv.setXY(i,(tx+.002+uv.getX(i)*.996)/ATW,1-(ty+1-(.002+uv.getY(i)*.996))/ATH);
+  for(let i=0;i<uv.count;i++)uv.setXY(i,(tx+.008+uv.getX(i)*.984)/ATW,1-(ty+1-(.008+uv.getY(i)*.984))/ATH);
   const k='tb'+(dbl?1:0);const m=IMAT[k]||(IMAT[k]=new THREE.MeshStandardMaterial({map:atlasTex,roughness:.8,alphaTest:.5,side:dbl?THREE.DoubleSide:THREE.FrontSide}));return new THREE.Mesh(g,m);}
 function doorModel(s){const g=new THREE.Group(),a=tileBox(s*.55,s*.55,s*.1,TILE.door_bottom),b=tileBox(s*.55,s*.55,s*.1,TILE.door_top);a.position.y=-s*.275;b.position.y=s*.275;g.add(a,b);return g;}
 function hopperModel(s){ // 깔때기 모양 호퍼 (블록 텍스처 일부를 각 상자에 입힘)
@@ -4154,7 +4164,7 @@ function hopperModel(s){ // 깔때기 모양 호퍼 (블록 텍스처 일부를 
   for(const b of HOPPER_BOXES){const cx=(b[0]+b[3])/2,cy=(b[1]+b[4])/2,cz=(b[2]+b[5])/2,geo=new THREE.BoxGeometry((b[3]-b[0])*s,(b[4]-b[1])*s,(b[5]-b[2])*s),uv=geo.attributes.uv,ps=geo.attributes.position;
     for(let f=0;f<6;f++){const fi=order[f],ua=FUV[fi],t=B.tiles[fi],tx=t%ATW,ty=Math.floor(t/ATW);
       for(let k=0;k<4;k++){const i=f*4+k,q=[ps.getX(i)/s+cx,ps.getY(i)/s+cy,ps.getZ(i)/s+cz],u=ua[0][1]?1-q[ua[0][0]]:q[ua[0][0]],v=ua[1][1]?1-q[ua[1][0]]:q[ua[1][0]];
-        uv.setXY(i,(tx+.002+u*.996)/ATW,1-(ty+1-(.002+v*.996))/ATH);}}
+        uv.setXY(i,(tx+.008+u*.984)/ATW,1-(ty+1-(.008+v*.984))/ATH);}}
     const mesh=new THREE.Mesh(geo,m);mesh.position.set((cx-.5)*s,(cy-.5)*s,(cz-.5)*s);grp.add(mesh);}
   return grp;
 }
