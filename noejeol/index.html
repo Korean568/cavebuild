@@ -275,7 +275,12 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.98 — 🌳 진짜 같은 나무 · 돌담</h4>
+    <h4>🆕 v26.99 — ⛰ 더 둥근 언덕 · 히트박스 · 둥근 침대</h4>
+    • 언덕이 훨씬 <b>완만하고 둥글게</b> 이어져요 (한 칸 계단이 넓은 비탈로).<br>
+    • <b>히트박스가 보이는 모양에 맞게</b>: 둥근 땅을 겨누면 네모 테두리 대신 표면에 고리가 보이고, 걸을 때 눈높이가 땅 표면을 따라 오르내리고, 흙 · 돌의 한 칸 턱은 점프 없이 걸어서 올라가요. 침대는 매트리스 높이만큼만 단단해요.<br>
+    • <b>침대</b>가 모서리가 둥근 나무 틀 · 푹신한 매트리스 · 베개로 바뀌었어요.<br>
+    • 🐞 고침: 조약돌 · 판자 · 벽 같은 건축 블록과 둥근 흙 · 모래가 만나는 곳에 <b>틈이 생겨 하늘이 보이던 문제</b> (건물 옆 땅은 칸에 딱 맞게 붙어요).
+    <h4>v26.98 — 🌳 진짜 같은 나무 · 돌담</h4>
     • 나무 줄기가 위로 갈수록 가늘어지고, 살짝 굽고, 둘레가 울퉁불퉁하고, <b>밑동은 뿌리처럼 퍼져요</b>. 잎은 큰 공 하나 대신 <b>잎 덩어리 여러 개</b>가 뭉쳐 있고, 사이사이로 <b>가지</b>가 뻗어 있어요. (집 기둥으로 쓴 원목은 반듯하게 남아요)<br>
     • 조약돌이 납작한 그림 대신 <b>돌을 하나하나 쌓은 것처럼</b> 볼록볼록하고 줄눈은 오목해요.<br>
     • 바스켓라벤더(바라) 로고를 새 로고로 바꿨어요.
@@ -741,7 +746,7 @@ defB(KILN,'가마',[TILE.kiln_side,TILE.kiln_side,TILE.kiln_top,TILE.kiln_top,TI
 defB(GLASS,'유리',TILE.glass,{hard:.3,opaque:false});
 defB(BRICK,'돌벽돌',TILE.brick,{hard:2,tool:'pick',tier:1});
 defB(SNOW,'눈 덮인 흙',{top:TILE.snow_top,bottom:TILE.dirt,side:TILE.snow_side},{hard:.6,tool:'shovel'}); // 캐면 눈 덮인 흙 그대로 나옴
-defB(BED,'침대',{top:TILE.bed_top,bottom:TILE.planks,side:TILE.bed_side},{hard:.5,tool:'axe'});
+defB(BED,'침대',{top:TILE.bed_top,bottom:TILE.planks,side:TILE.bed_side},{hard:.5,tool:'axe',opaque:false}); // 둥근 모양이라 옆 블록 면을 가리지 않음
 defB(LAMP,'등불',TILE.lamp,{hard:.4});
 defB(THORN,'가시 덤불',TILE.thorn,{hard:.6,tool:'axe',opaque:false});
 defB(HELLSTONE,'어비스석',TILE.hellstone,{hard:.8,tool:'pick',tier:1});
@@ -960,6 +965,20 @@ const AO_B=[.45,.62,.8,1];
 // 면마다 텍스처 u·v가 어느 축을 따라가는지 (블록보다 작은 상자에 텍스처 일부를 입힐 때 씀)
 const FUV=FACES.map(f=>{const n=f.dir[0]?0:f.dir[1]?1:2,ax=[0,1,2].filter(a=>a!==n);
   const find=k=>{for(const a of ax){if(f.c.every(c=>c[a]===c[k]))return [a,0];if(f.c.every(c=>c[a]!==c[k]))return [a,1];}return [ax[0],0];};return [find(3),find(4)];});
+function roundBox(P,U,C,I,x0,y0,z0,x1,y1,z1,r,tTop,tSide,tBot,sl,bl){ // 모서리가 둥근 상자 (가장자리에 촘촘한 줄)
+  const L=(a,b,w)=>a+(b-a)*w,ss=len=>{const a=Math.min(.45,r/len);return [0,a*.3,a*.7,a,.5,1-a,1-a*.7,1-a*.3,1];};
+  for(let fi=0;fi<6;fi++){const f=FACES[fi],t=fi===3?tTop:fi===2?tBot:tSide,tx=t%ATW,ty=Math.floor(t/ATW),base=P.length/3,cs=[];
+    for(const c of f.c)cs[c[3]*2+c[4]]=[c[0]?x1:x0,c[1]?y1:y0,c[2]?z1:z0];
+    const SU=ss(Math.hypot(cs[2][0]-cs[0][0],cs[2][1]-cs[0][1],cs[2][2]-cs[0][2])),SV=ss(Math.hypot(cs[1][0]-cs[0][0],cs[1][1]-cs[0][1],cs[1][2]-cs[0][2])),N=SU.length;
+    for(const tv of SV)for(const su of SU){const q=[0,1,2].map(k=>L(L(cs[0][k],cs[2][k],su),L(cs[1][k],cs[3][k],su),tv)),ix=Math.min(x1-r,Math.max(x0+r,q[0])),iy=Math.min(y1-r,Math.max(y0+r,q[1])),iz=Math.min(z1-r,Math.max(z0+r,q[2]));
+      let dx=q[0]-ix,dy=q[1]-iy,dz=q[2]-iz;const dl=Math.hypot(dx,dy,dz);if(dl>1e-6){dx/=dl;dy/=dl;dz/=dl;}else{dx=f.dir[0];dy=f.dir[1];dz=f.dir[2];}
+      P.push(ix+dx*r,iy+dy*r,iz+dz*r);U.push((tx+.008+su*.984)/ATW,1-(ty+1-(.008+tv*.984))/ATH);C.push(sl,bl,(dy>=0?.72+.28*dy:.72+.17*dy)-.06*Math.abs(dz));}
+    const e1=[cs[2][0]-cs[0][0],cs[2][1]-cs[0][1],cs[2][2]-cs[0][2]],e2=[cs[1][0]-cs[0][0],cs[1][1]-cs[0][1],cs[1][2]-cs[0][2]],dn=f.dir,ccw=((e1[1]*e2[2]-e1[2]*e2[1])*dn[0]+(e1[2]*e2[0]-e1[0]*e2[2])*dn[1]+(e1[0]*e2[1]-e1[1]*e2[0])*dn[2])>0;
+    for(let j=0;j<N-1;j++)for(let i=0;i<N-1;i++){const a=base+j*N+i,b=a+1,c=a+N,d=c+1;if(ccw)I.push(a,b,c,b,d,c);else I.push(a,c,b,b,c,d);}}}
+function bedGeom(P,U,C,I,x,y,z,sl,bl){ // 침대: 나무 틀 · 푹신한 매트리스(이불) · 베개
+  roundBox(P,U,C,I,x+.03,y,z+.03,x+.97,y+.24,z+.97,.05,TILE.planks,TILE.planks,TILE.planks,sl,bl);
+  roundBox(P,U,C,I,x+.05,y+.2,z+.05,x+.95,y+.5,z+.95,.12,TILE.bed_top,TILE.bed_side,TILE.planks,sl,bl);
+  roundBox(P,U,C,I,x+.17,y+.45,z+.08,x+.83,y+.6,z+.34,.07,TILE.snow_top,TILE.snow_top,TILE.snow_top,sl,bl);}
 const LOG_S=12,LOG_R=.47; // 둥근 원목: 12각 기둥, 반지름
 const LOG_CS=[...Array(LOG_S+1)].map((_,k)=>{const a=k/LOG_S*Math.PI*2;return [Math.cos(a),Math.sin(a)];});
 function logGeom(P,U,C,I,x,y,z,ts,tt,top,bot,sl,bl,org){ // 원목 기둥을 배열에 추가 (ts: 껍질 타일, tt: 나이테 타일, org: 자연 나무 모양)
@@ -1044,6 +1063,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       wheelGeom(P,U,C,I,x,y,z,OPAQUE[get(x+1,y,z)]||OPAQUE[get(x-1,y,z)]?'x':'z',B.tiles[3],B.tiles[0],sl,bl,.46,.12);continue;}
     if(id===WHEEL){const sl=y>=hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,sx=OPAQUE[get(x+1,y,z)]||OPAQUE[get(x-1,y,z)]||get(x+1,y,z)===CAR_ENGINE||get(x-1,y,z)===CAR_ENGINE;
       wheelGeom(P,U,C,I,x,y,z,sx||!(OPAQUE[get(x,y,z+1)]||OPAQUE[get(x,y,z-1)])?'x':'z',B.tiles[3],B.tiles[0],sl,bl);continue;} // 옆에 붙은 블록 쪽이 굴대
+    if(id===BED){bedGeom(P,U,C,I,x,y,z,y>=hms[4][z*16+x]?1:caveB,LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0);continue;}
     if(id===LOG){const sl=y>=hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,up=get(x,y+1,z),dn=get(x,y-1,z);
       let tp=y,bt=y;while(tp<CH-1&&get(x,tp+1,z)===LOG)tp++;while(bt>0&&get(x,bt-1,z)===LOG)bt--;let org=null;
       if(get(x,tp+1,z)===LEAVES){const H=tp-bt+1,hw=Math.imul(x+ox,73856093)^Math.imul(z+oz,83492791),sc=A=>.66+.34*A/H, // 잎이 달린 나무 줄기만 (건물 기둥은 반듯)
@@ -1097,7 +1117,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
     for(let fi=0;fi<6;fi++){
       const f=FACES[fi],n=get(x+f.dir[0],y+f.dir[1],z+f.dir[2]);
       if(isW||isL){if(LIQ_KIND[n]===LIQ_KIND[id]||OPAQUE[n])continue;}
-      else{if(OPAQUE[n])continue;if(n===id)continue;}
+      else{if(OPAQUE[n]&&!(NATB&&NATB[n]&&id!==CORE))continue;if(n===id)continue;} // 둥근 지형 쪽 면도 그림 (지형이 깎여도 구멍이 안 보임)
       const t=B.tiles[fi],tx=t%ATW,ty=Math.floor(t/ATW);
       const nx=x+f.dir[0],ny=y+f.dir[1],nz=z+f.dir[2];
       const sky=(nx>=0&&nx<16&&nz>=0&&nz<16)?ny>hms[4][nz*16+nx]:skyAt(nx,ny,nz);
@@ -1166,21 +1186,27 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
             const tint=.88+.24*R(i+31,j+17),hy=Math.min(1,Math.max(0,(v[1]-(cy-2.4))/4.4));C.push(sl,bl,(.5+.3*(v[3]*.5+.5)+.25*hy)*dark*tint);} // 위쪽 덩어리 · 윗면이 밝음
           I.push(base,base+1,base+2,base+1,base+3,base+2);}}});}}
   const NP=[],NU=[],NT=[],NC=[],NI=[];
-  natSurf:{const R=NAT_R,SW=22,SO=3,SL=SW*SW,si=(x,y,z)=>((y+1)*SW+(z+SO))*SW+(x+SO),S=new Uint8Array(SL*(CH+2));let any=false;
-    for(let y=-1;y<=CH;y++)for(let z=-3;z<19;z++)for(let x=-3;x<19;x++){const t=get(x,y,z);if(NATB[t]||OPAQUE[t]){S[si(x,y,z)]=1;if(!any&&NATB[t]&&x>=0&&x<16&&z>=0&&z<16&&y>=0&&y<CH)any=true;}}
+  natSurf:{const R=NAT_R,SW=24,SO=4,SL=SW*SW,si=(x,y,z)=>((y+2)*SW+(z+SO))*SW+(x+SO),S=new Uint8Array(SL*(CH+4));let any=false;
+    for(let y=-2;y<=CH+1;y++)for(let z=-4;z<20;z++)for(let x=-4;x<20;x++){const t=get(x,y,z);if(NATB[t]||OPAQUE[t]){S[si(x,y,z)]=1;if(!any&&NATB[t]&&x>=0&&x<16&&z>=0&&z<16&&y>=0&&y<CH)any=true;}}
     if(!any)break natSurf;
-    const A=new Float32Array(S.length),Bz=new Float32Array(S.length),D=new Float32Array(S.length); // 3×3×3 평균 밀도 → 계단이 비탈로 녹음
-    for(let y=-1;y<=CH;y++)for(let z=-3;z<19;z++)for(let x=-2;x<18;x++){const i=si(x,y,z);A[i]=S[i-1]+S[i]+S[i+1];}
-    for(let y=-1;y<=CH;y++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){const i=si(x,y,z);Bz[i]=A[i-SW]+A[i]+A[i+SW];}
+    const A=new Float32Array(S.length),Bz=new Float32Array(S.length),D=new Float32Array(S.length); // 5×5×5 평균 밀도 → 계단이 완만하고 둥근 언덕으로
+    for(let y=-2;y<=CH+1;y++)for(let z=-4;z<20;z++)for(let x=-2;x<18;x++){const i=si(x,y,z);A[i]=S[i-2]+S[i-1]+S[i]+S[i+1]+S[i+2];}
+    for(let y=-2;y<=CH+1;y++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){const i=si(x,y,z);Bz[i]=A[i-2*SW]+A[i-SW]+A[i]+A[i+SW]+A[i+2*SW];}
     let ylo=CH,yhi=-1;
-    for(let y=0;y<CH;y++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){const i=si(x,y,z),v=(Bz[i-SL]+Bz[i]+Bz[i+SL])/27;D[i]=v;if(v>0&&v<1&&x>=-1&&x<17&&z>=-1&&z<17){if(y<ylo)ylo=y;if(y>yhi)yhi=y;}}
+    for(let y=0;y<CH;y++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){const i=si(x,y,z),v=(Bz[i-2*SL]+Bz[i-SL]+Bz[i]+Bz[i+SL]+Bz[i+2*SL])/125;D[i]=v;if(v>0&&v<1&&x>=-1&&x<17&&z>=-1&&z<17){if(y<ylo)ylo=y;if(y>yhi)yhi=y;}}
     if(yhi<0)break natSurf;
     for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){D[si(x,-1,z)]=1;D[si(x,CH,z)]=0;}
     const fld=(px,py,pz)=>{let fy=py-.5;if(fy<-1)fy=-1;else if(fy>CH-.001)fy=CH-.001;const fx=px-.5,fz=pz-.5,ix=Math.floor(fx),iy=Math.floor(fy),iz=Math.floor(fz),ax=fx-ix,ay=fy-iy,az=fz-iz,i=si(ix,iy,iz),
       c00=D[i]+(D[i+1]-D[i])*ax,c10=D[i+SW]+(D[i+SW+1]-D[i+SW])*ax,c01=D[i+SL]+(D[i+SL+1]-D[i+SL])*ax,c11=D[i+SL+SW]+(D[i+SL+SW+1]-D[i+SL+SW])*ax,c0=c00+(c10-c00)*az,c1=c01+(c11-c01)*az;return c0+(c1-c0)*ay;};
     const NX=16*R+2,jLo=Math.max(0,(ylo-1)*R),jHi=Math.min(CH*R-1,(yhi+2)*R),FN=new Float32Array(NX*NX*(jHi-jLo+1)),fi_=(i,j,k)=>((j-jLo)*NX+(k+1))*NX+(i+1);
     const vox=(i,j,k)=>get(Math.floor((i+.5)/R),Math.floor((j+.5)/R),Math.floor((k+.5)/R));
-    for(let j=jLo;j<=jHi;j++)for(let k=-1;k<=16*R;k++)for(let i=-1;i<=16*R;i++){let f=fld((i+.5)/R,(j+.5)/R,(k+.5)/R);if(f<.62&&NATB[vox(i,j,k)])f=.62;FN[fi_(i,j,k)]=f;} // 흙·돌 칸 안은 항상 안쪽 (혼자 있는 흙도 안 사라짐)
+    const NW=20,nn=(x,y,z)=>((y+1)*NW+(z+2))*NW+(x+2),NN=new Uint8Array(NW*NW*(CH+2)),VW=18,NV=new Uint8Array(VW*VW*CH),nv=(x,y,z)=>(y*VW+(z+1))*VW+(x+1); // 건물 블록 (자연 지형이 아닌 불투명 블록)
+    for(let y=-1;y<=CH;y++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){const t=get(x,y,z);if(OPAQUE[t]&&!NATB[t])NN[nn(x,y,z)]=1;}
+    for(let y=0;y<CH;y++)for(let z=-1;z<17;z++)for(let x=-1;x<17;x++){let f=0;for(let c=-1;c<=1&&!f;c++)for(let b=-1;b<=1&&!f;b++)for(let a=-1;a<=1;a++)if(NN[nn(x+a,y+b,z+c)]){f=1;break;}NV[nv(x,y,z)]=f;}
+    for(let j=jLo;j<=jHi;j++)for(let k=-1;k<=16*R;k++)for(let i=-1;i<=16*R;i++){const bx=Math.floor((i+.5)/R),by=Math.floor((j+.5)/R),bz=Math.floor((k+.5)/R),t=get(bx,by,bz);let f;
+      if(NV[nv(bx,by,bz)])f=(NATB[t]||OPAQUE[t])?.9:.1; // 건물 옆은 칸 모양 그대로 → 벽·바닥과 틈 없이 맞물림
+      else{f=fld((i+.5)/R,(j+.5)/R,(k+.5)/R);if(f<.62&&NATB[t]&&D[si(bx,by,bz)]<.55)f=.62;} // 혼자 있는 흙 · 얇은 기둥은 안 사라지게
+      FN[fi_(i,j,k)]=f;}
     const CE=[0,1,2,3,4,5,6,7,0,2,1,3,4,6,5,7,0,4,1,5,2,6,3,7],VI=new Int32Array(FN.length).fill(-1),VX=[],VA=[];
     const cv=(i,j,k)=>{const ci=fi_(i,j,k);let v=VI[ci];if(v>=0)return v;const f=[];for(let c=0;c<8;c++)f.push(FN[fi_(i+(c&1),j+(c>>1&1),k+(c>>2&1))]);
       let sx=0,sy=0,sz=0,n=0;for(let e=0;e<24;e+=2){const a=CE[e],b=CE[e+1],fa=f[a],fb=f[b];if((fa>.5)===(fb>.5))continue;const t=(.5-fa)/(fb-fa);
@@ -1557,7 +1583,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.98 — 🌳 Realistic trees · stone walls</h4>
+    <h4>🆕 v26.99 — ⛰ Rounder hills · hitboxes · round bed</h4>
+    • Hills are much smoother. Aiming at smooth ground shows a ring on the surface, your eye height follows the ground and 1-block natural steps can be walked up. Beds are rounded and only mattress-high. Fixed see-through gaps where building blocks meet smooth terrain.
+    <h4>v26.98 — 🌳 Realistic trees · stone walls</h4>
     • Tree trunks taper, bend slightly and flare into roots; canopies are several leafy clumps with branches. Cobblestone is now made of bulging stones with recessed mortar. New BaRa logo.
     <h4>v26.97 — ⛰ Smooth terrain surface</h4>
     • Natural blocks are now drawn as a finely subdivided smooth surface: 1-block steps melt into rounded slopes, hills and caves curve, and shading follows the slope. Flat ground keeps its height; building blocks stay square. Phones and tablets use slightly lower quality.
@@ -3603,7 +3631,7 @@ function updateLiquids(dt){
     for(const kk of batch){const [cx,cz]=kk.split(',').map(Number);remeshAt(cx,cz);}
   }
 }
-function setBlock(x,y,z,id,batch){
+function setBlock(x,y,z,id,batch){try{GDN.clear();}catch(e){} // 지형 높이 캐시 비움
   if(y<0||y>=CH)return;const cx=x>>4,cz=z>>4,c=getChunk(cx,cz);if(!c)return;
   const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;if(BOMB_BLK[old]||BOMB_BLK[id]||old===SIGN||id===SIGN||old===ANVIL||id===ANVIL||old===GAS_STOVE||id===GAS_STOVE||old===STOCKPOT||id===STOCKPOT||old===FOOD_PLATE||id===FOOD_PLATE)nukeScan(c);if(old===FOOD_PLATE&&id!==FOOD_PLATE)plateDrop(x,y,z);if(old===STOCKPOT&&id!==STOCKPOT)potDrop(x,y,z);if(old===ANVIL&&id!==ANVIL)anvilDrop(x,y,z);if(old===GAS_STOVE&&id!==GAS_STOVE)stoveDrop(x,y,z);if(old!==id&&world.paint)delete world.paint[world.dim+':'+x+','+y+','+z];if(old===SIGN&&id!==SIGN&&world.signs)delete world.signs[signKey(x,y,z)];calcHM(c,lx,lz);c.ver++; // 핵폭탄 · 원자폭탄 · 차르 봄바 모델 갱신
   if(CONTAINER[old]&&CONTAINER[old]!==CONTAINER[id])dropContainer(x,y,z); // 상자·호퍼가 없어지면 안의 물건을 떨어뜨림
@@ -3724,16 +3752,18 @@ function rayAABB(o,d,mn,mx){
 }
 
 // ---------- 물리 ----------
+const HGT=new Float32Array(BLK_N);HGT[BED]=.56; // 블록보다 낮은 히트박스 (침대)
 function aabbSolid(x0,y0,z0,x1,y1,z1){
   for(let y=Math.floor(y0);y<=Math.floor(y1-1e-7);y++)for(let z=Math.floor(z0);z<=Math.floor(z1-1e-7);z++)for(let x=Math.floor(x0);x<=Math.floor(x1-1e-7);x++){
-    const b=getBlock(x,y,z);if(b<0||SOLID[b])return true;}
+    const b=getBlock(x,y,z);if(b<0||SOLID[b]){if(b>0&&HGT[b]&&y0>=y+HGT[b]-1e-6)continue;return true;}}
   return false;
 }
+function landTop(e){const p=e.pos,hw=e.w/2,fy=Math.floor(p.y);let top=-1;for(let z=Math.floor(p.z-hw);z<=Math.floor(p.z+hw-1e-7);z++)for(let x=Math.floor(p.x-hw);x<=Math.floor(p.x+hw-1e-7);x++){const b=getBlock(x,fy,z);if(b<0||SOLID[b])top=Math.max(top,fy+(b>0&&HGT[b]||1));}return top<0?fy+1:top;}
 function entHits(e){const hw=e.w/2,p=e.pos;return aabbSolid(p.x-hw,p.y,p.z-hw,p.x+hw,p.y+e.h,p.z+hw);}
 function moveAxis(e,ax,d){
   if(!d)return false;const p=e.pos,hw=e.w/2,orig=p[ax];p[ax]+=d;
   if(!entHits(e))return false;
-  if(ax==='y'){if(d<0)p.y=Math.floor(p.y)+1;else p.y=Math.floor(p.y+e.h)-e.h-.001;}
+  if(ax==='y'){if(d<0)p.y=landTop(e);else p.y=Math.floor(p.y+e.h)-e.h-.001;}
   else{const c=p[ax]+(d>0?hw:-hw);p[ax]=d>0?Math.floor(c)-hw-.001:Math.floor(c)+1+hw+.001;}
   // 스냅이 이동 방향과 반대로 가거나 여전히 끼어 있으면 원위치 (순간이동 방지)
   if((p[ax]-orig)*d<0||Math.abs(p[ax]-orig)>Math.abs(d)+.01||entHits(e))p[ax]=orig;
@@ -3751,8 +3781,8 @@ function physics(e,dt){
   const sdt=dt/steps;let landed=false;e.hitH=false;
   for(let s=0;s<steps;s++){
     if(moveAxis(e,'y',e.vel.y*sdt)){if(e.vel.y<0)landed=true;e.vel.y=0;}
-    if(moveAxis(e,'x',e.vel.x*sdt)){e.vel.x=0;e.hitH=true;}
-    if(moveAxis(e,'z',e.vel.z*sdt)){e.vel.z=0;e.hitH=true;}
+    if(moveAxis(e,'x',e.vel.x*sdt)&&!stepUp(e,'x',e.vel.x*sdt)){e.vel.x=0;e.hitH=true;}
+    if(moveAxis(e,'z',e.vel.z*sdt)&&!stepUp(e,'z',e.vel.z*sdt)){e.vel.z=0;e.hitH=true;}
   }
   const hw=e.w/2;
   e.onGround=landed||(e.vel.y<=0&&aabbSolid(e.pos.x-hw,e.pos.y-.05,e.pos.z-hw,e.pos.x+hw,e.pos.y,e.pos.z+hw));
@@ -3924,6 +3954,7 @@ clouds.rotation.x=-Math.PI/2;scene.add(clouds);
 // 블록 선택 표시 & 금 가는 효과
 const hl=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.004,1.004,1.004)),new THREE.LineBasicMaterial({color:0x000000,transparent:true,opacity:.6}));
 hl.visible=false;scene.add(hl);
+const hlRing=new THREE.Mesh(new THREE.RingGeometry(.26,.33,32),new THREE.MeshBasicMaterial({color:0,transparent:true,opacity:.55,side:THREE.DoubleSide,depthWrite:false}));hlRing.visible=false;scene.add(hlRing); // 둥근 지형을 겨눌 때: 표면에 고리
 const crack=new THREE.Mesh(new THREE.BoxGeometry(1.006,1.006,1.006),new THREE.MeshBasicMaterial({map:crackTex[0],transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2}));
 crack.visible=false;scene.add(crack);
 
@@ -4570,7 +4601,7 @@ function updateAvatar(dt){
   const gk=p.glideK||0,sk=Math.max(p.swimK||0,gk);
   if(sk>.5)A.yaw+=d*Math.min(1,10*dt);else if(hs>.5)A.yaw+=d*Math.min(1,10*dt);else if(Math.abs(d)>.75)A.yaw=p.yaw-Math.sign(d)*.75;
   d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
-  A.g.position.set(p.pos.x+Math.sin(A.yaw)*.9*sk,p.pos.y-cr*.1+.3*sk,p.pos.z+Math.cos(A.yaw)*.9*sk);A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0); // 수영: 엎드려 누움
+  A.g.position.set(p.pos.x+Math.sin(A.yaw)*.9*sk,p.pos.y+(p.gOff||0)-cr*.1+.3*sk,p.pos.z+Math.cos(A.yaw)*.9*sk);A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0); // 수영: 엎드려 누움
   A.up.rotation.x=-.45*cr;A.head.rotation.set(p.pitch+.45*cr+1.35*sk,d,0);
   if(p.onGround||p.boat)A.walk+=hs*dt*2.6;
   const amp=Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);
@@ -6083,7 +6114,9 @@ function updatePlayer(dt){
   if(p.onGround&&hs>1){p.stepD+=hs*dt;if(p.stepD>(sprint?2.6:2.2)){p.stepD=0;SFX.step();}}
   p.hungerAcc+=dt*(sprint?2.5:1);
   if(p.pos.y<-30&&!p.dead)die('세계 밖으로 떨어졌습니다'); // 물약으로 되살아나도 다시 떨어지므로 바로 처리
-  camera.position.set(p.pos.x,p.pos.y+lerp(1.62-.3*p.crouchK,.42,Math.max(p.swimK,p.glideK||0)),p.pos.z);
+  {let go=0;if(p.onGround&&!p.flying&&NATB){const b=getBlock(Math.floor(p.pos.x),Math.floor(p.pos.y-.05),Math.floor(p.pos.z));if(b>0&&NATB[b])go=Math.max(-.6,Math.min(.6,surfY(p.pos.x,p.pos.z,Math.floor(p.pos.y+.01))-p.pos.y));} // 발: 둥근 땅 표면 높이를 따라감
+    p.gOff=(p.gOff||0)+(go-(p.gOff||0))*Math.min(1,10*dt);}
+  camera.position.set(p.pos.x,p.pos.y+(p.gOff||0)+lerp(1.62-.3*p.crouchK,.42,Math.max(p.swimK,p.glideK||0)),p.pos.z);
   camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();
   const fov=sprint&&hs>4?82:75;if(Math.abs(camera.fov-fov)>.1){camera.fov+=(fov-camera.fov)*Math.min(1,10*dt);camera.updateProjectionMatrix();}
 }
@@ -6118,9 +6151,10 @@ function updateSurvival(dt){
   renderStats();
 }
 function updateTarget(){
-  if(isSpec()){target=mobTarget=boatTarget=null;hl.visible=false;return;} // 관전: 아무것도 고르지 않음
+  if(isSpec()){target=mobTarget=boatTarget=null;hl.visible=hlRing.visible=false;return;} // 관전: 아무것도 고르지 않음
   const dir=new THREE.Vector3();camera.getWorldDirection(dir);const eye=camera.position;
   target=player.dead?null:raycast(eye,dir,5);
+  if(!player.dead){const sh=smoothHit(eye,dir,5);if(target&&NATB[target.id])target=sh;else if(sh&&(!target||sh.dist<target.dist))target=sh;} // 둥근 지형은 보이는 표면을 겨눔
   mobTarget=null;let best=Math.min(target?target.dist:99,3.6);
   if(!player.dead)for(const m of mobs){const hw=m.w/2;const t=rayAABB(eye,dir,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<best){best=t;mobTarget=m;mobHitY=eye.y+dir.y*t;}}
   boatTarget=null;if(!player.dead)for(const b of boats){if(b.passenger==='player')continue;const t=rayAABB(eye,dir,{x:b.pos.x-.7,y:b.pos.y,z:b.pos.z-.7},{x:b.pos.x+.7,y:b.pos.y+.6,z:b.pos.z+.7});if(t!==null&&t<best){best=t;boatTarget=b;mobTarget=null;}}
@@ -6128,7 +6162,9 @@ function updateTarget(){
     for(const v of VEH){if(v===player.veh||v.d.d!==world.dim||v.pos.distanceTo(eye)>v.R+6)continue;
       vehPts(v).forEach((q,i)=>{const t=rayAABB(eye,dir,{x:q.x-.5,y:q.y-.5,z:q.z-.5},{x:q.x+.5,y:q.y+.5,z:q.z+.5});if(t!==null&&t<bst){bst=t;vehTarget=v;vehHitId=v.d.b[i][3];}});}
     if(vehTarget){mobTarget=null;boatTarget=null;}}
-  if(target&&!mobTarget&&!boatTarget&&!vehTarget){hl.visible=true;hl.position.set(target.x+.5,target.y+.5,target.z+.5);}else hl.visible=false;
+  hlRing.visible=false;
+  if(target&&!mobTarget&&!boatTarget&&!vehTarget){if(target.sp){hl.visible=false;hlRing.visible=true;hlRing.position.copy(target.sp).addScaledVector(target.sn,.03);hlRing.lookAt(target.sp.x+target.sn.x,target.sp.y+target.sn.y,target.sp.z+target.sn.z);}
+    else{const hh=HGT[target.id]||1;hl.visible=true;hl.scale.set(1,hh,1);hl.position.set(target.x+.5,target.y+hh/2,target.z+.5);}}else hl.visible=false;
 }
 function breakTime(id){
   const B=BL[id];if(isCreative())return LIQUID[id]?Infinity:.05;if(B.hard<0)return Infinity;const t=heldTool();
@@ -6937,9 +6973,23 @@ initWorker();
 // ---------- 메인 루프 ----------
 let last=performance.now(),saveT=0,fpsA=0,fpsN=0,fps=0;
 const GF={mesh:null,key:'',t:0},GDN=new Map();
-function gDens(x,y,z){const k=x+','+y+','+z;let v=GDN.get(k);if(v===undefined){v=0;for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)for(let c=-1;c<=1;c++){const t=getBlock(x+a,y+b,z+c);if(t<0||NATB[t]||OPAQUE[t])v++;}v/=27;GDN.set(k,v);}return v;}
+function gDens(x,y,z){const k=x+','+y+','+z;let v=GDN.get(k);if(v===undefined){v=0;for(let a=-2;a<=2;a++)for(let b=-2;b<=2;b++)for(let c=-2;c<=2;c++){const t=y+b<0?CORE:getBlock(x+a,y+b,z+c);if(t<0||NATB[t]||OPAQUE[t])v++;}v/=125;if(GDN.size>40000)GDN.clear();GDN.set(k,v);}return v;}
 function gFld(px,py,pz){const fx=px-.5,fy=py-.5,fz=pz-.5,ix=Math.floor(fx),iy=Math.floor(fy),iz=Math.floor(fz),ax=fx-ix,ay=fy-iy,az=fz-iz,L=(a,b,t)=>a+(b-a)*t;
   return L(L(L(gDens(ix,iy,iz),gDens(ix+1,iy,iz),ax),L(gDens(ix,iy,iz+1),gDens(ix+1,iy,iz+1),ax),az),L(L(gDens(ix,iy+1,iz),gDens(ix+1,iy+1,iz),ax),L(gDens(ix,iy+1,iz+1),gDens(ix+1,iy+1,iz+1),ax),az),ay);}
+function smoothHit(o,d,maxD){if(!NATB)natTable(); // 둥근 지형 표면을 겨눔 (보이는 곳 그대로)
+  for(let t=.15;t<=maxD;t+=.07){const x=o.x+d.x*t,y=o.y+d.y*t,z=o.z+d.z*t,b=getBlock(Math.floor(x),Math.floor(y),Math.floor(z));
+    if(b>0&&!NATB[b]&&SOLID[b])return null; // 건물 블록이 먼저 → 원래 방식
+    if(y>=0&&gFld(x,y,z)>.5){let a=t-.07,c=t;for(let i=0;i<5;i++){const m=(a+c)/2;if(gFld(o.x+d.x*m,o.y+d.y*m,o.z+d.z*m)>.5)c=m;else a=m;}
+      const px=o.x+d.x*c,py=o.y+d.y*c,pz=o.z+d.z*c;let vx=Math.floor(px),vy=Math.floor(py),vz=Math.floor(pz),id=getBlock(vx,vy,vz);
+      if(!(id>0&&NATB[id])){let f=null;for(const q of [[0,-1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1],[0,1,0]]){const u=getBlock(vx+q[0],vy+q[1],vz+q[2]);if(u>0&&NATB[u]){f=[vx+q[0],vy+q[1],vz+q[2],u];break;}}if(!f)return null;[vx,vy,vz,id]=f;}
+      const h=.15,N=new THREE.Vector3(gFld(px-h,py,pz)-gFld(px+h,py,pz),gFld(px,py-h,pz)-gFld(px,py+h,pz),gFld(px,py,pz-h)-gFld(px,py,pz+h));if(N.lengthSq()<1e-9)N.set(0,1,0);N.normalize();
+      const ax=Math.abs(N.x)>=Math.abs(N.y)&&Math.abs(N.x)>=Math.abs(N.z)?0:Math.abs(N.y)>=Math.abs(N.z)?1:2,n=[0,0,0];n[ax]=Math.sign(N.getComponent(ax))||1;
+      return {x:vx,y:vy,z:vz,id,n,dist:c,sp:new THREE.Vector3(px,py,pz),sn:N};}}
+  return null;}
+function stepUp(e,ax,d){ // 둥근 지형의 한 칸 턱은 걸어서 올라감 (비탈처럼)
+  if(e!==player||!e.onGround||e.flying||e.inWater||!NATB)return false;const p=e.pos,hw=e.w/2,fy=Math.floor(p.y+.01),sg=Math.sign(d);
+  const b=getBlock(ax==='x'?Math.floor(p.x+sg*(hw+.05)):Math.floor(p.x),fy,ax==='z'?Math.floor(p.z+sg*(hw+.05)):Math.floor(p.z));if(!(b>0&&NATB[b]))return false;
+  const oy=p.y,o=p[ax];p.y=fy+1;if(entHits(e)){p.y=oy;return false;}if(moveAxis(e,ax,d)){p.y=oy;p[ax]=o;return false;}p.gOff=(p.gOff||0)-(p.y-oy);return true;}
 function surfY(x,z,y0){let lo=y0-1,hi=y0+.7;for(let i=0;i<7;i++){const m=(lo+hi)/2;if(gFld(x,m,z)>.5)lo=m;else hi=m;}return (lo+hi)/2;} // 곡면 지형의 땅 높이 // 풀밭 (인스턴스 메시 하나로 수천 다발)
 function grassClumpGeo(){const P=[],C=[],I=[],R=mulberry32(77);
   for(let k=0;k<16;k++){const x=(R()-.5)*.8,z=(R()-.5)*.8,h=.2+R()*.42,w=.016+R()*.016,a=R()*Math.PI,ca=Math.cos(a),sa=Math.sin(a),lx=(R()-.5)*.5,lz=(R()-.5)*.5,dry=R()<.08,g=R();
