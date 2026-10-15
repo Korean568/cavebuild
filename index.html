@@ -280,7 +280,8 @@ body.mobile #toasts{top:72px}
     • 🎉 <b>v26.100 기념 망토</b>: 모든 세계에 망토를 하나씩 선물해요 (작업대: 거미줄 비단 6 · 깃털 2로도 만들 수 있어요). 인벤토리에 새로 생긴 <b>망토 칸</b>에 입으면 3인칭에서 등 뒤로 늘어지고 걸을수록 펄럭여요. 갑옷과 함께 입을 수 있어요.<br>
     • 🛠 <b>모루</b>: <b>흉갑 + 겉날개</b>를 올리면 겉날개가 달린 흉갑이 돼요 (방어력 그대로 · 활공 가능). 망토를 입은 채 겉날개를 착용하면 <b>날개가 망토 무늬</b>로 보여요.<br>
     • 엔딩 '제작' 로고를 새 로고로 바꿨어요. 블록을 겨누는 히트박스는 다시 <b>네모 테두리</b>로 돌아왔어요.<br>
-    • 🐞 둥근 언덕 위 <b>나무가 떠 보이던 문제</b>: 나무 밑동이 땅속까지 이어져요.
+    • 🐞 둥근 언덕 위 <b>나무가 떠 보이던 문제</b>: 나무 밑동이 땅속까지 이어져요. 줄기 끝과 잎 덩어리 사이가 <b>떨어져 보이던 틈</b>도 고쳤어요 (줄기가 잎 속까지 올라가고, 잎 아래쪽도 채움).<br>
+    • ☁ <b>구름</b>이 네모 대신 진짜 같은 <b>뭉게구름</b>으로 바뀌었어요: 가장자리는 부드럽게 흩어지고, 두꺼운 속은 살짝 그늘지고, 바람 따라 천천히 흘러가요 (타이틀 화면 구름도).
     <h4>v26.99 — ⛰ 더 둥근 언덕 · 히트박스 · 둥근 침대</h4>
     • 언덕이 훨씬 <b>완만하고 둥글게</b> 이어져요 (한 칸 계단이 넓은 비탈로).<br>
     • <b>히트박스가 보이는 모양에 맞게</b>: 둥근 땅을 겨누면 네모 테두리 대신 표면에 고리가 보이고, 걸을 때 눈높이가 땅 표면을 따라 오르내리고, 흙 · 돌의 한 칸 턱은 점프 없이 걸어서 올라가요. 침대는 매트리스 높이만큼만 단단해요.<br>
@@ -990,12 +991,12 @@ const LOG_CS=[...Array(LOG_S+1)].map((_,k)=>{const a=k/LOG_S*Math.PI*2;return [M
 function logGeom(P,U,C,I,x,y,z,ts,tt,top,bot,sl,bl,org){ // 원목 기둥을 배열에 추가 (ts: 껍질 타일, tt: 나이테 타일, org: 자연 나무 모양)
   const rr=(k,yy)=>{const [c,sn]=LOG_CS[k];if(!org)return [x+.5+c*LOG_R,z+.5+sn*LOG_R];const a=k/LOG_S*Math.PI*2,o=yy?org.o1:org.o0; // 울퉁불퉁한 둘레 · 밑동 뿌리
     let r=LOG_R*(yy?org.s1:org.s0)*(1+.07*Math.sin(3*a+org.ph)+.04*Math.sin(5*a+org.ph*2.3));if(!yy&&org.fl)r*=1.3+.45*Math.max(0,Math.sin(4*a+org.ph))**2;return [x+.5+o[0]+Math.cos(a)*r,z+.5+o[1]+Math.sin(a)*r];};
-  const uv=(t,u,v)=>[((t%ATW)+.008+u*.984)/ATW,1-(Math.floor(t/ATW)+1-(.008+v*.984))/ATH];
+  const uv=(t,u,v)=>[((t%ATW)+.008+u*.984)/ATW,1-(Math.floor(t/ATW)+1-(.008+v*.984))/ATH],yv=yy=>y+(yy?1+(org&&org.e2||0):-(org&&org.ext||0)); // 나무: 밑동은 땅속, 꼭대기는 잎 속까지
   for(let k=0;k<LOG_S;k++){const [c0,s0]=LOG_CS[k],[c1,s1]=LOG_CS[k+1],u0=(k%4)/4,u1=u0+.25,base=P.length/3; // 둘레에 껍질 무늬 3번 반복
-    for(const [c,kk,u,yy] of [[c0,k,u0,0],[c1,k+1,u1,0],[c0,k,u0,1],[c1,k+1,u1,1]]){const q=rr(kk,yy);P.push(q[0],y+(yy?1:-(org&&org.ext||0)),q[1]);U.push(...uv(ts,u,yy));C.push(sl,bl,.68+.12*Math.abs(c));}
+    for(const [c,kk,u,yy] of [[c0,k,u0,0],[c1,k+1,u1,0],[c0,k,u0,1],[c1,k+1,u1,1]]){const q=rr(kk,yy);P.push(q[0],yv(yy),q[1]);U.push(...uv(ts,u,yy));C.push(sl,bl,.68+.12*Math.abs(c));}
     I.push(base,base+2,base+1,base+1,base+2,base+3);}
-  for(const [on,yy,sh] of [[top,1,1],[bot,0,.55]])if(on){const base=P.length/3,o=org?(yy?org.o1:org.o0):[0,0];P.push(x+.5+o[0],y+yy,z+.5+o[1]);U.push(...uv(tt,.5,.5));C.push(sl,bl,sh);
-    for(let k=0;k<=LOG_S;k++){const [c,sn]=LOG_CS[k],q=rr(k,yy);P.push(q[0],y+yy,q[1]);U.push(...uv(tt,.5+c*.47,.5+sn*.47));C.push(sl,bl,sh);}
+  for(const [on,yy,sh] of [[top,1,1],[bot,0,.55]])if(on){const base=P.length/3,o=org?(yy?org.o1:org.o0):[0,0];P.push(x+.5+o[0],yv(yy),z+.5+o[1]);U.push(...uv(tt,.5,.5));C.push(sl,bl,sh);
+    for(let k=0;k<=LOG_S;k++){const [c,sn]=LOG_CS[k],q=rr(k,yy);P.push(q[0],yv(yy),q[1]);U.push(...uv(tt,.5+c*.47,.5+sn*.47));C.push(sl,bl,sh);}
     for(let k=0;k<LOG_S;k++)if(yy)I.push(base,base+2+k,base+1+k);else I.push(base,base+1+k,base+2+k);}
 }
 function wheelGeom(P,U,C,I,x,y,z,ax,tt,ts,sl,bl,R=.5,H=.8){ // 둥근 바퀴를 배열에 추가 (ax: 'x'면 x축으로 굴러감 · tt: 타이어 홈 타일, ts: 바퀴 옆면 타일)
@@ -1074,7 +1075,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       let tp=y,bt=y;while(tp<CH-1&&get(x,tp+1,z)===LOG)tp++;while(bt>0&&get(x,bt-1,z)===LOG)bt--;let org=null;
       if(get(x,tp+1,z)===LEAVES){const H=tp-bt+1,hw=Math.imul(x+ox,73856093)^Math.imul(z+oz,83492791),sc=A=>.66+.34*A/H, // 잎이 달린 나무 줄기만 (건물 기둥은 반듯)
           wob=yr=>yr===bt?[0,0]:[((Math.imul(hw^Math.imul(yr,19349663),2654435761)>>>9)%1000/1000-.5)*.1,((Math.imul(hw^Math.imul(yr+77,19349663),2246822519)>>>9)%1000/1000-.5)*.1];
-        org={s0:sc(tp-y+1),s1:sc(tp-y),o0:wob(y),o1:wob(y+1),fl:y===bt&&!!OPAQUE[dn],ext:y===bt&&OPAQUE[dn]?1:0,ph:(hw>>>5)%628/100};}
+        org={s0:sc(tp-y+1),s1:sc(tp-y),o0:wob(y),o1:wob(y+1),fl:y===bt&&!!OPAQUE[dn],ext:y===bt&&OPAQUE[dn]?1:0,e2:y===tp?1.8:0,ph:(hw>>>5)%628/100};}
       logGeom(P,U,C,I,x,y,z,B.tiles[0],B.tiles[3],up!==LOG&&!OPAQUE[up],dn!==LOG&&!OPAQUE[dn],sl,bl,org);continue;}
     if(DOOR_OF[id]||id===SAPLING||FLOWER_OF[id]){const sl=y>hms[4][z*16+x]?1:caveB,bl=LV?Math.min(1,lightAt(x,y,z)/LM*1.25):0,t=B.tiles[0],tx=t%ATW,ty=Math.floor(t/ATW);
       if(id===SAPLING||FLOWER_OF[id]){const W=.42,H=.9; // 묘목 · 꽃: 엇갈린 판 두 장 (양면)
@@ -1181,7 +1182,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
           for(const [q,r,v] of [[o,.13,0],[e,.035,1]])for(let k=0;k<=6;k++){const t=k/6*Math.PI*2,c=Math.cos(t)*r,sn=Math.sin(t)*r;P.push(q[0]+p1[0]*c+p2[0]*sn,q[1]+p1[1]*c+p2[1]*sn,q[2]+p1[2]*c+p2[2]*sn);
             U.push((btx+.008+k/6*.984)/ATW,1-(bty+1-(.008+v*.984))/ATH);C.push(sl,bl,.62+.18*Math.abs(Math.cos(t)));}
           for(let k=0;k<6;k++){const a0=base+k,a1=a0+1,b0=a0+7,b1=b0+1;I.push(a0,a1,b0,a1,b1,b0,a0,b0,a1,a1,b0,b1);}}}
-      const CL=[[0,.2,0,1.3]];for(let k=0;k<6;k++){const a=k/6*Math.PI*2+HR(k+20)*.8,d=1.05+HR(k+30)*.45;CL.push([Math.cos(a)*d,-.4+HR(k+40)*.9,Math.sin(a)*d,.95+HR(k+50)*.45]);} // 잎 덩어리 8개 (울퉁불퉁 · 사이사이 틈)
+      const CL=[[0,.2,0,1.3],[0,-1.15,0,1.2]]; // 가운데 · 아래 덩어리 (줄기 끝을 감쌈)for(let k=0;k<6;k++){const a=k/6*Math.PI*2+HR(k+20)*.8,d=1.05+HR(k+30)*.45;CL.push([Math.cos(a)*d,-.4+HR(k+40)*.9,Math.sin(a)*d,.95+HR(k+50)*.45]);} // 잎 덩어리 8개 (울퉁불퉁 · 사이사이 틈)
       CL.push([HR(60)-.5,1.1,HR(61)-.5,1.05]);
       CL.forEach(([qx,qy,qz,qr],ci)=>{for(const [sc,dark,lt] of [[1,1,TILE.leaves],[.84,.5,TILE.grass_top]]){const tx=lt%ATW,ty=Math.floor(lt/ATW); // 바깥 잎 + 안쪽 그늘진 잎
         const R=(i,j)=>{const a=Math.imul(i+hh+ci*131,374761393)^Math.imul(j+7,668265263);return ((a>>>8)%1000)/1000;};
@@ -1592,7 +1593,7 @@ const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
     <h4>🆕 v26.100 — 🐞 Smooth terrain hole fixes</h4>
     • Fixed holes where thin sand/cave ceilings vanished, see-through gaps in filled hollows, and seams between chunks after digging or explosions.<br>
-    • 🎉 v26.100 Cape: every world gets a free cape (also craftable: 6 silk + 2 feathers) worn in the new cape slot. Anvil: chestplate + elytra → a chestplate with elytra. With a cape on, elytra wings use the cape's pattern. New ending logo; block hitbox is a square outline again. Trees no longer float above rounded ground.
+    • 🎉 v26.100 Cape: every world gets a free cape (also craftable: 6 silk + 2 feathers) worn in the new cape slot. Anvil: chestplate + elytra → a chestplate with elytra. With a cape on, elytra wings use the cape's pattern. New ending logo; block hitbox is a square outline again. Trees no longer float above rounded ground, and trunks now reach into the canopy. Clouds are now soft, fluffy, drifting clouds instead of blocky ones.
     <h4>v26.99 — ⛰ Rounder hills · hitboxes · round bed</h4>
     • Hills are much smoother. Aiming at smooth ground shows a ring on the surface, your eye height follows the ground and 1-block natural steps can be walked up. Beds are rounded and only mattress-high. Fixed see-through gaps where building blocks meet smooth terrain.
     <h4>v26.98 — 🌳 Realistic trees · stone walls</h4>
@@ -2717,8 +2718,9 @@ function drawTitleBg(){
   ];
   const rows=LAYERS.reduce((a,l)=>a+l[1],0),s=Math.max(Math.round(14*dpr),Math.ceil(H*.56/rows)),top=H-rows*s,cols=Math.ceil(W/s)+1;
   const sky=g.createLinearGradient(0,0,0,top);sky.addColorStop(0,'#3a7bd5');sky.addColorStop(1,'#9fd0ff');g.fillStyle=sky;g.fillRect(0,0,W,top+1);
-  g.fillStyle='rgba(255,255,255,.85)'; // 네모난 구름
-  for(let i=0;i<Math.ceil(W/dpr/260);i++){const cx=R()*W,cy=top*(.08+R()*.3),u=s*.9;for(let k=0;k<4;k++)g.fillRect(cx+(k-1.5)*u*1.4,cy-(k%3===1?u*.6:0),u*1.6,u*(k%3===1?1.4:.8));}
+  for(let i=0;i<Math.ceil(W/dpr/260);i++){const cx=R()*W,cy=top*(.08+R()*.3),u=s*.9; // 몽글몽글한 뭉게구름
+    for(let k=0;k<10;k++){const px=cx+(R()-.5)*u*5,py=cy+(R()-.6)*u*1.3,rr=u*(.8+R()*1.1),gr=g.createRadialGradient(px,py-rr*.2,0,px,py,rr);
+      gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.55,'rgba(246,249,255,.6)');gr.addColorStop(1,'rgba(235,242,255,0)');g.fillStyle=gr;g.beginPath();g.arc(px,py,rr,0,7);g.fill();}}
   const tile=(t,x,y,sz)=>g.drawImage(atlas,(t%ATW)*TS+.5,Math.floor(t/ATW)*TS+.5,TS-1,TS-1,x,y,sz,sz); // 옆 타일 색이 번지지 않게 안쪽만
   for(let cx=0;cx<cols;cx++)if(R()<.55)tile(TILE.tuft,cx*s,top-Math.round(s*.8),Math.round(s*.8)); // 잔디 위 풀
   let row=0;
@@ -3964,9 +3966,19 @@ const stars=(()=>{const n=600,a=new Float32Array(n*3),r=mulberry32(99);for(let i
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(a,3));
   return new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:1.6,sizeAttenuation:false,fog:false,transparent:true,opacity:0}));})();
 scene.add(stars);
-const cloudTex=(()=>{const c=makeCanvas(64,64),g=c.getContext('2d'),r=mulberry32(7);g.fillStyle='#fff';for(let i=0;i<22;i++){g.fillRect(r()*64|0,r()*64|0,3+r()*10|0,2+r()*7|0);}
-  const t=new THREE.CanvasTexture(c);t.magFilter=t.minFilter=THREE.NearestFilter;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,6);return t;})();
-const clouds=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),new THREE.MeshBasicMaterial({map:cloudTex,transparent:true,opacity:.8,fog:false,depthWrite:false,side:THREE.DoubleSide}));
+const cloudU={uTime:{value:0},uLight:{value:1},uCam:{value:new THREE.Vector3()}}; // 진짜 같은 뭉게구름: 세계 좌표 노이즈 · 부드러운 가장자리 · 그늘진 아랫부분 · 천천히 흐름
+const clouds=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),new THREE.ShaderMaterial({uniforms:cloudU,transparent:true,depthWrite:false,side:THREE.DoubleSide,fog:false,
+  vertexShader:'varying vec3 vW;void main(){vec4 w=modelMatrix*vec4(position,1.);vW=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}',
+  fragmentShader:`uniform float uTime;uniform float uLight;uniform vec3 uCam;varying vec3 vW;
+float ch(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float cn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(ch(i),ch(i+vec2(1.,0.)),f.x),mix(ch(i+vec2(0.,1.)),ch(i+vec2(1.,1.)),f.x),f.y);}
+float cf(vec2 p){float s=0.,a=.5;for(int i=0;i<6;i++){s+=a*cn(p);p=p*2.07+vec2(1.7,9.2);a*=.5;}return s;}
+void main(){vec2 p=(vW.xz+vec2(uTime*2.2,uTime*.7))/110.;float big=cn(p*.35);
+  float d=cf(p)+(big-.5)*.35;float a=smoothstep(.5,.74,d);if(a<.01)discard;
+  float lit=smoothstep(-.05,.12,d-cf(p+vec2(.035,.025))); // 해 쪽 가장자리는 밝고 두꺼운 속은 그늘
+  vec3 col=mix(vec3(.66,.71,.8),vec3(1.),.45+.55*lit)*mix(1.,.82,smoothstep(.62,.95,d));
+  float fade=1.-smoothstep(330.,580.,length(vW.xz-uCam.xz));
+  gl_FragColor=vec4(col*uLight,a*.95*fade);}`}));
 clouds.rotation.x=-Math.PI/2;scene.add(clouds);
 
 // 블록 선택 표시 & 금 가는 효과
@@ -6408,8 +6420,8 @@ function updateSky(dt){
   moonMesh.position.copy(cp).addScaledVector(sd,-400);moonMesh.lookAt(cp);
   sunL.position.copy(cp).addScaledVector(sd,50);sunL.target.position.copy(cp);
   stars.position.copy(cp);stars.material.opacity=clamp(1-d*1.5,0,1);stars.rotation.z=a;
-  clouds.position.set(cp.x,112,cp.z);cloudTex.offset.set((cp.x+performance.now()*.0015)/200,-cp.z/200);
-  clouds.material.color.setScalar(Math.max(.25,light));
+  clouds.position.set(cp.x,112,cp.z);cloudU.uTime.value=performance.now()/1000%100000;cloudU.uCam.value.copy(cp);
+  cloudU.uLight.value=Math.max(.25,light);
 }
 
 // ---------- HUD ----------
