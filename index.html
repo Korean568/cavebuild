@@ -292,7 +292,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.101 — 📨 망토는 글벗 DM으로 요청</h4>
+    <h4>🆕 v26.102 — 👤 닉네임 저장 고침</h4>
+    • 탈의실에서 닉네임을 입력하고 <b>엔터</b>를 누르거나 그냥 <b>닫아도</b> 저장돼요 (전에는 '정하기' 버튼을 눌러야만 저장됐어요). 저장되면 '✅ 저장했어요'가 보여요.
+    <h4>v26.101 — 📨 망토는 글벗 DM으로 요청</h4>
     • 탈의실에서 🔒 망토를 누르고 <b>📨 제작자에게 DM</b>을 누르면 <b>글벗</b>에서 제작자(@운영자)와의 DM이 열리고 요청 글이 미리 채워져 있어요. 제작자가 DM으로 보내 준 <b>받는 코드</b>를 붙여 넣으면 망토를 입을 수 있어요.<br>
     • 보안: 게임 안의 제작자 도구 · 비밀번호를 없앴어요. 받는 코드는 <b>제작자 서명</b>으로 확인해서, 게임 코드를 들여다봐도 만들 수 없어요.
     <h4>v26.100 — 🐞 둥근 지형 구멍 고침</h4>
@@ -1615,7 +1617,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.101 — 📨 Cape requests via GeulBeot DM</h4>
+    <h4>🆕 v26.102 — 👤 Nickname saving fix</h4>
+    • The nickname now also saves when you press Enter or simply close the wardrobe.
+    <h4>v26.101 — 📨 Cape requests via GeulBeot DM</h4>
     • In the wardrobe, tap a locked cape → 📨 DM the creator: a GeulBeot DM to @운영자 opens with the request pre-filled. Paste the code the creator sends back to unlock it. The in-game creator tool and password were removed; unlock codes are now creator-signed and can't be forged from the game code.
     <h4>v26.100 — 🐞 Smooth terrain hole fixes</h4>
     • Fixed holes where thin sand/cave ceilings vanished, see-through gaps in filled hollows, and seams between chunks after digging or explosions.<br>
@@ -3483,7 +3487,8 @@ function wdGen(o){const c=makeCanvas(64,64),g=c.getContext('2d'),hx=h=>[parseInt
   const leg=(f,x,y)=>{if(f==='T')return [o.pants];if(f==='D')return [o.shoes];return y>=10?[o.shoes]:[o.pants];};box(0,16,4,12,4,leg);box(16,48,4,12,4,leg);
   return c.toDataURL();}
 function openWard(){wdEdit=null;wdReq=null;wdTool=false;wdMsg='';renderWard();$('wardUI').classList.add('show');}
-function closeWard(){$('wardUI').classList.remove('show');refreshWard();}
+function closeWard(){const i=$('wdNick');if(i&&i.value.trim()&&i.value.trim()!==nickNow()){const e=nickSet(i.value);if(e){wdMsg=e;renderWard();return;}toast(`👤 닉네임: <b>${nickNow()}</b>`);} // 입력만 하고 닫아도 저장
+  $('wardUI').classList.remove('show');refreshWard();}
 function renderWard(){const w=wdGet(),el=$('wdIn'),esc=t=>String(t).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
   if(wdEdit){const o=wdEdit,L=(k,t)=>`<label>${t}<input type="color" data-k="${k}" value="${o[k]}"></label>`;
     el.innerHTML=`<h2>🎨 캐릭터 만들기</h2><div class="wrow"><div class="wprev"><canvas class="big" id="wdF" width="160" height="320"></canvas><canvas class="big" id="wdB" width="160" height="320"></canvas></div><div class="wside">
@@ -3512,12 +3517,13 @@ function renderWard(){const w=wdGet(),el=$('wdIn'),esc=t=>String(t).replace(/[<>
   const sel=w.sel==='default'||w.chars.some(c=>c.id===w.sel)?w.sel:'default',url=sel==='default'?DEFAULT_SKIN:w.chars.find(c=>c.id===sel).skin,nk=nickNow();
   el.innerHTML=`<h2>👕 탈의실</h2><div class="wrow"><div class="wprev"><canvas class="big" id="wdF" width="160" height="320"></canvas><canvas class="big" id="wdB" width="160" height="320"></canvas></div><div class="wside">
     <h3>👤 닉네임 <small style="color:#aaa;font-weight:normal">(이 PC가 기억해요 · 이 PC에서 이미 쓰인 닉네임은 쓸 수 없어요)</small></h3>
-    <label><input type="text" id="wdNick" maxlength="12" value="${esc(nk)}" placeholder="닉네임 (2~12자)" style="flex:1"><button class="wb" id="wdNickOk" style="margin:0">${nk?'바꾸기':'정하기'}</button></label><div id="wdNm" style="font-size:13px;min-height:18px;color:#ff8a8a">${wdMsg}</div>
+    <label><input type="text" id="wdNick" maxlength="12" value="${esc(nk)}" placeholder="닉네임 (2~12자)" style="flex:1"><button class="wb" id="wdNickOk" style="margin:0">${nk?'바꾸기':'정하기'}</button></label><div id="wdNm" style="font-size:13px;min-height:18px;color:${wdMsg.startsWith('✅')?'#8ae86a':'#ff8a8a'}">${wdMsg}</div>
     <h3>🧍 캐릭터</h3><div class="wgrid" id="wdChars"></div><button class="wb" id="wdNew">➕ 캐릭터 만들기</button>
     <h3>🧥 망토 <small style="color:#aaa;font-weight:normal">(탈의실에서만 · 🔒는 제작자에게 요청해서 받아요)</small></h3><div class="wgrid" id="wdCapes"></div></div></div>
     <div style="text-align:center"><button class="wb gray" id="wdClose">닫기</button></div>`;
   wdDraw($('wdF'),url,false,null);wdDraw($('wdB'),url,true,wdCape(w));
-  $('wdNickOk').onclick=()=>{const e=nickSet($('wdNick').value);wdMsg=e;if(!e)toast(`👤 닉네임: <b>${esc(nickNow())}</b>`);refreshWard();renderWard();};
+  $('wdNickOk').onclick=()=>{const e=nickSet($('wdNick').value);wdMsg=e||'✅ 저장했어요 — 이 PC가 기억해요';if(!e)toast(`👤 닉네임: <b>${esc(nickNow())}</b>`);refreshWard();renderWard();};
+  $('wdNick').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();$('wdNickOk').click();}}; // 엔터로도 저장
   const list=[{id:'default',name:'기본 캐릭터',skin:DEFAULT_SKIN},...w.chars];
   $('wdChars').innerHTML=list.map(c=>`<div class="wcard${c.id===sel?' on':''}" data-id="${c.id}"><canvas width="40" height="80"></canvas>${esc(c.name)}${c.id!=='default'?'<span class="wdel" data-del="'+c.id+'">×</span>':''}</div>`).join('');
   $('wdChars').querySelectorAll('.wcard').forEach((d,i)=>{wdDraw(d.querySelector('canvas'),list[i].skin,false,null);d.onclick=e=>{if(e.target.dataset.del){if(!confirm('이 캐릭터를 지울까요?'))return;w.chars=w.chars.filter(c=>c.id!==e.target.dataset.del);if(w.sel===e.target.dataset.del)w.sel='default';}else w.sel=list[i].id;wdSave(w);renderWard();};});
@@ -3527,7 +3533,7 @@ function renderWard(){const w=wdGet(),el=$('wdIn'),esc=t=>String(t).replace(/[<>
     d.onclick=()=>{if(k!=='none'&&!w.unlocked.includes(k)){wdReq=k;wdMsg='';renderWard();return;}w.cape=k;wdSave(w);renderWard();};});
   $('wdNew').onclick=()=>{wdEdit={name:'',skin:'#e0b48c',hair:'#3a2618',eye:'#2a4a9a',shirt:'#3a6ad0',pants:'#2a3a6a',shoes:'#2a2018',hairS:'short',sleeve:'short'};renderWard();};
   $('wdClose').onclick=closeWard;}
-addEventListener('keydown',e=>{const t=e.target;if($('wardUI').classList.contains('show')){if(t&&t.tagName==='INPUT')e.stopPropagation();if(e.code==='Escape'&&!wdEdit&&!wdReq&&!wdTool){e.stopPropagation();closeWard();}}},true);
+addEventListener('keydown',e=>{if($('wardUI').classList.contains('show')&&e.code==='Escape'&&!wdEdit&&!wdReq&&!wdTool){e.stopPropagation();closeWard();}},true); // 입력칸 키는 막지 않음 (엔터로 닉네임 저장)
 let cbOpen=false,cbTab=0;
 function openCookBook(){cbOpen=true;stMenuOpen=true;mouseL=mouseR=false;for(const c in keys)keys[c]=false;if(document.pointerLockElement)document.exitPointerLock();renderCookBook();$('cookBook').classList.add('show');SFX.place();}
 function closeCookBook(){if(!cbOpen)return;cbOpen=false;$('cookBook').classList.remove('show');stMenuOpen=false;lockPointer();}
