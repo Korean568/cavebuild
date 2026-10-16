@@ -293,7 +293,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.103 — 🐞 좁은 굴이 메워지던 문제</h4>
+    <h4>🆕 v26.104 — 🎁 망토는 획득 버튼으로</h4>
+    • 탈의실의 🔒 망토(CLKKY GAMES · 바라)를 누르면 바로 <b>획득</b>해요. 망토는 <b>획득한 닉네임만</b> 입을 수 있어요 (닉네임을 바꾸면 그 닉네임으로 다시 획득해야 해요). 요청 코드 · DM 단계는 없앴어요.
+    <h4>v26.103 — 🐞 좁은 굴이 메워지던 문제</h4>
     • 1칸 너비로 판 <b>굴 · 구덩이 · 틈</b>이 둥근 지형으로 다듬어지면서 <b>메워져</b>, 그 안에 들어가면 땅속이 비쳐 하늘과 풀이 다 보이던 문제를 고쳤어요. 이제 좁은 굴도 벽이 그대로 보여요.
     <h4>v26.102 — 👤 닉네임 저장 고침</h4>
     • 탈의실에서 닉네임을 입력하고 <b>엔터</b>를 누르거나 그냥 <b>닫아도</b> 저장돼요 (전에는 '정하기' 버튼을 눌러야만 저장됐어요). 저장되면 '✅ 저장했어요'가 보여요.
@@ -1621,7 +1623,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.103 — 🐞 Narrow tunnels no longer fill in</h4>
+    <h4>🆕 v26.104 — 🎁 Capes via the Get button</h4>
+    • Tap a locked cape in the wardrobe to get it instantly. Capes can only be worn by the nickname that got them. The request-code/DM step was removed.
+    <h4>v26.103 — 🐞 Narrow tunnels no longer fill in</h4>
     • 1-block-wide tunnels, pits and gaps were being smoothed shut, so standing inside one let you see through the ground. They now keep their walls.
     <h4>v26.102 — 👤 Nickname saving fix</h4>
     • The nickname now also saves when you press Enter or simply close the wardrobe.
@@ -3469,9 +3473,9 @@ function openSignEd(k){signEdAt=k;const e=world.signs[k];$('signText').value=e?e
 function closeSignEd(ok){if(ok&&signEdAt&&world.signs[signEdAt])world.signs[signEdAt].t=$('signText').value.slice(0,80);signEdAt=null;$('signEd').classList.remove('show');stMenuOpen=false;lockPointer();}
 // ---------- 👕 탈의실 (타이틀): 닉네임 · 캐릭터 고르기 · 캐릭터 만들기 · 망토 (제작자에게 요청) ----------
 const WKEY='cavebuild-wardrobe';let wdEdit=null,wdReq=null,wdTool=false,wdMsg='';
-function wdGet(){const w=readWard();w.sel=w.sel||'default';w.cape=w.cape||'none';w.chars=w.chars||[];w.unlocked=w.unlocked||[];return w;}
+function wdGet(){const w=readWard();w.sel=w.sel||'default';w.cape=w.cape||'none';w.chars=w.chars||[];w.owned=w.owned||{};const nk=nickNow();if(w.unlocked&&w.unlocked.length&&nk)w.owned[nk]=[...new Set([...(w.owned[nk]||[]),...w.unlocked])];delete w.unlocked;return w;} // owned: 닉네임마다 획득한 망토
 function wdSave(w){try{localStorage.setItem(WKEY,JSON.stringify(w));}catch(e){alert('저장 공간이 부족해요');}refreshWard();}
-const wdCape=w=>CAPES[w.cape]&&w.unlocked.includes(w.cape)?w.cape:null;
+const wdOwn=w=>w.owned[nickNow()]||[],wdCape=w=>CAPES[w.cape]&&wdOwn(w).includes(w.cape)?w.cape:null; // 획득한 사람(닉네임)만 입음
 const wdImg={};function wdLoad(u){return wdImg[u]||(wdImg[u]=new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=u;}));}
 async function wdDraw(cv,url,back,cape){const im=await wdLoad(url),sk=makeCanvas(64,64),g=sk.getContext('2d'); // 스킨 펼침 그림 → 앞모습 · 뒷모습 (망토)
   if(im){g.drawImage(im,0,0);if(im.height===32){g.drawImage(sk,0,16,16,16,16,48,16,16);g.drawImage(sk,40,16,16,16,32,48,16,16);}
@@ -3509,23 +3513,12 @@ function renderWard(){const w=wdGet(),el=$('wdIn'),esc=t=>String(t).replace(/[<>
     $('wdFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{if(im.width!==64||(im.height!==64&&im.height!==32)){alert('64×64 (또는 64×32) 스킨 PNG만 쓸 수 있어요');return;}o.upload=true;o.skinUrl=r.result;draw();};im.src=r.result;};r.readAsDataURL(f);};
     $('wdNo').onclick=()=>{wdEdit=null;renderWard();};
     $('wdOk').onclick=()=>{const id='c'+Date.now().toString(36),ch={id,name:(o.name||'').trim()||'내 캐릭터',skin:o.skinUrl};w.chars.push(ch);w.sel=id;wdSave(w);wdEdit=null;renderWard();};return;}
-  if(wdReq){const k=wdReq,nk=nickNow(),rq=k+'@'+nk;
-    el.innerHTML=`<h2>📨 ${esc(CAPES[k])} 망토 받기</h2><div class="wrow"><div class="wprev"><canvas class="big" id="wdCp" width="160" height="240"></canvas></div><div class="wside">`+(nk?`
-      <p style="font-size:14px;line-height:1.6">① <b>📨 제작자에게 DM</b>을 누르면 글벗에서 제작자(<b>@운영자</b>)와의 DM이 열리고, 요청 글이 미리 채워져 있어요. <b>보내기</b>만 누르면 돼요 (글벗 로그인 필요).<br>② 제작자가 DM으로 보내 준 <b>받는 코드</b>를 붙여 넣으면 망토를 입을 수 있어요.</p>
-      <label>요청 코드<b style="font-size:17px;color:#ffe066;user-select:all">${esc(rq)}</b></label><button class="wb" id="wdDM">📨 제작자에게 DM</button><button class="wb gray" id="wdCopy">📋 요청 코드 복사</button>
-      <label style="margin-top:10px">받는 코드<input type="text" id="wdCode" maxlength="200" style="flex:1;font-size:12px" placeholder="DM으로 받은 코드를 붙여 넣어요"></label><button class="wb" id="wdOkC">✅ 확인</button>`
-      :`<p>먼저 <b>닉네임</b>을 정해 주세요 (요청 코드에 닉네임이 들어가요).</p>`)+`<div id="wdM" style="color:#ff8a8a;min-height:20px;margin-top:6px">${wdMsg}</div><button class="wb gray" id="wdBack">뒤로</button></div></div>`;
-    capeCanvas(k).ready.then(c=>{const g=$('wdCp')&&$('wdCp').getContext('2d');if(g)g.drawImage(c,0,0,160,240);});
-    if(nk){$('wdCopy').onclick=()=>{try{navigator.clipboard.writeText(rq);toast('📋 요청 코드를 복사했어요');}catch(e){}};
-      $('wdDM').onclick=()=>{try{navigator.clipboard.writeText(rq);}catch(e){}window.open(DM_URL+'?text='+encodeURIComponent(`[CAVEBUILD 망토 요청] ${CAPES[k]} 망토를 받고 싶어요! 닉네임: ${nk} · 요청 코드: ${rq}`),'_blank');};
-      $('wdOkC').onclick=async()=>{if(await capeVerify(k,nk,$('wdCode').value)){if(!w.unlocked.includes(k))w.unlocked.push(k);w.cape=k;wdSave(w);wdReq=null;wdMsg='';renderWard();toast(`🧥 <b>${CAPES[k]} 망토</b>를 받았어요!`);}else{wdMsg='❌ 받는 코드가 맞지 않아요';renderWard();}};}
-    $('wdBack').onclick=()=>{wdReq=null;wdMsg='';renderWard();};return;}
   const sel=w.sel==='default'||w.chars.some(c=>c.id===w.sel)?w.sel:'default',url=sel==='default'?DEFAULT_SKIN:w.chars.find(c=>c.id===sel).skin,nk=nickNow();
   el.innerHTML=`<h2>👕 탈의실</h2><div class="wrow"><div class="wprev"><canvas class="big" id="wdF" width="160" height="320"></canvas><canvas class="big" id="wdB" width="160" height="320"></canvas></div><div class="wside">
     <h3>👤 닉네임 <small style="color:#aaa;font-weight:normal">(이 PC가 기억해요 · 이 PC에서 이미 쓰인 닉네임은 쓸 수 없어요)</small></h3>
     <label><input type="text" id="wdNick" maxlength="12" value="${esc(nk)}" placeholder="닉네임 (2~12자)" style="flex:1"><button class="wb" id="wdNickOk" style="margin:0">${nk?'바꾸기':'정하기'}</button></label><div id="wdNm" style="font-size:13px;min-height:18px;color:${wdMsg.startsWith('✅')?'#8ae86a':'#ff8a8a'}">${wdMsg}</div>
     <h3>🧍 캐릭터</h3><div class="wgrid" id="wdChars"></div><button class="wb" id="wdNew">➕ 캐릭터 만들기</button>
-    <h3>🧥 망토 <small style="color:#aaa;font-weight:normal">(탈의실에서만 · 🔒는 제작자에게 요청해서 받아요)</small></h3><div class="wgrid" id="wdCapes"></div></div></div>
+    <h3>🧥 망토 <small style="color:#aaa;font-weight:normal">(탈의실에서만 · 🎁 획득한 닉네임만 입을 수 있어요)</small></h3><div class="wgrid" id="wdCapes"></div></div></div>
     <div style="text-align:center"><button class="wb gray" id="wdClose">닫기</button></div>`;
   wdDraw($('wdF'),url,false,null);wdDraw($('wdB'),url,true,wdCape(w));
   $('wdNickOk').onclick=()=>{const e=nickSet($('wdNick').value);wdMsg=e||'✅ 저장했어요 — 이 PC가 기억해요';if(!e)toast(`👤 닉네임: <b>${esc(nickNow())}</b>`);refreshWard();renderWard();};
@@ -3533,10 +3526,11 @@ function renderWard(){const w=wdGet(),el=$('wdIn'),esc=t=>String(t).replace(/[<>
   const list=[{id:'default',name:'기본 캐릭터',skin:DEFAULT_SKIN},...w.chars];
   $('wdChars').innerHTML=list.map(c=>`<div class="wcard${c.id===sel?' on':''}" data-id="${c.id}"><canvas width="40" height="80"></canvas>${esc(c.name)}${c.id!=='default'?'<span class="wdel" data-del="'+c.id+'">×</span>':''}</div>`).join('');
   $('wdChars').querySelectorAll('.wcard').forEach((d,i)=>{wdDraw(d.querySelector('canvas'),list[i].skin,false,null);d.onclick=e=>{if(e.target.dataset.del){if(!confirm('이 캐릭터를 지울까요?'))return;w.chars=w.chars.filter(c=>c.id!==e.target.dataset.del);if(w.sel===e.target.dataset.del)w.sel='default';}else w.sel=list[i].id;wdSave(w);renderWard();};});
-  $('wdCapes').innerHTML=`<div class="wcard${!wdCape(w)?' on':''}" data-c="none"><div style="height:80px;line-height:80px;font-size:26px">🚫</div>없음</div>`+Object.keys(CAPES).map(k=>{const own=w.unlocked.includes(k);
-    return `<div class="wcard${wdCape(w)===k?' on':''}" data-c="${k}"><canvas width="54" height="80" style="width:54px"></canvas>${esc(CAPES[k])}${own?'':'<div style="position:absolute;left:0;right:0;top:26px;font-size:24px">🔒</div><div style="color:#ffe066">📨 요청</div>'}</div>`;}).join('');
+  $('wdCapes').innerHTML=`<div class="wcard${!wdCape(w)?' on':''}" data-c="none"><div style="height:80px;line-height:80px;font-size:26px">🚫</div>없음</div>`+Object.keys(CAPES).map(k=>{const own=wdOwn(w).includes(k);
+    return `<div class="wcard${wdCape(w)===k?' on':''}" data-c="${k}"><canvas width="54" height="80" style="width:54px"></canvas>${esc(CAPES[k])}${own?'':'<div style="position:absolute;left:0;right:0;top:26px;font-size:24px">🔒</div><div style="color:#ffe066">🎁 획득</div>'}</div>`;}).join('');
   $('wdCapes').querySelectorAll('.wcard').forEach(d=>{const k=d.dataset.c,cv=d.querySelector('canvas');if(cv)capeCanvas(k).ready.then(c=>cv.getContext('2d').drawImage(c,0,0,54,80));
-    d.onclick=()=>{if(k!=='none'&&!w.unlocked.includes(k)){wdReq=k;wdMsg='';renderWard();return;}w.cape=k;wdSave(w);renderWard();};});
+    d.onclick=()=>{if(k!=='none'&&!wdOwn(w).includes(k)){const nk=nickNow();if(!nk){wdMsg='먼저 닉네임을 정해 주세요 (망토는 획득한 닉네임만 입을 수 있어요)';renderWard();return;} // 🎁 획득: 이 닉네임만 입을 수 있음
+      w.owned[nk]=[...wdOwn(w),k];w.cape=k;wdSave(w);wdMsg='';renderWard();toast(`🎁 <b>${CAPES[k]} 망토</b>를 획득했어요!`);return;}w.cape=k;wdSave(w);renderWard();};});
   $('wdNew').onclick=()=>{wdEdit={name:'',skin:'#e0b48c',hair:'#3a2618',eye:'#2a4a9a',shirt:'#3a6ad0',pants:'#2a3a6a',shoes:'#2a2018',hairS:'short',sleeve:'short'};renderWard();};
   $('wdClose').onclick=closeWard;}
 addEventListener('keydown',e=>{if($('wardUI').classList.contains('show')&&e.code==='Escape'&&!wdEdit&&!wdReq&&!wdTool){e.stopPropagation();closeWard();}},true); // 입력칸 키는 막지 않음 (엔터로 닉네임 저장)
@@ -4708,9 +4702,6 @@ function nickSet(n){n=(n||'').trim();if(!/^[0-9A-Za-z가-힣_]{2,12}$/.test(n))r
   const L=nickList();if(L.some(x=>x.toLowerCase()===n.toLowerCase()))return '❌ 이미 이 PC에서 누가 쓰고 있는 닉네임이에요';L.push(n);if(cur&&!L.includes(cur))L.push(cur);
   try{localStorage.setItem(NLIST,JSON.stringify(L));localStorage.setItem(NKEY,n);}catch(e){return '저장에 실패했어요';}NICK=n;return '';}
 function cbHash(str){let a=0xdeadbeef,b=0x41c6ce57;for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);a=Math.imul(a^ch,2654435761);b=Math.imul(b^ch,1597334677);}a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);return (4294967296*(2097151&b)+(a>>>0)).toString(36).toUpperCase();}
-const CAPE_PUB={"kty":"EC","crv":"P-256","x":"UPa-943Q_6QFyRkWKq_vXegv3TSkDPocD5k2n1L3ccE","y":"A3UhYdzbExRVZtIQg3QLfDHPcuk_ZO7SO6ocTQbXWp0"},DM_URL='https://geulbeot-rho.vercel.app/dm/to/'+encodeURIComponent('운영자'); // 망토 받는 코드는 제작자 서명으로 확인 (서명 열쇠는 제작자 PC에만) · 요청은 글벗 @운영자 DM
-async function capeVerify(k,n,code){try{let t=String(code||'').replace(/\s/g,'').replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const b=Uint8Array.from(atob(t),c=>c.charCodeAt(0));if(b.length!==64)return false;
-  const key=await crypto.subtle.importKey('jwk',CAPE_PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);return await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},key,b,new TextEncoder().encode(k+'@'+n));}catch(e){return false;}}
 function readWard(){try{return JSON.parse(localStorage.getItem('cavebuild-wardrobe')||'{}')||{};}catch(e){return {};}}
 function refreshWard(){WARD=readWard();NICK=nickNow();{const L=nickList();if(NICK&&!L.includes(NICK)){L.push(NICK);try{localStorage.setItem(NLIST,JSON.stringify(L));}catch(e){}}}try{$('btnWard').textContent='👕 탈의실'+(NICK?' · 👤 '+NICK:'');}catch(e){}let u=DEFAULT_SKIN;if(WARD.sel&&WARD.sel!=='default'){const c=(WARD.chars||[]).find(c=>c.id===WARD.sel);if(c&&c.skin)u=c.skin;}
   if(u===skinNow)return;skinNow=u;const im=new Image();im.onload=()=>{const g=SKIN_C.getContext('2d');g.clearRect(0,0,64,64);g.drawImage(im,0,0);
@@ -4750,7 +4741,7 @@ function capeCanvas(k){if(capeCv[k])return capeCv[k];const c=makeCanvas(256,384)
       g.strokeStyle='#e8458b';g.lineWidth=7;g.strokeRect(9,9,238,366);g.strokeStyle='#0d2f7a';g.lineWidth=4;g.strokeRect(18,18,220,348);const z=214;g.drawImage(im,(256-z)/2,384*.47-z/2,z,z);}else g.drawImage(im,0,0,256,384);res(c);};im.onerror=()=>res(c);im.src=k==='bara'?BARA_LOGO:CAPE_IMG;});return c;}
 const capeMs={};function capeMat(k){k=k||WARD.cape;if(!capeMs[k]){const c=capeCanvas(k),t=new THREE.CanvasTexture(c);t.anisotropy=4;c.ready.then(()=>t.needsUpdate=true);capeMs[k]=new THREE.MeshStandardMaterial({map:t,roughness:.9});}return capeMs[k];}
 function dressAvatar(A){ // 3인칭 몸에 갑옷 입히기 (몸보다 살짝 크게 덮음)
-  const capeOn=!!CAPES[WARD.cape]&&(WARD.unlocked||[]).includes(WARD.cape); // 망토: 탈의실에서 고르고 제작자에게 받은 것만
+  const capeOn=!!CAPES[WARD.cape]&&((WARD.owned||{})[NICK]||[]).includes(WARD.cape); // 망토: 탈의실에서 고르고, 지금 닉네임이 획득한 것만
   for(const m of A.armorParts||[])m.parent&&m.parent.remove(m);A.armorParts=[];
   const add=(par,w,h,d,mat,x,y,z)=>A.armorParts.push(part(par,w,h,d,mat,x,y,z));
   A.cape=null;
@@ -4829,7 +4820,7 @@ function updateAvatar(dt){
   if(sid){const sh=A.shieldP.children[0];A.arms[0].updateMatrix(); // 막을 때는 방패 앞면이 정면을 보게 (팔 회전을 되돌려 몸 기준으로 맞춤)
     _shRest.setFromEuler(_shE.set(0,-Math.PI/2,0));_shBlock.copy(A.arms[0].quaternion).invert().multiply(_shFwd);sh.quaternion.copy(_shRest).slerp(_shBlock,bk);
     A.shieldP.position.set(lerp(-.12,-.02,bk),lerp(-.42,-.76,bk),lerp(0,-.04,bk));} // 막을 땐 손 앞에
-  const ak=[armor[0],armor[1],armor[2],armor[3]].map(a=>a?a.id+(a.col||'')+(a.ely?'e':''):0).join()+'|'+(WARD.cape||'')+'|'+(WARD.unlocked||[]).join();if(ak!==A.armorKey){A.armorKey=ak;dressAvatar(A);} // 입은 갑옷
+  const ak=[armor[0],armor[1],armor[2],armor[3]].map(a=>a?a.id+(a.col||'')+(a.ely?'e':''):0).join()+'|'+(WARD.cape||'')+'|'+NICK+'|'+((WARD.owned||{})[NICK]||[]).join();if(ak!==A.armorKey){A.armorKey=ak;dressAvatar(A);} // 입은 갑옷
   const e=p.hurtCD>.3?.6:0;for(const m of A.mats)m.emissive.setRGB(e,0,0); // 맞으면 빨갛게
   A.pos.copy(p.pos);Mob.prototype.updShadow.call(A);
 }
