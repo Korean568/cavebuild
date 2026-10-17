@@ -293,7 +293,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.105 — 🪨 조약돌 생성기 · 🔑 로그인</h4>
+    <h4>🆕 v26.106 — 🔑 로그인 고침</h4>
+    • v26.105 전에 정해 둔 <b>예전 닉네임</b>으로 로그인하면 "없는 닉네임"이 뜨던 문제를 고쳤어요. 예전 닉네임으로 처음 로그인할 때 넣은 비밀번호로 <b>계정이 자동으로 만들어져요</b> (그 닉네임으로 얻은 망토도 그대로).<br>
+    • 닉네임 대소문자가 달라도 로그인돼요. 로그인 · 회원가입 화면에 안내 문구를 더했어요.
+    <h4>v26.105 — 🪨 조약돌 생성기 · 🔑 로그인</h4>
     • 🔑 탈의실에 <b>회원가입 · 로그인 · 로그아웃</b>이 생겼어요 (닉네임 + 비밀번호, 이 PC에 저장 · 비밀번호는 암호화해서 보관). 망토는 <b>로그인한 계정으로 획득</b>해야 얻고 입을 수 있고, 이미 있는 닉네임으로는 가입할 수 없어요.<br>
     • 물이 용암보다 빨리 흘러 <b>용암 샘까지 조약돌로 굳어 버려서</b> 조약돌이 한 번만 생기던 문제를 고쳤어요. 이제 옆에서 흘러온 물이 용암 샘에 닿으면 <b>물 쪽 칸이 조약돌</b>이 되고 용암 샘은 남아요 — 캐면 또 생기는 <b>조약돌 생성기</b>를 만들 수 있어요.<br>
     • 흐르는 용암이 물에 닿으면 조약돌, 용암 샘에 물 샘을 대거나 물을 <b>위에서</b> 부으면 흑요석이에요.
@@ -1627,7 +1630,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.105 — 🪨 Cobblestone generators · 🔑 Login</h4>
+    <h4>🆕 v26.106 — 🔑 Login fix</h4>
+    • Logging in with a nickname set before v26.105 used to say it doesn't exist. Now the first login with an old nickname turns it into an account with that password (its capes are kept). Nickname case no longer matters.
+    <h4>v26.105 — 🪨 Cobblestone generators · 🔑 Login</h4>
     • Sign up / log in / log out in the wardrobe (nickname + password, stored on this PC with a hashed password). Capes must be obtained with a logged-in account; taken nicknames can't be registered again.<br>
     • Water flowing sideways into a lava source now turns the water's cell into cobblestone and keeps the lava source, so cobblestone generators regenerate. Flowing lava + water → cobblestone; water source or water from above on a lava source → obsidian.
     <h4>v26.104 — 🎁 Capes via the Get button</h4>
@@ -3525,7 +3530,7 @@ function renderWard(){const w=wdGet(),el=$('wdIn'),esc=t=>String(t).replace(/[<>
     <h3>👤 계정 <small style="color:#aaa;font-weight:normal">(로그인해야 망토를 얻고 입을 수 있어요)</small></h3>${nk?`<div style="display:flex;align-items:center;gap:8px;font-size:15px">👤 <b>${esc(nk)}</b> <span style="color:#8ae86a;font-size:13px">로그인됨</span><button class="wb gray" id="wdOut" style="margin:0 0 0 auto">로그아웃</button></div>`
       :`<div style="display:flex;gap:6px;margin-bottom:4px"><button class="wb${wdSign?' gray':''}" id="wdTabIn" style="margin:0">로그인</button><button class="wb${wdSign?'':' gray'}" id="wdTabUp" style="margin:0">회원가입</button></div>
       <label>닉네임<input type="text" id="wdN" maxlength="12" placeholder="2~12자" style="flex:1"></label><label>비밀번호<input type="password" id="wdP" maxlength="40" style="flex:1"></label>${wdSign?'<label>비밀번호 확인<input type="password" id="wdP2" maxlength="40" style="flex:1"></label>':''}
-      <button class="wb" id="wdGo">${wdSign?'✨ 회원가입':'🔑 로그인'}</button>`}<div id="wdNm" style="font-size:13px;min-height:18px;color:${wdMsg.startsWith('✅')?'#8ae86a':'#ff8a8a'}">${wdMsg}</div>
+      <button class="wb" id="wdGo">${wdSign?'✨ 회원가입':'🔑 로그인'}</button>`}<div id="wdNm" style="font-size:13px;min-height:18px;color:${wdMsg.startsWith('✅')?'#8ae86a':'#ff8a8a'}">${wdMsg}</div>${nk?'':`<div style="font-size:12px;color:#aaa">${wdSign?'이미 계정이 있으면 <b>로그인</b> 탭을 눌러요.':'계정이 없으면 먼저 <b>회원가입</b> 탭에서 만들어요. 계정은 이 브라우저에 저장돼요 (다른 PC · 브라우저에선 새로 가입).'}</div>`}
     <h3>🧍 캐릭터</h3><div class="wgrid" id="wdChars"></div><button class="wb" id="wdNew">➕ 캐릭터 만들기</button>
     <h3>🧥 망토 <small style="color:#aaa;font-weight:normal">(탈의실에서만 · 🔑 로그인한 계정으로 획득해야 입을 수 있어요)</small></h3><div class="wgrid" id="wdCapes"></div></div></div>
     <div style="text-align:center"><button class="wb gray" id="wdClose">닫기</button></div>`;
@@ -4717,7 +4722,12 @@ async function pwHash(salt,pw){const b=await crypto.subtle.digest('SHA-256',new 
 async function signUp(n,pw,pw2){n=(n||'').trim();if(!/^[0-9A-Za-z가-힣_]{2,12}$/.test(n))return '닉네임은 2~12자 (한글 · 영어 · 숫자 · _)로 지어 주세요';if((pw||'').length<4)return '비밀번호는 4자 이상으로 해 주세요';if(pw!==pw2)return '비밀번호 확인이 달라요';
   const A=accts();if(Object.keys(A).some(x=>x.toLowerCase()===n.toLowerCase()))return '❌ 이미 있는 닉네임이에요';const salt=Math.random().toString(36).slice(2)+Date.now().toString(36);A[n]={salt,h:await pwHash(salt,pw),t:Date.now()};
   try{localStorage.setItem(AKEY,JSON.stringify(A));localStorage.setItem(NKEY,n);}catch(e){return '저장에 실패했어요';}NICK=n;return '';}
-async function logIn(n,pw){n=(n||'').trim();const a=accts()[n];if(!a)return '❌ 없는 닉네임이에요 (먼저 회원가입해 주세요)';if(await pwHash(a.salt,pw||'')!==a.h)return '❌ 비밀번호가 틀렸어요';try{localStorage.setItem(NKEY,n);}catch(e){}NICK=n;return '';}
+const LEGACY_NICK=(()=>{try{const L=JSON.parse(localStorage.getItem('cavebuild-nicks')||'[]')||[],u=localStorage.getItem('cavebuild-user');if(u)L.push(u);return L;}catch(e){return [];}})(); // v26.105 전에 정한 닉네임 (비밀번호 없음)
+async function logIn(n,pw){n=(n||'').trim();const A=accts(),key=Object.keys(A).find(x=>x.toLowerCase()===n.toLowerCase());
+  if(!key){const old=LEGACY_NICK.find(x=>x.toLowerCase()===n.toLowerCase());if(!old)return '❌ 없는 닉네임이에요 — 위의 <b>회원가입</b>을 눌러 먼저 계정을 만들어 주세요';
+    if((pw||'').length<4)return '예전 닉네임이에요 — 앞으로 쓸 비밀번호(4자 이상)를 넣으면 계정으로 바꿔 드려요';const salt=Math.random().toString(36).slice(2)+Date.now().toString(36); // 예전 닉네임: 처음 로그인할 때 그 비밀번호로 계정을 만듦
+    A[old]={salt,h:await pwHash(salt,pw),t:Date.now()};try{localStorage.setItem(AKEY,JSON.stringify(A));localStorage.setItem(NKEY,old);}catch(e){return '저장에 실패했어요';}NICK=old;return '';}
+  n=key;const a=A[n];if(await pwHash(a.salt,pw||'')!==a.h)return '❌ 비밀번호가 틀렸어요';try{localStorage.setItem(NKEY,n);}catch(e){}NICK=n;return '';}
 function logOut(){try{localStorage.removeItem(NKEY);}catch(e){}NICK='';}
 function nickNow(){try{const n=localStorage.getItem(NKEY)||'';return n&&accts()[n]?n:'';}catch(e){return '';}} // 로그인한 닉네임 (계정이 있어야 함)
 function cbHash(str){let a=0xdeadbeef,b=0x41c6ce57;for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);a=Math.imul(a^ch,2654435761);b=Math.imul(b^ch,1597334677);}a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);return (4294967296*(2097151&b)+(a>>>0)).toString(36).toUpperCase();}
