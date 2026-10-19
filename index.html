@@ -292,7 +292,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.109 — 🔑 서버 계정 · 트라이브 연동</h4>
+    <h4>🆕 v26.110 — 🔑 미리보기 로그인 안내</h4>
+    • claude.ai 미리보기(아티팩트)에서 로그인하면 "서버에 연결하지 못했어요"만 뜨던 것을, <b>게임 주소에서 열기</b> 링크와 함께 알기 쉽게 안내해요 (미리보기는 바깥 서버 연결이 막혀 있어서 로그인은 게임 주소에서 해야 해요).
+    <h4>v26.109 — 🔑 서버 계정 · 트라이브 연동</h4>
     • 계정이 이제 <b>서버에 저장</b>돼요: 어느 PC · 브라우저에서든 같은 닉네임 · 비밀번호로 로그인되고, 얻은 망토도 따라와요 (비밀번호는 암호화해서 보관).<br>
     • <b>트라이브(플벗 · 볼벗 · 듣벗) · 글벗 계정</b>으로도 로그인할 수 있어요. 처음이면 케이브빌드 계정이 자동으로 만들어지고, 로그인한 뒤 <b>연동하기</b>로 이어 둘 수도 있어요.<br>
     • <b>허브</b> 아래쪽 플레이어 칸을 누르면 허브에서도 로그인 · 회원가입 · 연동을 할 수 있어요 (게임과 같은 계정).<br>
@@ -1640,7 +1642,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.109 — 🔑 Server accounts · Tribe login</h4>
+    <h4>🆕 v26.110 — 🔑 Preview login notice</h4>
+    • In the claude.ai preview, the wardrobe now explains that login only works on the game site and links to it.
+    <h4>v26.109 — 🔑 Server accounts · Tribe login</h4>
     • Accounts are now stored on the server: log in from any PC with the same nickname and password, and your capes follow you. You can also log in with a Tribe (PlayBeot · BolBeot · DeutBeot) or GeulBeot account, link them later, and log in from the hub too.
     <h4>v26.108 — 🧱 Placed blocks stay square</h4>
     • Only the natural terrain is rounded now. Dirt, stone, sand etc. that players place stay square, so towers and houses keep their shape (existing builds too).
@@ -3545,7 +3549,7 @@ function renderWard(){const w=wdGet(),el=$('wdIn'),esc=t=>String(t).replace(/[<>
     $('wdOk').onclick=()=>{const id='c'+Date.now().toString(36),ch={id,name:(o.name||'').trim()||'내 캐릭터',skin:o.skinUrl};w.chars.push(ch);w.sel=id;wdSave(w);wdEdit=null;renderWard();};return;}
   const sel=w.sel==='default'||w.chars.some(c=>c.id===w.sel)?w.sel:'default',url=sel==='default'?DEFAULT_SKIN:w.chars.find(c=>c.id===sel).skin,nk=nickNow();
   el.innerHTML=`<h2>👕 탈의실</h2><div class="wrow"><div class="wprev"><canvas class="big" id="wdF" width="160" height="320"></canvas><canvas class="big" id="wdB" width="160" height="320"></canvas></div><div class="wside">
-    <h3>👤 계정 <small style="color:#aaa;font-weight:normal">(서버에 저장 · 어느 PC에서든 로그인 · 로그인해야 망토를 얻고 입어요)</small></h3>${nk?`<div style="display:flex;align-items:center;gap:8px;font-size:15px">👤 <b>${esc(nk)}</b> <span style="color:#8ae86a;font-size:13px">로그인됨</span><button class="wb gray" id="wdOut" style="margin:0 0 0 auto">로그아웃</button></div>
+    <h3>👤 계정 <small style="color:#aaa;font-weight:normal">(서버에 저장 · 어느 PC에서든 로그인 · 로그인해야 망토를 얻고 입어요)</small></h3>${CB_ONSITE?'':'<div style="background:#4a3a14;border-radius:6px;padding:6px 8px;font-size:13px;margin-bottom:6px">⚠ 여기는 미리보기(아티팩트)라 로그인이 안 돼요. <a href="https://korean568.github.io/cavebuild/?play=1" target="_blank" style="color:#ffe066">게임 주소에서 열기</a></div>'}${nk?`<div style="display:flex;align-items:center;gap:8px;font-size:15px">👤 <b>${esc(nk)}</b> <span style="color:#8ae86a;font-size:13px">로그인됨</span><button class="wb gray" id="wdOut" style="margin:0 0 0 auto">로그아웃</button></div>
       <div style="font-size:13px;margin-top:4px">🔗 트라이브: ${ACC.tribe?'<b style="color:#8ae86a">연동됨</b>':'<a href="#" data-lk="tribe" style="color:#ffe066">연동하기</a>'} · 글벗: ${ACC.geulbeot?'<b style="color:#8ae86a">연동됨</b>':'<a href="#" data-lk="geul" style="color:#ffe066">연동하기</a>'}</div>
       ${wdLink?`<div style="background:#1e1e22;border-radius:6px;padding:6px 8px;margin-top:6px"><label>${wdLink==='tribe'?'트라이브':'글벗'} 아이디<input type="text" id="wdLN" maxlength="20" style="flex:1"></label><label>비밀번호<input type="password" id="wdLP" maxlength="72" style="flex:1"></label><button class="wb" id="wdLGo">🔗 연동</button><button class="wb gray" id="wdLNo">취소</button></div>`:''}`
       :`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${[['in','로그인'],['up','회원가입'],['tribe','트라이브로'],['geul','글벗으로']].map(([m,t])=>`<button class="wb${wdMode===m?'':' gray'}" data-am="${m}" style="margin:0">${t}</button>`).join('')}</div>
@@ -4743,7 +4747,8 @@ let WARD={},skinNow='',NICK='';
 const NKEY='cavebuild-user',NLIST='cavebuild-nicks';
 const CB_API='https://geulbeot-rho.vercel.app/api/cavebuild',TKEY='cavebuild-token',ACCK='cavebuild-acc'; // 계정은 서버(글벗 창고)에 · 이 브라우저는 로그인 열쇠만 들고 있음 (허브와 함께 씀)
 let ACC=null;try{ACC=JSON.parse(localStorage.getItem(ACCK)||'null');}catch(e){}
-async function cbApi(body){let r,d={};try{r=await fetch(CB_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});}catch(e){throw new Error('서버에 연결하지 못했어요 (인터넷을 확인해 주세요)');}
+const CB_ONSITE=/github\.io$|^localhost$|^127\./.test(location.hostname); // 게임 주소(또는 내 PC)에서만 서버 계정을 쓸 수 있음 (claude.ai 미리보기는 바깥 서버 연결이 막힘)
+async function cbApi(body){let r,d={};try{r=await fetch(CB_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});}catch(e){throw new Error(CB_ONSITE?'서버에 연결하지 못했어요 (인터넷을 확인해 주세요)':'이 미리보기(아티팩트)에서는 서버에 연결할 수 없어요 — <a href="https://korean568.github.io/cavebuild/?play=1" target="_blank" style="color:#ffe066">게임 주소</a>에서 로그인해 주세요');}
   try{d=await r.json();}catch(e){}if(!r.ok||d.error)throw new Error(d.error||('서버 오류 '+r.status));return d;}
 function accToken(){try{return localStorage.getItem(TKEY)||'';}catch(e){return '';}}
 function accSave(user,token){ACC=user;try{if(token)localStorage.setItem(TKEY,token);localStorage.setItem(ACCK,JSON.stringify(user));localStorage.setItem(NKEY,user.nick);}catch(e){}NICK=user.nick;}
