@@ -293,7 +293,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.107 — 🎨 CLKKY STUDIO</h4>
+    <h4>🆕 v26.108 — 🧱 직접 놓은 블록은 네모 그대로</h4>
+    • 둥글게 다듬는 건 이제 <b>원래 땅(언덕 · 절벽 · 동굴)</b>뿐이에요. 플레이어가 <b>직접 놓은 흙 · 돌 · 모래</b> 등은 네모 블록 그대로 보여서, 쌓아 올린 탑이나 집이 둥글게 뭉개지지 않아요 (전에 지은 것도 바로 반듯해져요).
+    <h4>v26.107 — 🎨 CLKKY STUDIO</h4>
     • 제작팀 이름이 <b>CLKKY STUDIO</b>로 바뀌었어요: 엔딩의 '제작' 로고와 탈의실의 CLKKY 망토 무늬 · 이름이 새 로고로 바뀌었어요.
     <h4>v26.106 — 🔑 로그인 고침</h4>
     • v26.105 전에 정해 둔 <b>예전 닉네임</b>으로 로그인하면 "없는 닉네임"이 뜨던 문제를 고쳤어요. 예전 닉네임으로 처음 로그인할 때 넣은 비밀번호로 <b>계정이 자동으로 만들어져요</b> (그 닉네임으로 얻은 망토도 그대로).<br>
@@ -1058,7 +1060,7 @@ const DX6=[1,-1,0,0,0,0],DY6=[0,0,1,-1,0,0],DZ6=[0,0,0,0,1,-1];
 // datas/hms: 주변 3×3 청크의 블록·높이맵 (없으면 null, 가운데가 [4]), lamps: 주변 광원 좌표
 let NATB=null,NAT_C=null,NAT_F=null,NAT_R=2; // NAT_R: 둥근 지형 세밀도 (블록 한 칸을 NAT_R×NAT_R로 쪼갬, 모바일 1) // 둥글게 그리는 자연 지형 블록 · 꼭짓점 이동 캐시
 function natTable(){NATB=new Uint8Array(BLK_N);BL.forEach((b,i)=>{if(b&&b.opaque!==false&&b.hard>0&&(b.tool==='shovel'||/광석$/.test(b.name)||i===STONE||i===HELLSTONE||i===ENDSTONE))NATB[i]=1;});}
-function meshCore(cx,cz,datas,hms,lamps,caveB){
+function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에서 플레이어가 놓은 흙·돌 칸 번호 (네모로 그림)
   const P=[],U=[],C=[],I=[],WP=[],WU=[],WC=[],WI=[],LP=[],LU=[],LC=[],LI=[],GP=[],GU=[],GC=[],GI=[];
   const d=datas[4],ox=cx*16,oz=cz*16;
   // 등불 빛: 주변 3×3 청크 범위에서 BFS로 한 번만 퍼뜨림 (불투명 블록은 통과 못함)
@@ -1078,7 +1080,9 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
   const leafRound=(vx,vy,vz,o)=>{let sx=0,sy=0,sz=0,n=0; // 꼭짓점을 둘러싼 8칸 중 잎·원목 칸의 중심 쪽으로 이동
     for(let a=-1;a<=0;a++)for(let b=-1;b<=0;b++)for(let c=-1;c<=0;c++){const t=get(vx+a,vy+b,vz+c);if(t===LEAVES||t===LOG){sx+=a+.5;sy+=b+.5;sz+=c+.5;n++;}}
     const k=n?.95/n:0;o[0]=sx*k;o[1]=sy*k;o[2]=sz*k;},_lo=[0,0,0];
-  if(!NATB)natTable();const NCN=17*17*(CH+1);if(!NAT_F||NAT_F.length!==NCN){NAT_F=new Uint8Array(NCN);NAT_C=new Float32Array(NCN*3);}else NAT_F.fill(0);
+  if(!NATB)natTable();const PLM=(pl||[]).map(a=>{if(!a||!a.length)return null;const m=new Uint8Array(16*16*CH);for(const i of a)m[i]=1;return m;}),
+    placed=(x,y,z)=>{if(y<0||y>=CH)return false;const m=PLM[((z>>4)+1)*3+(x>>4)+1];return !!m&&m[(y*16+(z&15))*16+(x&15)]===1;}; // 직접 놓은 블록인지
+  const NCN=17*17*(CH+1);if(!NAT_F||NAT_F.length!==NCN){NAT_F=new Uint8Array(NCN);NAT_C=new Float32Array(NCN*3);}else NAT_F.fill(0);
   const natRound=(vx,vy,vz,o)=>{o[0]=o[1]=o[2]=0;if(vx<0||vx>16||vz<0||vz>16||vy<1||vy>=CH)return;const ci=(vy*17+vz)*17+vx; // 지형 꼭짓점: 둘러싼 8칸에서 흙·돌과 빈칸 경계의 중점 평균으로 이동 → 평평한 땅은 그대로, 모서리·턱은 둥글게
     if(NAT_F[ci]){o[0]=NAT_C[ci*3];o[1]=NAT_C[ci*3+1];o[2]=NAT_C[ci*3+2];return;}NAT_F[ci]=1;NAT_C[ci*3]=NAT_C[ci*3+1]=NAT_C[ci*3+2]=0;
     let m=0,ns=0;for(let i=0;i<8;i++){const t=get(vx+(i&1)-1,vy+(i>>1&1)-1,vz+(i>>2&1)-1);if(NATB[t]){m|=1<<i;ns++;}else if(t&&!LIQ_KIND[t]&&!FLOWER_OF[t]&&t!==SAPLING)return;} // 건물 블록이 닿으면 고정 (틈이 안 생김)
@@ -1157,14 +1161,14 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
           quad([cx-dx,y0,cz-dz],[cx+dx,y0,cz+dz],[cx-dx,y1,cz-dz],[cx+dx,y1,cz+dz],.82);}
         const ym=y+.5+((hr>>>12)%30-15)/100,ex=Math.cos(a0+.8)*W,ez=Math.sin(a0+.8)*W; // 가운데를 가로지르는 비스듬한 판
         quad([x+.5-ex,ym-.15,z+.5-ez],[x+.5+ez,ym+.15,z+.5-ex],[x+.5-ez,ym+.15,z+.5+ex],[x+.5+ex,ym-.15,z+.5+ez],.95);}}
-    if(NATB[id])continue; // 흙·돌·광석은 아래에서 매끈한 곡면으로 그림
+    if(NATB[id]&&!placed(x,y,z))continue; // 원래 땅의 흙·돌·광석은 아래에서 매끈한 곡면으로 (직접 놓은 건 네모)
     let wq=null; // 액체 윗면 네 모서리 높이: 모서리를 함께 쓰는 네 칸 중 가장 높은 값 → 이웃끼리 이어진 비탈
     if(isW||isL){const k=LIQ_KIND[id];wq=[0,0,0,0];
       for(let a=0;a<2;a++)for(let c2=0;c2<2;c2++){let m=0;for(let i=a-1;i<=a;i++)for(let j=c2-1;j<=c2;j++)m=Math.max(m,liqH(x+i,y,z+j,k));wq[a*2+c2]=m;}}
     for(let fi=0;fi<6;fi++){
       const f=FACES[fi],n=get(x+f.dir[0],y+f.dir[1],z+f.dir[2]);
       if(isW||isL){if(LIQ_KIND[n]===LIQ_KIND[id]||OPAQUE[n])continue;}
-      else{if(OPAQUE[n]&&!(NATB&&NATB[n]&&id!==CORE))continue;if(n===id)continue;} // 둥근 지형 쪽 면도 그림 (지형이 깎여도 구멍이 안 보임)
+      else{if(OPAQUE[n]&&!(NATB&&NATB[n]&&!placed(x+f.dir[0],y+f.dir[1],z+f.dir[2])&&id!==CORE))continue;if(n===id)continue;} // 둥근 지형 쪽 면도 그림 (지형이 깎여도 구멍이 안 보임)
       const t=B.tiles[fi],tx=t%ATW,ty=Math.floor(t/ATW);
       const nx=x+f.dir[0],ny=y+f.dir[1],nz=z+f.dir[2];
       const sky=(nx>=0&&nx<16&&nz>=0&&nz<16)?ny>hms[4][nz*16+nx]:skyAt(nx,ny,nz);
@@ -1205,7 +1209,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
           for(const o of ao){if(!OPAQUE[get(x+o[0],y+o[1],z+o[2])]){sum+=lightAt(x+o[0],y+o[1],z+o[2]);cnt++;}}
           bl=Math.min(1,sum/cnt/LM*1.25);}
         if(id===LEAVES){leafRound(x+c[0],y+c[1],z+c[2],_lo);P.push(x+c[0]+_lo[0],y+c[1]+_lo[1],z+c[2]+_lo[2]);}
-        else if(NATB[id]){natRound(x+c[0],y+c[1],z+c[2],_lo);P.push(x+c[0]+_lo[0],y+c[1]+_lo[1],z+c[2]+_lo[2]);}
+        else if(NATB[id]&&!placed(x,y,z)){natRound(x+c[0],y+c[1],z+c[2],_lo);P.push(x+c[0]+_lo[0],y+c[1]+_lo[1],z+c[2]+_lo[2]);}
         else P.push(x+c[0],y+(isL?(c[1]?wq[c[0]*2+c[2]]:0):c[1]),z+c[2]);U.push((tx+.008+c[3]*.984)/ATW,1-(ty+1-(.008+c[4]*.984))/ATH);C.push(sl,bl,AO_B[a]*f.shade*tint);
       }
       if(aoc[0]+aoc[3]>aoc[1]+aoc[2])I.push(base,base+1,base+3,base,base+3,base+2);
@@ -1234,7 +1238,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
           I.push(base,base+1,base+2,base+1,base+3,base+2);}}});}}
   const NP=[],NU=[],NT=[],NC=[],NI=[];
   natSurf:{const R=NAT_R,SW=24,SO=4,SL=SW*SW,si=(x,y,z)=>((y+2)*SW+(z+SO))*SW+(x+SO),S=new Uint8Array(SL*(CH+4));let any=false;
-    for(let y=-2;y<=CH+1;y++)for(let z=-4;z<20;z++)for(let x=-4;x<20;x++){const t=get(x,y,z);if(NATB[t]||OPAQUE[t]){S[si(x,y,z)]=1;if(!any&&NATB[t]&&x>=0&&x<16&&z>=0&&z<16&&y>=0&&y<CH)any=true;}}
+    for(let y=-2;y<=CH+1;y++)for(let z=-4;z<20;z++)for(let x=-4;x<20;x++){const t=get(x,y,z);if(NATB[t]||OPAQUE[t]){S[si(x,y,z)]=1;if(!any&&NATB[t]&&!placed(x,y,z)&&x>=0&&x<16&&z>=0&&z<16&&y>=0&&y<CH)any=true;}}
     if(!any)break natSurf;
     const A=new Float32Array(S.length),Bz=new Float32Array(S.length),D=new Float32Array(S.length); // 5×5×5 평균 밀도 → 계단이 완만하고 둥근 언덕으로
     for(let y=-2;y<=CH+1;y++)for(let z=-4;z<20;z++)for(let x=-2;x<18;x++){const i=si(x,y,z);A[i]=S[i-2]+S[i-1]+S[i]+S[i+1]+S[i+2];}
@@ -1248,11 +1252,11 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
     const NX=16*R+2,jLo=Math.max(0,(ylo-1)*R),jHi=Math.min(CH*R-1,(yhi+2)*R),FN=new Float32Array(NX*NX*(jHi-jLo+1)),fi_=(i,j,k)=>((j-jLo)*NX+(k+1))*NX+(i+1);
     const vox=(i,j,k)=>get(Math.floor((i+.5)/R),Math.floor((j+.5)/R),Math.floor((k+.5)/R));
     const NW=20,nn=(x,y,z)=>((y+1)*NW+(z+2))*NW+(x+2),NN=new Uint8Array(NW*NW*(CH+2)),VW=18,NV=new Uint8Array(VW*VW*CH),nv=(x,y,z)=>(y*VW+(z+1))*VW+(x+1); // 건물 블록 (자연 지형이 아닌 불투명 블록)
-    for(let y=-1;y<=CH;y++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){const t=get(x,y,z);if(OPAQUE[t]&&!NATB[t])NN[nn(x,y,z)]=1;}
+    for(let y=-1;y<=CH;y++)for(let z=-2;z<18;z++)for(let x=-2;x<18;x++){const t=get(x,y,z);if(OPAQUE[t]&&!(NATB[t]&&!placed(x,y,z)))NN[nn(x,y,z)]=1;} // 직접 놓은 흙·돌도 건물처럼 칸 모양
     for(let y=0;y<CH;y++)for(let z=-1;z<17;z++)for(let x=-1;x<17;x++){let f=0;for(let c=-1;c<=1&&!f;c++)for(let b=-1;b<=1&&!f;b++)for(let a=-1;a<=1;a++)if(NN[nn(x+a,y+b,z+c)]){f=1;break;}NV[nv(x,y,z)]=f;}
     for(let j=jLo;j<=jHi;j++)for(let k=-1;k<=16*R;k++)for(let i=-1;i<=16*R;i++){const bx=Math.floor((i+.5)/R),by=Math.floor((j+.5)/R),bz=Math.floor((k+.5)/R),t=get(bx,by,bz);let f;
       if(NV[nv(bx,by,bz)])f=(NATB[t]||OPAQUE[t])?.9:.1; // 건물 옆은 칸 모양 그대로 → 벽·바닥과 틈 없이 맞물림
-      else{f=fld((i+.5)/R,(j+.5)/R,(k+.5)/R);if(NATB[t]){const mn=D[si(bx,by,bz)]<.55?.62:.53;if(f<mn)f=mn;} // 흙·돌 칸은 절대 안 사라짐 (얇은 층 · 혼자 있는 흙도)
+      else{f=fld((i+.5)/R,(j+.5)/R,(k+.5)/R);if(NATB[t]&&!placed(bx,by,bz)){const mn=D[si(bx,by,bz)]<.55?.62:.53;if(f<mn)f=mn;} // 흙·돌 칸은 절대 안 사라짐 (얇은 층 · 혼자 있는 흙도)
         else if(!OPAQUE[t]&&f>.4){const q=si(bx,by,bz);if((S[q-1]&&S[q+1])||(S[q-SW]&&S[q+SW])||(S[q-SL]&&S[q+SL]))f=.4;}} // 1칸 굴 · 구덩이 · 틈은 메우지 않음 (안에서 세상이 비쳐 보이던 문제)
       FN[fi_(i,j,k)]=f;}
     const CE=[0,1,2,3,4,5,6,7,0,2,1,3,4,6,5,7,0,4,1,5,2,6,3,7],VI=new Int32Array(FN.length).fill(-1),VX=[],VA=[];
@@ -1267,9 +1271,9 @@ function meshCore(cx,cz,datas,hms,lamps,caveB){
       const ao=Math.max(.5,Math.min(1,1.28-fld(px+nx*.75,py+ny*.75,pz+nz*.75)*1.05)),sh=(ny>=0?.72+.28*ny:.72+.17*ny)-.06*Math.abs(nz); // 움푹한 곳은 어둡게 · 기울기만큼 음영
       v=VX.length/3;VX.push(px,py,pz);VA.push(sl,bl,sh*ao);VI[ci]=v;return v;};
     const NB6=[[0,-1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1],[0,1,0]],NT6=[[1,0],[3,2],[5,4]];
-    const NBk=(i,j,k)=>{const t=vox(i,j,k);if(NATB[t])return t;if(t&&OPAQUE[t])return 0; // 건물 블록 안은 안 그림 · 빈칸에 덮인 곡면은 옆 흙·돌 재질
-      const bx=Math.floor((i+.5)/R),by=Math.floor((j+.5)/R),bz=Math.floor((k+.5)/R);for(const o of NB6){const u=get(bx+o[0],by+o[1],bz+o[2]);if(NATB[u])return u;}
-      for(let rr=1;rr<=2;rr++)for(let c=-rr;c<=rr;c++)for(let b=-rr;b<=rr;b++)for(let a=-rr;a<=rr;a++){const u=get(bx+a,by+b,bz+c);if(NATB[u])return u;}return DIRT;}; // 구멍 대신 가까운 흙·돌 재질
+    const NBk=(i,j,k)=>{const bx=Math.floor((i+.5)/R),by=Math.floor((j+.5)/R),bz=Math.floor((k+.5)/R),t=get(bx,by,bz),nat=(X,Y,Z,u)=>NATB[u]&&!placed(X,Y,Z);if(nat(bx,by,bz,t))return t;if(t&&OPAQUE[t])return 0; // 건물 · 직접 놓은 블록 안은 안 그림 · 빈칸에 덮인 곡면은 옆 흙·돌 재질
+      for(const o of NB6){const u=get(bx+o[0],by+o[1],bz+o[2]);if(nat(bx+o[0],by+o[1],bz+o[2],u))return u;}
+      for(let rr=1;rr<=2;rr++)for(let c=-rr;c<=rr;c++)for(let b=-rr;b<=rr;b++)for(let a=-rr;a<=rr;a++){const u=get(bx+a,by+b,bz+c);if(nat(bx+a,by+b,bz+c,u))return u;}return DIRT;}; // 구멍 대신 가까운 흙·돌 재질
     const pq=(v,a,tl)=>{const x=VX[v*3],y=VX[v*3+1],z=VX[v*3+2];NP.push(x,y,z);if(a===1)NU.push(x+ox,z+oz);else if(a===0)NU.push(z+oz,y);else NU.push(x+ox,y);NT.push(tl%ATW,Math.floor(tl/ATW));NC.push(VA[v*3],VA[v*3+1],VA[v*3+2]);};
     for(let j=jLo+1;j<jHi;j++)for(let k=0;k<16*R;k++)for(let i=0;i<16*R;i++){const in0=FN[fi_(i,j,k)]>.5;
       for(let a=0;a<3;a++){const i2=i+(a===0?1:0),j2=j+(a===1?1:0),k2=k+(a===2?1:0);if((FN[fi_(i2,j2,k2)]>.5)===in0)continue;
@@ -1632,7 +1636,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.107 — 🎨 CLKKY STUDIO</h4>
+    <h4>🆕 v26.108 — 🧱 Placed blocks stay square</h4>
+    • Only the natural terrain is rounded now. Dirt, stone, sand etc. that players place stay square, so towers and houses keep their shape (existing builds too).
+    <h4>v26.107 — 🎨 CLKKY STUDIO</h4>
     • The team is now CLKKY STUDIO: new logo in the ending credits and on the CLKKY cape.
     <h4>v26.106 — 🔑 Login fix</h4>
     • Logging in with a nickname set before v26.105 used to say it doesn't exist. Now the first login with an old nickname turns it into an account with that password (its capes are kept). Nickname case no longer matters.
@@ -2915,9 +2921,11 @@ const dayU={value:1};
 function lightPatch(mat){mat.onBeforeCompile=s=>{s.uniforms.uDay=dayU;s.fragmentShader='uniform float uDay;\n'+s.fragmentShader.replace('#include <color_fragment>','diffuseColor.rgb *= max(vColor.r*uDay, vColor.g) * vColor.b;');};}
 const LAMP_R=8.5;
 function lampsNear(ch){const L=[];for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const c=getChunk(ch.cx+dx,ch.cz+dz);if(c)for(const l of c.lamps)L.push(l);}return L;}
-function meshInputs(ch){const datas=[],hms=[];for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const c=getChunk(ch.cx+dx,ch.cz+dz);datas.push(c?c.data:null);hms.push(c?c.hm:null);}return {datas,hms,lamps:lampsNear(ch)};}
+function meshInputs(ch){const datas=[],hms=[],pl=[];if(!NATB)natTable();for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const c=getChunk(ch.cx+dx,ch.cz+dz);datas.push(c?c.data:null);hms.push(c?c.hm:null);
+  const m=mods.get(ckey(ch.cx+dx,ch.cz+dz));let L=null;if(m)for(const [i,id] of m)if(NATB[id])(L||(L=[])).push(i);pl.push(L);} // 플레이어가 놓은 흙·돌 (네모로 그림)
+  return {datas,hms,lamps:lampsNear(ch),pl};}
 function buildMesh(ch){ // 즉시 다시 그림 (블록을 부수거나 놓을 때)
-  const q=meshInputs(ch);applyMesh(ch,meshCore(ch.cx,ch.cz,q.datas,q.hms,q.lamps,caveB));
+  const q=meshInputs(ch);applyMesh(ch,meshCore(ch.cx,ch.cz,q.datas,q.hms,q.lamps,caveB,q.pl));
   ch.needsMesh=false;ch.ver=(ch.ver||0)+1; // 진행 중인 워커 결과는 낡은 것으로 처리
 }
 function applyMesh(ch,r){
@@ -3831,7 +3839,7 @@ onmessage=e=>{const j=e.data;
   const hk=JSON.stringify(j.hv||null);if(hk!==hvKey){hvKey=hk;world.homeVillage=j.hv||null;VCACHE.clear();}
   world.dim=j.dim;
   if(j.t==='gen'){const data=new Uint16Array(16*16*CH);GEN[j.dim](data,j.cx,j.cz);applyCarves(data,j.cx,j.cz,j.cv);postMessage({id:j.id,data},[data.buffer]);}
-  else{const r=meshCore(j.cx,j.cz,j.datas,j.hms,j.lamps,j.caveB);postMessage({id:j.id,r},[r.NP.buffer,r.NU.buffer,r.NT.buffer,r.NC.buffer,r.NI.buffer,r.P.buffer,r.U.buffer,r.C.buffer,r.I.buffer,r.WP.buffer,r.WU.buffer,r.WC.buffer,r.WI.buffer,r.LP.buffer,r.LU.buffer,r.LC.buffer,r.LI.buffer,r.GP.buffer,r.GU.buffer,r.GC.buffer,r.GI.buffer]);}
+  else{const r=meshCore(j.cx,j.cz,j.datas,j.hms,j.lamps,j.caveB,j.pl);postMessage({id:j.id,r},[r.NP.buffer,r.NU.buffer,r.NT.buffer,r.NC.buffer,r.NI.buffer,r.P.buffer,r.U.buffer,r.C.buffer,r.I.buffer,r.WP.buffer,r.WU.buffer,r.WC.buffer,r.WI.buffer,r.LP.buffer,r.LU.buffer,r.LC.buffer,r.LI.buffer,r.GP.buffer,r.GU.buffer,r.GC.buffer,r.GI.buffer]);}
 };`;
     const url=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
     WK=new Worker(url);WK.onmessage=onWorkerMsg;WK.onerror=e=>{console.warn('워커를 쓸 수 없어 메인 스레드로 처리합니다',e.message);stopWorker();};
@@ -3862,7 +3870,7 @@ function workerChunks(pcx,pcz){
     const c=getChunk(pcx+dx,pcz+dz);
     if(c&&c.needsMesh&&!c.meshPending&&hasNeighbors(c.cx,c.cz)){
       const q=meshInputs(c);c.needsMesh=false;c.meshPending=true;wMeshN++;
-      wPost({t:'mesh',ch:c,ver:c.ver},{t:'mesh',cx:c.cx,cz:c.cz,datas:q.datas,hms:q.hms,lamps:q.lamps,caveB});
+      wPost({t:'mesh',ch:c,ver:c.ver},{t:'mesh',cx:c.cx,cz:c.cz,datas:q.datas,hms:q.hms,lamps:q.lamps,caveB,pl:q.pl});
     }
   }
 }
