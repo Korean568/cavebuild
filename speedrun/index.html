@@ -295,7 +295,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.112 — ⏱ 스피드런 공정하게</h4>
+    <h4>🆕 v26.113 — 🏆 내 등수</h4>
+    • 스피드런 랭킹(허브 · 게임 타이틀)에 <b>내 등수와 내 최고 기록</b>이 보여요 (상위 50명 밖이어도).
+    <h4>v26.112 — ⏱ 스피드런 공정하게</h4>
     • 스피드런 기록을 이제 <b>서버가 직접 재요</b>: 세계를 만들 때 서버가 시작 시각을 적어 두고, 엔딩 뒤 <b>저장하고 타이틀로</b>를 누르면 그 사이 시간이 랭킹에 올라가요 (가짜 기록을 보낼 수 없어요 · 한 세계에 한 번).<br>
     • 스피드런에서는 <b>크리에이티브 · 관전 모드를 쓸 수 없어요</b> (서바이벌만).
     <h4>v26.111 — ⏱ 스피드런 모드 · 💥 침대 폭발</h4>
@@ -1653,7 +1655,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.112 — ⏱ Fair speedruns</h4>
+    <h4>🆕 v26.113 — 🏆 My rank</h4>
+    • The speedrun ranking (hub and title) now shows your own rank and best time.
+    <h4>v26.112 — ⏱ Fair speedruns</h4>
     • Speedrun times are now measured by the server (start recorded when the world is made, end when you save & quit after the ending), so fake times can't be submitted. Creative and spectator modes are disabled in speedrun.
     <h4>v26.111 — ⏱ Speedrun mode · 💥 Exploding beds</h4>
     • Speedrun mode (hub list, login only): the debug screen is always on with a stopwatch at the bottom; it stops at the ending, and Save & Quit uploads your time to the ranking. Speedrun worlds are saved separately.<br>
@@ -7176,9 +7180,9 @@ $('btnSave').onclick=()=>{saveGame().then(ok=>{if(ok)toast('저장되었습니�
 const HOME_URL='https://korean568.github.io/cavebuildhome/';
 $('btnWard').onclick=openWard; // 👕 탈의실
 async function openRank(){const el=$('wdIn');el.innerHTML='<h2>🏆 스피드런 랭킹</h2><p style="text-align:center">불러오는 중…</p>';$('wardUI').classList.add('show');wdEdit=null;wdReq=null;wdTool=false; // 사람마다 가장 빠른 기록
-  let rows='';try{const d=await cbApi({action:'sr_top'}),me=nickNow();rows=d.top.length?d.top.map((r,i)=>`<tr style="${r.nick===me?'background:#2f4a2a':''}"><td style="padding:4px 10px;text-align:right">${i<3?['🥇','🥈','🥉'][i]:i+1}</td><td style="padding:4px 10px">${String(r.nick).replace(/</g,'&lt;')}</td><td style="padding:4px 10px;font-family:monospace">${fmtT(r.ms)}</td></tr>`).join(''):'<tr><td style="padding:10px">아직 기록이 없어요. 첫 완주자가 되어 보세요!</td></tr>';}
+  let rows='',mine='';try{const d=await cbApi({action:'sr_top',token:accToken()||undefined}),me=nickNow();mine=d.me?(d.me.rank?`👤 내 등수: <b>${d.me.rank}등</b> · ${fmtT(d.me.best)}`:'👤 아직 완주 기록이 없어요'):'🔑 로그인하면 내 등수가 보여요';rows=d.top.length?d.top.map((r,i)=>`<tr style="${r.nick===me?'background:#2f4a2a':''}"><td style="padding:4px 10px;text-align:right">${i<3?['🥇','🥈','🥉'][i]:i+1}</td><td style="padding:4px 10px">${String(r.nick).replace(/</g,'&lt;')}</td><td style="padding:4px 10px;font-family:monospace">${fmtT(r.ms)}</td></tr>`).join(''):'<tr><td style="padding:10px">아직 기록이 없어요. 첫 완주자가 되어 보세요!</td></tr>';}
   catch(e){rows=`<tr><td style="padding:10px;color:#ff8a8a">❌ ${e.message}</td></tr>`;}
-  el.innerHTML=`<h2>🏆 스피드런 랭킹</h2><p style="text-align:center;font-size:13px;color:#aaa">엔딩까지 걸린 시간 · 사람마다 가장 빠른 기록</p><table style="margin:0 auto;border-collapse:collapse;font-size:15px">${rows}</table><div style="text-align:center"><button class="wb gray" id="rkClose">닫기</button></div>`;$('rkClose').onclick=closeWard;}
+  el.innerHTML=`<h2>🏆 스피드런 랭킹</h2><p style="text-align:center;font-size:13px;color:#aaa">엔딩까지 걸린 시간 · 사람마다 가장 빠른 기록</p><table style="margin:0 auto;border-collapse:collapse;font-size:15px">${rows}</table>${mine?`<p style="text-align:center;background:rgba(255,208,64,.15);border-radius:6px;padding:6px;margin:10px auto;max-width:360px">${mine}</p>`:''}<div style="text-align:center"><button class="wb gray" id="rkClose">닫기</button></div>`;$('rkClose').onclick=closeWard;}
 $('btnRank').onclick=openRank;
 if(SPEEDRUN){$('srBanner').style.display='block';$('btnRank').style.display='';
   try{const m=JSON.parse(localStorage.getItem('cb-sr-msg')||'null');if(m){localStorage.removeItem('cb-sr-msg');setTimeout(()=>{toast(`⏱ 서버 기록 <b>${fmtT(m.ms)}</b> 올림! 내 최고 ${fmtT(m.best)} · <b>${m.rank}등</b>`);openRank();},900);}}catch(e){}}
