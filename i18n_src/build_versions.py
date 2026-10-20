@@ -19,3 +19,7 @@ g=g.replace('<meta charset="utf-8">','<meta charset="utf-8">\n<base href="../">'
 os.makedirs(os.path.join(ROOT,'noejeol'),exist_ok=True)
 open(os.path.join(ROOT,'noejeol','index.html'),'w',encoding='utf-8',newline='\n').write(g)
 print('noejeol ok')
+# 스피드런 모드: 같은 게임을 cavebuild/speedrun/ 으로 (디버그 화면 · 스톱워치 · 랭킹, 세계는 따로 저장)
+os.makedirs(os.path.join(ROOT,'speedrun'),exist_ok=True)
+open(os.path.join(ROOT,'speedrun','index.html'),'w',encoding='utf-8',newline='\n').write(g)
+print('speedrun ok')
