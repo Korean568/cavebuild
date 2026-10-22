@@ -1,0 +1,1 @@
+{ "name": "cavebuild-mp", "private": true, "scripts": { "deploy": "wrangler deploy" } }

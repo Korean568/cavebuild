@@ -297,7 +297,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.114 — 🌐 멀티플레이</h4>
+    <h4>🆕 v26.115 — 🌐 멀티플레이 중계 서버</h4>
+    • 멀티플레이 연결을 <b>Cloudflare 중계 서버</b>로 바꿨어요. 컴퓨터끼리 직접 잇지 않아서 학교 · 회사 와이파이나 모바일 데이터에서도 친구 세계에 잘 들어가져요.
+    <h4>v26.114 — 🌐 멀티플레이</h4>
     • <b>친구와 같은 세계</b>에서 놀 수 있어요! 일시정지 → <b>🌐 멀티플레이</b> → <b>방 열기</b>를 누르면 6자리 방 코드가 나와요.<br>
     • 친구는 타이틀 → 플레이 → <b>🌐 친구 세계 참가</b>에 코드를 넣으면 들어와요. 서로의 캐릭터 (스킨 · 망토 · 닉네임 · 든 아이템), 부수고 놓은 블록, 낮과 밤이 함께 보여요.<br>
     • <b>T</b> (모바일은 💬): 채팅. 친구의 인벤토리 · 위치는 방장 세계에 저장돼서 다시 들어오면 이어서 할 수 있어요.<br>
@@ -1667,7 +1669,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.114 — 🌐 Multiplayer</h4>
+    <h4>🆕 v26.115 — 🌐 Multiplayer relay server</h4>
+    • Multiplayer now connects through a Cloudflare relay server instead of direct peer-to-peer, so joining works on school/office Wi-Fi and mobile data.
+    <h4>v26.114 — 🌐 Multiplayer</h4>
     • Play in the same world with friends! Pause → 🌐 Multiplayer → Open room shows a 6-letter room code; friends enter it under Title → Play → 🌐 Join a friend's world. Players (skin, cape, nickname, held item), block changes and day/night are shared. T (💬 on mobile): chat. Guests' inventory and position are saved in the host's world. Mobs and chest contents are not shared yet; multiplayer is off in speedrun.
     <h4>v26.113 — 🏆 My rank</h4>
     • The speedrun ranking (hub and title) now shows your own rank and best time.
@@ -3853,7 +3857,7 @@ function updateLiquids(dt){
     for(const kk of batch){const [cx,cz]=kk.split(',').map(Number);remeshAt(cx,cz);}
   }
 }
-const MP={on:false,host:false,code:'',peer:null,hc:null,conns:new Set(),peers:new Map(),q:[],pend:[],rx:0,lq:0,chat:false,pt:0,tt:0,st:0,gid:0,me:null,hostNick:''}; // 🌐 멀티플레이 상태 (setBlock보다 먼저)
+const MP={on:false,host:false,code:'',ws:null,hc:null,conns:new Set(),peers:new Map(),q:[],pend:[],rx:0,lq:0,chat:false,pt:0,tt:0,st:0,gid:0,me:null,hostNick:''}; // 🌐 멀티플레이 상태 (setBlock보다 먼저)
 function setBlock(x,y,z,id,batch){try{GDN.clear();}catch(e){} // 지형 높이 캐시 비움
   if(y<0||y>=CH)return;const cx=x>>4,cz=z>>4,c=getChunk(cx,cz);if(!c)return;
   const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;if(BOMB_BLK[old]||BOMB_BLK[id]||old===SIGN||id===SIGN||old===ANVIL||id===ANVIL||old===GAS_STOVE||id===GAS_STOVE||old===STOCKPOT||id===STOCKPOT||old===FOOD_PLATE||id===FOOD_PLATE)nukeScan(c);if(old===FOOD_PLATE&&id!==FOOD_PLATE)plateDrop(x,y,z);if(old===STOCKPOT&&id!==STOCKPOT)potDrop(x,y,z);if(old===ANVIL&&id!==ANVIL)anvilDrop(x,y,z);if(old===GAS_STOVE&&id!==GAS_STOVE)stoveDrop(x,y,z);if(old!==id&&world.paint)delete world.paint[world.dim+':'+x+','+y+','+z];if(old===SIGN&&id!==SIGN&&world.signs)delete world.signs[signKey(x,y,z)];calcHM(c,lx,lz);c.ver++; // 핵폭탄 · 원자폭탄 · 차르 봄바 모델 갱신
@@ -7325,9 +7329,14 @@ function updateGrassField(dt){
     for(let k=0;k<(MOBILE?1:2)&&n<4200;k++){const h=Math.imul(wx*2+k,374761393)^Math.imul(wz,668265263),r1=((h>>>8)&1023)/1023,r2=((h>>>18)&1023)/1023;
       Q.setFromAxisAngle(Y,r1*6.28);const sc=(.75+.5*r2)*fade;const gx=wx+.25+.5*r1,gz=wz+.25+.5*r2;M.compose(V.set(gx,surfY(gx,gz,y+1)-.03,gz),Q,S.set(sc,sc*(.8+.5*r1),sc));GF.mesh.setMatrixAt(n++,M);}}
   GF.mesh.count=n;GF.mesh.instanceMatrix.needsUpdate=true;}
-// ---------- 🌐 멀티플레이 (방 코드 · PeerJS로 컴퓨터끼리 바로 연결 · 방장 세계를 함께) ----------
+// ---------- 🌐 멀티플레이 (방 코드 · Cloudflare 중계 서버 · 방장 세계를 함께) ----------
 const mpL=(ko,en)=>LANG==='en'?en:ko,mpEsc=t=>String(t==null?'':t).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
-function mpLib(){return window.Peer?Promise.resolve():new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js';sc.onload=res;sc.onerror=()=>rej(new Error(mpL('연결 도구를 불러오지 못했어요','Could not load the connection library')));document.head.appendChild(sc);});}
+const MP_RELAY='wss://cavebuild-mp.zombie-killer-match.workers.dev'; // Cloudflare 중계 서버 (CAVEBUILD/mpserver)
+function mpPack(o){const s=JSON.stringify(o);if(s.length<=200000)return [s];const k=Math.random().toString(36).slice(2),n=Math.ceil(s.length/200000),R=[]; // 큰 메시지(세계)는 잘라서
+  for(let i=0;i<n;i++)R.push(JSON.stringify({t:'_ch',k,i,n,s:s.slice(i*200000,(i+1)*200000)}));return R;}
+function mpUnpack(B,raw){let d;try{d=JSON.parse(raw);}catch(e){return null;}if(!d||d.t!=='_ch')return d; // 잘린 조각을 다시 이어 붙임
+  const a=B[d.k]||(B[d.k]=[]);a[d.i]=d.s;a.c=(a.c||0)+1;if(a.c<d.n)return null;delete B[d.k];try{return JSON.parse(a.join(''));}catch(e){return null;}}
+function mpWS(code,role){const ws=new WebSocket(MP_RELAY+'/room/'+code+'?role='+role);ws.ping=setInterval(()=>{try{ws.readyState===1&&ws.send('p');}catch(e){}},20000);ws.addEventListener('close',()=>clearInterval(ws.ping));return ws;}
 function mpMe(){const capeOn=!!CAPES[WARD.cape]&&accOwned().includes(WARD.cape);return {nick:nickNow()||((LANG==='en'?'Guest':'손님')+(1000+Math.random()*9000|0)),skin:skinNow||DEFAULT_SKIN,cape:capeOn?WARD.cape:''};}
 function mpOk(){if(SPEEDRUN){toast(mpL('⏱ 스피드런에서는 멀티플레이를 할 수 없어요 (랭킹 때문)','⏱ Multiplayer is off in speedrun'));return false;}
   if(!CB_ONSITE){toast(mpL('🌐 멀티플레이는 게임 주소(korean568.github.io/cavebuild)에서만 돼요','🌐 Multiplayer only works on the game site'));return false;}return true;}
@@ -7351,20 +7360,22 @@ function mpApply(L){MP.rx=1;try{for(const [d,x,y,z,id] of L){if(y<0||y>=CH)conti
 function mpPos(P,o){P.t=o;if(o.s&&P.sw<=0)P.sw=1;}
 function mpChatShow(n,m){toast(`💬 <b>${mpEsc(n)}</b>: ${mpEsc(m)}`);}
 // 방장: 방 열기 → 친구가 들어오면 세계를 통째로 보내 줌
-function mpHost(){if(!mpOk()||MP.on)return;MP.me=mpMe();renderMP(mpL('방을 여는 중…','Opening room…'));
-  mpLib().then(()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];
-    const peer=new Peer('cavebuild-mp-'+code);MP.peer=peer;
-    peer.on('open',()=>{MP.on=MP.host=true;MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 Room open! Code: <b>${code}</b>`));});
-    peer.on('error',e=>{if(e.type==='unavailable-id'){peer.destroy();MP.peer=null;mpHost();return;}toast('🌐 '+mpL('연결 문제','Connection problem')+': '+mpEsc(e.type||e.message));if(!MP.on){peer.destroy();MP.peer=null;renderMP();}});
-    peer.on('disconnected',()=>{if(MP.on&&!peer.destroyed)try{peer.reconnect();}catch(e){}}); // 중계 서버와 끊겨도 이미 들어온 친구는 그대로
-    peer.on('connection',c=>{MP.conns.add(c);
-      c.on('data',d=>mpHostRecv(c,d));
-      c.on('close',()=>{MP.conns.delete(c);if(c.P){mpDel(c.P.id);mpSend({t:'leave',id:c.P.id});toast(mpL(`🌐 <b>${mpEsc(c.P.nick)}</b> 님이 나갔어요`,`🌐 <b>${mpEsc(c.P.nick)}</b> left`));renderMP();}});
-      c.on('error',()=>{});});
-  }).catch(e=>{toast('🌐 '+mpEsc(e.message));renderMP();});}
+function mpHost(){if(!mpOk()||MP.on||MP.ws)return;MP.me=mpMe();renderMP(mpL('방을 여는 중…','Opening room…'));
+  const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];
+  const ws=mpWS(code,'host'),byId=new Map();MP.ws=ws;
+  ws.onmessage=ev=>{const s=ev.data;if(typeof s!=='string')return;
+    if(s[0]==='{'){const d=JSON.parse(s);if(d.t==='_ok'){MP.on=MP.host=true;MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 Room open! Code: <b>${code}</b>`));}
+      else if(d.t==='_err'){ws.onclose=null;MP.ws=null;if(d.m==='taken')mpHost();else{toast('🌐 '+mpEsc(d.m));renderMP();}}return;}
+    const i=s.indexOf('|'),gid=s.slice(0,i),raw=s.slice(i+1);
+    if(raw==='{"t":"_join"}'){const c={id:gid,open:true,B:{},send(o){if(!this.open||ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(gid+'|'+x);},close(){this.open=false;}}; // 친구 한 명 = 가짜 연결
+      byId.set(gid,c);MP.conns.add(c);return;}
+    const c=byId.get(gid);if(!c)return;
+    if(raw==='{"t":"_leave"}'){byId.delete(gid);c.open=false;MP.conns.delete(c);if(c.P){mpDel(c.P.id);mpSend({t:'leave',id:c.P.id});toast(mpL(`🌐 <b>${mpEsc(c.P.nick)}</b> 님이 나갔어요`,`🌐 <b>${mpEsc(c.P.nick)}</b> left`));renderMP();}return;}
+    const d=mpUnpack(c.B,raw);if(d)mpHostRecv(c,d);};
+  ws.onclose=()=>{if(MP.ws!==ws)return;const was=MP.on;MP.ws=null;if(was){toast(mpL('🌐 중계 서버와 연결이 끊겨서 방이 닫혔어요','🌐 Lost the relay server — room closed'));mpStop();}else{toast(mpL('🌐 중계 서버에 연결하지 못했어요','🌐 Could not reach the relay server'));renderMP();}};}
 function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   if(d.t==='hi'){if(!running)return;const nick=String(d.nick||'?').slice(0,16);
-    if(nick===MP.me.nick||[...MP.conns].some(x=>x.P&&x.P.nick===nick)){c.send({t:'no',m:mpL('같은 닉네임이 이미 방에 있어요','That nickname is already in the room')});setTimeout(()=>c.close(),500);return;}
+    if(nick===MP.me.nick||[...MP.conns].some(x=>x.P&&x.P.nick===nick)){c.send({t:'no',m:mpL('같은 닉네임이 이미 방에 있어요','That nickname is already in the room')});return;}
     const P={id:'g'+(++MP.gid),nick,skin:typeof d.skin==='string'&&d.skin.length<200000?d.skin:'',cape:CAPES[d.cape]?d.cape:''};
     let sn;try{sn=toPortable(saveSnapshot());}catch(e){c.send({t:'no',m:'세계를 보내지 못했어요'});return;}
     const st=(world.mpp||{})[nick];
@@ -7377,26 +7388,25 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='b'&&Array.isArray(d.L)){mpApply(d.L);mpSend(d,c);}
   else if(d.t==='c'){const m=String(d.m||'').slice(0,80);mpChatShow(c.P.nick,m);mpSend({t:'c',n:c.P.nick,m},c);}
   else if(d.t==='st'){(world.mpp||(world.mpp={}))[c.P.nick]={inv:d.inv,armor:d.armor,p:d.p,dim:d.dim};}}
-function mpStop(){mpSend({t:'bye'});const pe=MP.peer;setTimeout(()=>{for(const c of MP.conns)try{c.close();}catch(e){}MP.conns.clear();try{pe&&pe.destroy();}catch(e){}},300);
-  for(const id of [...MP.peers.keys()])mpDel(id);Object.assign(MP,{on:false,host:false,code:'',peer:null,hc:null,q:[],pend:[]});document.body.classList.remove('mpon');renderMP();}
+function mpStop(){mpSend({t:'bye'});const ws=MP.ws;MP.ws=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);MP.conns.clear();
+  for(const id of [...MP.peers.keys()])mpDel(id);Object.assign(MP,{on:false,host:false,code:'',hc:null,q:[],pend:[]});document.body.classList.remove('mpon');renderMP();}
 // 친구: 방 코드로 참가 → 방장 세계를 받아서 시작 (내 PC에는 저장 안 함 · 방장이 저장)
 function mpJoin(code){code=String(code||'').trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){toast(mpL('🌐 방 코드 6자리를 넣어 주세요','🌐 Enter the 6-letter room code'));return;}
-  if(!mpOk()||MP.on||running)return;MP.me=mpMe();audio();toast(mpL('🌐 방에 연결하는 중…','🌐 Connecting…'));
-  mpLib().then(()=>{const peer=new Peer();MP.peer=peer;let got=false;
-    const fail=m=>{if(got)return;toast('🌐 '+m);try{peer.destroy();}catch(e){}MP.peer=null;};
-    const tm=setTimeout(()=>fail(mpL('방에 연결하지 못했어요 (코드를 확인하거나 잠시 뒤 다시)','Could not reach the room')),20000);
-    peer.on('error',e=>{clearTimeout(tm);if(MP.on)return;fail(e.type==='peer-unavailable'?mpL('그 코드의 방이 없어요','No room with that code'):mpL('연결 문제: ','Connection problem: ')+mpEsc(e.type||e.message));});
-    peer.on('open',()=>{const c=peer.connect('cavebuild-mp-'+code,{reliable:true});MP.hc=c;
-      c.on('open',()=>c.send({t:'hi',...MP.me}));
-      c.on('data',d=>{if(!d||typeof d!=='object')return;
-        if(d.t==='no'){clearTimeout(tm);fail(mpEsc(d.m));return;}
-        if(d.t==='world'){clearTimeout(tm);got=true;MP.code=code;MP.hostNick=d.host;const sv=d.snap;if(!validSave(sv)){toast('🌐 세계를 받지 못했어요');return;}
-          sv.name=mpL(`🌐 ${d.host} 님의 세계`,`🌐 ${d.host}'s world`);$('playPanel').classList.remove('show');goFull();
-          startWorld(sv,()=>{CUR=null;MP.on=true;MP.host=false;document.body.classList.add('mpon');for(const o of d.players||[])mpAdd(o);
-            const L=MP.pend;MP.pend=[];for(const o of L)mpGuestRecv(o);toast(mpL(`🌐 <b>${mpEsc(d.host)}</b> 님의 세계에 들어왔어요! T: 채팅`,`🌐 Joined <b>${mpEsc(d.host)}</b>'s world! T: chat`));});return;}
-        if(!MP.on){MP.pend.push(d);return;}mpGuestRecv(d);});
-      c.on('close',()=>{if(MP.on)mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));else fail(mpL('연결이 끊겼어요','Disconnected'));});});
-  }).catch(e=>toast('🌐 '+mpEsc(e.message)));}
+  if(!mpOk()||MP.on||running||MP.ws)return;MP.me=mpMe();audio();toast(mpL('🌐 방에 연결하는 중…','🌐 Connecting…'));
+  const ws=mpWS(code,'guest'),B={};MP.ws=ws;let got=false;
+  const fail=m=>{if(got)return;toast('🌐 '+m);ws.onclose=null;try{ws.close();}catch(e){}MP.ws=null;MP.hc=null;};
+  MP.hc={get open(){return ws.readyState===1;},send(o){if(ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(x);}};
+  const tm=setTimeout(()=>fail(mpL('방에 연결하지 못했어요 (잠시 뒤 다시 해 보세요)','Could not reach the room')),25000);
+  ws.onmessage=ev=>{const d=mpUnpack(B,ev.data);if(!d||typeof d!=='object')return;
+    if(d.t==='_ok'){ws.send(JSON.stringify({t:'hi',...MP.me}));return;}
+    if(d.t==='_err'){clearTimeout(tm);fail(d.m==='none'?mpL('그 코드의 방이 없어요','No room with that code'):d.m==='full'?mpL('방이 꽉 찼어요','The room is full'):mpEsc(d.m));return;}
+    if(d.t==='no'){clearTimeout(tm);fail(mpEsc(d.m));return;}
+    if(d.t==='world'){clearTimeout(tm);got=true;MP.code=code;MP.hostNick=d.host;const sv=d.snap;if(!validSave(sv)){toast('🌐 세계를 받지 못했어요');return;}
+      sv.name=mpL(`🌐 ${d.host} 님의 세계`,`🌐 ${d.host}'s world`);$('playPanel').classList.remove('show');goFull();
+      startWorld(sv,()=>{CUR=null;MP.on=true;MP.host=false;document.body.classList.add('mpon');for(const o of d.players||[])mpAdd(o);
+        const Q=MP.pend;MP.pend=[];for(const o of Q)mpGuestRecv(o);toast(mpL(`🌐 <b>${mpEsc(d.host)}</b> 님의 세계에 들어왔어요! T: 채팅`,`🌐 Joined <b>${mpEsc(d.host)}</b>'s world! T: chat`));});return;}
+    if(!MP.on){MP.pend.push(d);return;}mpGuestRecv(d);};
+  ws.onclose=()=>{clearTimeout(tm);MP.ws=null;if(MP.on)mpEnd(mpL('방과 연결이 끊겼어요','Disconnected from the room'));else fail(mpL('연결이 끊겼어요','Disconnected'));};}
 function mpGuestRecv(d){
   if(d.t==='p'){const P=MP.peers.get(d.id);if(P)mpPos(P,d);}
   else if(d.t==='b'&&Array.isArray(d.L))mpApply(d.L);
@@ -7407,7 +7417,7 @@ function mpGuestRecv(d){
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
 function mpEnd(m){if(!MP.on)return;MP.on=false;toast('🌐 '+m+mpL(' — 타이틀로 돌아가요',' — returning to title'));setTimeout(()=>$('btnQuit').click(),2500);}
-function mpBye(){if(!MP.on&&!MP.peer)return;if(MP.host){mpStop();return;}try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}const pe=MP.peer;MP.on=false;setTimeout(()=>{try{pe&&pe.destroy();}catch(e){}},300);}
+function mpBye(){if(!MP.on&&!MP.ws)return;if(MP.host){mpStop();return;}try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}const ws=MP.ws;MP.on=false;MP.ws=null;if(ws)ws.onclose=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);}
 addEventListener('pagehide',()=>{if(MP.on)mpBye();});
 const _mpV=new THREE.Vector3();
 function mpTick(dt){if(!MP.on)return;
@@ -7452,7 +7462,6 @@ $('btnMP').onclick=()=>{renderMP();$('pause').classList.remove('show');$('mpUI')
 $('mpClose').onclick=()=>{$('mpUI').classList.remove('show');if(running)$('pause').classList.add('show');};
 $('mpJoinBtn').onclick=()=>mpJoin($('mpCode').value);
 $('mpCode').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.isComposing)mpJoin($('mpCode').value);});
-
 let srLast=0;const fmtT=ms=>{ms=Math.max(0,ms|0);const h=ms/3600000|0,m=(ms/60000|0)%60,s2=(ms/1000|0)%60;return `${h}:${String(m).padStart(2,'0')}:${String(s2).padStart(2,'0')}.${String(ms%1000).padStart(3,'0')}`;}; // 스톱워치
 function frame(now){
   requestAnimationFrame(frame);
