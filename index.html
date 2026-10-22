@@ -297,7 +297,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.121 — 🏹 석궁</h4>
+    <h4>🆕 v26.122 — 🏹 장전된 석궁 아이콘</h4>
+    • 석궁을 장전하면 아이콘에서도 <b>시위가 뒤로 당겨지고 화살이 걸린</b> 모습으로 바뀌어요.
+    <h4>v26.121 — 🏹 석궁</h4>
     • 새 무기 <b>석궁</b>: 작업대에서 막대기 3 + 실 2 + 철 주괴 1로 만들어요. 우클릭을 누르고 있으면 <b>두 손으로 시위를 당겨 장전</b>하고 (1.25초, 화살 1개), 다시 우클릭하면 쏴요. 활보다 세고 화살이 빨라요. 장전한 채로 들고 다닐 수 있고, 멀티플레이 친구 화면에도 장전 자세가 보여요.
     <h4>v26.120 — 🏹 두 손으로 활 당기기</h4>
     • 활을 들고 우클릭을 누르고 있으면 <b>두 손으로 활시위를 당겨요</b>. 1인칭에서는 왼손이 시위를 뒤로 당기고, 3인칭과 멀티플레이 친구 화면에서는 두 팔을 앞으로 뻗어 당기는 자세가 보여요 (쏘고 나면 다시 당김).
@@ -1683,7 +1685,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.121 — 🏹 Crossbow</h4>
+    <h4>🆕 v26.122 — 🏹 Loaded crossbow icon</h4>
+    • A loaded crossbow now shows a drawn string and an arrow in its icon.
+    <h4>v26.121 — 🏹 Crossbow</h4>
     • New weapon: Crossbow (workbench: 3 sticks + 2 string + 1 iron ingot). Hold right-click to load it with both hands (1.25s, uses an arrow), then right-click again to fire — stronger and faster than a bow. It stays loaded while carried, and other players see the pose in multiplayer.
     <h4>v26.120 — 🏹 Two-handed bow draw</h4>
     • Holding right-click with a bow now draws it with both hands: in first person your left hand pulls the string, and in third person (and for other players in multiplayer) both arms aim forward.
@@ -2631,6 +2635,11 @@ function armorIcon(part,m){
     return y<=(part===3?8:3)?m.l:(x===3||x===12||x===1||x===14)?m.d:m.c;
   });
 }
+function crossbowIcon(L){return pixelIcon((X,Y)=>{const ln=(ax,ay,bx,by,w)=>{const dx=bx-ax,dy=by-ay,t=Math.max(0,Math.min(1,((X-ax)*dx+(Y-ay)*dy)/(dx*dx+dy*dy)));return Math.hypot(X-ax-dx*t,Y-ay-dy*t)<w;}; // 석궁 아이콘 (L: 장전됨 → 시위가 뒤로 당겨지고 화살이 걸림)
+  const sx=L?6.3:8.3,sy=L?9.7:7.7;
+  if(L&&ln(11.6,4.4,13.4,2.6,.8))return '#e8e8f0';if(L&&ln(6.3,9.7,11.6,4.4,.5))return '#c9a46a';
+  if(ln(5,3,13,11,.75))return '#5a5a62';if(ln(3,13,11.5,4.5,.85))return (X+Y)%3<1?'#6a4422':'#8a5a2a';if(ln(5,3,sx,sy,.4)||ln(13,11,sx,sy,.4))return '#dddddd';return null;});}
+let ICON_CBL=null; // 장전된 석궁 아이콘
 function itemIcon(id){
   if(PAINT_COL[id]){const pc=PAINT_COL[id];return pixelIcon((X,Y,x,y)=>{ // 페인트 양동이: 회색 통 · 위에 물감 · 손잡이
     if(y>=1&&y<=3&&(x===3||x===12)||y===1&&x>3&&x<12)return '#55585f';const hw=5.5-(y-5)*.2;if(y>=5&&y<=14&&Math.abs(X-8)<=hw){if(y<=6)return pc;return x===Math.round(8-hw)||y===14?'#6a6e78':'#9aa0aa';}return null;});}
@@ -2647,8 +2656,7 @@ function itemIcon(id){
     case SPIKE:return pixelIcon((X,Y)=>{const dx=X-12.5,dy=Y-3.5,a=(dx-dy)*Math.SQRT1_2,b=(dx+dy)*Math.SQRT1_2;const w=(1.5-a)*.22;if(a<1.5&&a>-11&&Math.abs(b)<w)return b>0?'#a89870':'#ece0bc';return null;});
     case SILK:return pixelIcon((X,Y)=>{const r1=Math.abs(Math.hypot(X-8,Y-8)-4.5),r2=Math.abs(Math.hypot(X-6,Y-9)-2.6),r3=Math.abs(Math.hypot(X-10.5,Y-6.5)-2.2);return r1<.6||r2<.55||r3<.55?'#eeeef6':null;});
     case ROTTEN:return pixelIcon((X,Y,x,y)=>{if(((X-8.5)/6)**2+((Y-8.5)/4.6)**2>1)return null;return (x*7+y*3)%9===0?'#3e4a22':(x+y)%5===0?'#a8a070':'#7a8a4a';});
-    case CROSSBOW:return pixelIcon((X,Y)=>{const ln=(ax,ay,bx,by,w)=>{const dx=bx-ax,dy=by-ay,t=Math.max(0,Math.min(1,((X-ax)*dx+(Y-ay)*dy)/(dx*dx+dy*dy)));return Math.hypot(X-ax-dx*t,Y-ay-dy*t)<w;};
-      if(ln(5,3,13,11,.75))return '#5a5a62';if(ln(3,13,11.5,4.5,.85))return (X+Y)%3<1?'#6a4422':'#8a5a2a';if(ln(5,3,9,9,.4)||ln(13,11,9,9,.4))return '#dddddd';return null;});
+    case CROSSBOW:return crossbowIcon(0);
     case BOW:return pixelIcon((X,Y)=>{const d=Math.hypot(X-14,Y-14);if(X<14&&Y<14&&Math.abs(d-10.5)<.9)return d>10.5?'#5a3a1a':'#8a5a2a';if(X<13.8&&Y<13.8&&X>3&&Y>3&&Math.abs(X+Y-17.5)<.55)return '#dddddd';return null;});
     case ARROW:return pixelIcon((X,Y)=>{const dx=X-10.5,dy=Y-5.5,a=(dx-dy)*Math.SQRT1_2,b=(dx+dy)*Math.SQRT1_2;if(a>=2&&a<5&&Math.abs(b)<(5-a)*.6)return '#d0d0d0';if(a>-11&&a<2&&Math.abs(b)<.55)return '#8a6a44';if(a>-11&&a<-7.5&&Math.abs(b)<1.9)return '#9cc46a';return null;});
     case POTION:return pixelIcon((X,Y,x,y)=>{if(y===2&&x>=7&&x<=8)return '#8a5a2a';if(y>=3&&y<=5&&x>=7&&x<=8)return '#d8ecff';const d=Math.hypot(X-8,Y-10.5);if(d<4.6){if(d>3.9)return '#d8ecff';if(Y<8.2)return '#e8f4ff';return Math.hypot(X-6.5,Y-9.5)<1?'#fff6c0':'#ffc830';}return null;});
@@ -6760,7 +6768,7 @@ function renderStats(){
   let a='';if(ap>0)for(let i=0;i<10;i++){const v=ap-i*2;a+=`<div class="icon" style="background-image:url(${v>=2?IC.arm:v===1?IC.armH:IC.armE})"></div>`;}
   $('hearts').innerHTML=h+'</div>';$('foodrow').innerHTML=f;$('airrow').innerHTML=b;$('armorrow').innerHTML=a;
 }
-function slotImg(s){const u=ICON[s.id];return `<img src="${u}">`+(s.col?`<i class="dye" style="background:${s.col};-webkit-mask-image:url(${u});mask-image:url(${u})"></i>`:'');}
+function slotImg(s){const u=s.id===CROSSBOW&&s.loaded?(ICON_CBL||(ICON_CBL=crossbowIcon(1).toDataURL())):ICON[s.id];return `<img src="${u}">`+(s.col?`<i class="dye" style="background:${s.col};-webkit-mask-image:url(${u});mask-image:url(${u})"></i>`:'');}
 function slotHTML(s,i,isSel){
   let inner='';
   if(s){inner=slotImg(s);if(s.count>1)inner+=`<span class="cnt">${s.count}</span>`;
