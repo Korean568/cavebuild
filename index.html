@@ -297,7 +297,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.116 — 🌐 몹 · 상자 함께 · ⚔ PvP</h4>
+    <h4>🆕 v26.117 — 🛡 친구 갑옷이 보여요</h4>
+    • 멀티플레이에서 친구가 입은 <b>갑옷 · 겉날개 · 아이언맨 · 스파이더맨 슈트</b>가 친구 캐릭터에 보여요 (염색한 갑옷 색도 그대로).
+    <h4>v26.116 — 🌐 몹 · 상자 함께 · ⚔ PvP</h4>
     • 멀티플레이에서 <b>몹</b>이 모두에게 똑같이 보여요 (방장 게임이 계산 · 몹이 가까운 친구도 노려요). 방장과 80칸 넘게 떨어지거나 다른 차원에 있으면 그 친구 쪽 몹은 따로 나와요.<br>
     • <b>상자 · 호퍼</b> 속 물건과 <b>바닥에 떨어진 아이템</b>도 함께예요 (한 사람만 주울 수 있어요).<br>
     • <b>⚔ PvP</b>: 친구 캐릭터를 때리거나 활로 맞힐 수 있어요. 떨어지면서 치면 치명타, 달리면서 치면 더 멀리 밀려나요. 쓰러지면 가진 것을 모두 떨어뜨리고, 채팅에 누가 누구에게 당했는지 나와요. 폭발도 근처 친구를 다치게 해요. 방장은 🌐 멀티플레이 창에서 PvP를 끌 수 있어요.
@@ -1673,7 +1675,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.116 — 🌐 Shared mobs & chests · ⚔ PvP</h4>
+    <h4>🆕 v26.117 — 🛡 See friends' armor</h4>
+    • In multiplayer, other players' armor, elytra and suits (with dye colors) are now shown on their characters.
+    <h4>v26.116 — 🌐 Shared mobs & chests · ⚔ PvP</h4>
     • In multiplayer, mobs (simulated by the host), chest/hopper contents and dropped items are now shared. PvP: hit or shoot other players, critical hits when falling, sprint knockback; dying in PvP drops everything and posts a death message. The host can turn PvP off in the 🌐 Multiplayer window.
     <h4>v26.115 — 🌐 Multiplayer relay server</h4>
     • Multiplayer now connects through a Cloudflare relay server instead of direct peer-to-peer, so joining works on school/office Wi-Fi and mobile data.
@@ -4846,13 +4850,13 @@ function capeCanvas(k){if(capeCv[k])return capeCv[k];const c=makeCanvas(256,384)
       g.strokeStyle='#e8458b';g.lineWidth=7;g.strokeRect(9,9,238,366);g.strokeStyle='#0d2f7a';g.lineWidth=4;g.strokeRect(18,18,220,348);const z=214;g.drawImage(im,(256-z)/2,384*.47-z/2,z,z);}else g.drawImage(im,0,0,256,384);res(c);};im.onerror=()=>res(c);im.src=k==='bara'?BARA_LOGO:CAPE_IMG;});return c;}
 const capeMs={};function capeMat(k){k=k||WARD.cape;if(!capeMs[k]){const c=capeCanvas(k),t=new THREE.CanvasTexture(c);t.anisotropy=4;c.ready.then(()=>t.needsUpdate=true);capeMs[k]=new THREE.MeshStandardMaterial({map:t,roughness:.9});}return capeMs[k];}
 function dressAvatar(A){ // 3인칭 몸에 갑옷 입히기 (몸보다 살짝 크게 덮음)
-  const capeOn=!!CAPES[WARD.cape]&&accOwned().includes(WARD.cape); // 망토: 탈의실에서 고르고, 지금 닉네임이 획득한 것만
+  const capeOn=A.capeK!==undefined?!!CAPES[A.capeK]:!!CAPES[WARD.cape]&&accOwned().includes(WARD.cape); // 친구 몸은 친구가 고른 망토 · 망토: 탈의실에서 고르고, 지금 닉네임이 획득한 것만
   for(const m of A.armorParts||[])m.parent&&m.parent.remove(m);A.armorParts=[];
   const add=(par,w,h,d,mat,x,y,z)=>A.armorParts.push(part(par,w,h,d,mat,x,y,z));
   A.cape=null;
-  A.wings=null;if(armor[1]&&(armor[1].id===ELYTRA||armor[1].ely)){const m=capeOn?capeMat():imat('ely',0x8c7cb4,'feather',.7),e=capeOn?capeMat():imat('elyE',0x4a3e62,'feather',.7);A.wings=[]; // 등에 접힌 겉날개 (망토를 입으면 망토 무늬)
+  A.wings=null;if(armor[1]&&(armor[1].id===ELYTRA||armor[1].ely)){const m=capeOn?capeMat(A.capeK):imat('ely',0x8c7cb4,'feather',.7),e=capeOn?capeMat(A.capeK):imat('elyE',0x4a3e62,'feather',.7);A.wings=[]; // 등에 접힌 겉날개 (망토를 입으면 망토 무늬)
     for(const sd of [-1,1]){const w=pivot(A.up,sd*.1,.6,.16);part(w,.36,.7,.04,m,sd*.18,-.33,0);part(w,.04,.8,.05,e,sd*.36,-.38,0);part(w,.24,.2,.045,m,sd*.12,-.75,0);A.wings.push(w);A.armorParts.push(w);}}
-  if(capeOn&&!A.wings){const cp=pivot(A.up,0,.66,.17);part(cp,.5,.86,.025,capeMat(),0,-.43,0);A.cape=cp;A.armorParts.push(cp);} // 망토: 어깨에서 등 뒤로 늘어짐
+  if(capeOn&&!A.wings){const cp=pivot(A.up,0,.66,.17);part(cp,.5,.86,.025,capeMat(A.capeK),0,-.43,0);A.cape=cp;A.armorParts.push(cp);} // 망토: 어깨에서 등 뒤로 늘어짐
   const w0=armor[0],w1=armor[1],suit=!!(w1&&w1.id===IM_SUIT),body=suit||!!(w1&&w1.id===IM_BODY),helm=suit||!!(w0&&w0.id===IM_HEAD);
   if(spiderOn()){const MR=spWebMat(),MB=imat('spBl',0x2a4fc0,'cloth',.95),W=imat('spW',0xffffff,null,.3),K=imat('spK',0x111114,null,.6); // 스파이더맨 슈트: 거미줄 무늬 빨강 · 파랑 옆구리/다리 · 흰 눈 · 가슴 거미
     add(A.head,.5,.5,.5,MR,0,.22,0);for(const sd of [-1,1]){add(A.head,.17,.12,.02,K,sd*.1,.27,-.255);add(A.head,.13,.085,.02,W,sd*.1,.27,-.262);} // 가면 · 눈
@@ -7357,7 +7361,7 @@ function mpAdd(o){mpDel(o.id);const A=mkAvatar(mpSkinTex(o.skin));A.shadow.visib
   const c=makeCanvas(256,64),g=c.getContext('2d'),nk=String(o.nick||'?').slice(0,16);g.font="bold 34px 'Malgun Gothic',sans-serif";const w=Math.min(250,g.measureText(nk).width+26);
   g.fillStyle='rgba(0,0,0,.45)';g.fillRect((256-w)/2,8,w,48);g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.fillText(nk,128,33);
   const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));tag.scale.set(1.2,.3,1);tag.position.y=2.3;A.g.add(tag);
-  if(CAPES[o.cape]){const cp=pivot(A.up,0,.66,.17);part(cp,.5,.86,.025,capeMat(o.cape),0,-.43,0);A.cape=cp;}
+  A.capeK=CAPES[o.cape]?o.cape:''; // 망토 · 갑옷은 받은 정보로 dressAvatar가 입힘
   MP.peers.set(o.id,{id:o.id,nick:nk,A,t:null,sw:0,tag});}
 function mpDel(id){const P=MP.peers.get(id);if(!P)return;scene.remove(P.A.g,P.A.shadow);MP.peers.delete(id);}
 function mpList(){return [...MP.peers.values()].map(P=>P.nick);}
@@ -7451,7 +7455,7 @@ const _mpV=new THREE.Vector3();
 function mpTick(dt){if(!MP.on)return;
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
-    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0};
+    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0)};
     if(MP.host)o.id='H';mpSend(o);}
   if(player.hp<MP.lhp)MP.redT=.35;MP.lhp=player.hp;MP.redT-=dt; // 다치면 친구 화면에서 빨갛게
   MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();}
@@ -7466,6 +7470,8 @@ function mpTick(dt){if(!MP.on)return;
     A.g.rotation.order='YXZ';A.g.rotation.set(0,A.yaw,0);A.up.rotation.x=-.45*(t.c||0);A.head.rotation.set(t.pi+.45*(t.c||0),d,0);
     A.walk+=hs*dt*2.6;const amp=Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);A.legs[0].rotation.x=sw*amp;A.legs[1].rotation.x=-sw*amp;A.arms[0].rotation.set(-sw*amp*.8,0,-.05);
     P.sw=Math.max(0,P.sw-dt*3);const sa=Math.sin(P.sw*Math.PI);A.arms[1].rotation.set((t.h?.3:0)+sw*amp*.8*(t.h?.5:1)+sa*1.5,sa*-.3,.05+sa*.15);
+    {const ak=JSON.stringify(t.ar||0);if(ak!==P.ak){P.ak=ak;const sa=armor;armor=[0,1,2,3].map(i=>{const a=t.ar&&t.ar[i];return Array.isArray(a)&&IT[a[0]]?{id:a[0],col:a[1]||undefined,ely:a[2]?1:undefined}:null;}).concat([null]);try{dressAvatar(A);}catch(e){}finally{armor=sa;}}} // 친구 갑옷 · 겉날개 · 망토
+    if(A.wings)A.wings.forEach((w,i)=>w.rotation.set(-.2,0,(i?1:-1)*.12));
     if(A.cape)A.cape.rotation.x=-(.08+Math.min(.85,hs*.13));
     P.red=(P.red||0)-dt;{const rd=t.r||P.red>0?.6:0;for(const mm of A.mats)mm.emissive.setRGB(rd,0,0);}if(P.tag)P.tag.visible=!t.c; // 맞으면 빨갛게 · 웅크리면 닉네임 숨김
     if(t.h!==A.itemId){A.itemId=t.h;A.hand.clear();if(t.h)try{const it=itemModel(t.h);if(it.grip){it.g.rotation.set(-Math.PI/2,0,Math.PI/2,'ZXY');A.hand.add(it.g);}else{const gm=groundModel(t.h);gm.position.set(0,-.06,-.1);A.hand.add(gm);}}catch(e){}}}}
