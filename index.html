@@ -297,7 +297,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.118 — 🛡 친구 방패 · 활공 날개</h4>
+    <h4>🆕 v26.119 — 🏹 친구 화살이 보여요</h4>
+    • 멀티플레이에서 친구가 활로 쏜 <b>화살</b>과 몹(스켈레톤 등)이 쏜 화살 · 불덩이가 모두에게 날아가는 게 보여요.
+    <h4>v26.118 — 🛡 친구 방패 · 활공 날개</h4>
     • 멀티플레이에서 친구가 든 <b>방패</b>가 보이고, 막으면 몸 앞으로 들어 올려요. 친구가 <b>겉날개로 활공</b>하면 날개를 활짝 펴고 엎드린 자세로, <b>수영</b>하면 헤엄치는 자세로 보여요.
     <h4>v26.117 — 🛡 친구 갑옷이 보여요</h4>
     • 멀티플레이에서 친구가 입은 <b>갑옷 · 겉날개 · 아이언맨 · 스파이더맨 슈트</b>가 친구 캐릭터에 보여요 (염색한 갑옷 색도 그대로).
@@ -1677,7 +1679,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.118 — 🛡 Friends' shields & gliding</h4>
+    <h4>🆕 v26.119 — 🏹 See friends' arrows</h4>
+    • In multiplayer, arrows shot by other players and projectiles from mobs are now visible to everyone.
+    <h4>v26.118 — 🛡 Friends' shields & gliding</h4>
     • In multiplayer, other players' shields (raised when blocking), elytra gliding with spread wings, and swimming poses are now shown.
     <h4>v26.117 — 🛡 See friends' armor</h4>
     • In multiplayer, other players' armor, elytra and suits (with dye colors) are now shown on their characters.
@@ -5325,7 +5329,7 @@ function touchingBlock(e,id){
 // ---------- 발사체 & 폭발 ----------
 const projs=[];
 const PROJ={arrow:{size:[.07,.07,.6],mat:bas(0x9a7a50),grav:8,col:0x9a7a50},shard:{size:[.14,.14,.5],mat:bas(0x5ff3ee),grav:0,col:0x5ff3ee},fire:{size:[.45,.45,.45],mat:bas(0xff6a20),grav:0,col:0xff6a20},void:{size:[.6,.6,.6],mat:bas(0x3ae0d0),grav:0,col:0x3ae0d0}};
-function shoot(kind,pos,dir,speed,dmg,owner,cause){
+function shoot(kind,pos,dir,speed,dmg,owner,cause){if(MP.on&&(owner==='player'||owner==='mob'&&MP.host)){const r=v=>Math.round(v*100)/100;mpSend({t:'sh',k:kind,p:[r(pos.x),r(pos.y),r(pos.z)],v:[r(dir.x*speed),r(dir.y*speed),r(dir.z*speed)]});} // 🌐 쏜 화살을 친구 화면에도 (보이기만 · 피해는 쏜 쪽에서)
   const P=PROJ[kind],mesh=bx(...P.size,P.mat);mesh.position.copy(pos);scene.add(mesh);
   projs.push({kind,mesh,pos:pos.clone(),vel:dir.clone().multiplyScalar(speed),dmg,owner,cause,grav:P.grav,life:4});
 }
@@ -5339,8 +5343,8 @@ function updateProjectiles(dt){
       const b=getBlock(Math.floor(p.pos.x),Math.floor(p.pos.y),Math.floor(p.pos.z));
       if(b<0||SOLID[b]){hit=true;break;}
       const l=Math.hypot(p.vel.x,p.vel.z)||1;
-      if(MP.on&&p.owner==='mob'){const R=mpHitRemote(p.pos);if(R){mpHurtTo(R.id,p.dmg,p.vel.x/l*.5,p.vel.z/l*.5,p.cause);hit=true;break;}}
-      if(p.owner==='mob'){if(!player.dead&&inBox(p.pos,player,.15)){hurtPlayer(p.dmg,p.vel.x/l*.5,p.vel.z/l*.5,p.cause);hit=true;}
+      if(MP.on&&p.owner==='mob'&&MP.host){const R=mpHitRemote(p.pos);if(R){mpHurtTo(R.id,p.dmg,p.vel.x/l*.5,p.vel.z/l*.5,p.cause);hit=true;break;}}
+      if(p.owner==='ghost'){}else if(p.owner==='mob'){if(!player.dead&&inBox(p.pos,player,.15)){hurtPlayer(p.dmg,p.vel.x/l*.5,p.vel.z/l*.5,p.cause);hit=true;}
         else for(const o of mobs)if((o.kind==='villager'||o.kind==='vguard')&&inBox(p.pos,o,.1)){o.hurt(p.dmg,p.vel.x/l*.5,p.vel.z/l*.5);hit=true;break;}}
       else for(const m of mpWithDummies(mobs))if(inBox(p.pos,m,.15)){m.byPlayer=performance.now();m.hurt(isHead(m,p.pos.y)?(headshotFx(m),p.dmg*HEAD_MULT):p.dmg,p.vel.x/l*.7,p.vel.z/l*.7);achieve('archer');hit=true;break;}
     }
@@ -7413,6 +7417,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='gr'){mpGiDel(d.g);mpSend(d,c);}
   else if(d.t==='gc'){const g=groundItems.find(q=>q.gid===d.g);if(g)g.slot.count=+d.n||g.slot.count;mpSend(d,c);}
   else if(d.t==='gq')mpGq(c,d);
+  else if(d.t==='sh'){mpShotIn(d);mpSend(d,c);}
   else if(d.t==='st'){(world.mpp||(world.mpp={}))[c.P.nick]={inv:d.inv,armor:d.armor,p:d.p,dim:d.dim};}}
 function mpStop(){mpSend({t:'bye'});const ws=MP.ws;MP.ws=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);MP.conns.clear();
   for(const id of [...MP.peers.keys()])mpDel(id);for(const g of groundItems)delete g.gid;Object.assign(MP,{on:false,host:false,code:'',hc:null,q:[],pend:[]});document.body.classList.remove('mpon');renderMP();}
@@ -7448,6 +7453,7 @@ function mpGuestRecv(d){
   else if(d.t==='gr')mpGiDel(d.g);
   else if(d.t==='gc'){const g=groundItems.find(q=>q.gid===d.g);if(g)g.slot.count=+d.n||g.slot.count;}
   else if(d.t==='gok')mpGok(d);
+  else if(d.t==='sh')mpShotIn(d);
   else if(d.t==='gno')mpGiDel(d.g);
   else if(d.t==='cfg'){MP.pvp=d.pvp!==false;toast('⚔ PvP: '+(MP.pvp?mpL('켬','ON'):mpL('끔','OFF')));}
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
@@ -7539,6 +7545,8 @@ function mpCtInit(){MP.ctc={};const C=world.containers||{};for(const k in C)MP.c
 function mpCtScan(){const C=world.containers||{};for(const k in C){const j=JSON.stringify(C[k]);if(MP.ctc[k]!==j){MP.ctc[k]=j;mpSend({t:'ct',k,v:C[k]});}}}
 function mpCtIn(d){if(typeof d.k!=='string'||!d.v||!Array.isArray(d.v.slots))return;const C=world.containers||(world.containers={}),o=C[d.k];
   if(o){for(const key in d.v)o[key]=d.v[key];}else C[d.k]=d.v;MP.ctc[d.k]=JSON.stringify(C[d.k]);if(invOpen&&openCont&&openCont.key===d.k)renderInv();}
+function mpShotIn(d){const P=PROJ[d.k];if(!P||!Array.isArray(d.p)||!Array.isArray(d.v))return;const v=new THREE.Vector3(+d.v[0]||0,+d.v[1]||0,+d.v[2]||0),sp=v.length();if(!sp)return; // 친구 · 방장 몹이 쏜 화살 (보이기만)
+  const mesh=bx(...P.size,P.mat),pos=new THREE.Vector3(+d.p[0],+d.p[1],+d.p[2]);mesh.position.copy(pos);scene.add(mesh);projs.push({kind:d.k,mesh,pos,vel:v,dmg:0,owner:'ghost',grav:P.grav,life:4});if(d.k==='arrow')try{SFX.bow?SFX.bow():0;}catch(e){}}
 function mpGiMsg(g){const r=v=>Math.round(v*100)/100;return {t:'gi',g:g.gid,s:g.slot,p:[r(g.pos.x),r(g.pos.y),r(g.pos.z)],v:[r(g.vel.x),r(g.vel.y),r(g.vel.z)],k:Math.max(0,g.pickT||0)};}
 function mpGiOut(g){g.gid=MP.myId+'.'+(++MP.gn);mpSend(mpGiMsg(g));}
 function mpGiIn(d){if(!d.s||!Array.isArray(d.p))return;if(groundItems.some(g=>g.gid===d.g))return;MP.gin=1;try{const v=d.v||[0,0,0],g=spawnGroundItem({...d.s},+d.p[0],+d.p[1],+d.p[2],+v[0]||0,+v[1]||0,+v[2]||0,+d.k||0);g.gid=d.g;}catch(e){}finally{MP.gin=0;}}
