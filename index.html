@@ -297,7 +297,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.117 — 🛡 친구 갑옷이 보여요</h4>
+    <h4>🆕 v26.118 — 🛡 친구 방패 · 활공 날개</h4>
+    • 멀티플레이에서 친구가 든 <b>방패</b>가 보이고, 막으면 몸 앞으로 들어 올려요. 친구가 <b>겉날개로 활공</b>하면 날개를 활짝 펴고 엎드린 자세로, <b>수영</b>하면 헤엄치는 자세로 보여요.
+    <h4>v26.117 — 🛡 친구 갑옷이 보여요</h4>
     • 멀티플레이에서 친구가 입은 <b>갑옷 · 겉날개 · 아이언맨 · 스파이더맨 슈트</b>가 친구 캐릭터에 보여요 (염색한 갑옷 색도 그대로).
     <h4>v26.116 — 🌐 몹 · 상자 함께 · ⚔ PvP</h4>
     • 멀티플레이에서 <b>몹</b>이 모두에게 똑같이 보여요 (방장 게임이 계산 · 몹이 가까운 친구도 노려요). 방장과 80칸 넘게 떨어지거나 다른 차원에 있으면 그 친구 쪽 몹은 따로 나와요.<br>
@@ -1675,7 +1677,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.117 — 🛡 See friends' armor</h4>
+    <h4>🆕 v26.118 — 🛡 Friends' shields & gliding</h4>
+    • In multiplayer, other players' shields (raised when blocking), elytra gliding with spread wings, and swimming poses are now shown.
+    <h4>v26.117 — 🛡 See friends' armor</h4>
     • In multiplayer, other players' armor, elytra and suits (with dye colors) are now shown on their characters.
     <h4>v26.116 — 🌐 Shared mobs & chests · ⚔ PvP</h4>
     • In multiplayer, mobs (simulated by the host), chest/hopper contents and dropped items are now shared. PvP: hit or shoot other players, critical hits when falling, sprint knockback; dying in PvP drops everything and posts a death message. The host can turn PvP off in the 🌐 Multiplayer window.
@@ -7455,7 +7459,7 @@ const _mpV=new THREE.Vector3();
 function mpTick(dt){if(!MP.on)return;
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
-    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0)};
+    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0)};
     if(MP.host)o.id='H';mpSend(o);}
   if(player.hp<MP.lhp)MP.redT=.35;MP.lhp=player.hp;MP.redT-=dt; // 다치면 친구 화면에서 빨갛게
   MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();}
@@ -7464,14 +7468,19 @@ function mpTick(dt){if(!MP.on)return;
   else{MP.st+=dt;if(MP.st>=10){MP.st=0;mpSend(mpState());}}
   for(const P of MP.peers.values()){const A=P.A,t=P.t;const vis=!!t&&running&&t.d===world.dim&&!t.v;A.g.visible=vis;if(!vis)continue; // 친구 캐릭터: 받은 위치로 부드럽게 · 걷기 · 휘두르기
     const k=Math.min(1,dt*12),ox=A.g.position.x,oz=A.g.position.z;
-    if(!P.init){P.init=1;A.g.position.set(t.x,t.y,t.z);A.yaw=t.ya;}else A.g.position.lerp(_mpV.set(t.x,t.y-(t.c?.1:0),t.z),k);
+    const gk=t.gk||0,sk=Math.max(t.wk||0,gk); // 활공 · 수영: 엎드려 누움
+    if(!P.init){P.init=1;A.g.position.set(t.x,t.y,t.z);A.yaw=t.ya;}else A.g.position.lerp(_mpV.set(t.x+Math.sin(A.yaw)*.9*sk,t.y-(t.c?.1:0)+.3*sk,t.z+Math.cos(A.yaw)*.9*sk),k);
     const hs=Math.min(12,Math.hypot(A.g.position.x-ox,A.g.position.z-oz)/Math.max(dt,1e-3));
-    let d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));if(hs>.5)A.yaw+=d*k;else if(Math.abs(d)>.75)A.yaw=t.ya-Math.sign(d)*.75;d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));
-    A.g.rotation.order='YXZ';A.g.rotation.set(0,A.yaw,0);A.up.rotation.x=-.45*(t.c||0);A.head.rotation.set(t.pi+.45*(t.c||0),d,0);
-    A.walk+=hs*dt*2.6;const amp=Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);A.legs[0].rotation.x=sw*amp;A.legs[1].rotation.x=-sw*amp;A.arms[0].rotation.set(-sw*amp*.8,0,-.05);
+    let d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));if(hs>.5||sk>.5)A.yaw+=d*k;else if(Math.abs(d)>.75)A.yaw=t.ya-Math.sign(d)*.75;d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));
+    A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0);A.up.rotation.x=-.45*(t.c||0);A.head.rotation.set(t.pi+.45*(t.c||0)+1.35*sk,d,0);
+    A.walk+=hs*dt*2.6;const amp=Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);A.legs[0].rotation.x=sw*amp;A.legs[1].rotation.x=-sw*amp;const bk=t.bk||0;A.arms[0].rotation.order='YXZ';A.arms[0].rotation.set(lerp(-sw*amp*.8,1.38,bk),lerp(0,-.5,bk),lerp(-.05,0,bk)); // 방패 막기: 왼팔을 앞으로
     P.sw=Math.max(0,P.sw-dt*3);const sa=Math.sin(P.sw*Math.PI);A.arms[1].rotation.set((t.h?.3:0)+sw*amp*.8*(t.h?.5:1)+sa*1.5,sa*-.3,.05+sa*.15);
     {const ak=JSON.stringify(t.ar||0);if(ak!==P.ak){P.ak=ak;const sa=armor;armor=[0,1,2,3].map(i=>{const a=t.ar&&t.ar[i];return Array.isArray(a)&&IT[a[0]]?{id:a[0],col:a[1]||undefined,ely:a[2]?1:undefined}:null;}).concat([null]);try{dressAvatar(A);}catch(e){}finally{armor=sa;}}} // 친구 갑옷 · 겉날개 · 망토
-    if(A.wings)A.wings.forEach((w,i)=>w.rotation.set(-.2,0,(i?1:-1)*.12));
+    if(gk>.05&&gk>=(t.wk||0)){A.arms.forEach((a,i)=>{a.rotation.order='XYZ';a.rotation.set(lerp(a.rotation.x,.15,gk),0,lerp(a.rotation.z,(i?-1:1)*.35,gk));});A.legs.forEach(l=>{l.rotation.x=lerp(l.rotation.x,0,gk);});} // 활공: 팔을 뒤로 붙임
+    else if(sk>.05){const tt=performance.now()/1000;A.arms.forEach((a,i)=>{a.rotation.order='XYZ';a.rotation.set(lerp(a.rotation.x,2.6+Math.sin(tt*4.5+i*Math.PI)*.75,sk),0,lerp(a.rotation.z,(i?-1:1)*.25,sk));});A.legs.forEach((l,i)=>{l.rotation.x=lerp(l.rotation.x,Math.sin(tt*9+i*Math.PI)*.35,sk);});} // 수영
+    if(A.wings)A.wings.forEach((w,i)=>{const sd=i?1:-1;w.rotation.set(-.2-.25*gk,0,sd*(.12+1.15*gk));}); // 겉날개: 활공하면 활짝 펼침
+    {const sid=t.sh||0;if(sid!==A.shieldId){A.shieldId=sid;A.shieldP.clear();if(sid)try{const c=(sid===BZ_SHIELD?SHIELD_MODEL.bz:SHIELD_MODEL.normal).clone();c.visible=true;c.scale.setScalar(1.05);A.shieldP.add(c);}catch(e){}} // 친구 방패 (막으면 몸 앞으로)
+      const sh=A.shieldP.children[0];if(sh){A.arms[0].updateMatrix();_shRest.setFromEuler(_shE.set(0,-Math.PI/2,0));_shBlock.copy(A.arms[0].quaternion).invert().multiply(_shFwd);sh.quaternion.copy(_shRest).slerp(_shBlock,bk);A.shieldP.position.set(lerp(-.12,-.02,bk),lerp(-.42,-.76,bk),lerp(0,-.04,bk));}}
     if(A.cape)A.cape.rotation.x=-(.08+Math.min(.85,hs*.13));
     P.red=(P.red||0)-dt;{const rd=t.r||P.red>0?.6:0;for(const mm of A.mats)mm.emissive.setRGB(rd,0,0);}if(P.tag)P.tag.visible=!t.c; // 맞으면 빨갛게 · 웅크리면 닉네임 숨김
     if(t.h!==A.itemId){A.itemId=t.h;A.hand.clear();if(t.h)try{const it=itemModel(t.h);if(it.grip){it.g.rotation.set(-Math.PI/2,0,Math.PI/2,'ZXY');A.hand.add(it.g);}else{const gm=groundModel(t.h);gm.position.set(0,-.06,-.1);A.hand.add(gm);}}catch(e){}}}}
