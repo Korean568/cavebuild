@@ -297,7 +297,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.115 — 🌐 멀티플레이 중계 서버</h4>
+    <h4>🆕 v26.116 — 🌐 몹 · 상자 함께 · ⚔ PvP</h4>
+    • 멀티플레이에서 <b>몹</b>이 모두에게 똑같이 보여요 (방장 게임이 계산 · 몹이 가까운 친구도 노려요). 방장과 80칸 넘게 떨어지거나 다른 차원에 있으면 그 친구 쪽 몹은 따로 나와요.<br>
+    • <b>상자 · 호퍼</b> 속 물건과 <b>바닥에 떨어진 아이템</b>도 함께예요 (한 사람만 주울 수 있어요).<br>
+    • <b>⚔ PvP</b>: 친구 캐릭터를 때리거나 활로 맞힐 수 있어요. 떨어지면서 치면 치명타, 달리면서 치면 더 멀리 밀려나요. 쓰러지면 가진 것을 모두 떨어뜨리고, 채팅에 누가 누구에게 당했는지 나와요. 폭발도 근처 친구를 다치게 해요. 방장은 🌐 멀티플레이 창에서 PvP를 끌 수 있어요.
+    <h4>v26.115 — 🌐 멀티플레이 중계 서버</h4>
     • 멀티플레이 연결을 <b>Cloudflare 중계 서버</b>로 바꿨어요. 컴퓨터끼리 직접 잇지 않아서 학교 · 회사 와이파이나 모바일 데이터에서도 친구 세계에 잘 들어가져요.
     <h4>v26.114 — 🌐 멀티플레이</h4>
     • <b>친구와 같은 세계</b>에서 놀 수 있어요! 일시정지 → <b>🌐 멀티플레이</b> → <b>방 열기</b>를 누르면 6자리 방 코드가 나와요.<br>
@@ -1669,7 +1673,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.115 — 🌐 Multiplayer relay server</h4>
+    <h4>🆕 v26.116 — 🌐 Shared mobs & chests · ⚔ PvP</h4>
+    • In multiplayer, mobs (simulated by the host), chest/hopper contents and dropped items are now shared. PvP: hit or shoot other players, critical hits when falling, sprint knockback; dying in PvP drops everything and posts a death message. The host can turn PvP off in the 🌐 Multiplayer window.
+    <h4>v26.115 — 🌐 Multiplayer relay server</h4>
     • Multiplayer now connects through a Cloudflare relay server instead of direct peer-to-peer, so joining works on school/office Wi-Fi and mobile data.
     <h4>v26.114 — 🌐 Multiplayer</h4>
     • Play in the same world with friends! Pause → 🌐 Multiplayer → Open room shows a 6-letter room code; friends enter it under Title → Play → 🌐 Join a friend's world. Players (skin, cape, nickname, held item), block changes and day/night are shared. T (💬 on mobile): chat. Guests' inventory and position are saved in the host's world. Mobs and chest contents are not shared yet; multiplayer is off in speedrun.
@@ -3857,7 +3863,7 @@ function updateLiquids(dt){
     for(const kk of batch){const [cx,cz]=kk.split(',').map(Number);remeshAt(cx,cz);}
   }
 }
-const MP={on:false,host:false,code:'',ws:null,hc:null,conns:new Set(),peers:new Map(),q:[],pend:[],rx:0,lq:0,chat:false,pt:0,tt:0,st:0,gid:0,me:null,hostNick:''}; // 🌐 멀티플레이 상태 (setBlock보다 먼저)
+const MP={on:false,host:false,code:'',ws:null,hc:null,conns:new Set(),peers:new Map(),q:[],pend:[],rx:0,lq:0,chat:false,pt:0,tt:0,st:0,gid:0,me:null,hostNick:'',nid:0,pm:new Map(),sv:{p:new THREE.Vector3(),v:new THREE.Vector3(),dead:false,og:false},proxy:null,defer:[],mk:0,myId:'',gn:0,gin:0,grx:0,ctc:{},ctT:0,mt:0,pvp:true,lhp:20,redT:0,pvpT:0,pvpBy:''}; // 🌐 멀티플레이 상태 (setBlock보다 먼저)
 function setBlock(x,y,z,id,batch){try{GDN.clear();}catch(e){} // 지형 높이 캐시 비움
   if(y<0||y>=CH)return;const cx=x>>4,cz=z>>4,c=getChunk(cx,cz);if(!c)return;
   const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;if(BOMB_BLK[old]||BOMB_BLK[id]||old===SIGN||id===SIGN||old===ANVIL||id===ANVIL||old===GAS_STOVE||id===GAS_STOVE||old===STOCKPOT||id===STOCKPOT||old===FOOD_PLATE||id===FOOD_PLATE)nukeScan(c);if(old===FOOD_PLATE&&id!==FOOD_PLATE)plateDrop(x,y,z);if(old===STOCKPOT&&id!==STOCKPOT)potDrop(x,y,z);if(old===ANVIL&&id!==ANVIL)anvilDrop(x,y,z);if(old===GAS_STOVE&&id!==GAS_STOVE)stoveDrop(x,y,z);if(old!==id&&world.paint)delete world.paint[world.dim+':'+x+','+y+','+z];if(old===SIGN&&id!==SIGN&&world.signs)delete world.signs[signKey(x,y,z)];calcHM(c,lx,lz);c.ver++; // 핵폭탄 · 원자폭탄 · 차르 봄바 모델 갱신
@@ -5229,7 +5235,7 @@ class Mob{
     if(d.init)d.init(this);
     this.g=new THREE.Group();this.u=d.build(this.g,this);scene.add(this.g);mobs.push(this);
     if(!d.noclip){this.shadow=new THREE.Mesh(SHADOW_GEO,SHADOW_MAT.clone());const r=Math.max(.5,d.w*1.25);this.shadow.scale.set(r,r,1);this.shadow.rotation.x=-Math.PI/2;scene.add(this.shadow);}
-    if(d.hostile&&!d.boss&&!d.keep&&isSafe())this.remove();} // 세이프 모드에선 적대 몹이 나오지 않음
+    if(d.hostile&&!d.boss&&!d.keep&&isSafe())this.remove();else if(MP.on&&!MP.host&&!MP.mk&&!mpLocalMobs()){mpSend({t:'ms',kind,x,y,z});this.remove();}} // 🌐 친구 게임에서 생긴 몹은 방장 게임에 만듦 · 세이프 모드에선 적대 몹이 나오지 않음
   updShadow(){const s=this.shadow;if(!s)return;const x=Math.floor(this.pos.x),z=Math.floor(this.pos.z);let y=Math.floor(this.pos.y+.01),k=0; // 발밑 땅을 찾아 그림자를 깔고, 높이 뜰수록 옅게
     while(k<6){const b=getBlock(x,y-1,z);if(b<0||SOLID[b])break;y--;k++;}
     const h=this.pos.y-y;s.visible=k<6;s.position.set(this.pos.x,y+.02,this.pos.z);s.material.opacity=.42*Math.max(0,1-h/5)*Math.min(1,light+.3);}
@@ -5284,7 +5290,7 @@ class Mob{
     if(this.pos.y<-20)this.remove();
   }
   hurt(dmg,kx,kz,silent){
-    if(this.dead)return;const d=this.def,k=d.knock??1;
+    if(this.dead)return;if(this.net&&MP.on&&!MP.host){mpSend({t:'mh',id:this.net,dmg,kx,kz,s:silent?1:0});if(!silent){this.hurtT=.3;SFX.mobhit();}return;} // 🌐 친구가 때린 몹: 방장 게임에서 다침const d=this.def,k=d.knock??1;
     if(d.invuln&&d.invuln(this)){if(!silent){SFX.clink();spawnParticles(this.pos.x,this.pos.y+this.h/2,this.pos.z,new THREE.Color(0x1fe0cc),6,.6,3);}return;}
     this.hp-=dmg;this.hurtT=.3;
     if(!silent){this.vel.x+=kx*6*k;this.vel.z+=kz*6*k;if(!d.fly&&k>0)this.vel.y=Math.max(this.vel.y,5.5*Math.max(k,.4));SFX.mobhit();}
@@ -5292,7 +5298,7 @@ class Mob{
     if(this.hp<=0)this.die(!silent);
   }
   die(drops){
-    const d=this.def;this.dead=true;spawnParticles(this.pos.x,this.pos.y+this.h/2,this.pos.z,new THREE.Color(d.color),d.boss?40:14,d.boss?1.2:.5,4);
+    const d=this.def;this.dead=true;if(MP.on&&MP.host&&this.nid)mpSend({t:'md',id:this.nid});spawnParticles(this.pos.x,this.pos.y+this.h/2,this.pos.z,new THREE.Color(d.color),d.boss?40:14,d.boss?1.2:.5,4);
     if(d.onDeath)d.onDeath(this);
     if(drops||d.boss){world.stats.kills++;
       for(const [id,n] of d.drops(this))if(n>0)dropItem(id,n,this.pos.x,this.pos.y+Math.min(1,this.h*.5),this.pos.z,{fireproof:!!d.boss,spread:2});
@@ -5325,9 +5331,10 @@ function updateProjectiles(dt){
       const b=getBlock(Math.floor(p.pos.x),Math.floor(p.pos.y),Math.floor(p.pos.z));
       if(b<0||SOLID[b]){hit=true;break;}
       const l=Math.hypot(p.vel.x,p.vel.z)||1;
+      if(MP.on&&p.owner==='mob'){const R=mpHitRemote(p.pos);if(R){mpHurtTo(R.id,p.dmg,p.vel.x/l*.5,p.vel.z/l*.5,p.cause);hit=true;break;}}
       if(p.owner==='mob'){if(!player.dead&&inBox(p.pos,player,.15)){hurtPlayer(p.dmg,p.vel.x/l*.5,p.vel.z/l*.5,p.cause);hit=true;}
         else for(const o of mobs)if((o.kind==='villager'||o.kind==='vguard')&&inBox(p.pos,o,.1)){o.hurt(p.dmg,p.vel.x/l*.5,p.vel.z/l*.5);hit=true;break;}}
-      else for(const m of mobs)if(inBox(p.pos,m,.15)){m.byPlayer=performance.now();m.hurt(isHead(m,p.pos.y)?(headshotFx(m),p.dmg*HEAD_MULT):p.dmg,p.vel.x/l*.7,p.vel.z/l*.7);achieve('archer');hit=true;break;}
+      else for(const m of mpWithDummies(mobs))if(inBox(p.pos,m,.15)){m.byPlayer=performance.now();m.hurt(isHead(m,p.pos.y)?(headshotFx(m),p.dmg*HEAD_MULT):p.dmg,p.vel.x/l*.7,p.vel.z/l*.7);achieve('archer');hit=true;break;}
     }
     p.mesh.position.copy(p.pos);p.mesh.lookAt(p.pos.x+p.vel.x,p.pos.y+p.vel.y,p.pos.z+p.vel.z);
     if(hit||p.life<=0){spawnParticles(p.pos.x,p.pos.y,p.pos.z,new THREE.Color(PROJ[p.kind].col).multiplyScalar(Math.max(.4,light)),5,.15,2);scene.remove(p.mesh);projs.splice(i,1);}
@@ -5343,7 +5350,7 @@ function explode(x,y,z,r,cause){
     if(b>0&&!LIQUID[b]&&BL[b].hard>=0&&BL[b].hard<15)setBlock(X,Y,Z,AIR,batch);
   }
   for(const k of batch){const [cx,cz]=k.split(',').map(Number);remeshAt(cx,cz);}
-  const reach=r*2.4;
+  const reach=r*2.4;mpBlast(x,y,z,reach,cause);
   const pd=Math.hypot(player.pos.x-x,player.pos.y+.9-y,player.pos.z-z);
   if(pd<reach){const f=1-pd/reach,l=Math.hypot(player.pos.x-x,player.pos.z-z)||1;hurtPlayer(Math.round(f*14),(player.pos.x-x)/l*f*1.6,(player.pos.z-z)/l*f*1.6,cause);}
   for(const m of [...mobs]){const md=Math.hypot(m.pos.x-x,m.pos.y+m.h/2-y,m.pos.z-z);if(md<reach){const f=1-md/reach,l=Math.hypot(m.pos.x-x,m.pos.z-z)||1;m.hurt(Math.round(f*14),(m.pos.x-x)/l*f,(m.pos.z-z)/l*f,true);}}
@@ -5980,10 +5987,10 @@ function updateHoppers(dt){ // 0.4초마다: 위에 떨어진 아이템·위 보
 // ---------- 바닥 아이템 (Q로 버리기) ----------
 const groundItems=[],gItemMats=new Map();let gMergeT=0;
 function gItemMat(id){let m=gItemMats.get(id);if(!m){const t=new THREE.CanvasTexture(ICON_CANVAS[id]);t.magFilter=t.minFilter=THREE.NearestFilter;t.generateMipmaps=false;m=new THREE.SpriteMaterial({map:t,alphaTest:.1});gItemMats.set(id,m);}return m;}
-function spawnGroundItem(slot,x,y,z,vx,vy,vz,pickDelay=0){
+function spawnGroundItem(slot,x,y,z,vx,vy,vz,pickDelay=0){if(MP.rx)return {slot,pos:new THREE.Vector3(x,y,z),vel:new THREE.Vector3(),age:0}; // 친구가 부순 블록의 상자 속 물건은 친구 쪽에서만 떨어짐
   const sp=groundModel(slot.id,slot.col);sp.rotation.y=Math.random()*6.28;scene.add(sp);
   const g={slot,pos:new THREE.Vector3(x,y,z),vel:new THREE.Vector3(vx,vy,vz),w:.25,h:.25,onGround:false,age:0,pickT:pickDelay,sp,bob:Math.random()*6};
-  groundItems.push(g);return g;
+  groundItems.push(g);if(MP.on&&!MP.gin)mpGiOut(g);return g;
 }
 function dropItem(id,n,x,y,z,opt={}){ // 아이템을 바닥에 떨어뜨림 (줍기 전까지 인벤토리에 안 들어옴)
   const ms=maxStack(id),mx=IT[id]&&IT[id].maxDur;
@@ -5992,7 +5999,7 @@ function dropItem(id,n,x,y,z,opt={}){ // 아이템을 바닥에 떨어뜨림 (�
     const g=spawnGroundItem(slot,x,y,z,Math.cos(a)*v*Math.random(),opt.up??4,Math.sin(a)*v*Math.random(),opt.delay??.5);g.fireproof=!!opt.fireproof;}
 }
 function dropAtPlayer(id,n){if(n>0)dropItem(id,n,player.pos.x,player.pos.y+1.2,player.pos.z,{spread:.6,up:2,delay:.8});}
-function removeGroundItem(i){scene.remove(groundItems[i].sp);groundItems.splice(i,1);}
+function removeGroundItem(i){if(MP.on&&!MP.grx&&groundItems[i].gid)mpSend({t:'gr',g:groundItems[i].gid});scene.remove(groundItems[i].sp);groundItems.splice(i,1);}
 function clearGroundItems(){for(let i=groundItems.length-1;i>=0;i--)removeGroundItem(i);}
 function giveSlot(s){ // 내구도 같은 슬롯 정보를 그대로 인벤토리에 넣음 (못 넣은 개수 반환)
   if(s.dur!==undefined||maxStack(s.id)===1||s.col||s.name){for(let i=0;i<36;i++)if(!inv[i]){inv[i]={...s};invChanged();return 0;}return s.count;}
@@ -6007,7 +6014,7 @@ function dropHeld(all){ // Q: 1개, Ctrl+Q: 한 묶음
 }
 function updateGroundItems(dt){
   const L=Math.max(.35,light);for(const m of gItemMats.values())m.color.setScalar(L);
-  gMergeT-=dt;if(gMergeT<=0){gMergeT=.5;
+  gMergeT-=dt;if(gMergeT<=0&&!MP.on){gMergeT=.5;
     for(let i=groundItems.length-1;i>=0;i--){const a=groundItems[i];if(a.slot.dur!==undefined||a.slot.col||a.slot.name)continue;const ms=maxStack(a.slot.id);
       for(let j=i-1;j>=0;j--){const b=groundItems[j];if(b.slot.id!==a.slot.id||b.slot.dur!==undefined||b.slot.col||b.slot.name||b.slot.count+a.slot.count>ms)continue;
         if(Math.abs(a.pos.x-b.pos.x)<1&&Math.abs(a.pos.y-b.pos.y)<.6&&Math.abs(a.pos.z-b.pos.z)<1){b.slot.count+=a.slot.count;b.age=Math.min(a.age,b.age);b.fireproof=b.fireproof||a.fireproof;removeGroundItem(i);break;}}}}
@@ -6017,15 +6024,16 @@ function updateGroundItems(dt){
     if(LIQ_KIND[getBlock(bx,by,bz)]===2&&!g.fireproof){spawnParticles(g.pos.x,g.pos.y+.2,g.pos.z,new THREE.Color(0xff7a2a),6,.3,3);SFX.sizzle?SFX.sizzle():tone(300,120,.2,.05,'sawtooth');removeGroundItem(i);continue;}
     if(getChunk(bx>>4,bz>>4)){physics(g,dt);if(g.onGround){const k=1-Math.min(1,8*dt);g.vel.x*=k;g.vel.z*=k;}}
     g.bob+=dt*2.5;g.sp.position.set(g.pos.x,g.pos.y+.2+Math.sin(g.bob)*.05,g.pos.z);g.sp.rotation.y+=dt*1.4;
-    const hp=hopperUnder(g);
+    const hp=MP.on&&!MP.host?null:hopperUnder(g);
     if(hp){const H=getCont(hp[0],hp[1],hp[2]);if(H){const before=g.slot.count,left=contInsert(H.slots,g.slot);
       if(left<before&&invOpen&&openCont&&openCont.c===H)renderInv();if(left<=0){removeGroundItem(i);continue;}}
       continue;} // 호퍼 위의 아이템은 플레이어가 줍지 않음 (호퍼가 꽉 차도 그대로 둠)
     if(g.pickT>0||player.dead||isSpec())continue;
     const dx=player.pos.x-g.pos.x,dy=player.pos.y+.8-g.pos.y,dz=player.pos.z-g.pos.z,dist=Math.hypot(dx,dy,dz);
-    if(dist<1.3){const before=g.slot.count,left=giveSlot(g.slot);
+    if(dist<1.3){if(MP.on&&!MP.host&&g.gid){if(!(g.rq>performance.now())){g.rq=performance.now()+1500;mpSend({t:'gq',g:g.gid});}continue;} // 🌐 친구는 방장에게 물어보고 주움
+      const before=g.slot.count,left=giveSlot(g.slot);
       if(left<before)SFX.pop();
-      if(left<=0){removeGroundItem(i);continue;}g.slot.count=left;}
+      if(left<=0){removeGroundItem(i);continue;}g.slot.count=left;if(MP.on&&g.gid)mpSend({t:'gc',g:g.gid,n:left});}
     else if(dist<2.8){g.vel.x=dx/dist*7;g.vel.z=dz/dist*7;if(dy>0&&g.onGround)g.vel.y=Math.max(g.vel.y,3);} // 가까우면 빨려옴
   }
 }
@@ -6236,7 +6244,7 @@ function njEggVideo(bird){if($('njVid'))return; // 뇌절모드 영상: 끝까�
   v.onended=close;v.onerror=close;v.play().catch(()=>{v.muted=true;v.play().catch(close);});}
 let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 앞의 숨 들이키는 소리(0.2~0.5초)는 빼고 목소리 부분(0.5~1.07초)만, 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
     const a=njHurtA.cloneNode(),S0=.5,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
-function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
+function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){if(MP.proxy){mpHurtTo(MP.proxy.id,dmg,kx,kz,cause);return;} // 🌐 방장 몹이 친구를 때림
   if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec())return; // 크리에이티브·관전: 다치지 않음
   if(!bypass&&(stFrozen()||gm))return; // 스텔라 연출 · 미사일 조종 중엔 몹에게 맞지 않음
   if(!bypass)dmg*=DIFF_MUL[world.diff||'normal']||1; // 난이도: EASY 0.5배 · DIFFICULTY · HARDCORE 1.5배
@@ -6269,7 +6277,7 @@ function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){
   }
   renderStats();
 }
-function die(cause){
+function die(cause){if(MP.on)try{mpDied(cause);}catch(e){}
   player.dead=true;world.stats.deaths++;invOpen&&closeInv(true);$('deadMsg').textContent=cause;$('dead').classList.add('show');
   if(isHardcore()){$('deadMsg').innerHTML=cause+'<br><b style="color:#ff9a9a">💀 하드코어 세계에서는 다시 살아날 수 없어요 — 이제 관전만 할 수 있어요</b>';$('btnRespawn').textContent='👁 관전하기';}
   else $('btnRespawn').textContent='부활하기';
@@ -6444,7 +6452,7 @@ function updateTarget(){
   const dir=new THREE.Vector3();camera.getWorldDirection(dir);const eye=camera.position;
   target=player.dead?null:raycast(eye,dir,5);
   mobTarget=null;let best=Math.min(target?target.dist:99,3.6);
-  if(!player.dead)for(const m of mobs){const hw=m.w/2;const t=rayAABB(eye,dir,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<best){best=t;mobTarget=m;mobHitY=eye.y+dir.y*t;}}
+  if(!player.dead)for(const m of mpWithDummies(mobs)){const hw=m.w/2;const t=rayAABB(eye,dir,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<best){best=t;mobTarget=m;mobHitY=eye.y+dir.y*t;}}
   boatTarget=null;if(!player.dead)for(const b of boats){if(b.passenger==='player')continue;const t=rayAABB(eye,dir,{x:b.pos.x-.7,y:b.pos.y,z:b.pos.z-.7},{x:b.pos.x+.7,y:b.pos.y+.6,z:b.pos.z+.7});if(t!==null&&t<best){best=t;boatTarget=b;mobTarget=null;}}
   vehTarget=null;if(!player.dead&&VEH.length){let bst=(mobTarget||boatTarget)?best:(target?target.dist:5); // 탈것 블록을 겨눔
     for(const v of VEH){if(v===player.veh||v.d.d!==world.dim||v.pos.distanceTo(eye)>v.R+6)continue;
@@ -6658,6 +6666,7 @@ function attack(){
       if(dmg>=40)toast(`💥 철퇴 내려찍기! <b>${Math.round(dmg)}</b>`);}
     else SFX.clank();}
   else if(isHead(mobTarget,mobHitY)){dmg*=HEAD_MULT;headshotFx(mobTarget);} // 머리를 맞히면 1.5배
+  if(mobTarget.pvp&&!player.onGround&&player.vel.y<0&&!player.inWater){dmg*=1.5;headshotFx(mobTarget);} // ⚔ PvP: 떨어지며 치면 치명타 (마크처럼)
   const dx=mobTarget.pos.x-player.pos.x,dz=mobTarget.pos.z-player.pos.z,l=Math.hypot(dx,dz)||1;
   mobTarget.byPlayer=performance.now();mobTarget.hurt(dmg,dx/l*(mace?1.6:spp?3:1),dz/l*(mace?1.6:spp?3:1));if(t)useDurability(t.type==='sword'||mace?1:2);player.hungerAcc+=.5;
 }
@@ -7349,7 +7358,7 @@ function mpAdd(o){mpDel(o.id);const A=mkAvatar(mpSkinTex(o.skin));A.shadow.visib
   g.fillStyle='rgba(0,0,0,.45)';g.fillRect((256-w)/2,8,w,48);g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.fillText(nk,128,33);
   const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));tag.scale.set(1.2,.3,1);tag.position.y=2.3;A.g.add(tag);
   if(CAPES[o.cape]){const cp=pivot(A.up,0,.66,.17);part(cp,.5,.86,.025,capeMat(o.cape),0,-.43,0);A.cape=cp;}
-  MP.peers.set(o.id,{id:o.id,nick:nk,A,t:null,sw:0});}
+  MP.peers.set(o.id,{id:o.id,nick:nk,A,t:null,sw:0,tag});}
 function mpDel(id){const P=MP.peers.get(id);if(!P)return;scene.remove(P.A.g,P.A.shadow);MP.peers.delete(id);}
 function mpList(){return [...MP.peers.values()].map(P=>P.nick);}
 function mpPlayersFor(skip){const L=[{id:'H',nick:MP.me.nick,skin:MP.me.skin,cape:MP.me.cape}];for(const c of MP.conns)if(c.P&&c!==skip)L.push({id:c.P.id,nick:c.P.nick,skin:c.P.skin,cape:c.P.cape});return L;}
@@ -7364,7 +7373,7 @@ function mpHost(){if(!mpOk()||MP.on||MP.ws)return;MP.me=mpMe();renderMP(mpL('방
   const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];
   const ws=mpWS(code,'host'),byId=new Map();MP.ws=ws;
   ws.onmessage=ev=>{const s=ev.data;if(typeof s!=='string')return;
-    if(s[0]==='{'){const d=JSON.parse(s);if(d.t==='_ok'){MP.on=MP.host=true;MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 Room open! Code: <b>${code}</b>`));}
+    if(s[0]==='{'){const d=JSON.parse(s);if(d.t==='_ok'){MP.on=MP.host=true;MP.myId='H';mpCtInit();MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 Room open! Code: <b>${code}</b>`));}
       else if(d.t==='_err'){ws.onclose=null;MP.ws=null;if(d.m==='taken')mpHost();else{toast('🌐 '+mpEsc(d.m));renderMP();}}return;}
     const i=s.indexOf('|'),gid=s.slice(0,i),raw=s.slice(i+1);
     if(raw==='{"t":"_join"}'){const c={id:gid,open:true,B:{},send(o){if(!this.open||ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(gid+'|'+x);},close(){this.open=false;}}; // 친구 한 명 = 가짜 연결
@@ -7381,15 +7390,24 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
     const st=(world.mpp||{})[nick];
     Object.assign(sn,{mpp:{},items:[],sr:null,ach:[],sel:0,inv:st&&st.inv||new Array(36).fill(null),armor:st&&st.armor||[],dim:st&&st.dim||world.dim,
       p:st&&st.p||{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:0,hp:20,food:20}});
-    c.P=P;c.send({t:'world',id:P.id,host:MP.me.nick,snap:sn,players:mpPlayersFor(c)});c.ready=true;
+    sn.golems=[];sn.mobQ={};c.P=P;c.send({t:'world',id:P.id,host:MP.me.nick,snap:sn,players:mpPlayersFor(c),pvp:MP.pvp});c.ready=true;
+    for(const g of groundItems){if(!g.gid)g.gid='H.'+(++MP.gn);c.send(mpGiMsg(g));} // 지금 바닥에 있는 아이템
     mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();return;}
   if(!c.P)return;
   if(d.t==='p'){d.id=c.P.id;const P=MP.peers.get(c.P.id);if(P)mpPos(P,d);mpSend(d,c);}
   else if(d.t==='b'&&Array.isArray(d.L)){mpApply(d.L);mpSend(d,c);}
   else if(d.t==='c'){const m=String(d.m||'').slice(0,80);mpChatShow(c.P.nick,m);mpSend({t:'c',n:c.P.nick,m},c);}
+  else if(d.t==='mh'){const m=mobs.find(o=>o.nid===d.id&&!o.dead);if(m){m.byPlayer=performance.now();m.hurt(Math.max(0,Math.min(500,+d.dmg||0)),+d.kx||0,+d.kz||0,!!d.s);}}
+  else if(d.t==='ms'){if(MOBDEF[d.kind]&&running)try{new Mob(d.kind,+d.x,+d.y,+d.z);}catch(e){}}
+  else if(d.t==='hurt'){if(d.to==='H')mpHurtIn(d);else for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}}
+  else if(d.t==='ct'){mpCtIn(d);mpSend(d,c);}
+  else if(d.t==='gi'){mpGiIn(d);mpSend(d,c);}
+  else if(d.t==='gr'){mpGiDel(d.g);mpSend(d,c);}
+  else if(d.t==='gc'){const g=groundItems.find(q=>q.gid===d.g);if(g)g.slot.count=+d.n||g.slot.count;mpSend(d,c);}
+  else if(d.t==='gq')mpGq(c,d);
   else if(d.t==='st'){(world.mpp||(world.mpp={}))[c.P.nick]={inv:d.inv,armor:d.armor,p:d.p,dim:d.dim};}}
 function mpStop(){mpSend({t:'bye'});const ws=MP.ws;MP.ws=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);MP.conns.clear();
-  for(const id of [...MP.peers.keys()])mpDel(id);Object.assign(MP,{on:false,host:false,code:'',hc:null,q:[],pend:[]});document.body.classList.remove('mpon');renderMP();}
+  for(const id of [...MP.peers.keys()])mpDel(id);for(const g of groundItems)delete g.gid;Object.assign(MP,{on:false,host:false,code:'',hc:null,q:[],pend:[]});document.body.classList.remove('mpon');renderMP();}
 // 친구: 방 코드로 참가 → 방장 세계를 받아서 시작 (내 PC에는 저장 안 함 · 방장이 저장)
 function mpJoin(code){code=String(code||'').trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){toast(mpL('🌐 방 코드 6자리를 넣어 주세요','🌐 Enter the 6-letter room code'));return;}
   if(!mpOk()||MP.on||running||MP.ws)return;MP.me=mpMe();audio();toast(mpL('🌐 방에 연결하는 중…','🌐 Connecting…'));
@@ -7403,7 +7421,7 @@ function mpJoin(code){code=String(code||'').trim().toUpperCase();if(!/^[A-Z0-9]{
     if(d.t==='no'){clearTimeout(tm);fail(mpEsc(d.m));return;}
     if(d.t==='world'){clearTimeout(tm);got=true;MP.code=code;MP.hostNick=d.host;const sv=d.snap;if(!validSave(sv)){toast('🌐 세계를 받지 못했어요');return;}
       sv.name=mpL(`🌐 ${d.host} 님의 세계`,`🌐 ${d.host}'s world`);$('playPanel').classList.remove('show');goFull();
-      startWorld(sv,()=>{CUR=null;MP.on=true;MP.host=false;document.body.classList.add('mpon');for(const o of d.players||[])mpAdd(o);
+      startWorld(sv,()=>{CUR=null;MP.on=true;MP.host=false;MP.myId=d.id;MP.pvp=d.pvp!==false;mpCtInit();for(const m of [...mobs])m.remove();document.body.classList.add('mpon');for(const o of d.players||[])mpAdd(o);
         const Q=MP.pend;MP.pend=[];for(const o of Q)mpGuestRecv(o);toast(mpL(`🌐 <b>${mpEsc(d.host)}</b> 님의 세계에 들어왔어요! T: 채팅`,`🌐 Joined <b>${mpEsc(d.host)}</b>'s world! T: chat`));});return;}
     if(!MP.on){MP.pend.push(d);return;}mpGuestRecv(d);};
   ws.onclose=()=>{clearTimeout(tm);MP.ws=null;if(MP.on)mpEnd(mpL('방과 연결이 끊겼어요','Disconnected from the room'));else fail(mpL('연결이 끊겼어요','Disconnected'));};}
@@ -7414,6 +7432,16 @@ function mpGuestRecv(d){
   else if(d.t==='join'){mpAdd(d);toast(mpL(`🌐 <b>${mpEsc(d.nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(d.nick)}</b> joined`));}
   else if(d.t==='leave'){const P=MP.peers.get(d.id);if(P)toast(mpL(`🌐 <b>${mpEsc(P.nick)}</b> 님이 나갔어요`,`🌐 <b>${mpEsc(P.nick)}</b> left`));mpDel(d.id);}
   else if(d.t==='c')mpChatShow(d.n,d.m);
+  else if(d.t==='mobs')mpMobsIn(d.L);
+  else if(d.t==='md'){const m=MP.pm.get(d.id);if(m){spawnParticles(m.pos.x,m.pos.y+m.h/2,m.pos.z,new THREE.Color(m.def.color),14,.5,4);m.remove();MP.pm.delete(d.id);}}
+  else if(d.t==='hurt')mpHurtIn(d);
+  else if(d.t==='ct')mpCtIn(d);
+  else if(d.t==='gi')mpGiIn(d);
+  else if(d.t==='gr')mpGiDel(d.g);
+  else if(d.t==='gc'){const g=groundItems.find(q=>q.gid===d.g);if(g)g.slot.count=+d.n||g.slot.count;}
+  else if(d.t==='gok')mpGok(d);
+  else if(d.t==='gno')mpGiDel(d.g);
+  else if(d.t==='cfg'){MP.pvp=d.pvp!==false;toast('⚔ PvP: '+(MP.pvp?mpL('켬','ON'):mpL('끔','OFF')));}
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
 function mpEnd(m){if(!MP.on)return;MP.on=false;toast('🌐 '+m+mpL(' — 타이틀로 돌아가요',' — returning to title'));setTimeout(()=>$('btnQuit').click(),2500);}
@@ -7423,8 +7451,11 @@ const _mpV=new THREE.Vector3();
 function mpTick(dt){if(!MP.on)return;
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
-    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0};
+    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0};
     if(MP.host)o.id='H';mpSend(o);}
+  if(player.hp<MP.lhp)MP.redT=.35;MP.lhp=player.hp;MP.redT-=dt; // 다치면 친구 화면에서 빨갛게
+  MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();}
+  if(MP.host){MP.mt+=dt;if(MP.mt>=.1){MP.mt=0;mpMobsOut();}}
   if(MP.host){MP.tt+=dt;if(MP.tt>=5){MP.tt=0;mpSend({t:'tm',v:world.time});}}
   else{MP.st+=dt;if(MP.st>=10){MP.st=0;mpSend(mpState());}}
   for(const P of MP.peers.values()){const A=P.A,t=P.t;const vis=!!t&&running&&t.d===world.dim&&!t.v;A.g.visible=vis;if(!vis)continue; // 친구 캐릭터: 받은 위치로 부드럽게 · 걷기 · 휘두르기
@@ -7436,7 +7467,69 @@ function mpTick(dt){if(!MP.on)return;
     A.walk+=hs*dt*2.6;const amp=Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);A.legs[0].rotation.x=sw*amp;A.legs[1].rotation.x=-sw*amp;A.arms[0].rotation.set(-sw*amp*.8,0,-.05);
     P.sw=Math.max(0,P.sw-dt*3);const sa=Math.sin(P.sw*Math.PI);A.arms[1].rotation.set((t.h?.3:0)+sw*amp*.8*(t.h?.5:1)+sa*1.5,sa*-.3,.05+sa*.15);
     if(A.cape)A.cape.rotation.x=-(.08+Math.min(.85,hs*.13));
+    P.red=(P.red||0)-dt;{const rd=t.r||P.red>0?.6:0;for(const mm of A.mats)mm.emissive.setRGB(rd,0,0);}if(P.tag)P.tag.visible=!t.c; // 맞으면 빨갛게 · 웅크리면 닉네임 숨김
     if(t.h!==A.itemId){A.itemId=t.h;A.hand.clear();if(t.h)try{const it=itemModel(t.h);if(it.grip){it.g.rotation.set(-Math.PI/2,0,Math.PI/2,'ZXY');A.hand.add(it.g);}else{const gm=groundModel(t.h);gm.position.set(0,-.06,-.1);A.hand.add(gm);}}catch(e){}}}}
+// 🌐 몹 함께: 방장 게임이 몹을 계산하고 친구에게 보냄 (방장과 멀리 · 다른 차원에 있는 친구는 자기 몹을 따로 계산)
+function mpLocalMobs(){if(!MP.on||MP.host)return false;const H=MP.peers.get('H'),t=H&&H.t;return !t||t.d!==world.dim||Math.hypot(t.x-player.pos.x,t.z-player.pos.z)>80;}
+function mpMobUpdate(m,dt){
+  if(!MP.on){m.update(dt);return;}
+  if(!MP.host){if(m.net){if(mpLocalMobs()){m.remove();MP.pm.delete(m.net);}else mpPuppet(m,dt);return;}if(!mpLocalMobs()){m.remove();return;}m.update(dt);return;}
+  if(!m.nid)m.nid=++MP.nid;
+  let R=null,best=player.dead?1e9:Math.hypot(player.pos.x-m.pos.x,player.pos.z-m.pos.z);
+  for(const P of MP.peers.values()){const t=P.t;if(!t||t.v||t.d!==world.dim)continue;const dd=Math.hypot(t.x-m.pos.x,t.z-m.pos.z);if(dd<best){best=dd;R=P;}}
+  if(!R){m.update(dt);return;}
+  const sv=MP.sv;sv.p.copy(player.pos);sv.v.copy(player.vel);sv.dead=player.dead;sv.og=player.onGround; // 더 가까운 친구를 노림: 잠깐 그 친구 자리를 '플레이어'로 보고 계산
+  player.pos.set(R.t.x,R.t.y,R.t.z);player.vel.set(0,0,0);player.dead=false;player.onGround=true;MP.proxy=R;
+  try{m.update(dt);}catch(e){console.error(e);}finally{MP.proxy=null;player.pos.copy(sv.p);player.vel.copy(sv.v);player.dead=sv.dead;player.onGround=sv.og;const D=MP.defer;MP.defer=[];for(const f of D)try{f();}catch(e){}}}
+function mpPuppet(m,dt){const t=m.nt;if(!t)return;const k=Math.min(1,dt*10),ox=m.pos.x,oz=m.pos.z,it=1/Math.max(dt,1e-3); // 친구 화면의 몹: 받은 자리로 부드럽게 · 걷기 동작
+  m.pos.x+=(t.x-m.pos.x)*k;m.pos.y+=(t.y-m.pos.y)*k;m.pos.z+=(t.z-m.pos.z)*k;m.vel.set((m.pos.x-ox)*it,0,(m.pos.z-oz)*it);
+  const hs=Math.min(10,Math.hypot(m.vel.x,m.vel.z));let dy=t.ya-m.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));m.yaw+=dy*k;m.walk+=hs*dt*3;
+  m.hurtT=Math.max(0,m.hurtT-dt);m.swingT=Math.max(0,m.swingT-dt);
+  m.g.position.copy(m.pos);m.g.rotation.y=m.yaw;m.updShadow();const d=m.def;try{if(d.anim)d.anim(m,dt,hs);}catch(e){}
+  const fl=d.flash?d.flash(m):0,e=m.hurtT>0?.6:0;for(const mm of m.u.mats)mm.emissive.setRGB(Math.max(e,fl),fl,fl);}
+function mpMobsIn(L){if(mpLocalMobs()||!Array.isArray(L))return;const seen=new Set();
+  for(const e of L){const [id,kind,x,y,z,ya,hu,hp,fu,sw]=e;seen.add(id);let m=MP.pm.get(id);
+    if(!m||m.removed){if(!MOBDEF[kind])continue;MP.mk=1;try{m=new Mob(kind,x,y,z);}catch(er){m=null;}MP.mk=0;if(!m||m.removed)continue;m.net=id;m.yaw=ya;MP.pm.set(id,m);}
+    m.nt={x,y,z,ya};if(hu&&m.hurtT<=0)m.hurtT=.3;m.hp=hp;m.fuse=fu;if(sw)m.swingT=.3;}
+  for(const [id,m] of MP.pm)if(!seen.has(id)){m.remove();MP.pm.delete(id);}}
+function mpMobsOut(){const r=v=>Math.round(v*100)/100;
+  for(const c of MP.conns){if(!c.ready||!c.P)continue;const P=MP.peers.get(c.P.id),t=P&&P.t;if(!t||t.d!==world.dim||Math.hypot(t.x-player.pos.x,t.z-player.pos.z)>80)continue;
+    const L=[];for(const m of mobs){if(m.dead||Math.hypot(m.pos.x-t.x,m.pos.z-t.z)>72)continue;if(!m.nid)m.nid=++MP.nid;
+      L.push([m.nid,m.kind,r(m.pos.x),r(m.pos.y),r(m.pos.z),r(m.yaw),m.hurtT>0?1:0,Math.round(m.hp),r(m.fuse||0),m.swingT>0?1:0]);}
+    c.send({t:'mobs',L});}}
+// ⚔ PvP · 다치기 (몹 · 폭발 · 화살 · 친구 공격) — 맞는 사람 게임에서 체력이 줄어듦
+function mpHurtTo(id,dmg,kx,kz,cause,pv){const d={t:'hurt',to:id,dmg,kx,kz,c:cause,pv:pv?1:0,by:MP.me&&MP.me.nick};
+  if(id===MP.myId){if(MP.proxy)MP.defer.push(()=>mpHurtIn(d));else mpHurtIn(d);return;}
+  if(MP.host){for(const c of MP.conns)if(c.P&&c.P.id===id){c.send(d);return;}}else mpSend(d);}
+function mpHurtIn(d){if(d.pv&&!MP.pvp)return;const dm=Math.max(0,Math.min(200,+d.dmg||0));if(!dm)return;
+  if(d.pv){MP.pvpBy=d.by;MP.pvpT=performance.now();hurtPlayer(dm/(DIFF_MUL[world.diff||'normal']||1),+d.kx||0,+d.kz||0,mpL(`⚔ ${d.by} 님에게 당했습니다`,`⚔ Slain by ${d.by}`));}
+  else hurtPlayer(dm,+d.kx||0,+d.kz||0,String(d.c||'쓰러졌습니다'));}
+function mpWithDummies(L){if(!MP.on)return L;const R=L.slice(); // 친구 캐릭터도 때리고 맞힐 수 있는 대상으로
+  for(const P of MP.peers.values()){const t=P.t;if(!t||t.v||t.d!==world.dim||!P.A.g.visible)continue;
+    if(!P.dm)P.dm={pvp:true,id:P.id,kind:'player',def:{name:P.nick},w:.6,h:1.8,dead:false,pos:P.A.g.position,hurt(dmg,kx,kz){mpPvp(P,dmg,kx,kz);}};R.push(P.dm);}
+  return R;}
+function mpPvp(P,dmg,kx,kz){if(!MP.pvp){toast(mpL('⚔ 이 방은 PvP가 꺼져 있어요','⚔ PvP is off in this room'));return;}
+  const sp=player.sprinting?1.7:1;mpHurtTo(P.id,dmg,kx*sp,kz*sp,'',1);P.red=.35;SFX.mobhit();
+  spawnParticles(P.A.g.position.x,P.A.g.position.y+1.2,P.A.g.position.z,new THREE.Color(0xc02020),6,.3,2);}
+function mpHitRemote(pos){for(const P of MP.peers.values()){const t=P.t;if(!t||t.v||t.d!==world.dim)continue;if(inBox(pos,{pos:{x:t.x,y:t.y,z:t.z},w:.6,h:1.8},.15))return P;}return null;}
+function mpBlast(x,y,z,reach,cause){if(!MP.on)return; // 폭발은 근처 친구도 다치게
+  for(const P of MP.peers.values()){const t=P.t;if(!t||t.v||t.d!==world.dim||P===MP.proxy)continue;const pd=Math.hypot(t.x-x,t.y+.9-y,t.z-z);if(pd>=reach)continue;
+    const f=1-pd/reach,l=Math.hypot(t.x-x,t.z-z)||1;mpHurtTo(P.id,Math.round(f*14),(t.x-x)/l*f*1.6,(t.z-z)/l*f*1.6,cause);}
+  if(MP.proxy){const q=MP.sv.p,pd=Math.hypot(q.x-x,q.y+.9-y,q.z-z);if(pd<reach){const f=1-pd/reach,l=Math.hypot(q.x-x,q.z-z)||1,kx=(q.x-x)/l*f*1.6,kz=(q.z-z)/l*f*1.6;MP.defer.push(()=>hurtPlayer(Math.round(f*14),kx,kz,cause));}}}
+function mpDied(cause){const m=MP.me.nick+' — '+cause;mpSend({t:'c',n:'☠',m});mpChatShow('☠',m);
+  if(performance.now()-(MP.pvpT||0)<1500){const P=player.pos,out=s=>{if(s)spawnGroundItem({...s},P.x,P.y+1,P.z,(Math.random()-.5)*4,3,(Math.random()-.5)*4,1);}; // PvP로 쓰러지면 마크처럼 가진 것을 모두 떨어뜨림
+    for(let i=0;i<inv.length;i++){out(inv[i]);inv[i]=null;}for(let i=0;i<armor.length;i++){out(armor[i]);armor[i]=null;}try{invChanged();}catch(e){}try{renderStats();}catch(e){}}}
+// 📦 상자 · 호퍼 함께 (바뀐 보관함만 보냄) · 🪙 바닥 아이템 함께 (줍기는 방장이 정해 줘서 두 번 주워지지 않음)
+function mpCtInit(){MP.ctc={};const C=world.containers||{};for(const k in C)MP.ctc[k]=JSON.stringify(C[k]);}
+function mpCtScan(){const C=world.containers||{};for(const k in C){const j=JSON.stringify(C[k]);if(MP.ctc[k]!==j){MP.ctc[k]=j;mpSend({t:'ct',k,v:C[k]});}}}
+function mpCtIn(d){if(typeof d.k!=='string'||!d.v||!Array.isArray(d.v.slots))return;const C=world.containers||(world.containers={}),o=C[d.k];
+  if(o){for(const key in d.v)o[key]=d.v[key];}else C[d.k]=d.v;MP.ctc[d.k]=JSON.stringify(C[d.k]);if(invOpen&&openCont&&openCont.key===d.k)renderInv();}
+function mpGiMsg(g){const r=v=>Math.round(v*100)/100;return {t:'gi',g:g.gid,s:g.slot,p:[r(g.pos.x),r(g.pos.y),r(g.pos.z)],v:[r(g.vel.x),r(g.vel.y),r(g.vel.z)],k:Math.max(0,g.pickT||0)};}
+function mpGiOut(g){g.gid=MP.myId+'.'+(++MP.gn);mpSend(mpGiMsg(g));}
+function mpGiIn(d){if(!d.s||!Array.isArray(d.p))return;if(groundItems.some(g=>g.gid===d.g))return;MP.gin=1;try{const v=d.v||[0,0,0],g=spawnGroundItem({...d.s},+d.p[0],+d.p[1],+d.p[2],+v[0]||0,+v[1]||0,+v[2]||0,+d.k||0);g.gid=d.g;}catch(e){}finally{MP.gin=0;}}
+function mpGiDel(gid){const i=groundItems.findIndex(g=>g.gid===gid);if(i<0)return;MP.grx=1;try{removeGroundItem(i);}finally{MP.grx=0;}}
+function mpGq(c,d){const i=groundItems.findIndex(g=>g.gid===d.g);if(i<0){c.send({t:'gno',g:d.g});return;}const g=groundItems[i];c.send({t:'gok',g:g.gid,s:g.slot});removeGroundItem(i);}
+function mpGok(d){mpGiDel(d.g);if(!d.s)return;const left=giveSlot({...d.s});SFX.pop();if(left>0){const P=player.pos;spawnGroundItem({...d.s,count:left},P.x,P.y+.5,P.z,0,2,0,1.5);}}
 // 채팅 (T · 모바일 💬)
 function mpChatOpen(){if(!MP.on||MP.chat)return;MP.chat=true;for(const k in keys)keys[k]=false;mouseL=mouseR=false;const el=$('mpChat');el.value='';el.style.display='block';
   try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>el.focus(),30);}
@@ -7453,10 +7546,11 @@ function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   else if(!MP.on)h=`<div>${mpL('친구가 이 세계에 같이 들어올 수 있게 <b>방</b>을 열어요.','Open a <b>room</b> so friends can join this world.')}</div><button class="btn" id="mpHostBtn">🌐 ${mpL('방 열기','Open room')}</button>`;
   else if(MP.host)h=`<div>${mpL('방 코드 (친구에게 알려 주세요)','Room code (share with friends)')}</div><div class="code">${MP.code}</div><button class="btn" id="mpCopy">📋 ${mpL('코드 복사','Copy code')}</button>`;
   else h=`<div>🌐 <b>${mpEsc(MP.hostNick)}</b> ${mpL('님의 세계','\'s world')} · ${mpL('방 코드','Code')} <b>${MP.code}</b></div>`;
+  if(MP.on&&MP.host)h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
   if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`:'');
-  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌐 친구 세계 참가에 코드를 넣어요 · T: 채팅<br>블록 · 캐릭터 · 시간이 함께 보여요. 몹 · 상자 속 물건은 각자 따로예요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players and time are shared. Mobs and chest contents are separate.')}</div>`;
+  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌐 친구 세계 참가에 코드를 넣어요 · T: 채팅<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 시간이 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
-  if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;
+  if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;
   if($('mpCopy'))$('mpCopy').onclick=()=>{try{navigator.clipboard.writeText(MP.code).then(()=>toast(mpL('📋 방 코드를 복사했어요','📋 Copied')));}catch(e){}};}
 $('btnMP').onclick=()=>{renderMP();$('pause').classList.remove('show');$('mpUI').classList.add('show');};
 $('mpClose').onclick=()=>{$('mpUI').classList.remove('show');if(running)$('pause').classList.add('show');};
@@ -7476,8 +7570,8 @@ function frame(now){
     updatePlayer(dt);
     updateTarget();updateMining(dt);
     if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}updateEating(dt);updateBite(dt);updateDine(dt);}
-    for(const m of [...mobs])m.update(dt);
-    spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
+    for(const m of [...mobs])mpMobUpdate(m,dt);
+    if(!MP.on||MP.host||mpLocalMobs())spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);if(!MP.on||MP.host)updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
   }
   updateSky(active?dt:0);
