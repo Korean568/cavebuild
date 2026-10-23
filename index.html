@@ -297,7 +297,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.126 — 🎮 게임 모드 · 🧩 모드도 함께</h4>
+    <h4>🆕 v26.127 — 🛒 모드 마켓 · 🎨 텍스처 모드</h4>
+    • <b>허브에 🛒 마켓</b>이 생겼어요! 직접 만든 모드를 0~10000 케이브코인에 팔고, 다른 사람의 모드를 사서 버튼 하나로 설치해요. 케이브코인(1코인 = 25원)은 충전하거나 모드가 팔리면 받아요.<br>
+    • 기본 모드 <b>🎨 텍스처 바꾸기</b>: 일시정지 메뉴에서 블록이나 아이템을 골라 내 그림으로 바꿀 수 있어요 (무료).<br>
+    • 모드 만드는 사람용: <code>CB.blocks()</code> · <code>CB.items()</code> · <code>CB.setBlockTexture(id, 그림)</code> · <code>CB.setItemIcon(id, 그림)</code> 이 생겼어요.
+    <h4>v26.126 — 🎮 게임 모드 · 🧩 모드도 함께</h4>
     • 멀티플레이에서 누가 <b>게임 모드</b>(서바이벌 · 크리에이티브 · 관전)를 바꾸든 모두에게 똑같이 바뀌어요.<br>
     • 방장이 켠 <b>🧩 모드(Mods)</b>도 함께예요: 친구가 들어올 때 모드가 다르면 물어보고, 좋다고 하면 방장의 모드로 게임을 새로고침해서 자동으로 다시 들어가요 (그 방에서만 켜지고, 내 모드 목록은 그대로예요). 모드 블록 · 아이템 번호도 방장과 똑같이 맞춰요.
     <h4>v26.125 — 🚗 탈것도 함께</h4>
@@ -1696,7 +1700,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.126 — 🎮 Shared game mode · 🧩 mods</h4>
+    <h4>🆕 v26.127 — 🛒 Mod market · 🎨 texture mod</h4>
+    • The hub now has a 🛒 Market: sell your mods for 0–10000 CaveCoins and buy/install others' mods in one click. Default free mod "🎨 Texture changer" lets you replace block textures and item icons from the pause menu. New mod API: CB.blocks(), CB.items(), CB.setBlockTexture(id, image), CB.setItemIcon(id, image).
+    <h4>v26.126 — 🎮 Shared game mode · 🧩 mods</h4>
     • In multiplayer, game mode changes apply to everyone. The host's mods are shared too: if a joining player's mods differ, they're asked to reload with the host's mods for that room only (block/item IDs are matched to the host).
     <h4>v26.125 — 🚗 Shared vehicles</h4>
     • In multiplayer, cars and planes built with engines are shared: building, driving and unbuilding them is visible to everyone. You can't board a vehicle someone else is driving; booster-driven empty vehicles are moved by the host.
@@ -7341,6 +7347,15 @@ const CB={version:'v26.30',
   onTick(f){MOD_TICK.push(f);},onUse(id,f){MOD_USE[id]=f;if(IT[id])IT[id].use=true;},
   toast:t=>toast(t),give:(id,n=1)=>addItem(id,n),player:()=>player,world:()=>world,target:()=>target,
   getBlock:(x,y,z)=>getBlock(x,y,z),setBlock:(x,y,z,id)=>{setBlock(x,y,z,id);remeshAt(x>>4,z>>4);},
+  blocks:()=>{const L=[];for(let i=1;i<BL.length;i++)if(BL[i]&&!LIQUID[i]&&ICON[i])L.push({id:i,name:tr(BL[i].name),icon:ICON[i]});return L;}, // 🎨 블록 · 아이템 목록 (텍스처 모드용)
+  items:()=>{const L=[];for(let i=100;i<IT.length;i++)if(IT[i]&&ICON[i])L.push({id:i,name:tr(IT[i].name),icon:ICON[i]});return L;},
+  setBlockTexture(id,img){const B=BL[id];if(!B||!img)return false;const c=makeCanvas(TS,TS),g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(img,0,0,TS,TS);const P=g.getImageData(0,0,TS,TS).data,D=AIMG.data,W=atlas.width; // 블록 그림 바꾸기 (같은 그림 칸을 쓰는 블록도 함께 바뀜)
+    for(const t of new Set(B.tiles)){const ox=(t%ATW)*TS,oy=Math.floor(t/ATW)*TS;for(let y=0;y<TS;y++)for(let x=0;x<TS;x++){const i=((oy+y)*W+ox+x)*4,j=(y*TS+x)*4;D[i]=P[j];D[i+1]=P[j+1];D[i+2]=P[j+2];D[i+3]=P[j+3];}}
+    actx.putImageData(AIMG,0,0);atlasTex.needsUpdate=true;
+    for(let i=1;i<BL.length;i++)if(BL[i]&&!LIQUID[i]&&BL[i].tiles.some(t=>B.tiles.includes(t))){ICON_CANVAS[i]=blockIcon(i);ICON[i]=ICON_CANVAS[i].toDataURL();}
+    try{renderHotbar();if(invOpen)renderInv();}catch(e){}return true;},
+  setItemIcon(id,img){if(!IT[id]&&!BL[id]||!img)return false;const c=makeCanvas(48,48),g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(img,0,0,48,48);ICON_CANVAS[id]=c;ICON[id]=c.toDataURL(); // 아이템 아이콘 바꾸기
+    try{renderHotbar();if(invOpen)renderInv();}catch(e){}return true;},
   explode:(x,y,z,r)=>explode(x,y,z,r||3,'모드 폭발에 휘말렸습니다'),flash:(o,t,c)=>flash(o,t,c),shake:(a,t)=>shake(a,t),sound:n=>SFX[n]&&SFX[n](),
   THREE};
 window.CB=CB;
