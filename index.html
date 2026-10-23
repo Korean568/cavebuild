@@ -297,8 +297,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.127 — 🛒 모드 마켓 · 🎨 텍스처 모드</h4>
-    • <b>허브에 🛒 마켓</b>이 생겼어요! 직접 만든 모드를 0~10000 케이브코인에 팔고, 다른 사람의 모드를 사서 버튼 하나로 설치해요. 케이브코인(1코인 = 25원)은 충전하거나 모드가 팔리면 받아요.<br>
+    <h4>🆕 v26.128 — 🪙 케이브코인 = 10원</h4>
+    • 케이브코인 값이 <b>1코인 = 10원</b>으로 바뀌었어요. 충전은 100코인(1000원)부터, 진짜 돈으로 바로 사는 모드는 100코인 이상부터예요.
+    <h4>v26.127 — 🛒 모드 마켓 · 🎨 텍스처 모드</h4>
+    • <b>허브에 🛒 마켓</b>이 생겼어요! 직접 만든 모드를 0~10000 케이브코인에 팔고, 다른 사람의 모드를 사서 버튼 하나로 설치해요. 케이브코인(1코인 = 10원)은 충전하거나 모드가 팔리면 받아요.<br>
     • 기본 모드 <b>🎨 텍스처 바꾸기</b>: 일시정지 메뉴에서 블록이나 아이템을 골라 내 그림으로 바꿀 수 있어요 (무료).<br>
     • 모드 만드는 사람용: <code>CB.blocks()</code> · <code>CB.items()</code> · <code>CB.setBlockTexture(id, 그림)</code> · <code>CB.setItemIcon(id, 그림)</code> 이 생겼어요.
     <h4>v26.126 — 🎮 게임 모드 · 🧩 모드도 함께</h4>
@@ -1700,7 +1702,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.127 — 🛒 Mod market · 🎨 texture mod</h4>
+    <h4>🆕 v26.128 — 🪙 1 CaveCoin = ₩10</h4>
+    • CaveCoins now cost ₩10 each. Top-ups start at 100 coins (₩1,000).
+    <h4>v26.127 — 🛒 Mod market · 🎨 texture mod</h4>
     • The hub now has a 🛒 Market: sell your mods for 0–10000 CaveCoins and buy/install others' mods in one click. Default free mod "🎨 Texture changer" lets you replace block textures and item icons from the pause menu. New mod API: CB.blocks(), CB.items(), CB.setBlockTexture(id, image), CB.setItemIcon(id, image).
     <h4>v26.126 — 🎮 Shared game mode · 🧩 mods</h4>
     • In multiplayer, game mode changes apply to everyone. The host's mods are shared too: if a joining player's mods differ, they're asked to reload with the host's mods for that room only (block/item IDs are matched to the host).
