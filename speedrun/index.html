@@ -298,7 +298,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.123 — 🩹 피해가 안 들어가던 버그 고침</h4>
+    <h4>🆕 v26.124 — 🌐 멀티플레이 모든 것 함께</h4>
+    • 멀티플레이에서 <b>표지판 글씨 · 칠한 블록 색 · 가스레인지 · 냄비 · 접시 · 모루</b>도 모두에게 똑같이 보여요.<br>
+    • <b>보트</b>를 놓고 부수고 타고 가는 모습이 함께 보여요 (친구가 탄 보트는 탈 수 없어요).<br>
+    • <b>폭발</b> 소리 · 불꽃과 스텔라 · 핵으로 <b>땅이 패이는 것</b>도 함께예요. 보스를 잡은 기록 같은 <b>세계 진행</b>과 방장이 바꾼 <b>난이도</b>도 친구에게 그대로 적용돼요.
+    <h4>v26.123 — 🩹 피해가 안 들어가던 버그 고침</h4>
     • v26.116부터 <b>몹을 때려도 피해가 안 들어가던</b> 버그를 고쳤어요 (칼 · 활 · 석궁 · 폭발 모두).
     <h4>v26.122 — 🏹 장전된 석궁 아이콘</h4>
     • 석궁을 장전하면 아이콘에서도 <b>시위가 뒤로 당겨지고 화살이 걸린</b> 모습으로 바뀌어요.
@@ -1688,7 +1692,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.123 — 🩹 Damage bug fixed</h4>
+    <h4>🆕 v26.124 — 🌐 Share everything in multiplayer</h4>
+    • Signs, painted blocks, stoves, pots, plates and anvils, boats (placing, breaking, riding), explosion effects, Stellar/nuke terrain carving, world progress flags and the host's difficulty are now shared with everyone.
+    <h4>v26.123 — 🩹 Damage bug fixed</h4>
     • Fixed a bug since v26.116 where mobs took no damage from any attack.
     <h4>v26.122 — 🏹 Loaded crossbow icon</h4>
     • A loaded crossbow now shows a drawn string and an arrow in its icon.
@@ -3074,7 +3080,7 @@ function carveHit(c,X,y,Z){ // 아직 안 불러온 청크의 옛 기록이 새�
   if(c.t==='gung')return Math.hypot(X-c.x,Z-c.z)<=c.r&&y>c.y-c.dep-3;
   if(c.t==='crat')return Math.hypot(X-c.x,Z-c.z)<=c.r&&y>c.y-c.r;
   if(c.t==='line')return segD(X,Z,c)<=c.w&&y>c.y0;return false;}
-function stCarve(c){
+function stCarve(c){if(MP.on&&!MP.rx)mpSend({t:'cv',d:world.dim,c});
   carveBox(c);if(!world.carves)world.carves={};(world.carves[world.dim]||(world.carves[world.dim]=[])).push(c);
   const b=c.b,touched=[];
   for(const ch of chunks.values()){const ox=ch.cx*16,oz=ch.cz*16;if(ox+15<b[0]||ox>b[2]||oz+15<b[1]||oz>b[3])continue;
@@ -3899,7 +3905,7 @@ function updateLiquids(dt){
     for(const kk of batch){const [cx,cz]=kk.split(',').map(Number);remeshAt(cx,cz);}
   }
 }
-const MP={on:false,host:false,code:'',ws:null,hc:null,conns:new Set(),peers:new Map(),q:[],pend:[],rx:0,lq:0,chat:false,pt:0,tt:0,st:0,gid:0,me:null,hostNick:'',nid:0,pm:new Map(),sv:{p:new THREE.Vector3(),v:new THREE.Vector3(),dead:false,og:false},proxy:null,defer:[],mk:0,myId:'',gn:0,gin:0,grx:0,ctc:{},ctT:0,mt:0,pvp:true,lhp:20,redT:0,pvpT:0,pvpBy:''}; // 🌐 멀티플레이 상태 (setBlock보다 먼저)
+const MP={on:false,host:false,code:'',ws:null,hc:null,conns:new Set(),peers:new Map(),q:[],pend:[],rx:0,lq:0,chat:false,pt:0,tt:0,st:0,gid:0,me:null,hostNick:'',nid:0,pm:new Map(),sv:{p:new THREE.Vector3(),v:new THREE.Vector3(),dead:false,og:false},proxy:null,defer:[],mk:0,myId:'',gn:0,gin:0,grx:0,ctc:{},ctT:0,mt:0,pvp:true,lhp:20,redT:0,pvpT:0,pvpBy:'',wsc:{},flc:'',dfc:'',bin:0,bt:0}; // 🌐 멀티플레이 상태 (setBlock보다 먼저)
 function setBlock(x,y,z,id,batch){try{GDN.clear();}catch(e){} // 지형 높이 캐시 비움
   if(y<0||y>=CH)return;const cx=x>>4,cz=z>>4,c=getChunk(cx,cz);if(!c)return;
   const lx=x&15,lz=z&15,i=(y*16+lz)*16+lx;const old=c.data[i];c.data[i]=id;if(BOMB_BLK[old]||BOMB_BLK[id]||old===SIGN||id===SIGN||old===ANVIL||id===ANVIL||old===GAS_STOVE||id===GAS_STOVE||old===STOCKPOT||id===STOCKPOT||old===FOOD_PLATE||id===FOOD_PLATE)nukeScan(c);if(old===FOOD_PLATE&&id!==FOOD_PLATE)plateDrop(x,y,z);if(old===STOCKPOT&&id!==STOCKPOT)potDrop(x,y,z);if(old===ANVIL&&id!==ANVIL)anvilDrop(x,y,z);if(old===GAS_STOVE&&id!==GAS_STOVE)stoveDrop(x,y,z);if(old!==id&&world.paint)delete world.paint[world.dim+':'+x+','+y+','+z];if(old===SIGN&&id!==SIGN&&world.signs)delete world.signs[signKey(x,y,z)];calcHM(c,lx,lz);c.ver++; // 핵폭탄 · 원자폭탄 · 차르 봄바 모델 갱신
@@ -5388,7 +5394,7 @@ function updateProjectiles(dt){
   }
 }
 function explode(x,y,z,r,cause){
-  SFX.boom();
+  SFX.boom();if(MP.on&&!MP.rx)mpSend({t:'fx',d:world.dim,x,y,z,r});
   spawnParticles(x,y,z,new THREE.Color(0x555555),30,r*.6,6);spawnParticles(x,y,z,new THREE.Color(0xff9a30),22,r*.4,5);
   const batch=new Set(),R=Math.ceil(r);
   for(let dy=-R;dy<=R;dy++)for(let dz=-R;dz<=R;dz++)for(let dx=-R;dx<=R;dx++){
@@ -5521,7 +5527,7 @@ function enterDim(dim,pos,fromLoad){
   if(gm){scene.remove(gm.m);player.pos.copy(gm.home);gm=null;$('gmHud').style.display='none';}
   if(!fromLoad)world.lastPos[world.dim]={x:player.pos.x,y:player.pos.y,z:player.pos.z};
   for(const c of chunks.values())disposeMesh(c);chunks.clear();resetWorkerJobs();
-  syncGolems();VSTATE={};for(const b of [...boats])removeBoat(b,false);player.boat=null;syncVeh();clearVehRuntime();for(const m of [...mobs])m.remove();for(const p of projs)scene.remove(p.mesh);projs.length=0;clearBeams();
+  syncGolems();VSTATE={};MP.bin=1;for(const b of [...boats])removeBoat(b,false);MP.bin=0;player.boat=null;syncVeh();clearVehRuntime();for(const m of [...mobs])m.remove();for(const p of projs)scene.remove(p.mesh);projs.length=0;clearBeams();
   for(const p of parts)scene.remove(p);parts.length=0;clearGroundItems();
   world.dim=dim;LQ[1].clear();LQ[2].clear();removeBobber();clearFireworks();if(stCast)stEnd(stCast,0);player.gliding=false;if(!modsByDim[dim])modsByDim[dim]=new Map();mods=modsByDim[dim];
   caveB=dim==='over'?.38:DIM[dim].caveB;
@@ -6091,19 +6097,22 @@ function placeBoat(){
   const h=raycast(camera.position,viewDir(),5,true);if(!h)return false;let x,y,z;
   if(LIQUID[h.id]){x=h.x+.5;y=h.y+.7;z=h.z+.5;}
   else{const X=h.x+h.n[0],Y=h.y+h.n[1],Z=h.z+h.n[2],c=getBlock(X,Y,Z);if(c!==AIR&&!LIQUID[c])return false;x=X+.5;y=Y;z=Z+.5;}
-  const g=new THREE.Group(),w=lam(0x9a6a3a,0,'wood'),d=lam(0x6a4526,0,'wood');
-  part(g,1,.12,1.6,w,0,.06,0);part(g,.1,.35,1.6,d,-.5,.28,0);part(g,.1,.35,1.6,d,.5,.28,0);part(g,1,.35,.1,d,0,.28,-.8);part(g,1,.35,.1,d,0,.28,.8);part(g,.9,.06,.25,w,0,.3,.2);
-  scene.add(g);boats.push({pos:new THREE.Vector3(x,y,z),vel:new THREE.Vector3(),w:1.2,h:.6,yaw:player.yaw,g,mats:[w,d],hp:2,passenger:null,dead:false,hitT:0,inWater:false});
+  const b=makeBoat(x,y,z,player.yaw);if(MP.on&&!MP.bin)mpBoatOut(b);
   SFX.place();return true;
 }
+function makeBoat(x,y,z,yaw){const g=new THREE.Group(),w=lam(0x9a6a3a,0,'wood'),d=lam(0x6a4526,0,'wood');
+  part(g,1,.12,1.6,w,0,.06,0);part(g,.1,.35,1.6,d,-.5,.28,0);part(g,.1,.35,1.6,d,.5,.28,0);part(g,1,.35,.1,d,0,.28,-.8);part(g,1,.35,.1,d,0,.28,.8);part(g,.9,.06,.25,w,0,.3,.2);
+  scene.add(g);const b={pos:new THREE.Vector3(x,y,z),vel:new THREE.Vector3(),w:1.2,h:.6,yaw,g,mats:[w,d],hp:2,passenger:null,dead:false,hitT:0,inWater:false};boats.push(b);return b;
+}
 function removeBoat(b,drop){
-  if(b.dead)return;b.dead=true;scene.remove(b.g);b.mats.forEach(m=>m.dispose());const i=boats.indexOf(b);if(i>=0)boats.splice(i,1);
-  if(b.passenger&&b.passenger!=='player')b.passenger.boat=null;if(player.boat===b)player.boat=null;
+  if(b.dead)return;b.dead=true;if(MP.on&&!MP.bin&&b.bid)mpSend({t:'br',b:b.bid});scene.remove(b.g);b.mats.forEach(m=>m.dispose());const i=boats.indexOf(b);if(i>=0)boats.splice(i,1);
+  if(b.passenger&&typeof b.passenger==='object')b.passenger.boat=null;if(player.boat===b)player.boat=null;
   if(drop)dropItem(BOAT,1,b.pos.x,b.pos.y+.4,b.pos.z);
 }
 function hitBoat(b){b.hp--;b.hitT=.2;swing=1;SFX.dig();spawnParticles(b.pos.x,b.pos.y+.3,b.pos.z,new THREE.Color(0x9a6a3a),6,.4,3);if(b.hp<=0){SFX.break();removeBoat(b,true);}}
 function updateBoats(dt){
   for(const b of [...boats]){
+    if(b.rt){if(performance.now()-b.rt<700&&player.boat!==b){b.pos.lerp(b.rtp,.35);let dy=b.rya-b.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));b.yaw+=dy*.35;b.vel.set(0,0,0);b.g.position.copy(b.pos);b.g.rotation.y=b.yaw;continue;}b.rt=0;if(b.passenger==='remote')b.passenger=null;} // 🌐 친구가 탄 보트는 친구가 보낸 자리로
     b.hitT=Math.max(0,b.hitT-dt);
     b.inWater=isLiquidAt(b.pos.x,b.pos.y+.3,b.pos.z);if(b.inWater)b.vel.y=Math.min(b.vel.y+14*dt,1.2); // 물에 뜸
     physics(b,dt);
@@ -7433,7 +7442,7 @@ function mpHost(){if(!mpOk()||MP.on||MP.ws)return;MP.me=mpMe();renderMP(mpL('방
   const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];
   const ws=mpWS(code,'host'),byId=new Map();MP.ws=ws;
   ws.onmessage=ev=>{const s=ev.data;if(typeof s!=='string')return;
-    if(s[0]==='{'){const d=JSON.parse(s);if(d.t==='_ok'){MP.on=MP.host=true;MP.myId='H';mpCtInit();MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 Room open! Code: <b>${code}</b>`));}
+    if(s[0]==='{'){const d=JSON.parse(s);if(d.t==='_ok'){MP.on=MP.host=true;MP.myId='H';mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 Room open! Code: <b>${code}</b>`));}
       else if(d.t==='_err'){ws.onclose=null;MP.ws=null;if(d.m==='taken')mpHost();else{toast('🌐 '+mpEsc(d.m));renderMP();}}return;}
     const i=s.indexOf('|'),gid=s.slice(0,i),raw=s.slice(i+1);
     if(raw==='{"t":"_join"}'){const c={id:gid,open:true,B:{},send(o){if(!this.open||ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(gid+'|'+x);},close(){this.open=false;}}; // 친구 한 명 = 가짜 연결
@@ -7452,6 +7461,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
       p:st&&st.p||{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:0,hp:20,food:20}});
     sn.golems=[];sn.mobQ={};c.P=P;c.send({t:'world',id:P.id,host:MP.me.nick,snap:sn,players:mpPlayersFor(c),pvp:MP.pvp});c.ready=true;
     for(const g of groundItems){if(!g.gid)g.gid='H.'+(++MP.gn);c.send(mpGiMsg(g));} // 지금 바닥에 있는 아이템
+    for(const b of boats){if(!b.bid)b.bid='H.b'+(++MP.gn);c.send({t:'bi',b:b.bid,d:world.dim,x:b.pos.x,y:b.pos.y,z:b.pos.z,ya:b.yaw});}
     mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();return;}
   if(!c.P)return;
   if(d.t==='p'){d.id=c.P.id;const P=MP.peers.get(c.P.id);if(P)mpPos(P,d);mpSend(d,c);}
@@ -7466,6 +7476,13 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='gc'){const g=groundItems.find(q=>q.gid===d.g);if(g)g.slot.count=+d.n||g.slot.count;mpSend(d,c);}
   else if(d.t==='gq')mpGq(c,d);
   else if(d.t==='sh'){mpShotIn(d);mpSend(d,c);}
+  else if(d.t==='ws'){mpWsIn(d);mpSend(d,c);}
+  else if(d.t==='fl'){mpFlIn(d);mpSend(d,c);}
+  else if(d.t==='cv'){mpCarveIn(d);mpSend(d,c);}
+  else if(d.t==='fx'){mpFxIn(d);mpSend(d,c);}
+  else if(d.t==='bi'){mpBoatIn(d);mpSend(d,c);}
+  else if(d.t==='br'){mpBoatDel(d.b);mpSend(d,c);}
+  else if(d.t==='bp'){mpBoatPos(d);mpSend(d,c);}
   else if(d.t==='st'){(world.mpp||(world.mpp={}))[c.P.nick]={inv:d.inv,armor:d.armor,p:d.p,dim:d.dim};}}
 function mpStop(){mpSend({t:'bye'});const ws=MP.ws;MP.ws=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);MP.conns.clear();
   for(const id of [...MP.peers.keys()])mpDel(id);for(const g of groundItems)delete g.gid;Object.assign(MP,{on:false,host:false,code:'',hc:null,q:[],pend:[]});document.body.classList.remove('mpon');renderMP();}
@@ -7482,7 +7499,7 @@ function mpJoin(code){code=String(code||'').trim().toUpperCase();if(!/^[A-Z0-9]{
     if(d.t==='no'){clearTimeout(tm);fail(mpEsc(d.m));return;}
     if(d.t==='world'){clearTimeout(tm);got=true;MP.code=code;MP.hostNick=d.host;const sv=d.snap;if(!validSave(sv)){toast('🌐 세계를 받지 못했어요');return;}
       sv.name=mpL(`🌐 ${d.host} 님의 세계`,`🌐 ${d.host}'s world`);$('playPanel').classList.remove('show');goFull();
-      startWorld(sv,()=>{CUR=null;MP.on=true;MP.host=false;MP.myId=d.id;MP.pvp=d.pvp!==false;mpCtInit();for(const m of [...mobs])m.remove();document.body.classList.add('mpon');for(const o of d.players||[])mpAdd(o);
+      startWorld(sv,()=>{CUR=null;MP.on=true;MP.host=false;MP.myId=d.id;MP.pvp=d.pvp!==false;mpCtInit();mpWsInit();for(const m of [...mobs])m.remove();document.body.classList.add('mpon');for(const o of d.players||[])mpAdd(o);
         const Q=MP.pend;MP.pend=[];for(const o of Q)mpGuestRecv(o);toast(mpL(`🌐 <b>${mpEsc(d.host)}</b> 님의 세계에 들어왔어요! T: 채팅`,`🌐 Joined <b>${mpEsc(d.host)}</b>'s world! T: chat`));});return;}
     if(!MP.on){MP.pend.push(d);return;}mpGuestRecv(d);};
   ws.onclose=()=>{clearTimeout(tm);MP.ws=null;if(MP.on)mpEnd(mpL('방과 연결이 끊겼어요','Disconnected from the room'));else fail(mpL('연결이 끊겼어요','Disconnected'));};}
@@ -7502,6 +7519,14 @@ function mpGuestRecv(d){
   else if(d.t==='gc'){const g=groundItems.find(q=>q.gid===d.g);if(g)g.slot.count=+d.n||g.slot.count;}
   else if(d.t==='gok')mpGok(d);
   else if(d.t==='sh')mpShotIn(d);
+  else if(d.t==='ws')mpWsIn(d);
+  else if(d.t==='fl')mpFlIn(d);
+  else if(d.t==='df'){if(DIFF_INFO[d.d]&&world.diff!==d.d){setDiff(d.d);toast(mpL('🌐 방장이 난이도를 바꿨어요: ','🌐 Host changed difficulty: ')+DIFF_INFO[d.d][0]);}}
+  else if(d.t==='cv')mpCarveIn(d);
+  else if(d.t==='fx')mpFxIn(d);
+  else if(d.t==='bi')mpBoatIn(d);
+  else if(d.t==='br')mpBoatDel(d.b);
+  else if(d.t==='bp')mpBoatPos(d);
   else if(d.t==='gno')mpGiDel(d.g);
   else if(d.t==='cfg'){MP.pvp=d.pvp!==false;toast('⚔ PvP: '+(MP.pvp?mpL('켬','ON'):mpL('끔','OFF')));}
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
@@ -7516,7 +7541,8 @@ function mpTick(dt){if(!MP.on)return;
     const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0)};
     if(MP.host)o.id='H';mpSend(o);}
   if(player.hp<MP.lhp)MP.redT=.35;MP.lhp=player.hp;MP.redT-=dt; // 다치면 친구 화면에서 빨갛게
-  MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();}
+  MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();mpWsScan();}
+  MP.bt+=dt;if(MP.bt>=.1){MP.bt=0;mpBoatsTick();}
   if(MP.host){MP.mt+=dt;if(MP.mt>=.1){MP.mt=0;mpMobsOut();}}
   if(MP.host){MP.tt+=dt;if(MP.tt>=5){MP.tt=0;mpSend({t:'tm',v:world.time});}}
   else{MP.st+=dt;if(MP.st>=10){MP.st=0;mpSend(mpState());}}
@@ -7602,6 +7628,33 @@ function mpGiIn(d){if(!d.s||!Array.isArray(d.p))return;if(groundItems.some(g=>g.
 function mpGiDel(gid){const i=groundItems.findIndex(g=>g.gid===gid);if(i<0)return;MP.grx=1;try{removeGroundItem(i);}finally{MP.grx=0;}}
 function mpGq(c,d){const i=groundItems.findIndex(g=>g.gid===d.g);if(i<0){c.send({t:'gno',g:d.g});return;}const g=groundItems[i];c.send({t:'gok',g:g.gid,s:g.slot});removeGroundItem(i);}
 function mpGok(d){mpGiDel(d.g);if(!d.s)return;const left=giveSlot({...d.s});SFX.pop();if(left>0){const P=player.pos;spawnGroundItem({...d.s,count:left},P.x,P.y+.5,P.z,0,2,0,1.5);}}
+// 🌐 세계 상태 함께: 표지판 · 칠 · 가스레인지 · 냄비 · 접시 · 모루 (바뀐 것만) · 세계 기록(보스 등) · 난이도
+const MP_WS=['signs','paint','stoves','pots','plates','anvils'];
+const mpVol=(v,n)=>JSON.stringify(v,(k,x)=>k==='heat'||k==='burnT'||n==='pots'&&k==='t'?undefined:x); // 저절로 흐르는 시간 값은 각자 계산 (비교에서 뺌)
+function mpFlags(){const f={...(world.flags||{})};delete f.hcDead;delete f.cook100;return JSON.stringify(f);}
+function mpWsInit(){MP.wsc={};for(const n of MP_WS){const A=world[n]||{},C=MP.wsc[n]={};for(const k in A)C[k]=mpVol(A[k],n);}MP.flc=mpFlags();MP.dfc=world.diff;}
+function mpWsScan(){for(const n of MP_WS){const A=world[n]||{},C=MP.wsc[n]||(MP.wsc[n]={});
+    for(const k in A){const j=mpVol(A[k],n);if(C[k]!==j){C[k]=j;mpSend({t:'ws',n,k,v:A[k]});}}
+    for(const k in C)if(!(k in A)){delete C[k];mpSend({t:'ws',n,k,v:null});}}
+  const f=mpFlags();if(f!==MP.flc){MP.flc=f;try{mpSend({t:'fl',f:JSON.parse(f)});}catch(e){}}
+  if(MP.host&&world.diff!==MP.dfc){MP.dfc=world.diff;mpSend({t:'df',d:world.diff});}}
+function mpWsIn(d){if(!MP_WS.includes(d.n)||typeof d.k!=='string')return;const A=world[d.n]||(world[d.n]={}),C=MP.wsc[d.n]||(MP.wsc[d.n]={});
+  if(d.v===null||d.v===undefined){delete A[d.k];delete C[d.k];}
+  else if(A[d.k]&&typeof A[d.k]==='object'&&d.v&&typeof d.v==='object'){const o=A[d.k];for(const key of Object.keys(o))if(!(key in d.v))delete o[key];Object.assign(o,d.v);C[d.k]=mpVol(o,d.n);}
+  else{A[d.k]=d.v;C[d.k]=mpVol(d.v,d.n);}
+  nukeSyncT=0;}
+function mpFlIn(d){if(!d.f||typeof d.f!=='object')return;const f=world.flags||(world.flags={});for(const k in d.f)if(k!=='hcDead'&&k!=='cook100')f[k]=d.f[k];MP.flc=mpFlags();}
+// 💥 폭발 · 땅 새김(스텔라 · 핵)도 함께
+function mpFxIn(d){if(d.d!==world.dim||Math.hypot(d.x-player.pos.x,d.z-player.pos.z)>160)return;const r=+d.r||3;SFX.boom();
+  spawnParticles(d.x,d.y,d.z,new THREE.Color(0x555555),30,r*.6,6);spawnParticles(d.x,d.y,d.z,new THREE.Color(0xff9a30),22,r*.4,5);}
+function mpCarveIn(d){if(!d.c||typeof d.c!=='object')return;MP.rx=1;
+  try{if(d.d===world.dim)stCarve(d.c);else{const W=world.carves||(world.carves={});(W[d.d]||(W[d.d]=[])).push(d.c);}}catch(e){console.error(e);}finally{MP.rx=0;}}
+// 🚤 보트 함께: 놓기 · 부수기 · 탄 사람 쪽에서 움직임을 보냄
+function mpBoatOut(b){b.bid=MP.myId+'.b'+(++MP.gn);const r=v=>Math.round(v*100)/100;mpSend({t:'bi',b:b.bid,d:world.dim,x:r(b.pos.x),y:r(b.pos.y),z:r(b.pos.z),ya:r(b.yaw)});}
+function mpBoatIn(d){if(d.d!==world.dim||boats.some(b=>b.bid===d.b))return;MP.bin=1;try{const b=makeBoat(+d.x,+d.y,+d.z,+d.ya||0);b.bid=d.b;}finally{MP.bin=0;}}
+function mpBoatDel(id){const b=boats.find(q=>q.bid===id);if(!b)return;MP.bin=1;try{removeBoat(b,false);}finally{MP.bin=0;}}
+function mpBoatPos(d){const b=boats.find(q=>q.bid===d.b);if(!b||player.boat===b)return;b.rt=performance.now();(b.rtp||(b.rtp=new THREE.Vector3())).set(+d.x,+d.y,+d.z);b.rya=+d.ya||0;if(!b.passenger)b.passenger='remote';}
+function mpBoatsTick(){const r=v=>Math.round(v*100)/100,b=player.boat;if(b&&b.bid)mpSend({t:'bp',b:b.bid,x:r(b.pos.x),y:r(b.pos.y),z:r(b.pos.z),ya:r(b.yaw)});}
 // 채팅 (T · 모바일 💬)
 function mpChatOpen(){if(!MP.on||MP.chat)return;MP.chat=true;for(const k in keys)keys[k]=false;mouseL=mouseR=false;const el=$('mpChat');el.value='';el.style.display='block';
   try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>el.focus(),30);}
@@ -7620,7 +7673,7 @@ function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   else h=`<div>🌐 <b>${mpEsc(MP.hostNick)}</b> ${mpL('님의 세계','\'s world')} · ${mpL('방 코드','Code')} <b>${MP.code}</b></div>`;
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
   if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`:'');
-  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌐 친구 세계 참가에 코드를 넣어요 · T: 채팅<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 시간이 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
+  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌐 친구 세계 참가에 코드를 넣어요 · T: 채팅<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 표지판 · 요리 · 폭발 · 난이도 · 시간이 모두 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
   if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;
   if($('mpCopy'))$('mpCopy').onclick=()=>{try{navigator.clipboard.writeText(MP.code).then(()=>toast(mpL('📋 방 코드를 복사했어요','📋 Copied')));}catch(e){}};}
