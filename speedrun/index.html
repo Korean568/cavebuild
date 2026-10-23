@@ -298,7 +298,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.125 — 🚗 탈것도 함께</h4>
+    <h4>🆕 v26.126 — 🎮 게임 모드 · 🧩 모드도 함께</h4>
+    • 멀티플레이에서 누가 <b>게임 모드</b>(서바이벌 · 크리에이티브 · 관전)를 바꾸든 모두에게 똑같이 바뀌어요.<br>
+    • 방장이 켠 <b>🧩 모드(Mods)</b>도 함께예요: 친구가 들어올 때 모드가 다르면 물어보고, 좋다고 하면 방장의 모드로 게임을 새로고침해서 자동으로 다시 들어가요 (그 방에서만 켜지고, 내 모드 목록은 그대로예요). 모드 블록 · 아이템 번호도 방장과 똑같이 맞춰요.
+    <h4>v26.125 — 🚗 탈것도 함께</h4>
     • 멀티플레이에서 엔진으로 만든 <b>자동차 · 비행기</b>를 만들고, 운전하고, 블록으로 되돌리는 것이 모두에게 똑같이 보여요. 다른 사람이 운전 중인 탈것에는 탈 수 없고, 부스터로 혼자 가는 탈것은 방장 게임이 움직여요.
     <h4>v26.124 — 🌐 멀티플레이 모든 것 함께</h4>
     • 멀티플레이에서 <b>표지판 글씨 · 칠한 블록 색 · 가스레인지 · 냄비 · 접시 · 모루</b>도 모두에게 똑같이 보여요.<br>
@@ -1694,7 +1697,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.125 — 🚗 Shared vehicles</h4>
+    <h4>🆕 v26.126 — 🎮 Shared game mode · 🧩 mods</h4>
+    • In multiplayer, game mode changes apply to everyone. The host's mods are shared too: if a joining player's mods differ, they're asked to reload with the host's mods for that room only (block/item IDs are matched to the host).
+    <h4>v26.125 — 🚗 Shared vehicles</h4>
     • In multiplayer, cars and planes built with engines are shared: building, driving and unbuilding them is visible to everyone. You can't board a vehicle someone else is driving; booster-driven empty vehicles are moved by the host.
     <h4>v26.124 — 🌐 Share everything in multiplayer</h4>
     • Signs, painted blocks, stoves, pots, plates and anvils, boats (placing, breaking, riding), explosion effects, Stellar/nuke terrain carving, world progress flags and the host's difficulty are now shared with everyone.
@@ -7256,7 +7261,7 @@ function renderSettings(){const m=world.mode||'survival',d=world.diff||'normal';
 $('setDiff').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.d===world.diff)return;if(world.flags.hcDead){toast(world.flags.banned?'🚫 밴당한 세계는 관전만 할 수 있어요':'💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setDiff(b.dataset.d);renderSettings();toast('난이도: <b>'+DIFF_INFO[world.diff][0]+'</b>');});
 $('btnMode').onclick=()=>{renderSettings();$('pause').classList.remove('show');$('settings').classList.add('show');};
 $('btnSetClose').onclick=()=>{$('settings').classList.remove('show');$('pause').classList.add('show');};
-$('setMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.m===world.mode)return;if(world.flags.hcDead){toast(world.flags.banned?'🚫 밴당한 세계는 관전만 할 수 있어요':'💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setMode(b.dataset.m);renderSettings();toast('게임 모드: <b>'+MODE_INFO[world.mode][0]+'</b>');});
+$('setMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.m===world.mode)return;if(world.flags.hcDead){toast(world.flags.banned?'🚫 밴당한 세계는 관전만 할 수 있어요':'💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setMode(b.dataset.m);renderSettings();toast('게임 모드: <b>'+MODE_INFO[world.mode][0]+'</b>');if(MP.on)mpSend({t:'gm',m:world.mode});});
 let lastSpaceT=0;function spaceTap(){const n=performance.now();if((isCreative()||canFly())&&n-lastSpaceT<300&&!player.boat){player.flying=!player.flying;if(player.flying)player.vel.y=Math.max(player.vel.y,5);toast(player.flying?'🕊 날기 시작 (스페이스: 위 · C: 아래)':'날기 그만');lastSpaceT=0;}else lastSpaceT=n;}
 function parseSeed(t){ // 숫자는 그대로, 글자는 같은 글자면 늘 같은 숫자로
   t=(t||'').trim();if(!t)return null;
@@ -7306,15 +7311,17 @@ addEventListener('unhandledrejection',()=>{});
 // .js 모드 파일을 넣으면 게임이 켜질 때 CB(케이브빌드) API로 블록 · 아이템 · 조합법 · 행동을 더함. 모드 목록은 이 브라우저에 저장
 const MOD_KEY='cavebuild-mods',MOD_ID_KEY='cavebuild-modids',MOD_TICK=[],MOD_USE={};let MOD_WSRC='',modTile=116;
 const MOD_FREE_BLOCKS=[189,219,248,249,255];
+let MP_SMODS=null;try{const q=JSON.parse(sessionStorage.getItem('cb-mpmods')||'null');if(q&&q.pending){q.pending=false;sessionStorage.setItem('cb-mpmods',JSON.stringify(q));MP_SMODS=q;}else sessionStorage.removeItem('cb-mpmods');}catch(e){} // 🌐 방장 모드로 들어가는 중 (이 탭 · 이 방에서만)
+const MOD_RAN=[]; // 이번에 실제로 켠 모드 (방장과 비교)
 function modLoad(){try{return JSON.parse(localStorage.getItem(MOD_KEY)||'[]');}catch(e){return [];}}
 function modSave(L){try{localStorage.setItem(MOD_KEY,JSON.stringify(L));}catch(e){toast('모드를 저장할 공간이 부족해요');}}
 function modErr(where,e){console.warn('모드 오류',where,e);toast(`🧩 모드 오류(${where}): ${String(e&&e.message||e).slice(0,80)}`);}
-function modIds(){try{return JSON.parse(localStorage.getItem(MOD_ID_KEY)||'{}');}catch(e){return {};}}
+function modIds(){if(MP_SMODS)return MP_SMODS.ids||(MP_SMODS.ids={});try{return JSON.parse(localStorage.getItem(MOD_ID_KEY)||'{}');}catch(e){return {};}}
 function modAlloc(key,isBlock){const M=modIds();if(M[key]!==undefined&&(isBlock?!BL[M[key]]&&!IT[M[key]]:!IT[M[key]]&&!BL[M[key]]))return M[key]; // 같은 key는 늘 같은 번호 (저장한 세계가 안 꼬이게)
   const used=new Set(Object.values(M));let id;
   if(isBlock){id=1500;while(BL[id]||IT[id]||used.has(id))id++;if(id>=BLK_N)throw new Error('모드 블록 칸이 다 찼어요');}
   else{id=400;while(IT[id]||used.has(id))id++;}
-  M[key]=id;try{localStorage.setItem(MOD_ID_KEY,JSON.stringify(M));}catch(e){}return id;}
+  M[key]=id;if(!MP_SMODS)try{localStorage.setItem(MOD_ID_KEY,JSON.stringify(M));}catch(e){}return id;}
 function modIconCanvas(o){const c=makeCanvas(48,48),g=c.getContext('2d');
   if(o.icon&&o.icon.length<=4){g.font='36px serif';g.textAlign='center';g.textBaseline='middle';g.fillText(o.icon,24,27);}
   else{const col=o.color||[200,200,200];g.fillStyle=`rgb(${col})`;g.fillRect(10,10,28,28);g.fillStyle='rgba(255,255,255,.35)';g.fillRect(10,10,28,6);g.strokeStyle='#222';g.lineWidth=3;g.strokeRect(10,10,28,28);}return c;}
@@ -7338,7 +7345,7 @@ const CB={version:'v26.30',
   explode:(x,y,z,r)=>explode(x,y,z,r||3,'모드 폭발에 휘말렸습니다'),flash:(o,t,c)=>flash(o,t,c),shake:(a,t)=>shake(a,t),sound:n=>SFX[n]&&SFX[n](),
   THREE};
 window.CB=CB;
-function modRunAll(){for(const m of modLoad()){if(!m.on)continue;modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
+function modRunAll(){for(const m of MP_SMODS?MP_SMODS.mods:modLoad()){if(!m.on&&!MP_SMODS)continue;MOD_RAN.push({name:m.name,code:m.code});modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
 function modRender(){const L=modLoad();$('modList').innerHTML=L.length?L.map((m,i)=>`<div class="mi${m.on?'':' off'}"><b>${m.name.replace(/</g,'&lt;')}</b>${modBroken[m.name]?`<small>오류</small>`:''}<button data-t="${i}">${m.on?'켜짐':'꺼짐'}</button><button data-d="${i}">삭제</button></div>`).join(''):'<div class="mi"><b>아직 넣은 모드가 없어요</b></div>';}
 const modBroken={};
 try{modRunAll();}catch(e){}
@@ -7465,7 +7472,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
     const st=(world.mpp||{})[nick];
     Object.assign(sn,{mpp:{},items:[],sr:null,ach:[],sel:0,inv:st&&st.inv||new Array(36).fill(null),armor:st&&st.armor||[],dim:st&&st.dim||world.dim,
       p:st&&st.p||{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:0,hp:20,food:20}});
-    sn.golems=[];sn.mobQ={};c.P=P;c.send({t:'world',id:P.id,host:MP.me.nick,snap:sn,players:mpPlayersFor(c),pvp:MP.pvp});c.ready=true;
+    sn.golems=[];sn.mobQ={};if(!mpModSame(d.mods)){c.send({t:'mods',mods:MOD_RAN,ids:modIds()});return;}c.P=P;c.send({t:'world',id:P.id,host:MP.me.nick,snap:sn,players:mpPlayersFor(c),pvp:MP.pvp});c.ready=true;
     for(const g of groundItems){if(!g.gid)g.gid='H.'+(++MP.gn);c.send(mpGiMsg(g));} // 지금 바닥에 있는 아이템
     for(const b of boats){if(!b.bid)b.bid='H.b'+(++MP.gn);c.send({t:'bi',b:b.bid,d:world.dim,x:b.pos.x,y:b.pos.y,z:b.pos.z,ya:b.yaw});}
     mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();return;}
@@ -7490,6 +7497,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='br'){mpBoatDel(d.b);mpSend(d,c);}
   else if(d.t==='bp'){mpBoatPos(d);mpSend(d,c);}
   else if(d.t==='vi'){mpVehIn(d.d);mpSend(d,c);}
+  else if(d.t==='gm'){mpModeIn(d);mpSend(d,c);}
   else if(d.t==='vr'){mpVehDel(d.v);mpSend(d,c);}
   else if(d.t==='vp'){mpVehPos(d);mpSend(d,c);}
   else if(d.t==='vb'){const v=VEH.find(q=>q.d.vid===d.v);if(v)v.boost=v.d.boost=!!d.b;mpSend(d,c);}
@@ -7504,7 +7512,8 @@ function mpJoin(code){code=String(code||'').trim().toUpperCase();if(!/^[A-Z0-9]{
   MP.hc={get open(){return ws.readyState===1;},send(o){if(ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(x);}};
   const tm=setTimeout(()=>fail(mpL('방에 연결하지 못했어요 (잠시 뒤 다시 해 보세요)','Could not reach the room')),25000);
   ws.onmessage=ev=>{const d=mpUnpack(B,ev.data);if(!d||typeof d!=='object')return;
-    if(d.t==='_ok'){ws.send(JSON.stringify({t:'hi',...MP.me}));return;}
+    if(d.t==='_ok'){ws.send(JSON.stringify({t:'hi',...MP.me,mods:MOD_RAN}));return;}
+    if(d.t==='mods'){clearTimeout(tm);mpModsAsk(code,d);return;}
     if(d.t==='_err'){clearTimeout(tm);fail(d.m==='none'?mpL('그 코드의 방이 없어요','No room with that code'):d.m==='full'?mpL('방이 꽉 찼어요','The room is full'):mpEsc(d.m));return;}
     if(d.t==='no'){clearTimeout(tm);fail(mpEsc(d.m));return;}
     if(d.t==='world'){clearTimeout(tm);got=true;MP.code=code;MP.hostNick=d.host;const sv=d.snap;if(!validSave(sv)){toast('🌐 세계를 받지 못했어요');return;}
@@ -7538,6 +7547,7 @@ function mpGuestRecv(d){
   else if(d.t==='br')mpBoatDel(d.b);
   else if(d.t==='bp')mpBoatPos(d);
   else if(d.t==='vi')mpVehIn(d.d);
+  else if(d.t==='gm')mpModeIn(d);
   else if(d.t==='vr')mpVehDel(d.v);
   else if(d.t==='vp')mpVehPos(d);
   else if(d.t==='vb'){const v=VEH.find(q=>q.d.vid===d.v);if(v)v.boost=v.d.boost=!!d.b;}
@@ -7678,6 +7688,18 @@ function mpVehTick(){const r=v=>Math.round(v*1000)/1000;
   for(const v of VEH){if(v.d.d!==world.dim||!v.d.vid)continue;const mine=player.veh===v;
     if(mine||MP.host&&!(mpVehFresh(v)&&v.drv)&&(Math.abs(v.speed)>.02||Math.abs(v.vy)>.02||v.boost))mpSend({t:'vp',v:v.d.vid,x:r(v.pos.x),y:r(v.pos.y),z:r(v.pos.z),ya:r(v.yaw),pi:r(v.pitch),ro:r(v.roll),dr:mine?1:0});}}
 function mpVehFollow(v){const k=.35,da=(a,b)=>{let d=b-a;return Math.atan2(Math.sin(d),Math.cos(d));};v.pos.lerp(v.rtp,k);v.yaw+=da(v.yaw,v.rya)*k;v.pitch+=da(v.pitch,v.rpi)*k;v.roll+=da(v.roll,v.rro)*k;v.speed=0;v.vy=0;vehPose(v);}
+// 🧩 모드 맞추기: 방장과 켠 모드가 다르면 친구에게 물어보고, 방장 모드로 새로고침해서 다시 들어감
+function mpModSame(L){if(!Array.isArray(L)||L.length!==MOD_RAN.length)return false;return L.every((m,i)=>m&&m.name===MOD_RAN[i].name&&m.code===MOD_RAN[i].code);}
+function mpModsAsk(code,d){const L=Array.isArray(d.mods)?d.mods.filter(m=>m&&typeof m.code==='string'):[],names=L.map(m=>m.name).join(', ');
+  const ok=confirm(L.length?mpL(`🧩 방장이 모드 ${L.length}개를 켜고 있어요: ${names}\n\n방장의 모드 코드가 내 게임에서 실행돼요. 믿을 수 있는 친구일 때만 켜세요.\n이 방에서만 켜고, 게임을 새로고침한 뒤 다시 들어갈까요?`,`🧩 The host uses ${L.length} mod(s): ${names}\n\nThe host's mod code will run in your game. Only accept from people you trust.\nEnable them for this room only and rejoin?`)
+    :mpL('🧩 방장은 모드를 안 켜고 있어요. 이 방에서는 내 모드를 끄고, 새로고침한 뒤 다시 들어갈까요?','🧩 The host has no mods. Turn off your mods for this room and rejoin?'));
+  try{MP.ws&&(MP.ws.onclose=null,MP.ws.close());}catch(e){}MP.ws=null;MP.hc=null;
+  if(!ok){toast(mpL('🧩 모드가 달라서 들어가지 않았어요','🧩 Mods differ — not joined'));return;}
+  try{sessionStorage.setItem('cb-mpmods',JSON.stringify({pending:true,code,mods:L.map(m=>({name:String(m.name),code:m.code,on:true})),ids:d.ids&&typeof d.ids==='object'?d.ids:{}}));sessionStorage.setItem('cb-play','1');}catch(e){toast('저장 공간이 부족해요');return;}
+  location.href=location.origin+location.pathname+'?play=1';}
+if(MP_SMODS&&MP_SMODS.code)setTimeout(()=>{toast(mpL(`🧩 방장 모드 ${MP_SMODS.mods.length}개로 다시 들어가는 중…`,`🧩 Rejoining with the host's mods…`));mpJoin(MP_SMODS.code);},1500);
+// 🎮 게임 모드도 함께 (누가 바꾸든 모두에게)
+function mpModeIn(d){if(!MODE_INFO[d.m]||world.mode===d.m||world.flags&&world.flags.hcDead)return;MP.rx=1;try{setMode(d.m);}finally{MP.rx=0;}try{renderSettings();}catch(e){}toast(mpL('🌐 게임 모드가 바뀌었어요: ','🌐 Game mode changed: ')+MODE_INFO[world.mode][0]);}
 // 채팅 (T · 모바일 💬)
 function mpChatOpen(){if(!MP.on||MP.chat)return;MP.chat=true;for(const k in keys)keys[k]=false;mouseL=mouseR=false;const el=$('mpChat');el.value='';el.style.display='block';
   try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>el.focus(),30);}
@@ -7696,7 +7718,7 @@ function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   else h=`<div>🌐 <b>${mpEsc(MP.hostNick)}</b> ${mpL('님의 세계','\'s world')} · ${mpL('방 코드','Code')} <b>${MP.code}</b></div>`;
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
   if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`:'');
-  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌐 친구 세계 참가에 코드를 넣어요 · T: 채팅<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 난이도 · 시간이 모두 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
+  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌐 친구 세계 참가에 코드를 넣어요 · T: 채팅<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
   if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;
   if($('mpCopy'))$('mpCopy').onclick=()=>{try{navigator.clipboard.writeText(MP.code).then(()=>toast(mpL('📋 방 코드를 복사했어요','📋 Copied')));}catch(e){}};}
