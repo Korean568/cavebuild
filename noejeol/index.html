@@ -298,7 +298,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.131 — 🌳 진짜 같은 나무 · 🪨 바위</h4>
+    <h4>🆕 v26.132 — 🌊 진짜 같은 물</h4>
+    • 고퀄 그래픽에서 바다에 <b>나무 · 언덕 · 구름이 거울처럼 비쳐요</b> (진짜 반사).<br>
+    • 물 <b>깊이</b>에 따라 얕은 곳은 맑은 옥색으로 바닥이 비치고, 깊은 곳은 짙은 남색이에요. <b>물가</b>에는 하얀 거품이 넘실거리고, 물결이 조금 더 크게 출렁여요.
+    <h4>v26.131 — 🌳 진짜 같은 나무 · 🪨 바위</h4>
     • <b>나무</b>: 잎이 덩어리 9개로 울퉁불퉁하게 모이고, 겉에 잎 다발이 삐죽삐죽 나와 보송보송해요 (그동안 덩어리 6개가 빠져 있던 것도 고쳤어요).<br>
     • <b>바위</b>: 돌 · 광석 지형 표면이 울퉁불퉁 깎이고 틈은 어둡게 져서 진짜 바위처럼 보여요. 발 딛는 윗면은 덜 울퉁불퉁해요.
     <h4>v26.130 — ⭕ 사각형의 시대는 끝났다</h4>
@@ -1155,6 +1158,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
   const get=(x,y,z)=>{if(y<0)return CORE;if(y>=CH)return AIR;if(x>=0&&x<16&&z>=0&&z<16)return d[(y*16+z)*16+x];const dd=datas[((z>>4)+1)*3+(x>>4)+1];return dd?dd[(y*16+(z&15))*16+(x&15)]:STONE;};
   const skyAt=(x,y,z)=>{const h=hms[((z>>4)+1)*3+(x>>4)+1];return !h||y>h[(z&15)*16+(x&15)];};
   const aoc=[0,0,0,0];
+  let wdep=.88;const shoreAt=(vx,y,vz)=>{for(let a=-1;a<=0;a++)for(let b=-1;b<=0;b++){const t=get(vx+a,y,vz+b);if(!LIQ_KIND[t]&&(OPAQUE[t]||(NATB&&NATB[t])))return 1;}return 0;}; // 🌊 물 깊이 · 물가(땅이 닿은 모서리)
   const leafRound=(vx,vy,vz,o)=>{let sx=0,sy=0,sz=0,n=0; // 꼭짓점을 둘러싼 8칸 중 잎·원목 칸의 중심 쪽으로 이동
     for(let a=-1;a<=0;a++)for(let b=-1;b<=0;b++)for(let c=-1;c<=0;c++){const t=get(vx+a,vy+b,vz+c);if(t===LEAVES||t===LOG){sx+=a+.5;sy+=b+.5;sz+=c+.5;n++;}}
     const k=n?.95/n:0;o[0]=sx*k;o[1]=sy*k;o[2]=sz*k;},_lo=[0,0,0];
@@ -1241,7 +1245,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
         quad([x+.5-ex,ym-.15,z+.5-ez],[x+.5+ez,ym+.15,z+.5-ex],[x+.5-ez,ym+.15,z+.5+ex],[x+.5+ex,ym-.15,z+.5+ez],.95);}}
     if(NATB[id]&&!placed(x,y,z))continue; // 원래 땅의 흙·돌·광석은 아래에서 매끈한 곡면으로 (직접 놓은 건 네모)
     let wq=null; // 액체 윗면 네 모서리 높이: 모서리를 함께 쓰는 네 칸 중 가장 높은 값 → 이웃끼리 이어진 비탈
-    if(isW||isL){const k=LIQ_KIND[id];wq=[0,0,0,0];
+    if(isW||isL){const k=LIQ_KIND[id];wq=[0,0,0,0];wdep=.88;if(isW)for(let k2=1;k2<=12;k2++){if(LIQ_KIND[get(x,y-k2,z)]===1)wdep++;else break;}
       for(let a=0;a<2;a++)for(let c2=0;c2<2;c2++){let m=0;for(let i=a-1;i<=a;i++)for(let j=c2-1;j<=c2;j++)m=Math.max(m,liqH(x+i,y,z+j,k));wq[a*2+c2]=m;}}
     for(let fi=0;fi<6;fi++){
       const f=FACES[fi],n=get(x+f.dir[0],y+f.dir[1],z+f.dir[2]);
@@ -1253,7 +1257,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
       const sl=sky?1:caveB;
       if(isW){
         const base=WP.length/3;
-        for(const c of f.c){WP.push(x+c[0],y+(c[1]?wq[c[0]*2+c[2]]:0),z+c[2]);WU.push((tx+.008+c[3]*.984)/ATW,1-(ty+1-(.008+c[4]*.984))/ATH);
+        for(const c of f.c){WP.push(x+c[0],y+(c[1]?wq[c[0]*2+c[2]]:0),z+c[2]);WU.push(wdep,shoreAt(x+c[0],y,z+c[2]));
           WC.push(sl,LV?Math.min(1,lightAt(x+f.dir[0],y+f.dir[1],z+f.dir[2])/LM*1.25):0,f.shade);}
         WI.push(base,base+1,base+2,base+2,base+1,base+3);
         continue;
@@ -1325,7 +1329,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
     for(let y=1;y<CH-1;y++)for(let z=0;z<16;z++)for(let x=0;x<16;x++){const t=get(x,y,z);if(!NATB||!NATB[t]||placed(x,y,z)||LIQ_KIND[get(x,y+1,z)])continue;
       let wet=false;for(let dz=-1;dz<=1&&!wet;dz++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dz)continue;const n=get(x+dx,y,z+dz);if(LIQ_KIND[n]===1&&!LIQ_KIND[get(x+dx,y+1,z+dz)]&&!OPAQUE[get(x+dx,y+1,z+dz)]){wet=true;break;}}
       if(!wet)continue;const h=y+.875,sl=(y+1)>hms[4][z*16+x]?1:caveB,base=WP.length/3;
-      for(const [cx,cz] of [[0,0],[1,0],[0,1],[1,1]]){WP.push(x+cx,h,z+cz);WU.push((wtx+.008+cx*.984)/ATW,1-(wty+1-(.008+cz*.984))/ATH);WC.push(sl,0,1);}
+      for(const [cx,cz] of [[0,0],[1,0],[0,1],[1,1]]){WP.push(x+cx,h,z+cz);WU.push(.4,1);WC.push(sl,0,1);}
       WI.push(base,base+1,base+2,base+2,base+1,base+3);}}
   const NP=[],NU=[],NT=[],NC=[],NI=[];
   natSurf:{const R=NAT_R,SW=24,SO=4,SL=SW*SW,si=(x,y,z)=>((y+2)*SW+(z+SO))*SW+(x+SO),S=new Uint8Array(SL*(CH+4));let any=false;
@@ -1742,7 +1746,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.131 — 🌳 Realistic trees · 🪨 rocks</h4>
+    <h4>🆕 v26.132 — 🌊 Realistic water</h4>
+    • With HQ graphics the sea mirrors trees, hills and clouds (real reflections). Shallow water is clear turquoise and deep water dark blue, foam rolls along shorelines and waves are a bit bigger.
+    <h4>v26.131 — 🌳 Realistic trees · 🪨 rocks</h4>
     • Tree crowns are built from 9 lumpy leaf clumps with leafy tufts sticking out (6 clumps were missing before), and stone/ore terrain is craggy with dark crevices like real rock.
     <h4>v26.130 — ⭕ The age of squares is over</h4>
     • Hills are smooth slopes (terraces smoothed, grass on gentle slopes), shorelines curve naturally, the ground texture no longer shows a grid, and hands, arms, held items, mobs and third-person characters have rounded edges.
@@ -4222,12 +4228,12 @@ float vn3(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
   return mix(mix(mix(h31(i),h31(i+vec3(1.,0.,0.)),f.x),mix(h31(i+vec3(0.,1.,0.)),h31(i+vec3(1.,1.,0.)),f.x),f.y),
              mix(mix(h31(i+vec3(0.,0.,1.)),h31(i+vec3(1.,0.,1.)),f.x),mix(h31(i+vec3(0.,1.,1.)),h31(i+vec3(1.,1.,1.)),f.x),f.y),f.z);}`;
 const LIQ_VERT=(amp,speed)=>`
-uniform float uTime;varying vec3 vW;varying vec3 vC;
+uniform float uTime;uniform mat4 uRefM;varying vec3 vW;varying vec3 vC;varying vec2 vD;varying vec4 vRC;
 #include <fog_pars_vertex>
 void main(){
-  vec4 wp=modelMatrix*vec4(position,1.);
+  vec4 wp=modelMatrix*vec4(position,1.);vD=uv;
   if(abs(fract(position.y+.0001)-.88)<.02)wp.y+=(sin(wp.x*1.7+uTime*${speed})+sin(wp.z*2.1-uTime*${speed}*.8))*${amp}-${amp}; // 표면이 출렁임
-  vW=wp.xyz;vC=color;
+  vW=wp.xyz;vC=color;vRC=uRefM*wp;
   vec4 mvPosition=viewMatrix*wp;gl_Position=projectionMatrix*mvPosition;
   #include <fog_vertex>
 }`;
@@ -4235,28 +4241,35 @@ function liquidMat(frag,amp,speed,opts){
   return new THREE.ShaderMaterial(Object.assign({vertexColors:true,fog:true,extensions:{derivatives:true},
     uniforms:Object.assign(THREE.UniformsUtils.clone(THREE.UniformsLib.fog),{uTime:timeU,uDay:dayU,uSun:sunDirU,uSky:skyU}),
     vertexShader:LIQ_VERT(amp,speed),fragmentShader:`precision highp float;
-uniform float uTime;uniform float uDay;uniform vec3 uSun;uniform vec3 uSky;varying vec3 vW;varying vec3 vC;
+uniform float uTime;uniform float uDay;uniform vec3 uSun;uniform vec3 uSky;uniform sampler2D uRef;uniform float uRefOn;uniform float uRefH;uniform vec3 uTop;uniform vec3 uHor;varying vec3 vW;varying vec3 vC;varying vec2 vD;varying vec4 vRC;
 #include <fog_pars_fragment>
 ${NOISE_GLSL}
 ${frag}`},opts));
 }
 // 물: 잔물결로 흔들리는 표면 · 비스듬히 볼수록 하늘이 비침(프레넬) · 햇빛 반짝임 · 깊은 청록색 · 위에서 보면 투명
+const WREF={uRef:{value:null},uRefM:{value:new THREE.Matrix4()},uRefOn:{value:0},uRefH:{value:SEA+.88},uTop:{value:skyDome.material.uniforms.top.value},uHor:{value:skyDome.material.uniforms.hor.value}}; // 🌊 수면 반사 (고퀄에서 채움)
+// 물: 깊이에 따라 맑은 옥색 → 짙은 남색 · 수면에 진짜 반사(고퀄) · 비스듬히 볼수록 반사(프레넬) · 햇빛 반짝임 · 물가 거품 · 얕은 곳 물결 빛
 waterMat=liquidMat(`
-float wh(vec2 p){return vn2(p*1.3+vec2(uTime*.35,uTime*.2))*.6+vn2(p*3.1-vec2(uTime*.5,-uTime*.3))*.3+vn2(p*7.-uTime*.8)*.1;}
+float wh(vec2 p){return vn2(p*1.3+vec2(uTime*.35,uTime*.2))*.55+vn2(p*3.1-vec2(uTime*.5,-uTime*.3))*.3+vn2(p*7.-uTime*.8)*.15;}
 void main(){
   vec3 V=normalize(cameraPosition-vW),N=normalize(cross(dFdx(vW),dFdy(vW)));if(dot(N,V)<0.)N=-N;
   float lit=max(max(vC.r*uDay,vC.g),.07);bool top=abs(N.y)>.6;
-  if(top){float e=.07,h0=wh(vW.xz),hx=wh(vW.xz+vec2(e,0.)),hz=wh(vW.xz+vec2(0.,e));
-    vec3 n2=normalize(vec3(-(hx-h0)/e*.32,1.,-(hz-h0)/e*.32));N=N.y>0.?n2:vec3(n2.x,-n2.y,n2.z);}
-  float ndv=clamp(dot(N,V),0.,1.),F=.03+.97*pow(1.-ndv,5.);
-  vec3 body=mix(vec3(.02,.13,.22),vec3(.09,.36,.42),.3+.45*wh(vW.xz*.45))*lit;
-  vec3 sky=uSky*(.7+.3*lit)*clamp(vC.r+.12,0.,1.);
-  vec3 col=mix(body,sky,F*.88);
-  vec3 R=reflect(-V,N);col+=vec3(1.,.95,.82)*pow(max(dot(R,normalize(uSun)),0.),160.)*uDay*vC.r*1.8; // 햇빛 반짝임
-  if(top)col+=vec3(.55,.8,.85)*pow(vn2(vW.xz*4.+uTime*.6)*vn2(vW.xz*3.3-uTime*.5),3.)*lit*.5; // 물결 빛 무늬
-  gl_FragColor=vec4(col,top?mix(.6,.95,F):.8);
+  float dist=length(cameraPosition-vW),ns=.24*clamp(1.-dist/70.,.18,1.); // 멀수록 잔물결을 줄여 반사가 또렷하게
+  if(top){float e=.06,h0=wh(vW.xz),hx=wh(vW.xz+vec2(e,0.)),hz=wh(vW.xz+vec2(0.,e));
+    vec3 n2=normalize(vec3(-(hx-h0)/e*ns,1.,-(hz-h0)/e*ns));N=N.y>0.?n2:vec3(n2.x,-n2.y,n2.z);}
+  float ndv=clamp(dot(N,V),0.,1.),F=.02+.98*pow(1.-ndv,5.);
+  float dep=clamp((vD.x-.88)/6.,0.,1.),dq=sqrt(dep); // 0 얕음 · 1 깊음
+  vec3 body=mix(vec3(.13,.5,.48),vec3(.012,.08,.16),dq)*lit*(.85+.3*wh(vW.xz*.45));
+  vec3 R=reflect(-V,N);vec3 sky=mix(uHor,uTop,pow(clamp(R.y,0.,1.),.5))*(.75+.25*lit)*clamp(vC.r+.12,0.,1.);
+  if(top&&uRefOn>.5&&abs(vW.y-uRefH)<.3){vec2 ruv=vRC.xy/vRC.w+N.xz*.025;sky=mix(sky,texture2D(uRef,clamp(ruv,.002,.998)).rgb,.95);} // 진짜 반사 (나무 · 언덕 · 구름)
+  vec3 col=mix(body,sky,clamp(F*.95+.12,0.,1.));
+  col+=vec3(1.,.95,.82)*(pow(max(dot(R,normalize(uSun)),0.),220.)*2.2+pow(max(dot(R,normalize(uSun)),0.),24.)*.12)*uDay*vC.r; // 햇빛 반짝임
+  if(top)col+=vec3(.5,.78,.82)*pow(vn2(vW.xz*4.+uTime*.6)*vn2(vW.xz*3.3-uTime*.5),3.)*lit*.55*(1.-dq); // 얕은 곳 물결 빛
+  if(top&&vD.y>.01){float fl=vn2(vW.xz*3.2+vec2(uTime*.7,-uTime*.4))*vn2(vW.xz*1.4-uTime*.35),band=smoothstep(.32,.8,fl+.22*sin(uTime*1.7+vW.x*.8+vW.z*.6)); // 물가 거품
+    col=mix(col,vec3(.93,.97,.99)*max(lit,.35),band*.8*vD.y);}
+  gl_FragColor=vec4(col,top?clamp(mix(mix(.38,.93,dq),1.,F)+vD.y*.25,0.,1.):.8);
   #include <fog_fragment>
-}`,.016,1.6,{transparent:true,depthWrite:false,side:THREE.DoubleSide});
+}`,.022,1.6,{transparent:true,depthWrite:false,side:THREE.DoubleSide});Object.assign(waterMat.uniforms,WREF);
 // 용암: 천천히 흐르며 뒤틀리는 무늬 · 검붉게 굳은 껍질 · 밝게 빛나는 틈 · 스스로 빛남
 const lavaMat=liquidMat(`
 float fb(vec3 p){return vn3(p)*.55+vn3(p*2.1)*.28+vn3(p*4.3)*.17;}
@@ -7851,12 +7864,25 @@ void main(){vec2 q=vUv-.5;float ca=dot(q,q)*.004; // 가장자리 색 번짐
     const o={minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:false};
     st.b1=new THREE.WebGLRenderTarget(W>>1,H>>1,o);st.b2=new THREE.WebGLRenderTarget(W>>1,H>>1,o);st.r1=new THREE.WebGLRenderTarget(W>>2,H>>2,o);}
   function shadowsOn(v){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;sunL.castShadow=v;if(v){const sc=sunL.shadow.camera;sc.left=sc.bottom=-56;sc.right=sc.top=56;sc.near=1;sc.far=320;sc.updateProjectionMatrix();sunL.shadow.mapSize.set(2048,2048);sunL.shadow.bias=-.0004;sunL.shadow.normalBias=.04;}}
-  function set(v,quiet){st.on=!!v;try{localStorage.setItem('cavebuild-gfx',v?'hq':'normal');}catch(e){}
+  function set(v,quiet){st.on=!!v;if(!v)WREF.uRefOn.value=0;try{localStorage.setItem('cavebuild-gfx',v?'hq':'normal');}catch(e){}
     for(const m of [terrainMat,natMat]){m.defines=m.defines||{};if(v)m.defines.HQ=1;else delete m.defines.HQ;m.extensions={derivatives:true};m.needsUpdate=true;}
     shadowsOn(v);if(v)for(const c of chunks.values())if(c.nmesh&&!c.nmesh.geometry.attributes.normal)c.nmesh.geometry.computeVertexNormals();
     st.slow=0;if(!quiet)toast(v?'🎬 그래픽: <b>고퀄</b> (그림자 · 빛 번짐 · 햇살 · 영화 색감)':'⚡ 그래픽: <b>보통</b> (빠르게)');try{renderGfx();}catch(e){}}
   const _sp=new THREE.Vector3();
-  function begin(){if(!st.on)return false;size();
+  const rcam=new THREE.PerspectiveCamera(),_cw=new THREE.Vector3(),_rp=new THREE.Vector3(),_rv=new THREE.Vector3(),_n=new THREE.Vector3(0,1,0),_rot=new THREE.Matrix4(),_la=new THREE.Vector3(),_tg=new THREE.Vector3(),clip=new THREE.Plane(new THREE.Vector3(0,1,0),0);let rf=0;
+  function reflectPass(){ // 🌊 해수면에 비친 세상: 카메라를 수면 아래로 뒤집어 그린 그림 (물 셰이더가 읽음)
+    WREF.uRefOn.value=0;if(world.dim!=='over')return;const h=SEA+.88;camera.getWorldPosition(_cw);if(_cw.y<h+.15||_cw.y>h+80)return;
+    if(!st.rr){st.rr=new THREE.WebGLRenderTarget(st.W>>1,st.H>>1,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});}
+    else if(st.rr.width!==st.W>>1||st.rr.height!==st.H>>1)st.rr.setSize(st.W>>1,st.H>>1);
+    if((rf^=1)&&st.rrOk){WREF.uRefOn.value=1;return;} // 두 프레임에 한 번만 새로 그림
+    _rp.set(_cw.x,h,_cw.z);_rv.subVectors(_rp,_cw).reflect(_n).negate().add(_rp);
+    _rot.extractRotation(camera.matrixWorld);_la.set(0,0,-1).applyMatrix4(_rot).add(_cw);_tg.subVectors(_rp,_la).reflect(_n).negate().add(_rp);
+    rcam.position.copy(_rv);rcam.up.set(0,1,0).applyMatrix4(_rot).reflect(_n);rcam.lookAt(_tg);rcam.near=camera.near;rcam.far=camera.far;rcam.updateMatrixWorld();rcam.projectionMatrix.copy(camera.projectionMatrix);rcam.projectionMatrixInverse.copy(camera.projectionMatrixInverse);
+    WREF.uRefM.value.set(.5,0,0,.5,0,.5,0,.5,0,0,.5,.5,0,0,0,1).multiply(rcam.projectionMatrix).multiply(rcam.matrixWorldInverse);
+    clip.constant=-h+.02;const au=renderer.shadowMap.autoUpdate;renderer.shadowMap.autoUpdate=false;waterMat.visible=false;renderer.clippingPlanes=[clip];
+    renderer.setRenderTarget(st.rr);renderer.clear();renderer.render(scene,rcam);
+    renderer.clippingPlanes=[];waterMat.visible=true;renderer.shadowMap.autoUpdate=au;WREF.uRef.value=st.rr.texture;st.rrOk=true;WREF.uRefOn.value=1;}
+  function begin(){if(!st.on)return false;size();try{reflectPass();}catch(e){WREF.uRefOn.value=0;}
     HQU.uSMat.value=sunL.shadow.matrix; // 같은 행렬을 그대로 씀 (그림자를 그리는 순간 갱신됨)
     HQU.uSM.value=sunL.shadow.map?sunL.shadow.map.texture:white;HQU.uSunD.value.copy(sunDirU.value).normalize();HQU.uSun.value=world.dim==='over'?Math.min(1,sunL.intensity/.6):0;
     if((st.trav-=1)<=0){st.trav=90;scene.traverse(o=>{if(o.isMesh&&o.material&&!o.userData.ns&&(o.material.isMeshLambertMaterial||o.material.isMeshStandardMaterial||o.material.isMeshPhongMaterial)){o.castShadow=true;o.receiveShadow=true;}});} // 사람 · 몹 · 물건도 그림자
