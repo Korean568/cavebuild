@@ -297,7 +297,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.129 — 🎬 고퀄 그래픽 · 사각형의 시대는 끝났다</h4>
+    <h4>🆕 v26.130 — ⭕ 사각형의 시대는 끝났다</h4>
+    • 언덕이 <b>매끈한 비탈</b>이 됐어요: 계단 모양을 부드럽게 다듬고, 완만한 비탈엔 잔디가 덮여 갈색 줄무늬가 없어졌어요.<br>
+    • <b>물가</b>가 지그재그 네모 대신 자연스러운 곡선이에요. 땅 그림의 <b>바둑판 무늬</b>도 안 보여요.<br>
+    • <b>손 · 팔 · 든 물건 · 몹 · 3인칭 캐릭터</b>의 모서리가 둥글어졌어요.
+    <h4>v26.129 — 🎬 고퀄 그래픽 · 사각형의 시대는 끝났다</h4>
     • 새 그래픽 <b>🎬 고퀄</b>: 해를 따라 움직이는 <b>실시간 그림자</b>, 밝은 곳이 번지는 <b>빛 번짐</b>, 해에서 퍼지는 <b>햇살</b>, 영화 같은 <b>색감</b>(ACES), 비네팅 · 필름 결, 매끈한 가장자리(안티앨리어싱), 해 주변 하늘 빛무리. PC는 처음부터 켜지고, 일시정지 → ⚙ 서버 설정 → 🎬 그래픽에서 바꿀 수 있어요 (너무 느리면 알아서 보통으로).<br>
     • 블록을 겨눌 때 나오던 <b>네모난 테두리</b>를 없앴어요.
     <h4>v26.128 — 🪙 케이브코인 = 10원</h4>
@@ -1306,6 +1310,12 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
           for(const [v,u,w] of [[q[0],0,1],[q[1],1,1],[q[2],0,0],[q[3],1,0]]){P.push(v[0],v[1],v[2]);U.push((tx+.008+u*.984)/ATW,1-(ty+1-(.008+w*.984))/ATH);
             const tint=.88+.24*R(i+31,j+17),hy=Math.min(1,Math.max(0,(v[1]-(cy-2.4))/4.4));C.push(sl,bl,(.5+.3*(v[3]*.5+.5)+.25*hy)*dark*tint);} // 위쪽 덩어리 · 윗면이 밝음
           I.push(base,base+1,base+2,base+1,base+3,base+2);}}});}}
+  {const WT=BL[WATER].tiles[2],wtx=WT%ATW,wty=Math.floor(WT/ATW); // 🌊 물가를 둥글게: 물 옆 자연 지형 칸에도 같은 높이의 물 표면을 깔아 둠 (지형에 가려 물과 땅의 경계만 곡선으로 보임)
+    for(let y=1;y<CH-1;y++)for(let z=0;z<16;z++)for(let x=0;x<16;x++){const t=get(x,y,z);if(!NATB||!NATB[t]||placed(x,y,z)||LIQ_KIND[get(x,y+1,z)])continue;
+      let wet=false;for(let dz=-1;dz<=1&&!wet;dz++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dz)continue;const n=get(x+dx,y,z+dz);if(LIQ_KIND[n]===1&&!LIQ_KIND[get(x+dx,y+1,z+dz)]&&!OPAQUE[get(x+dx,y+1,z+dz)]){wet=true;break;}}
+      if(!wet)continue;const h=y+.875,sl=(y+1)>hms[4][z*16+x]?1:caveB,base=WP.length/3;
+      for(const [cx,cz] of [[0,0],[1,0],[0,1],[1,1]]){WP.push(x+cx,h,z+cz);WU.push((wtx+.008+cx*.984)/ATW,1-(wty+1-(.008+cz*.984))/ATH);WC.push(sl,0,1);}
+      WI.push(base,base+1,base+2,base+2,base+1,base+3);}}
   const NP=[],NU=[],NT=[],NC=[],NI=[];
   natSurf:{const R=NAT_R,SW=24,SO=4,SL=SW*SW,si=(x,y,z)=>((y+2)*SW+(z+SO))*SW+(x+SO),S=new Uint8Array(SL*(CH+4));let any=false;
     for(let y=-2;y<=CH+1;y++)for(let z=-4;z<20;z++)for(let x=-4;x<20;x++){const t=get(x,y,z);if(NATB[t]||OPAQUE[t]){S[si(x,y,z)]=1;if(!any&&NATB[t]&&!placed(x,y,z)&&x>=0&&x<16&&z>=0&&z<16&&y>=0&&y<CH)any=true;}}
@@ -1329,7 +1339,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
       else{f=fld((i+.5)/R,(j+.5)/R,(k+.5)/R);if(NATB[t]&&!placed(bx,by,bz)){const mn=D[si(bx,by,bz)]<.55?.62:.53;if(f<mn)f=mn;} // 흙·돌 칸은 절대 안 사라짐 (얇은 층 · 혼자 있는 흙도)
         else if(!OPAQUE[t]&&f>.4){const q=si(bx,by,bz);if((S[q-1]&&S[q+1])||(S[q-SW]&&S[q+SW])||(S[q-SL]&&S[q+SL]))f=.4;}} // 1칸 굴 · 구덩이 · 틈은 메우지 않음 (안에서 세상이 비쳐 보이던 문제)
       FN[fi_(i,j,k)]=f;}
-    const CE=[0,1,2,3,4,5,6,7,0,2,1,3,4,6,5,7,0,4,1,5,2,6,3,7],VI=new Int32Array(FN.length).fill(-1),VX=[],VA=[];
+    const CE=[0,1,2,3,4,5,6,7,0,2,1,3,4,6,5,7,0,4,1,5,2,6,3,7],VI=new Int32Array(FN.length).fill(-1),VX=[],VA=[],VL=[],QS=[];
     const cv=(i,j,k)=>{const ci=fi_(i,j,k);let v=VI[ci];if(v>=0)return v;const f=[];for(let c=0;c<8;c++)f.push(FN[fi_(i+(c&1),j+(c>>1&1),k+(c>>2&1))]);
       let sx=0,sy=0,sz=0,n=0;for(let e=0;e<24;e+=2){const a=CE[e],b=CE[e+1],fa=f[a],fb=f[b];if((fa>.5)===(fb>.5))continue;const t=(.5-fa)/(fb-fa);
         sx+=(a&1)+((b&1)-(a&1))*t;sy+=(a>>1&1)+((b>>1&1)-(a>>1&1))*t;sz+=(a>>2&1)+((b>>2&1)-(a>>2&1))*t;n++;}
@@ -1339,7 +1349,7 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
       const nx=-gx/gl,ny=-gy/gl,nz=-gz/gl,qx=Math.floor(px+nx*.45),qy=Math.floor(py+ny*.45),qz=Math.floor(pz+nz*.45);
       const sky=(qx>=0&&qx<16&&qz>=0&&qz<16)?qy>hms[4][qz*16+qx]:skyAt(qx,qy,qz),sl=sky?1:caveB,bl=LV?Math.min(1,lightAt(qx,qy,qz)/LM*1.25):0;
       const ao=Math.max(.5,Math.min(1,1.28-fld(px+nx*.75,py+ny*.75,pz+nz*.75)*1.05)),sh=(ny>=0?.72+.28*ny:.72+.17*ny)-.06*Math.abs(nz); // 움푹한 곳은 어둡게 · 기울기만큼 음영
-      v=VX.length/3;VX.push(px,py,pz);VA.push(sl,bl,sh*ao);VI[ci]=v;return v;};
+      v=VX.length/3;VX.push(px,py,pz);VA.push(sl,bl,sh*ao);VL.push(i<=0||i>=16*R-1||k<=0||k>=16*R-1||NV[nv(Math.floor((i+.5)/R),Math.min(CH-1,Math.max(0,Math.floor((j+.5)/R))),Math.floor((k+.5)/R))]?1:0);VI[ci]=v;return v;};
     const NB6=[[0,-1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1],[0,1,0]],NT6=[[1,0],[3,2],[5,4]];
     const NBk=(i,j,k)=>{const bx=Math.floor((i+.5)/R),by=Math.floor((j+.5)/R),bz=Math.floor((k+.5)/R),t=get(bx,by,bz),nat=(X,Y,Z,u)=>NATB[u]&&!placed(X,Y,Z);if(nat(bx,by,bz,t))return t;if(t&&OPAQUE[t])return 0; // 건물 · 직접 놓은 블록 안은 안 그림 · 빈칸에 덮인 곡면은 옆 흙·돌 재질
       for(const o of NB6){const u=get(bx+o[0],by+o[1],bz+o[2]);if(nat(bx+o[0],by+o[1],bz+o[2],u))return u;}
@@ -1349,10 +1359,17 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
       for(let a=0;a<3;a++){const i2=i+(a===0?1:0),j2=j+(a===1?1:0),k2=k+(a===2?1:0);if((FN[fi_(i2,j2,k2)]>.5)===in0)continue;
         const bid=in0?NBk(i,j,k):NBk(i2,j2,k2);if(!bid)continue;
         const q=a===0?[cv(i,j-1,k-1),cv(i,j,k-1),cv(i,j,k),cv(i,j-1,k)]:a===1?[cv(i-1,j,k-1),cv(i,j,k-1),cv(i,j,k),cv(i-1,j,k)]:[cv(i-1,j-1,k),cv(i,j-1,k),cv(i,j,k),cv(i-1,j,k)];
-        const sg=in0?1:-1,tl=BL[bid].tiles[NT6[a][sg>0?0:1]],base=NP.length/3;for(const v of q)pq(v,a,tl);
+        const sg=in0?1:-1;QS.push(q[0],q[1],q[2],q[3],a,bid,sg);}}
+    {const nV=VX.length/3,nb=Array.from({length:nV},()=>[]),lk=(u,v)=>{if(!nb[u].includes(v))nb[u].push(v);if(!nb[v].includes(u))nb[v].push(u);}; // 꼭짓점 이웃 (사각형 변)
+     for(let e=0;e<QS.length;e+=7)for(let c=0;c<4;c++)lk(QS[e+c],QS[e+(c+1)%4]);
+     for(let it=0;it<3;it++)for(const lam of [.55,-.58]){const T=Float32Array.from(VX);for(let v=0;v<nV;v++){const L=nb[v];if(VL[v]||!L.length)continue;let sx=0,sy=0,sz=0;for(const u of L){sx+=T[u*3];sy+=T[u*3+1];sz+=T[u*3+2];}const n=L.length;
+       VX[v*3]+=lam*(sx/n-T[v*3]);VX[v*3+1]+=lam*(sy/n-T[v*3+1]);VX[v*3+2]+=lam*(sz/n-T[v*3+2]);}}}
+    for(let e=0;e<QS.length;e+=7){const q=[QS[e],QS[e+1],QS[e+2],QS[e+3]],a=QS[e+4],bid=QS[e+5],sg=QS[e+6],base=NP.length/3;
         const P0=q[0]*3,P1=q[1]*3,P2=q[2]*3,P3=q[3]*3,d1x=VX[P2]-VX[P0],d1y=VX[P2+1]-VX[P0+1],d1z=VX[P2+2]-VX[P0+2],d2x=VX[P3]-VX[P1],d2y=VX[P3+1]-VX[P1+1],d2z=VX[P3+2]-VX[P1+2];
-        const dot=(a===0?d1y*d2z-d1z*d2y:a===1?d1z*d2x-d1x*d2z:d1x*d2y-d1y*d2x)*sg; // 바깥을 보게 감음
-        if(dot>0)NI.push(base,base+1,base+2,base,base+2,base+3);else NI.push(base,base+2,base+1,base,base+3,base+2);}}
+        const cx=d1y*d2z-d1z*d2y,cy=d1z*d2x-d1x*d2z,cz=d1x*d2y-d1y*d2x,dot=(a===0?cx:a===1?cy:cz)*sg,o=dot>0?1:-1,ox_=cx*o,oy_=cy*o,oz_=cz*o; // 바깥을 보게 감음 · 다듬은 뒤 실제 기울기
+        const A2=Math.abs(oy_)>=Math.abs(ox_)*.8&&Math.abs(oy_)>=Math.abs(oz_)*.8?1:Math.abs(ox_)>Math.abs(oz_)?0:2,s2=(A2===0?ox_:A2===1?oy_:oz_)>0?1:-1; // 완만한 비탈은 윗면 그림 (갈색 계단 줄무늬 없앰)
+        const tl=BL[bid].tiles[NT6[A2][s2>0?0:1]];for(const v of q)pq(v,A2,tl);
+        if(dot>0)NI.push(base,base+1,base+2,base,base+2,base+3);else NI.push(base,base+2,base+1,base,base+3,base+2);}
   }
   const F=a=>new Float32Array(a),U32=a=>new Uint32Array(a);
   return {NP:F(NP),NU:F(NU),NT:F(NT),NC:F(NC),NI:U32(NI),P:F(P),U:F(U),C:F(C),I:U32(I),WP:F(WP),WU:F(WU),WC:F(WC),WI:U32(WI),LP:F(LP),LU:F(LU),LC:F(LC),LI:U32(LI),GP:F(GP),GU:F(GU),GC:F(GC),GI:U32(GI)};
@@ -1707,7 +1724,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.129 — 🎬 High-quality graphics</h4>
+    <h4>🆕 v26.130 — ⭕ The age of squares is over</h4>
+    • Hills are smooth slopes (terraces smoothed, grass on gentle slopes), shorelines curve naturally, the ground texture no longer shows a grid, and hands, arms, held items, mobs and third-person characters have rounded edges.
+    <h4>v26.129 — 🎬 High-quality graphics</h4>
     • New 🎬 HQ graphics: real-time sun shadows, bloom, sun rays, filmic ACES color, vignette and film grain, anti-aliasing and a glowing sky around the sun. On by default on PC; switch in Pause → ⚙ Settings → 🎬 Graphics (drops to normal automatically if too slow). The square block outline is gone.
     <h4>v26.128 — 🪙 1 CaveCoin = ₩10</h4>
     • CaveCoins now cost ₩10 each. Top-ups start at 100 coins (₩1,000).
@@ -4165,7 +4184,14 @@ vec2 gs=vec2(.984/${ATW}.,.984/${ATH}.);vec4 tc=textureGrad(map,st,dFdx(vRaw)*gs
 #else
 vec4 tc=texture2D(map,st);
 #endif
-diffuseColor*=tc;}`);};}
+vec2 r2=mat2(.8,-.6,.6,.8)*vRaw*.63+vec2(.37,.11),f2=fract(r2);vec2 st2=vec2((vTl.x+.008+f2.x*.984)/${ATW}.,1.-(vTl.y+1.-(.008+f2.y*.984))/${ATH}.);
+#if __VERSION__>=300
+vec4 tc2=textureGrad(map,st2,dFdx(r2)*gs,dFdy(r2)*gs);
+#else
+vec4 tc2=texture2D(map,st2);
+#endif
+float mac=.9+.1*sin(vRaw.x*.21+2.*sin(vRaw.y*.17))*sin(vRaw.y*.23+2.*sin(vRaw.x*.13)); // 넓은 밝기 얼룩
+diffuseColor*=mix(tc,tc2,.5)*mac;}`);};}
 // ---------- 진짜 같은 물 · 용암 (셰이더) ----------
 const timeU={value:0},sunDirU={value:new THREE.Vector3(0,1,0)},skyU={value:skyColor};
 const NOISE_GLSL=`
@@ -4409,9 +4435,20 @@ const mobs=[];const geoCache=new Map();
 const SHADOW_GEO=new THREE.PlaneGeometry(1,1),SHADOW_MAT=(()=>{const c=makeCanvas(64,64),g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);
   gr.addColorStop(0,'rgba(0,0,0,1)');gr.addColorStop(.55,'rgba(0,0,0,.6)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);
   return new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2});})();
-function bx(w,h,d,mat){const k=w+','+h+','+d;let g=geoCache.get(k);
-  if(!g){g=new THREE.BoxGeometry(w,h,d);const uv=g.attributes.uv,S=.5,span=[[d,h],[d,h],[w,d],[w,d],[w,h],[w,h]]; // 크기에 맞춰 텍스처 밀도를 일정하게
-    for(let i=0;i<uv.count;i++){const f=span[i>>2];uv.setXY(i,uv.getX(i)*f[0]/S,uv.getY(i)*f[1]/S);}geoCache.set(k,g);}
+function rbGeo(w,h,d,r){ // 둥근 상자: 4×4 칸 상자 → 가장자리 줄을 모서리 가까이로 · 안쪽 상자 밖은 반지름 r 구면 · 법선도 둥글게
+  const g=new THREE.BoxGeometry(w,h,d,4,4,4),p=g.attributes.position,uv=g.attributes.uv,nr=g.attributes.normal,H=[w/2,h/2,d/2],F=[[2,-1,1,-1],[2,1,1,-1],[0,1,2,1],[0,1,2,-1],[0,1,1,-1],[0,-1,1,-1]],c=[0,0,0],q=[0,0,0];
+  r=Math.min(r,H[0]*.98,H[1]*.98,H[2]*.98);
+  for(let i=0;i<p.count;i++){const f=Math.floor(i/25);c[0]=p.getX(i);c[1]=p.getY(i);c[2]=p.getZ(i);
+    if(r>0)for(let a=0;a<3;a++){const v=c[a];if(Math.abs(v)>1e-6&&Math.abs(v)<H[a]-1e-6)c[a]=Math.sign(v)*(H[a]-Math.min(.55*r,H[a]*.5));}
+    const [ua,ud,va,vd]=F[f];uv.setXY(i,c[ua]*ud/(2*H[ua])+.5,1-(c[va]*vd/(2*H[va])+.5));
+    for(let a=0;a<3;a++)q[a]=Math.max(-(H[a]-r),Math.min(H[a]-r,c[a]));
+    const dx=c[0]-q[0],dy=c[1]-q[1],dz=c[2]-q[2],l=Math.hypot(dx,dy,dz);
+    if(l>1e-6){p.setXYZ(i,q[0]+dx/l*r,q[1]+dy/l*r,q[2]+dz/l*r);nr.setXYZ(i,dx/l,dy/l,dz/l);}else p.setXYZ(i,c[0],c[1],c[2]);}
+  return g;}
+let BX_ITEM=0; // 물건(곡괭이 등) 모델을 만드는 중: 원래 모양 그대로 (작은 상자를 이어 붙인 모양이라 둥글리면 마디가 울퉁불퉁)
+function bx(w,h,d,mat){const k=(BX_ITEM?'i':'')+w+','+h+','+d;let g=geoCache.get(k);
+  if(!g){g=BX_ITEM?rbGeo(w,h,d,0):rbGeo(w,h,d,Math.min(Math.min(w,h,d)*.16,.05));const uv=g.attributes.uv,S=.5,span=[[d,h],[d,h],[w,d],[w,d],[w,h],[w,h]]; // 크기에 맞춰 텍스처 밀도를 일정하게 · 모서리는 둥글게
+    for(let i=0;i<uv.count;i++){const f=span[Math.floor(i/25)];uv.setXY(i,uv.getX(i)*f[0]/S,uv.getY(i)*f[1]/S);}geoCache.set(k,g);}
   return new THREE.Mesh(g,mat);}
 // 몹 표면 재질 (피부·천·뼈·양털·금속·껍데기·나무·깃털·비늘·점액) — 색 위에 곱해지는 무늬
 const MOBTEX_FN={
@@ -4621,7 +4658,8 @@ function hopperModel(s){ // 깔때기 모양 호퍼 (블록 텍스처 일부를 
     const mesh=new THREE.Mesh(geo,m);mesh.position.set((cx-.5)*s,(cy-.5)*s,(cz-.5)*s);grp.add(mesh);}
   return grp;
 }
-function buildItemModel(id){
+function buildItemModel(id){BX_ITEM=1;try{return buildItemModel0(id);}finally{BX_ITEM=0;}}
+function buildItemModel0(id){
   const g=new THREE.Group();let grip=false;
   const it=IT[id];
   if(PAINT_COL[id]){const mt=imat('pbM',0x9aa0aa,'metal',.4,.6),pt=new THREE.MeshStandardMaterial({color:PAINT_COL[id],roughness:.35}); // 페인트 양동이 3D
@@ -4905,9 +4943,9 @@ function tintHand(){const M=handArm.userData.mats;if(!M)return;const d=SKIN_C.ge
   if(sk)for(const [m,k] of [[M.skin,1.05],[M.skinD,.9]]){m.color.copy(sk).multiplyScalar(k);m.userData.base=m.color.clone();}
   if(sl)for(const [m,k] of [[M.cloth,1.05],[M.cuff,.82]]){m.color.copy(sl).multiplyScalar(k);m.userData.base=m.color.clone();}}
 function skinBox(w,h,d,u,v,pw,ph,pd,mat){ // 스킨 펼침 그림을 상자 6면에 입힘: [오른쪽][앞][왼쪽][뒤] · 위 · 아래
-  const g=new THREE.BoxGeometry(w,h,d),uv=g.attributes.uv,R=[[u,v+pd,pd,ph],[u+pd+pw,v+pd,pd,ph],[u+pd,v,pw,pd],[u+pd+pw,v,pw,pd],[u+2*pd+pw,v+pd,pw,ph],[u+pd,v+pd,pw,ph]];
-  for(let f=0;f<6;f++){const [x,y,ww,hh]=R[f];for(let k=0;k<4;k++){const i=f*4+k;let a=uv.getX(i),b=uv.getY(i);if(f===2){a=1-a;b=1-b;}else if(f===3)a=1-a;
-    uv.setXY(i,(x+a*ww)/64,1-(y+(1-b)*hh)/64);}}
+  const g=rbGeo(w,h,d,Math.min(Math.min(w,h,d)*.2,.07)),uv=g.attributes.uv,R=[[u,v+pd,pd,ph],[u+pd+pw,v+pd,pd,ph],[u+pd,v,pw,pd],[u+pd+pw,v,pw,pd],[u+2*pd+pw,v+pd,pw,ph],[u+pd,v+pd,pw,ph]]; // 모서리가 둥근 몸
+  for(let i=0;i<uv.count;i++){const f=Math.floor(i/25),[x,y,ww,hh]=R[f];let a=uv.getX(i),b=uv.getY(i);if(f===2){a=1-a;b=1-b;}else if(f===3)a=1-a;
+    uv.setXY(i,(x+a*ww)/64,1-(y+(1-b)*hh)/64);}
   return new THREE.Mesh(g,mat);}
 function mkAvatar(T){const g=new THREE.Group(),SK=new THREE.MeshLambertMaterial({map:T}),SO=new THREE.MeshLambertMaterial({map:T,alphaTest:.5,side:THREE.DoubleSide}); // 스킨 · 겉옷 층(모자 · 재킷 등)
   const L2=(par,w,h,d,u,v,ou,ov,pw,ph,pd,y,k)=>{const a=skinBox(w,h,d,u,v,pw,ph,pd,SK),b=skinBox(w*k,h*(1+(k-1)*.5),d*k,ou,ov,pw,ph,pd,SO);a.position.y=b.position.y=y;par.add(a,b);};
