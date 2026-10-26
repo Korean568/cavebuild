@@ -301,11 +301,13 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.133 — 🎃 할로윈 모드</h4>
+    <h4>🆕 v26.134 — 🟨 백룸의 하루 = 프론티어의 하루</h4>
+    • 백룸의 하루가 90초가 아니라 <b>프론티어와 똑같이 10분</b>이에요. 7일을 버티려면 70분! 위쪽에 남은 시간이 분 · 초로 나와요.
+    <h4>v26.133 — 🎃 할로윈 모드</h4>
     • 허브에서 <b>🎃 CAVEBUILD 할로윈</b>으로 들어가는 따로 된 모드예요 (세계도 따로 저장).<br>
     • 흑요석을 캐면 발밑이 꺼지며 <b>백룸</b>으로 떨어져요. 가운데 스폰 방 둘레에 <b>실험실 · 도서관 · 투명 벽 미로 · 엘리베이터</b>가 있어요.<br>
     • 백룸에서는 <b>이상현상</b>(정전 · 웃는 스마일러 · 등 뒤에 생기는 벽 · 발소리 · 보급품)이 일어나요. 스마일러는 쳐다보면 멈추니 눈을 떼지 마세요!<br>
-    • <b>7일</b>(백룸의 하루는 90초)을 버티면 프론티어로 돌아오며 <b>할로윈 열쇠</b>를 받아요. 열쇠를 쓰면 <b>할로윈 차원</b>으로 가고, 거기서 <b>잭오랜턴</b>을 쓰러뜨리면 엔딩이에요.
+    • <b>7일</b>을 버티면 프론티어로 돌아오며 <b>할로윈 열쇠</b>를 받아요. 열쇠를 쓰면 <b>할로윈 차원</b>으로 가고, 거기서 <b>잭오랜턴</b>을 쓰러뜨리면 엔딩이에요.
     <h4>v26.132 — 🌊 진짜 같은 물</h4>
     • 고퀄 그래픽에서 바다에 <b>나무 · 언덕 · 구름이 거울처럼 비쳐요</b> (진짜 반사).<br>
     • 물 <b>깊이</b>에 따라 얕은 곳은 맑은 옥색으로 바닥이 비치고, 깊은 곳은 짙은 남색이에요. <b>물가</b>에는 하얀 거품이 넘실거리고, 물결이 조금 더 크게 출렁여요.
@@ -1821,7 +1823,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.133 — 🎃 Halloween mode</h4>
+    <h4>🆕 v26.134 — 🟨 Backrooms day = Frontier day</h4>
+    • A Backrooms day now lasts as long as a Frontier day (10 minutes), so surviving 7 days takes 70 minutes.
+    <h4>v26.133 — 🎃 Halloween mode</h4>
     • A separate mode (own saves) from the hub: mining obsidian drops you into the Backrooms (lab, library, invisible-wall maze, elevator). Survive anomalies for 7 days to earn the Halloween Key, then defeat the Jack-o'-Lantern in the Halloween dimension for the ending.
     <h4>v26.132 — 🌊 Realistic water</h4>
     • With HQ graphics the sea mirrors trees, hills and clouds (real reflections). Shallow water is clear turquoise and deep water dark blue, foam rolls along shorelines and waves are a bit bigger.
@@ -5775,7 +5779,7 @@ function onArrive(dim,fromLoad){
 }
 
 // ===== 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석을 캐면 백룸 → 이상현상 속에서 7일 버티기 → 할로윈 열쇠 → 할로윈 차원의 잭오랜턴 =====
-const BK_DAY=90,BK_DAYS=7; // 백룸의 하루 (초) · 버텨야 하는 날
+const BK_DAY=DAY_LEN,BK_DAYS=7; // 백룸의 하루 = 프론티어의 하루 (10분) · 버텨야 하는 날
 let bkEvT=40,bkDark=0,bkElevT=0,bkQuiet=false;
 function hwFallToBack(){toast('🕳 흑요석 아래가 <b>꺼졌어요</b>... 어딘가로 떨어지고 있어요','ach');tone(220,40,1.2,.06,'sawtooth');
   setTimeout(()=>{const F=world.flags;F.bkT=0;F.bkDay=1;bkEvT=40;travel('back',arrivalOf('back'));},700);}
@@ -5807,7 +5811,7 @@ function hwTick(dt){
     if(world.dim!=='back'&&F.bkT>0&&!traveling){F.bkT=0;F.bkDay=0;toast('🟨 백룸에서 쓰러졌어요... 흑요석을 다시 캐면 <b>처음부터</b> 버텨야 해요');}return;}
   F.bkT=(F.bkT||0)+dt;const day=Math.floor(F.bkT/BK_DAY)+1,left=Math.ceil(BK_DAY-F.bkT%BK_DAY);
   if(F.bkT>=BK_DAY*BK_DAYS){bkEscape();return;}
-  const txt=`🟨 백룸 · <b>${day}일째</b> / ${BK_DAYS}일 · 다음 날까지 ${left}초`;hud.style.display='block';if(hud._t!==txt){hud.innerHTML=txt;hud._t=txt;}
+  const txt=`🟨 백룸 · <b>${day}일째</b> / ${BK_DAYS}일 · 다음 날까지 ${Math.floor(left/60)}분 ${left%60}초`;hud.style.display='block';if(hud._t!==txt){hud.innerHTML=txt;hud._t=txt;}
   if(day>(F.bkDay||1)){F.bkDay=day;toast(`🟨 백룸 <b>${day}일째</b>... ${day>=5?'이상현상이 점점 잦아져요':'계속 버티세요'}`);}
   bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=35+Math.random()*35;bkAnomaly(day);}
   if(bkDark>0){bkDark-=dt;D.style.opacity=bkDark<.6||Math.random()<.06?.35:.94;}else D.style.opacity=Math.random()<dt*.6?.25:0; // 정전 · 가끔 깜빡이는 형광등
