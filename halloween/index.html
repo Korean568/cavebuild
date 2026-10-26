@@ -22,7 +22,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malg
 #stats{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3px}
 #hearts{flex-direction:column-reverse;gap:2px}.hrow{display:flex;gap:1px} /* 늘어난 체력은 위 줄로 쌓임 */
 .row{display:flex;gap:1px}
-#foodrow{flex-direction:row-reverse}
+#foodrow{flex-direction:row-reverse}#foodrow.two{flex-direction:column-reverse;gap:2px}.frow{display:flex;flex-direction:row-reverse;gap:1px}
 #airrow{flex-direction:row-reverse;height:18px;margin-bottom:2px}
 .icon{width:18px;height:18px;background-size:100% 100%;image-rendering:pixelated}
 #hotbar{display:flex;gap:2px;background:rgba(0,0,0,.45);padding:3px;border:2px solid rgba(0,0,0,.6)}
@@ -301,7 +301,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.140 — 🥤 콜라</h4>
+    <h4>🆕 v26.141 — ⚡ 콜라 효과 · 🍦 배고픔 두 줄</h4>
+    • 콜라를 다 마시면 <b>30초 동안 1.4배 빨라져요</b>.<br>
+    • <b>카라멜라떼맛 아이스크림</b>을 먹으면 <b>배고픔이 두 줄</b>(가득 찬 줄 위에 한 줄 더)이 돼요. 위 줄부터 줄어들어요.
+    <h4>v26.140 — 🥤 콜라</h4>
     • (모든 모드) <b>콜라</b>가 생겼어요! 작업대에서 <b>철 주괴 1 · 사과 1 · 석탄 1</b> → 콜라 2캔.<br>
     • 들고 우클릭하면 <b>따요</b>: 왼손에 캔을 들고 <b>오른손 검지로 따개를 들어 올리면 "칙!"</b> 하고, 다시 눌러 닫아요. 딴 콜라는 꾹 누르면 캔을 입에 대고 기울여 <b>꿀꺽꿀꺽</b> 마셔요 (배고픔 +3 · 마시고 나면 꺼억).<br>
     • 백룸 보급품에도 가끔 콜라가 들어 있어요.
@@ -1841,7 +1844,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.140 — 🥤 Cola</h4>
+    <h4>🆕 v26.141 — ⚡ Cola boost · 🍦 double hunger bar</h4>
+    • Finishing a Cola makes you 1.4× faster for 30 seconds. Eating a Caramel Latte Ice Cream fills your hunger to two full rows.
+    <h4>v26.140 — 🥤 Cola</h4>
     • (All modes) Craft 2 Colas at a workbench from 1 Iron Ingot, 1 Apple and 1 Coal. Right-click to open it: holding the can in your left hand, your right index finger lifts the tab (pssst!) and presses it back down. Hold right-click to tilt it to your mouth and drink (+3 hunger, then a burp).
     <h4>v26.139 — 🎃 Halloween starting box · elevator removed</h4>
     • New Halloween worlds start inside invisible walls with a bedrock wall in front (2 obsidian blocks in the middle). Your Pumpkin is the only item that mines obsidian in one hit (and nothing else). Escaping the Backrooms removes the box and the Pumpkin. The Backrooms elevator is gone.
@@ -3741,7 +3746,7 @@ function plateUse(x,y,z,s){const k=plateKey(x,y,z),st=world.plates&&world.plates
   player.bite={k,x,y,z,id:st.id,t:0,done:false,col:foodCol(st.id)[0]};}
 function updateBite(dt){const b=player.bite;if(!b)return;b.t+=dt; // 한 입: 접시로 손 뻗기 → 집어서 입으로 → 오물오물
   if(!b.done&&b.t>=.45){b.done=true;const st=world.plates&&world.plates[b.k];if(!st){player.bite=null;return;}
-    st.bites++;const f=Math.max(1,Math.round((IT[st.id]&&IT[st.id].food||2)/PLATE_BITES));player.food=Math.min(20,player.food+f);tone(1400,900,.05,.04,'triangle');
+    st.bites++;const f=Math.max(1,Math.round((IT[st.id]&&IT[st.id].food||2)/PLATE_BITES));player.food=Math.max(player.food,Math.min(20,player.food+f));tone(1400,900,.05,.04,'triangle');
     if(st.bites>=PLATE_BITES){delete world.plates[b.k];setBlock(b.x,b.y,b.z,AIR);remeshAt(b.x>>4,b.z>>4);if(IT[st.id]&&IT[st.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(st.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}
       if(st.id===DARK_DISH||st.id===DARK_STEW){player.hungerAcc+=60;toast('🤢 맛이 이상해…');}}
     renderStats();}
@@ -6800,7 +6805,7 @@ function updatePlayer(dt){
     if(got)toast('🕷 스파이더맨 슈트! <b>웹 스윙</b> · <b>웹 슈터</b> · <b>스파이더맨 펀치</b> 획득');}if(!w&&player.web)webRelease();spWorn=w;}
   const p=player;p.attackCD=Math.max(0,p.attackCD-dt);p.hurtCD=Math.max(0,p.hurtCD-dt);p.bowCD=Math.max(0,(p.bowCD||0)-dt);
   p.thornT=Math.max(0,(p.thornT||0)-dt);if(p.thornT<=0&&touchingBlock(p,THORN)){p.thornT=.7;hurtPlayer(1,0,0,'가시 덤불에 찔렸습니다');}
-  p.invulnT=Math.max(0,p.invulnT-dt);p.graceT=Math.max(0,(p.graceT||0)-dt);p.lavaT=Math.max(0,p.lavaT-dt);
+  p.invulnT=Math.max(0,p.invulnT-dt);if(p.colaT>0){p.colaT-=dt;if(p.colaT<=0)toast('🥤 콜라 효과가 끝났어요');}p.graceT=Math.max(0,(p.graceT||0)-dt);p.lavaT=Math.max(0,p.lavaT-dt);
   if(p.lavaT<=0&&overlapBlock(p,b=>LIQ_KIND[b]===2)){p.lavaT=.5;hurtPlayer(4,0,0,'용암에 빠졌습니다');}
   const pb=overlapBlock(p,b=>PORTAL[b]===1)||touchPortal(p); // 차원문 안(또는 바로 맞닿은 채)에 잠시 서 있으면 이동
   if(pb){if(portalLock){portalLockT+=dt;if(portalLockT>3)portalLock=false;} // 도착한 문에서 3초 넘게 머물면 다시 쓸 수 있음
@@ -6849,7 +6854,8 @@ function updatePlayer(dt){
   // 방패 막기: 우클릭 기능이 없는 아이템(무기·도구·맨손)을 든 채 우클릭 유지
   const h0=held(),hi=h0&&IT[h0.id],hasUse=h0&&(isBlk(h0.id)||(hi&&(hi.food||hi.bow||hi.armor||hi.bucket||hi.use))||h0.id===LASER||h0.id===POTION);
   p.shieldCD=Math.max(0,(p.shieldCD||0)-dt);p.blocking=!!(mouseR&&armor[4]&&!invOpen&&!hasUse&&p.shieldCD<=0);
-  let sp=sprint&&!p.blocking?5.8:4.3;if(p.inWater)sp*=p.graceT>0?.85:.55;if(p.blocking)sp*=.4;if(p.crouch)sp*=.33;
+  let sp=sprint&&!p.blocking?5.8:4.3;if(p.colaT>0)sp*=1.4; // 🥤 콜라 효과
+  if(p.inWater)sp*=p.graceT>0?.85:.55;if(p.blocking)sp*=.4;if(p.crouch)sp*=.33;
   const s=Math.sin(p.yaw),c=Math.cos(p.yaw);
   let wx=-s*fz+c*fx,wz=-c*fz-s*fx;const l=Math.hypot(wx,wz);if(l>0){const q=Math.min(1,l)*sp/l;wx*=q;wz*=q;}
   const acc=p.onGround?14:p.inWater?6:3.5;const k=Math.min(1,acc*dt);
@@ -7014,7 +7020,7 @@ function updateDine(dt){const d=player.dine;if(!d)return;const s=held();
   if(!mouseR||invOpen||!s||s.id!==d.id||sel!==d.sel||player.dead||!countItem(d.tool)){stopDine();return;}
   if(!leftArm)buildLeftArm();leftArm.visible=true;setLeftPlate(s.id,s.bites|0);
   const P=DINE_P,prev=d.t;d.t+=dt;const ph=(d.t%P)/P,cycle=Math.floor(d.t/P);if(Math.floor(prev/P)!==cycle)d.picked=false;
-  if(!d.picked&&ph>.38){d.picked=true;s.bites=(s.bites|0)+1;const f=Math.max(1,Math.round(IT[s.id].food/PLATE_BITES));player.food=Math.min(20,player.food+f);tone(1300,900,.05,.04,'triangle');setLeftPlate(s.id,s.bites);renderStats();
+  if(!d.picked&&ph>.38){d.picked=true;s.bites=(s.bites|0)+1;const f=Math.max(1,Math.round(IT[s.id].food/PLATE_BITES));player.food=Math.max(player.food,Math.min(20,player.food+f));tone(1300,900,.05,.04,'triangle');setLeftPlate(s.id,s.bites);renderStats();
     if(s.bites>=PLATE_BITES){s.bites=0;s.count--;if(!s.count)inv[sel]=null;if(IT[s.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(s.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}
       if(s.id===DARK_DISH||s.id===DARK_STEW){player.hungerAcc+=60;toast('🤢 맛이 이상해…');}SFX.eat();invChanged();stopDine();return;}}
   if(ph>.5&&ph<.95&&((d.t*5)|0)!==((prev*5)|0)){noise(.06,900+Math.random()*700,.05);const v=viewDir(),o=camera.position;spawnParticles(o.x+v.x*.4,o.y-.18+v.y*.4,o.z+v.z*.4,foodCol(d.id)[0],3,.05,1);}}
@@ -7030,7 +7036,8 @@ function updateEating(dt){const e=player.eating;if(!e)return;const s=held(); // 
   else if(e.ct<=0){e.ct=.2+Math.random()*.08;noise(.07,900+Math.random()*900,.06);const d=viewDir(),o=camera.position;spawnParticles(o.x+d.x*.45,o.y-.18+d.y*.45,o.z+d.z*.45,eatColor(e.id),4,.06,1.2);}
   if(e.t<e.dur)return;player.eating=null;
   if(IT[s.id].bad&&Math.random()<.5){player.hungerAcc+=35;toast('윽... 속이 좀 안 좋다');}if(s.id===DARK_DISH){player.hungerAcc+=60;toast('🤢 탄 맛… 쓰다');}
-  player.food=Math.min(20,player.food+IT[s.id].food);s.count--;if(!s.count)inv[sel]=null;SFX.eat();if(IT[s.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(s.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}if(s.id===OPEN_COLA){toast('🥤 캬~ 시원하다!');setTimeout(()=>{tone(140,70,.35,.09,'sawtooth');noise(.3,300,.06);},600);}invChanged();renderStats();
+  player.food=s.id===ICE_CREAM?40:Math.max(player.food,Math.min(20,player.food+IT[s.id].food));s.count--; // 🍦 카라멜라떼맛 아이스크림은 배고픔 두 줄 · 두 줄일 땐 다른 음식이 줄이지 않음
+  if(s.id===ICE_CREAM)toast('🍦 카라멜라떼맛! 배고픔이 <b>두 줄</b>이 됐어요');if(!s.count)inv[sel]=null;SFX.eat();if(IT[s.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(s.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}if(s.id===OPEN_COLA){player.colaT=30;toast('🥤 캬~ 시원하다! <b>30초 동안 빨라져요</b> ⚡');setTimeout(()=>{tone(140,70,.35,.09,'sawtooth');noise(.3,300,.06);},600);}invChanged();renderStats();
   if(s.id===COOKED_MEAT||s.id===COOKED_FISH)achieve('cook');}
 function useItem(){
   if(player.dead||isSpec())return;const s=held();
@@ -7234,9 +7241,10 @@ function renderStats(){
   let h='',f='',b='';
   for(let i=0;i<maxHp()/2;i++){const v=p.hp-i*2;if(i%10===0)h+=(i?'</div>':'')+'<div class="hrow">';h+=`<div class="icon" style="background-image:url(${v>=2?IC.heart:v>0?IC.heartH:IC.heartE})"></div>`;if(i>=10)continue;
     const w=p.food-i*2;f+=`<div class="icon" style="background-image:url(${w>=2?IC.food:w===1?IC.foodH:IC.foodE})"></div>`;}
+  if(p.food>20){let f2='';for(let i=0;i<10;i++){const w=p.food-20-i*2;f2+=`<div class="icon" style="background-image:url(${w>=2?IC.food:w===1?IC.foodH:IC.foodE})"></div>`;}f=`<div class="frow">${f}</div><div class="frow">${f2}</div>`;} // 🍦 두 줄: 늘어난 배고픔은 위 줄
   if(p.air<10)for(let i=0;i<Math.ceil(p.air);i++)b+=`<div class="icon" style="background-image:url(${IC.bub})"></div>`;
   let a='';if(ap>0)for(let i=0;i<10;i++){const v=ap-i*2;a+=`<div class="icon" style="background-image:url(${v>=2?IC.arm:v===1?IC.armH:IC.armE})"></div>`;}
-  $('hearts').innerHTML=h+'</div>';$('foodrow').innerHTML=f;$('airrow').innerHTML=b;$('armorrow').innerHTML=a;
+  $('hearts').innerHTML=h+'</div>';$('foodrow').innerHTML=f;$('foodrow').classList.toggle('two',p.food>20);$('airrow').innerHTML=b;$('armorrow').innerHTML=a;
 }
 function slotImg(s){const u=s.id===CROSSBOW&&s.loaded?(ICON_CBL||(ICON_CBL=crossbowIcon(1).toDataURL())):ICON[s.id];return `<img src="${u}">`+(s.col?`<i class="dye" style="background:${s.col};-webkit-mask-image:url(${u});mask-image:url(${u})"></i>`:'');}
 function slotHTML(s,i,isSel){
