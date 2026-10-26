@@ -301,7 +301,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.136 — 💗 몹 체력 그대로 · 📦 백룸 보급품</h4>
+    <h4>🆕 v26.137 — ⚠ 백룸 이상현상 1: 저주인형</h4>
+    • 불이 <b>1분 동안</b> 꺼지고 <b>저주인형</b>이 나와요. 인형을 쳐다보거나 인형이 나를 보면 <b>1 대미지</b>를 받아요 (어떤 갑옷을 입어도 · 크리에이티브만 안전).<br>
+    • 인형은 죽지 않고 12초마다 자리를 옮기며, 불이 켜지면 사라져요. 예전 이상현상(스마일러 · 벽 · 발소리)은 빠졌어요.
+    <h4>v26.136 — 💗 몹 체력 그대로 · 📦 백룸 보급품</h4>
     • (모든 모드) <b>몹 체력이 그대로</b> 남아요: 차원을 나갔다 오거나, 쓰러지거나, 게임을 나갔다 들어와도 몹이 그 자리에 그 체력으로 있어요. 보스는 멀리 가서 사라져도 깎은 체력을 기억해요.<br>
     • 백룸 <b>보급품</b>은 이상현상이 아니라 기본이에요: 들어가자마자 한 번, 그 뒤로 2~3분마다 음식이 떨어져요.
     <h4>v26.135 — 🟨 백룸 30분 = 7일</h4>
@@ -1828,7 +1831,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.136 — 💗 Mob health is kept · 📦 Backrooms supplies</h4>
+    <h4>🆕 v26.137 — ⚠ Backrooms anomaly 1: Cursed Doll</h4>
+    • The lights go out for 1 minute and a Cursed Doll appears. Looking at it, or being seen by it, deals 1 damage that ignores armor (only Creative is safe).
+    <h4>v26.136 — 💗 Mob health is kept · 📦 Backrooms supplies</h4>
     • (All modes) Mobs keep their health and place when you leave a dimension, die or quit and come back; bosses remember damage even if they despawn. Backrooms supplies now drop regularly (on arrival, then every 2–3 minutes) instead of being an anomaly.
     <h4>v26.135 — 🟨 30 minutes = 7 Backrooms days</h4>
     • Surviving 30 minutes in the Backrooms now counts as 7 days (about 4 min 17 s per day).
@@ -5791,7 +5796,7 @@ function onArrive(dim,fromLoad){
   if(dim==='end'){achieve('end');
     if(!F.dragonDead){if(!has('dragon'))new Mob('dragon',0,55,0);if(!has('crystal')&&!(world.mobSave&&world.mobSave.end))for(const q of END_PILLARS)new Mob('crystal',q.x+.5,q.h+2,q.z+.5);}
     toast(F.dragonDead?'🐉 <b>호라이즌</b>... 드래곤은 더 이상 없습니다.':'🐉 <b>호라이즌</b>... 기둥 위 <b>엔딩 수정</b>을 부수세요! 수정이 남아 있으면 제단에 앉은 드래곤이 회복합니다.','ach');}
-  if(dim==='back'&&!bkQuiet)toast('🟨 <b>백룸</b>... 축축한 카펫 냄새 · 형광등 윙윙거리는 소리. <b>7일</b>을 버티면 돌아갈 수 있어요.<br>⚠ 이상현상이 일어나요. <b>웃는 얼굴</b>을 보면 눈을 떼지 마세요!','ach');bkQuiet=false;
+  if(dim==='back'&&!bkQuiet)toast('🟨 <b>백룸</b>... 축축한 카펫 냄새 · 형광등 윙윙거리는 소리. <b>7일</b>을 버티면 돌아갈 수 있어요.<br>⚠ 가끔 <b>이상현상</b>이 일어나요...','ach');bkQuiet=false;
   if(dim==='hallo'){if(!has('jack')&&!F.jackDead)new Mob('jack',.5,21,.5);
     toast(F.jackDead?'🎃 <b>할로윈</b>... 결투장은 조용합니다. 열쇠를 다시 쓰면 프론티어로 돌아가요.':'🎃 <b>할로윈</b>... 결투장 가운데에서 <b>잭오랜턴</b>이 웃고 있습니다! (열쇠를 다시 쓰면 프론티어로)','ach');}
   if(dim==='over'&&!fromLoad)toast('🏠 <b>프론티어</b>로 돌아왔습니다.');
@@ -5811,20 +5816,19 @@ function hwUseKey(){
 function bkEscape(){const F=world.flags;F.bkDone=1;F.bkT=0;F.bkDay=0;bkDark=0;addItem(HW_KEY,1);invChanged();
   travel('over',world.lastPos.over||world.spawn);SFX.ach();
   setTimeout(()=>toast('🎃 백룸에서 <b>7일</b>을 버텼어요! 손에 <b>할로윈 열쇠</b>가 쥐어져 있어요 — 들고 우클릭하면 <b>할로윈 차원</b>으로 가요','ach'),900);}
-function bkSpawnSmiler(d){if(mobs.filter(m=>m.kind==='smiler').length>=3)return;
-  for(let t=0;t<24;t++){const a=Math.random()*6.28,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);
-    if(getBlock(x,11,z)===AIR&&getBlock(x,12,z)===AIR&&getBlock(x,13,z)===AIR){new Mob('smiler',x+.5,11,z+.5);return;}}}
+function bkSpot(d){for(let t=0;t<24;t++){const a=Math.random()*6.28,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d); // 백룸에서 몹이 설 빈자리
+    if(getBlock(x,11,z)===AIR&&getBlock(x,12,z)===AIR&&getBlock(x,13,z)===AIR)return {x:x+.5,z:z+.5};}return null;}
+function bkSpawnSmiler(d){if(mobs.filter(m=>m.kind==='smiler').length>=3)return;const s=bkSpot(d);if(s)new Mob('smiler',s.x,11,s.z);}
 function bkElevator(){toast('🛗 엘리베이터가 덜컹거리며 움직여요...');tone(80,60,1.6,.05,'square');
   setTimeout(()=>{if(world.dim!=='back')return;const a=Math.random()*6.28,d=160+Math.random()*200;bkQuiet=true;
     travel('back',{x:Math.floor(Math.cos(a)*d/8)*8+4.5,y:11,z:Math.floor(Math.sin(a)*d/8)*8+4.5});
     setTimeout(()=>toast('🛗 ...문이 열렸는데 처음 보는 복도예요'),900);},1600);}
-function bkAnomaly(day){const r=Math.random(),p=player.pos;
-  if(r<.3){bkDark=6+day;noise(.5,150,.25);toast('⚠ <b>이상현상</b> · 형광등이 전부 꺼졌어요...');if(Math.random()<.5+day*.06)bkSpawnSmiler(10);}
-  else if(r<.5){bkSpawnSmiler(14);toast('⚠ <b>이상현상</b> · 어둠 속에서 누군가 <b>웃고</b> 있어요... 쳐다보면 멈춰요. 눈을 떼지 마세요');for(let i=0;i<3;i++)tone(300+i*40,200,.25,.04,'triangle',i*.18);}
-  else if(r<.68){const sy=Math.sin(player.yaw),cy=Math.cos(player.yaw); // 등 뒤에 벽이 생김
-    for(let k=-2;k<=2;k++){const x=Math.floor(p.x+sy*3+cy*k),z=Math.floor(p.z+cy*3-sy*k);for(let y=11;y<=13;y++)if(getBlock(x,y,z)===AIR)setBlock(x,y,z,BK_WALL);}
-    noise(.35,220,.3);toast('⚠ <b>이상현상</b> · 등 뒤에서 쿵 소리... <b>벽</b>이 생겼어요');}
-  else{for(let i=0;i<8;i++)noise(.08,300,.08,i*.45);toast('⚠ <b>이상현상</b> · 멀리서 <b>발소리</b>가 다가와요...');setTimeout(()=>{if(world.dim==='back')bkSpawnSmiler(18);},4000);}}
+let bkDollT=0,bkCurseT=0;
+const BK_ANOM=[ // ⚠ 이상현상 목록 (사용자님이 정한 것)
+  day=>{bkDark=60;bkDollT=12;noise(.5,150,.25);const s=bkSpot(6+Math.random()*4);if(s)new Mob('cursedoll',s.x,11,s.z); // 1: 불이 1분간 꺼지고 저주인형
+    toast('⚠ <b>이상현상</b> · 불이 1분 동안 꺼졌어요... 어딘가에 <b>저주인형</b>이 있어요. 인형을 보거나 인형에게 보이면 다쳐요!');},
+];
+function bkAnomaly(day){BK_ANOM[Math.floor(Math.random()*BK_ANOM.length)](day);}
 function hwTick(dt){
   const hud=$('bkHud'),D=$('bkDark'),F=world.flags;
   if(world.dim!=='back'||player.dead){if(hud.style.display!=='none')hud.style.display='none';D.style.opacity=0;bkDark=0;
@@ -5834,11 +5838,30 @@ function hwTick(dt){
   const txt=`🟨 백룸 · <b>${day}일째</b> / ${BK_DAYS}일 · 다음 날까지 ${Math.floor(left/60)}분 ${left%60}초`;hud.style.display='block';if(hud._t!==txt){hud.innerHTML=txt;hud._t=txt;}
   if(day>(F.bkDay||1)){F.bkDay=day;toast(`🟨 백룸 <b>${day}일째</b>... ${day>=5?'이상현상이 점점 잦아져요':'계속 버티세요'}`);}
   bkSupT-=dt;if(bkSupT<=0){bkSupT=120+Math.random()*60;bkSupply();}
-  bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=35+Math.random()*35;bkAnomaly(day);}
+  if(bkDark<=0)bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=50+Math.random()*50;bkAnomaly(day);} // 이상현상이 끝난 뒤에 다음 이상현상
+  const dolls=mobs.filter(m=>m.kind==='cursedoll'&&!m.dead);
+  if(bkDark<=0){for(const m of dolls){spawnParticles(m.pos.x,m.pos.y+.4,m.pos.z,new THREE.Color(0x401010),14,.4,2);m.remove();}} // 불이 켜지면 인형은 사라짐
+  else if(dolls.length){bkDollT-=dt;if(bkDollT<=0){bkDollT=12;const s=bkSpot(5+Math.random()*5);if(s)dolls[0].pos.set(s.x,11,s.z);} // 12초마다 다른 곳으로
+    bkCurseT-=dt;if(bkCurseT<=0&&dolls.some(m=>m.seesP||m.seenBy)){bkCurseT=1;hurtPlayer(1,0,0,'저주인형의 저주를 받았습니다',true);}} // 갑옷 무시 1 대미지 (크리에이티브 · 관전은 안 다침)
   if(bkDark>0){bkDark-=dt;D.style.opacity=bkDark<.6||Math.random()<.06?.35:.94;}else D.style.opacity=Math.random()<dt*.6?.25:0; // 정전 · 가끔 깜빡이는 형광등
   if(Math.random()<dt*.25)tone(118,122,.6,.012,'sawtooth');
   if(getBlock(Math.floor(player.pos.x),Math.floor(player.pos.y-.05),Math.floor(player.pos.z))===ELEV_FLOOR){bkElevT+=dt;if(bkElevT>2.5){bkElevT=-99;bkElevator();}}else bkElevT=0;}
 Object.assign(MOBDEF,{
+  cursedoll:{name:'저주인형',w:.45,h:.8,hp:99999,fireproof:true,knock:0,color:0x8a7a5a,
+    sound:()=>{},drops:()=>[],
+    build(g){const sack=lam(0x8a7a5a,0,'cloth'),dark=lam(0x3a2a1a,0,'cloth'),red=bas(0xff2020),pin=lam(0xc8c8d0,0,'metal'),thr=bas(0x200a0a);
+      const legs=[-.08,.08].map(x=>{const p=pivot(g,x,.25,0);part(p,.1,.25,.1,sack,0,-.125,0);return p;});
+      part(g,.28,.3,.18,sack,0,.4,0);part(g,.3,.03,.19,dark,0,.33,0);
+      const head=pivot(g,0,.55,0);part(head,.3,.28,.26,sack,0,.14,0);
+      part(head,.07,.07,.02,red,-.07,.17,-.135);part(head,.07,.07,.02,red,.07,.17,-.135); // 빨간 단추 눈
+      for(let i=0;i<4;i++)part(head,.03,.06,.02,thr,(i-1.5)*.04,.06,-.135); // 꿰맨 입
+      part(head,.015,.015,.22,pin,.08,.24,.02).rotation.y=.6;part(head,.015,.015,.22,pin,-.06,.2,.04).rotation.y=-.8; // 꽂힌 바늘
+      const arms=[-1,1].map(s=>{const p=pivot(g,s*.18,.52,0);part(p,.08,.22,.08,sack,0,-.11,0);p.rotation.z=s*.5;return p;});
+      return {legs,arms,head,mats:[sack,dark]};},
+    ai(m,c,dt){m.hp=m.def.hp;steer(m,0,0,dt,20);m.face=false;m.yaw+=dt*.6; // 안 죽음 · 제자리에서 천천히 둘러봄
+      const l=c.dist||1,fx=-Math.sin(m.yaw),fz=-Math.cos(m.yaw),v=viewDir(),los=!player.dead&&c.dist<24&&canSee(m);
+      m.seesP=los&&(fx*c.toX+fz*c.toZ)/l>.5;m.seenBy=los&&(-c.toX*v.x-c.toZ*v.z)/l>.75;}, // 인형이 플레이어를 봄 · 플레이어가 인형을 봄
+    anim(m){m.u.head.rotation.z=Math.sin(performance.now()/300)*.15;}},
   smiler:{name:'스마일러',w:.7,h:2.3,hp:40,hostile:true,fireproof:true,knock:.4,color:0x08080a,
     sound:()=>tone(520,260,.4,.03,'triangle'),drops:()=>[[COIN,Math.random()<.5?1:0]],
     build(g){const blk=lam(0x0a0a0c,0,'rough'),eye=bas(0xfffbe0);
@@ -5902,7 +5925,6 @@ Object.assign(MOBDEF,{
 function spawnDim(){
   const hostile=mobs.filter(m=>m.def.hostile&&!m.def.boss).length,py=Math.floor(player.pos.y),r=Math.random();
   const tps=mobs.filter(m=>m.kind==='teleporter').length;
-  if(world.dim==='back'&&Math.random()<.04+world.flags.bkDay*.01)bkSpawnSmiler(22); // 🟨 백룸: 스마일러가 가끔
   if(world.dim==='hallo'&&hostile<10&&Math.random()<.35){const a=Math.random()*6.28,d=14+Math.random()*16,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d),sf=surfaceAt(x,z);
     if(sf&&Math.hypot(x,z)>32)new Mob(r<.45?'pumpkinhead':r<.75?'zombie':'skeleton',x+.5,sf.y,z+.5);}
   if(world.dim==='hell'&&tps<4&&Math.random()<.25){const s=caveSpot(10,26,py-10,py+8,3);if(s)new Mob('teleporter',s.x,s.y,s.z);}
