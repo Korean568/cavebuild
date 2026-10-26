@@ -300,7 +300,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.134 — 🟨 백룸의 하루 = 프론티어의 하루</h4>
+    <h4>🆕 v26.135 — 🟨 백룸 30분 = 7일</h4>
+    • 백룸에서 <b>30분</b>을 버티면 7일이 지나 돌아올 수 있어요 (하루 약 4분 17초).
+    <h4>v26.134 — 🟨 백룸의 하루 = 프론티어의 하루</h4>
     • 백룸의 하루가 90초가 아니라 <b>프론티어와 똑같이 10분</b>이에요. 7일을 버티려면 70분! 위쪽에 남은 시간이 분 · 초로 나와요.
     <h4>v26.133 — 🎃 할로윈 모드</h4>
     • 허브에서 <b>🎃 CAVEBUILD 할로윈</b>으로 들어가는 따로 된 모드예요 (세계도 따로 저장).<br>
@@ -1822,7 +1824,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.134 — 🟨 Backrooms day = Frontier day</h4>
+    <h4>🆕 v26.135 — 🟨 30 minutes = 7 Backrooms days</h4>
+    • Surviving 30 minutes in the Backrooms now counts as 7 days (about 4 min 17 s per day).
+    <h4>v26.134 — 🟨 Backrooms day = Frontier day</h4>
     • A Backrooms day now lasts as long as a Frontier day (10 minutes), so surviving 7 days takes 70 minutes.
     <h4>v26.133 — 🎃 Halloween mode</h4>
     • A separate mode (own saves) from the hub: mining obsidian drops you into the Backrooms (lab, library, invisible-wall maze, elevator). Survive anomalies for 7 days to earn the Halloween Key, then defeat the Jack-o'-Lantern in the Halloween dimension for the ending.
@@ -5778,7 +5782,7 @@ function onArrive(dim,fromLoad){
 }
 
 // ===== 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석을 캐면 백룸 → 이상현상 속에서 7일 버티기 → 할로윈 열쇠 → 할로윈 차원의 잭오랜턴 =====
-const BK_DAY=DAY_LEN,BK_DAYS=7; // 백룸의 하루 = 프론티어의 하루 (10분) · 버텨야 하는 날
+const BK_DAY=1800/7,BK_DAYS=7; // 백룸 30분 = 7일 (하루 약 4분 17초) · 버텨야 하는 날
 let bkEvT=40,bkDark=0,bkElevT=0,bkQuiet=false;
 function hwFallToBack(){toast('🕳 흑요석 아래가 <b>꺼졌어요</b>... 어딘가로 떨어지고 있어요','ach');tone(220,40,1.2,.06,'sawtooth');
   setTimeout(()=>{const F=world.flags;F.bkT=0;F.bkDay=1;bkEvT=40;travel('back',arrivalOf('back'));},700);}
