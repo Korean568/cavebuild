@@ -301,7 +301,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.135 — 🟨 백룸 30분 = 7일</h4>
+    <h4>🆕 v26.136 — 💗 몹 체력 그대로 · 📦 백룸 보급품</h4>
+    • (모든 모드) <b>몹 체력이 그대로</b> 남아요: 차원을 나갔다 오거나, 쓰러지거나, 게임을 나갔다 들어와도 몹이 그 자리에 그 체력으로 있어요. 보스는 멀리 가서 사라져도 깎은 체력을 기억해요.<br>
+    • 백룸 <b>보급품</b>은 이상현상이 아니라 기본이에요: 들어가자마자 한 번, 그 뒤로 2~3분마다 음식이 떨어져요.
+    <h4>v26.135 — 🟨 백룸 30분 = 7일</h4>
     • 백룸에서 <b>30분</b>을 버티면 7일이 지나 돌아올 수 있어요 (하루 약 4분 17초).
     <h4>v26.134 — 🟨 백룸의 하루 = 프론티어의 하루</h4>
     • 백룸의 하루가 90초가 아니라 <b>프론티어와 똑같이 10분</b>이에요. 7일을 버티려면 70분! 위쪽에 남은 시간이 분 · 초로 나와요.
@@ -1825,7 +1828,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.135 — 🟨 30 minutes = 7 Backrooms days</h4>
+    <h4>🆕 v26.136 — 💗 Mob health is kept · 📦 Backrooms supplies</h4>
+    • (All modes) Mobs keep their health and place when you leave a dimension, die or quit and come back; bosses remember damage even if they despawn. Backrooms supplies now drop regularly (on arrival, then every 2–3 minutes) instead of being an anomaly.
+    <h4>v26.135 — 🟨 30 minutes = 7 Backrooms days</h4>
     • Surviving 30 minutes in the Backrooms now counts as 7 days (about 4 min 17 s per day).
     <h4>v26.134 — 🟨 Backrooms day = Frontier day</h4>
     • A Backrooms day now lasts as long as a Frontier day (10 minutes), so surviving 7 days takes 70 minutes.
@@ -5498,6 +5503,7 @@ class Mob{
   constructor(kind,x,y,z){const d=MOBDEF[kind];Object.assign(this,{kind,def:d,w:d.w,h:d.h,hp:d.hp,pos:new THREE.Vector3(x,y,z),vel:new THREE.Vector3(),yaw:Math.random()*6.28,
     onGround:false,inWater:false,hitH:false,aiT:0,wish:new THREE.Vector3(),hurtT:0,flee:0,angry:0,atkCD:0,swingT:0,shootT:1.5,jumpT:0,walk:0,sunT:0,fuse:0,side:1,face:false,thornT:0,
     soundT:3+Math.random()*8,dead:false});
+    if(d.boss&&world.flags&&world.flags.bossHp&&world.flags.bossHp[kind]>0)this.hp=Math.min(d.hp,world.flags.bossHp[kind]); // 💗 보스 체력 기억
     if(d.init)d.init(this);
     this.g=new THREE.Group();this.u=d.build(this.g,this);scene.add(this.g);mobs.push(this);
     if(!d.noclip){this.shadow=new THREE.Mesh(SHADOW_GEO,SHADOW_MAT.clone());const r=Math.max(.5,d.w*1.25);this.shadow.scale.set(r,r,1);this.shadow.rotation.x=-Math.PI/2;scene.add(this.shadow);}
@@ -5640,6 +5646,7 @@ function caveSpot(minD,maxD,yMin,yMax,tall=2){
 }
 function spawnMobs(dt){
   spawnT-=dt;if(spawnT>0)return;spawnT=1;
+  for(const m of mobs)if(m.def.boss&&!m.dead&&!m.net)(world.flags.bossHp||(world.flags.bossHp={}))[m.kind]=m.hp; // 💗 보스 체력 기억 (멀리 가서 사라져도)
   for(const m of [...mobs])if(!m.def.persist&&m.dist()>(m.def.boss?140:90))m.remove();
   if(world.dim!=='over'){spawnDim();return;}
   updateVillages();
@@ -5741,7 +5748,15 @@ function travel(dest,pos){
   if(traveling)return;traveling=true;SFX.portal();$('fade').style.opacity=1;
   setTimeout(()=>{try{enterDim(dest,pos);}catch(e){console.warn('차원 이동 실패',e);toast('차원 이동 중 문제가 생겼어요: '+(e&&e.message||e));}finally{$('fade').style.opacity=0;traveling=false;}},450); // 오류가 나도 다시 이동할 수 있게
 }
+const MS_SKIP=new Set(['villager','vguard']); // 마을 주민 · 가디언은 마을/가디언 기록으로 따로 되살아남
+function mobList(){if(MP.on&&!MP.host)return null;return mobs.filter(m=>!m.dead&&!m.removed&&!m.net&&!m.village&&!MS_SKIP.has(m.kind)).slice(0,80)
+  .map(m=>({k:m.kind,x:Math.round(m.pos.x*100)/100,y:Math.round(m.pos.y*100)/100,z:Math.round(m.pos.z*100)/100,hp:Math.round(m.hp*10)/10,p:m.prof}));}
+function mobSnap(){const o={...(world.mobSave||{})},L=mobList();if(L)o[world.dim]=L;return o;}
+function restoreMobs(){const L=world.mobSave&&world.mobSave[world.dim];if(!L||(MP.on&&!MP.host))return; // 💗 저장해 둔 몹을 체력 그대로 되살림
+  for(const o of L){if(!MOBDEF[o.k])continue;if(o.p!=null){VPROF=o.p;ZV_PROF=o.p;}let m=null;try{m=new Mob(o.k,o.x,o.y+.05,o.z);}catch(e){}VPROF=ZV_PROF=null;
+    if(m&&!m.dead){m.hp=Math.max(1,Math.min(o.hp,m.def.hp));m.ptT=3;}}}
 function enterDim(dim,pos,fromLoad){
+  if(!fromLoad){const L=mobList();if(L)(world.mobSave||(world.mobSave={}))[world.dim]=L;} // 떠나는 차원의 몹을 체력 그대로 기억
   if(gm){scene.remove(gm.m);player.pos.copy(gm.home);gm=null;$('gmHud').style.display='none';}
   if(!fromLoad)world.lastPos[world.dim]={x:player.pos.x,y:player.pos.y,z:player.pos.z};
   for(const c of chunks.values())disposeMesh(c);chunks.clear();resetWorkerJobs();
@@ -5752,7 +5767,7 @@ function enterDim(dim,pos,fromLoad){
   player.pos.set(pos.x,pos.y,pos.z);player.vel.set(0,0,0);if(pos.yaw!==undefined)player.yaw=pos.yaw;
   loadNear(60);
   if(pos.hell)fixHellArrival();
-  onArrive(dim,fromLoad);restoreGolems();restoreVehicles();spawnMobQ(dim);
+  restoreMobs();onArrive(dim,fromLoad);restoreGolems();restoreVehicles();spawnMobQ(dim);
   while(entHits(player)&&player.pos.y<CH-2)player.pos.y+=1;
   player.peakY=player.pos.y;portalLock=true;portalT=0;portalLockT=0;lastStats='';renderStats();updateSky(0);
   camera.position.set(player.pos.x,player.pos.y+1.62,player.pos.z);
@@ -5774,7 +5789,7 @@ function onArrive(dim,fromLoad){
   if(dim==='city'){achieve('city');if(!has('darkguard')&&!F.guardDead)new Mob('darkguard',.5,11,.5);
     toast(F.guardDead?'🌃 <b>네크로폴리스</b>... 광장은 조용합니다.':'🌃 <b>네크로폴리스</b>... 광장 중앙에 <b>다크가디언</b>이 서 있습니다. 레이저 조준선을 피하세요!','ach');}
   if(dim==='end'){achieve('end');
-    if(!F.dragonDead){if(!has('dragon'))new Mob('dragon',0,55,0);if(!has('crystal'))for(const q of END_PILLARS)new Mob('crystal',q.x+.5,q.h+2,q.z+.5);}
+    if(!F.dragonDead){if(!has('dragon'))new Mob('dragon',0,55,0);if(!has('crystal')&&!(world.mobSave&&world.mobSave.end))for(const q of END_PILLARS)new Mob('crystal',q.x+.5,q.h+2,q.z+.5);}
     toast(F.dragonDead?'🐉 <b>호라이즌</b>... 드래곤은 더 이상 없습니다.':'🐉 <b>호라이즌</b>... 기둥 위 <b>엔딩 수정</b>을 부수세요! 수정이 남아 있으면 제단에 앉은 드래곤이 회복합니다.','ach');}
   if(dim==='back'&&!bkQuiet)toast('🟨 <b>백룸</b>... 축축한 카펫 냄새 · 형광등 윙윙거리는 소리. <b>7일</b>을 버티면 돌아갈 수 있어요.<br>⚠ 이상현상이 일어나요. <b>웃는 얼굴</b>을 보면 눈을 떼지 마세요!','ach');bkQuiet=false;
   if(dim==='hallo'){if(!has('jack')&&!F.jackDead)new Mob('jack',.5,21,.5);
@@ -5784,9 +5799,11 @@ function onArrive(dim,fromLoad){
 
 // ===== 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석을 캐면 백룸 → 이상현상 속에서 7일 버티기 → 할로윈 열쇠 → 할로윈 차원의 잭오랜턴 =====
 const BK_DAY=1800/7,BK_DAYS=7; // 백룸 30분 = 7일 (하루 약 4분 17초) · 버텨야 하는 날
-let bkEvT=40,bkDark=0,bkElevT=0,bkQuiet=false;
+let bkEvT=40,bkDark=0,bkElevT=0,bkQuiet=false,bkSupT=6;
+function bkSupply(){const p=player.pos,d=viewDir(),R=[APPLE,COOKED_MEAT,COOKED_MEAT,APPLE,APPLE]; // 📦 보급품 (기본)
+  for(let i=0;i<2;i++)dropItem(R[Math.floor(Math.random()*R.length)],1+(Math.random()<.5?1:0),p.x+d.x*1.5,p.y+.4,p.z+d.z*1.5,{spread:.8,up:2});toast('📦 <b>보급품</b>이 떨어졌어요');}
 function hwFallToBack(){toast('🕳 흑요석 아래가 <b>꺼졌어요</b>... 어딘가로 떨어지고 있어요','ach');tone(220,40,1.2,.06,'sawtooth');
-  setTimeout(()=>{const F=world.flags;F.bkT=0;F.bkDay=1;bkEvT=40;travel('back',arrivalOf('back'));},700);}
+  setTimeout(()=>{const F=world.flags;F.bkT=0;F.bkDay=1;bkEvT=40;bkSupT=6;travel('back',arrivalOf('back'));},700);}
 function hwUseKey(){
   if(world.dim==='hallo'){travel('over',world.lastPos.over||world.spawn);return;}
   if(world.dim!=='over'){toast('🎃 할로윈 열쇠는 <b>프론티어</b>에서만 쓸 수 있어요');return;}
@@ -5807,8 +5824,7 @@ function bkAnomaly(day){const r=Math.random(),p=player.pos;
   else if(r<.68){const sy=Math.sin(player.yaw),cy=Math.cos(player.yaw); // 등 뒤에 벽이 생김
     for(let k=-2;k<=2;k++){const x=Math.floor(p.x+sy*3+cy*k),z=Math.floor(p.z+cy*3-sy*k);for(let y=11;y<=13;y++)if(getBlock(x,y,z)===AIR)setBlock(x,y,z,BK_WALL);}
     noise(.35,220,.3);toast('⚠ <b>이상현상</b> · 등 뒤에서 쿵 소리... <b>벽</b>이 생겼어요');}
-  else if(r<.84){for(let i=0;i<8;i++)noise(.08,300,.08,i*.45);toast('⚠ <b>이상현상</b> · 멀리서 <b>발소리</b>가 다가와요...');setTimeout(()=>{if(world.dim==='back')bkSpawnSmiler(18);},4000);}
-  else{const d=viewDir();dropItem(Math.random()<.5?APPLE:COOKED_MEAT,2,p.x+d.x*1.5,p.y+.4,p.z+d.z*1.5,{spread:.6,up:2});toast('⚠ <b>이상현상</b> · 바닥에 누가 두고 간 <b>보급품</b>이 있어요');}}
+  else{for(let i=0;i<8;i++)noise(.08,300,.08,i*.45);toast('⚠ <b>이상현상</b> · 멀리서 <b>발소리</b>가 다가와요...');setTimeout(()=>{if(world.dim==='back')bkSpawnSmiler(18);},4000);}}
 function hwTick(dt){
   const hud=$('bkHud'),D=$('bkDark'),F=world.flags;
   if(world.dim!=='back'||player.dead){if(hud.style.display!=='none')hud.style.display='none';D.style.opacity=0;bkDark=0;
@@ -5817,6 +5833,7 @@ function hwTick(dt){
   if(F.bkT>=BK_DAY*BK_DAYS){bkEscape();return;}
   const txt=`🟨 백룸 · <b>${day}일째</b> / ${BK_DAYS}일 · 다음 날까지 ${Math.floor(left/60)}분 ${left%60}초`;hud.style.display='block';if(hud._t!==txt){hud.innerHTML=txt;hud._t=txt;}
   if(day>(F.bkDay||1)){F.bkDay=day;toast(`🟨 백룸 <b>${day}일째</b>... ${day>=5?'이상현상이 점점 잦아져요':'계속 버티세요'}`);}
+  bkSupT-=dt;if(bkSupT<=0){bkSupT=120+Math.random()*60;bkSupply();}
   bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=35+Math.random()*35;bkAnomaly(day);}
   if(bkDark>0){bkDark-=dt;D.style.opacity=bkDark<.6||Math.random()<.06?.35:.94;}else D.style.opacity=Math.random()<dt*.6?.25:0; // 정전 · 가끔 깜빡이는 형광등
   if(Math.random()<dt*.25)tone(118,122,.6,.012,'sawtooth');
@@ -7377,7 +7394,7 @@ function encodeMods(){
 }
 function saveSnapshot(){
   syncGolems();
-  return {v:3,t:Date.now(),name:world.name||'',diff:world.diff||'normal',seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,sr:world.sr||null,mpp:world.mpp||{},lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,carves:world.carves||{},mode:world.mode||'survival',containers:world.containers||{},saplings:world.saplings||[],vehicles:vehSave(),signs:world.signs||{},mobQ:world.mobQ||{},anvils:world.anvils||{},paint:world.paint||{},stoves:world.stoves||{},pots:world.pots||{},plates:world.plates||{},items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
+  return {v:3,t:Date.now(),name:world.name||'',diff:world.diff||'normal',seed,time:world.time,spawn:world.spawn,inv,sel,ach:[...achDone],md:encodeMods(),armor,dim:world.dim,flags:world.flags,sr:world.sr||null,mpp:world.mpp||{},lastPos:world.lastPos,stats:world.stats,golems:world.golems,homeVillage:world.homeVillage,carves:world.carves||{},mode:world.mode||'survival',containers:world.containers||{},saplings:world.saplings||[],vehicles:vehSave(),signs:world.signs||{},mobQ:world.mobQ||{},mobSave:mobSnap(),anvils:world.anvils||{},paint:world.paint||{},stoves:world.stoves||{},pots:world.pots||{},plates:world.plates||{},items:groundItems.map(g=>({s:g.slot,x:g.pos.x,y:g.pos.y,z:g.pos.z,a:g.age,f:g.fireproof?1:0})),
     p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};
 }
 // 파일/localStorage용: 압축 배열을 base64 문자열로
@@ -7474,7 +7491,7 @@ function startWorld(save,onOk){refreshWard(); // 탈의실에서 고른 캐릭�
       save=fromPortable(save);modsByDim={};
       for(const d in save.md){const mm=new Map();for(const k in save.md[d]){const a=save.md[d][k],m=new Map();for(let i=0;i+1<a.length;i+=2)m.set(a[i],a[i+1]);mm.set(k,m);}modsByDim[d]=mm;}
       for(const k in modCache)delete modCache[k];Object.assign(modCache,save.md);modDirty.clear();
-      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.sr=save.sr||null;world.mpp=save.mpp||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.carves=save.carves||{};world.containers=save.containers||{};world.saplings=save.saplings||[];world.signs=save.signs||{};world.mobQ=save.mobQ||{};world.anvils=save.anvils||{};world.paint=save.paint||{};world.stoves=save.stoves||{};world.pots=save.pots||{};world.plates=save.plates||{};world.mode=save.mode||'survival';world.name=save.name||world.name||'World';
+      armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.sr=save.sr||null;world.mpp=save.mpp||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.carves=save.carves||{};world.containers=save.containers||{};world.saplings=save.saplings||[];world.signs=save.signs||{};world.mobQ=save.mobQ||{};world.mobSave=save.mobSave||{};world.anvils=save.anvils||{};world.paint=save.paint||{};world.stoves=save.stoves||{};world.pots=save.pots||{};world.plates=save.plates||{};world.mode=save.mode||'survival';world.name=save.name||world.name||'World';
       world.diff=save.diff||(world.mode==='hardcore'?'hardcore':world.mode==='safe'?'safe':'normal');if(!MODE_INFO[world.mode])world.mode='survival';if(save.flags&&save.flags.hcDead)world.mode='spectator';VCACHE.clear();
       world.stats=Object.assign({kills:0,deaths:0,play:0,days:0},save.stats||{});
       if(!modsByDim[world.dim])modsByDim[world.dim]=new Map();mods=modsByDim[world.dim];caveB=world.dim==='over'?.38:DIM[world.dim].caveB;
@@ -7487,7 +7504,7 @@ function startWorld(save,onOk){refreshWard(); // 탈의실에서 고른 캐릭�
       }
     }else{
       seed=(wantSeed!==null?wantSeed:(Math.random()*1e9)|0);wantSeed=null;initNoise();mods=new Map();modsByDim={over:mods};for(const k in modCache)delete modCache[k];modDirty.clear();armor=[null,null,null,null,null];
-      Object.assign(world,{dim:'over',mode:SPEEDRUN&&wantMode!=='survival'?'survival':wantMode,diff:wantDiff,name:wantName||'World',golems:[],homeVillage:null,carves:{},containers:{},saplings:[],signs:{},mobQ:{},anvils:{},paint:{},stoves:{},pots:{},plates:{},flags:{},mpp:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
+      Object.assign(world,{dim:'over',mode:SPEEDRUN&&wantMode!=='survival'?'survival':wantMode,diff:wantDiff,name:wantName||'World',golems:[],homeVillage:null,carves:{},containers:{},saplings:[],signs:{},mobQ:{},mobSave:{},anvils:{},paint:{},stoves:{},pots:{},plates:{},flags:{},mpp:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}});caveB=.38;inv=new Array(36).fill(null);achDone=new Set();world.time=.03;
       const s=findSpawn();world.spawn={x:s.x,y:s.h+1,z:s.z};player.pos.set(s.x,s.h+1,s.z);
       VCACHE.clear();world.homeVillage=findHomeVillage(s.x,s.z);
     }
@@ -7503,6 +7520,7 @@ function startWorld(save,onOk){refreshWard(); // 탈의실에서 고른 캐릭�
         if(s&&s.b===GRASS){spot={x:bx0+dx+.5,y:s.y,z:bz0+dz+.5};break;}}
       if(spot){world.spawn=spot;player.pos.set(spot.x,spot.y,spot.z);}
     }
+    if(save)restoreMobs();
     if(save&&world.dim!=='over')onArrive(world.dim,true);
     restoreVehicles();
     if(save){restoreGolems();for(const it of save.items||[]){const g=spawnGroundItem(it.s,it.x,it.y+.05,it.z,0,0,0,0);g.age=it.a||0;g.fireproof=!!it.f;}}
