@@ -300,7 +300,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.137 — ⚠ 백룸 이상현상 1: 저주인형</h4>
+    <h4>🆕 v26.138 — 🟡 백룸 동료 · ⚠ 이상현상 2</h4>
+    • 백룸에 들어가면 노랗게 빛나는 <b>동료</b>가 옆에 둥둥 떠서 따라와요. 이상현상이 나타나면 <b>대처법</b>을 알려 줘요.<br>
+    • 이상현상 1 (저주인형)의 정전이 <b>30초</b>로 줄었어요.<br>
+    • 이상현상 2: 동료의 <b>목이 꺾이며</b> 눈이 빨개지고, 20초 동안 <b>영국식 영어 + 텍사스 사투리</b>로 이상한 말을 해요.
+    <h4>v26.137 — ⚠ 백룸 이상현상 1: 저주인형</h4>
     • 불이 <b>1분 동안</b> 꺼지고 <b>저주인형</b>이 나와요. 인형을 쳐다보거나 인형이 나를 보면 <b>1 대미지</b>를 받아요 (어떤 갑옷을 입어도 · 크리에이티브만 안전).<br>
     • 인형은 죽지 않고 12초마다 자리를 옮기며, 불이 켜지면 사라져요. 예전 이상현상(스마일러 · 벽 · 발소리)은 빠졌어요.
     <h4>v26.136 — 💗 몹 체력 그대로 · 📦 백룸 보급품</h4>
@@ -1830,7 +1834,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.137 — ⚠ Backrooms anomaly 1: Cursed Doll</h4>
+    <h4>🆕 v26.138 — 🟡 Backrooms companion · ⚠ anomaly 2</h4>
+    • A glowing yellow companion floats beside you in the Backrooms and tells you how to handle each anomaly. The Cursed Doll blackout now lasts 30 seconds. Anomaly 2: the companion's neck snaps and it talks in British English mixed with a Texas drawl for 20 seconds.
+    <h4>v26.137 — ⚠ Backrooms anomaly 1: Cursed Doll</h4>
     • The lights go out for 1 minute and a Cursed Doll appears. Looking at it, or being seen by it, deals 1 damage that ignores armor (only Creative is safe).
     <h4>v26.136 — 💗 Mob health is kept · 📦 Backrooms supplies</h4>
     • (All modes) Mobs keep their health and place when you leave a dimension, die or quit and come back; bosses remember damage even if they despawn. Backrooms supplies now drop regularly (on arrival, then every 2–3 minutes) instead of being an anomaly.
@@ -5752,7 +5758,7 @@ function travel(dest,pos){
   if(traveling)return;traveling=true;SFX.portal();$('fade').style.opacity=1;
   setTimeout(()=>{try{enterDim(dest,pos);}catch(e){console.warn('차원 이동 실패',e);toast('차원 이동 중 문제가 생겼어요: '+(e&&e.message||e));}finally{$('fade').style.opacity=0;traveling=false;}},450); // 오류가 나도 다시 이동할 수 있게
 }
-const MS_SKIP=new Set(['villager','vguard']); // 마을 주민 · 가디언은 마을/가디언 기록으로 따로 되살아남
+const MS_SKIP=new Set(['villager','vguard','buddy','cursedoll']); // 마을 주민 · 가디언은 마을/가디언 기록으로 따로 되살아남
 function mobList(){if(MP.on&&!MP.host)return null;return mobs.filter(m=>!m.dead&&!m.removed&&!m.net&&!m.village&&!MS_SKIP.has(m.kind)).slice(0,80)
   .map(m=>({k:m.kind,x:Math.round(m.pos.x*100)/100,y:Math.round(m.pos.y*100)/100,z:Math.round(m.pos.z*100)/100,hp:Math.round(m.hp*10)/10,p:m.prof}));}
 function mobSnap(){const o={...(world.mobSave||{})},L=mobList();if(L)o[world.dim]=L;return o;}
@@ -5824,9 +5830,23 @@ function bkElevator(){toast('🛗 엘리베이터가 덜컹거리며 움직여�
     setTimeout(()=>toast('🛗 ...문이 열렸는데 처음 보는 복도예요'),900);},1600);}
 let bkDollT=0,bkCurseT=0;
 const BK_ANOM=[ // ⚠ 이상현상 목록 (사용자님이 정한 것)
-  day=>{bkDark=60;bkDollT=12;noise(.5,150,.25);const s=bkSpot(6+Math.random()*4);if(s)new Mob('cursedoll',s.x,11,s.z); // 1: 불이 1분간 꺼지고 저주인형
-    toast('⚠ <b>이상현상</b> · 불이 1분 동안 꺼졌어요... 어딘가에 <b>저주인형</b>이 있어요. 인형을 보거나 인형에게 보이면 다쳐요!');},
+  day=>{bkDark=30;bkDollT=12;noise(.5,150,.25);const s=bkSpot(6+Math.random()*4);if(s)new Mob('cursedoll',s.x,11,s.z); // 1: 불이 30초간 꺼지고 저주인형
+    toast('⚠ <b>이상현상</b> · 불이 꺼졌어요... 어딘가에 <b>저주인형</b>이 있어요!');
+    compSay('불이 꺼졌어! <b>저주인형</b>이 나왔어. 인형 쪽을 <b>쳐다보지 말고</b>, 인형 눈에 띄지 않게 <b>벽 뒤에 숨어</b>! 30초만 버티면 불이 다시 켜져.',1500);},
+  day=>{const b=compEnsure();if(!b)return;bkTwist=20;bkTwistI=0;b.twist=true;b.u.eyeM.color.setHex(0xff1010);noise(.15,900,.35);tone(90,40,.4,.08,'square'); // 2: 동료의 목이 꺾이며 영국식 + 텍사스 영어
+    toast('⚠ <b>이상현상</b> · 동료의 목이 <b>꺾였어요</b>...');},
 ];
+let bkTwist=0,bkTwistI=0;
+const COMP_EN=["Blimey, y'all... I reckon the lights are fixin' to go out, innit?","Howdy, old chap. Fancy a spot of tea with the folks behind the wallpaper?",
+  "Bless your heart, mate. You've been walkin' in circles since Tuesday, y'all.","Cheerio, partner. Ain't nobody leavin' this here corridor, love.",
+  "Don't you fret, darlin'. I'm right as rain... right as rain... right as rain."];
+function compEnsure(){let b=mobs.find(m=>m.kind==='buddy'&&!m.dead); // 🟡 백룸 동료: 없으면 옆에 생김
+  if(!b){const d=viewDir();b=new Mob('buddy',player.pos.x+d.x*1.5,player.pos.y+.6,player.pos.z+d.z*1.5);
+    if(!world.flags.compHi){world.flags.compHi=1;compSay('안녕! 난 백룸 <b>동료</b>야. 이상현상이 오면 <b>대처법</b>을 알려 줄게. 7일만 같이 버티자!',800);}}
+  return b;}
+function compSay(t,delay=0){setTimeout(()=>{if(world.dim==='back')toast('🟡 <b>동료</b>: '+t);},delay);}
+function compTTS(t){try{const S=speechSynthesis,u=new SpeechSynthesisUtterance(t),vs=S.getVoices(),v=vs.find(x=>/en-GB/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));
+  if(v)u.voice=v;u.lang=v?v.lang:'en-GB';u.rate=.8;u.pitch=.5;S.speak(u);}catch(e){}}
 function bkAnomaly(day){BK_ANOM[Math.floor(Math.random()*BK_ANOM.length)](day);}
 function hwTick(dt){
   const hud=$('bkHud'),D=$('bkDark'),F=world.flags;
@@ -5837,7 +5857,10 @@ function hwTick(dt){
   const txt=`🟨 백룸 · <b>${day}일째</b> / ${BK_DAYS}일 · 다음 날까지 ${Math.floor(left/60)}분 ${left%60}초`;hud.style.display='block';if(hud._t!==txt){hud.innerHTML=txt;hud._t=txt;}
   if(day>(F.bkDay||1)){F.bkDay=day;toast(`🟨 백룸 <b>${day}일째</b>... ${day>=5?'이상현상이 점점 잦아져요':'계속 버티세요'}`);}
   bkSupT-=dt;if(bkSupT<=0){bkSupT=120+Math.random()*60;bkSupply();}
-  if(bkDark<=0)bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=50+Math.random()*50;bkAnomaly(day);} // 이상현상이 끝난 뒤에 다음 이상현상
+  compEnsure();
+  if(bkTwist>0){bkTwist-=dt;const n=Math.floor((20-bkTwist)/5);if(n>=bkTwistI&&bkTwistI<4&&bkTwist>0){const t=COMP_EN[(Math.random()*COMP_EN.length)|0];bkTwistI=n+1;toast('🟡 <b>동료</b>: <i>'+t+'</i>');compTTS(t);}
+    if(bkTwist<=0){const b=mobs.find(m=>m.kind==='buddy'&&!m.dead);if(b){b.twist=false;b.u.eyeM.color.setHex(0x201a08);}compSay('...어? 방금 내가 뭐라고 했어? 머리가 좀 아파... 괜찮아, 계속 가자!');}}
+  if(bkDark<=0&&bkTwist<=0)bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=50+Math.random()*50;bkAnomaly(day);} // 이상현상이 끝난 뒤에 다음 이상현상
   const dolls=mobs.filter(m=>m.kind==='cursedoll'&&!m.dead);
   if(bkDark<=0){for(const m of dolls){spawnParticles(m.pos.x,m.pos.y+.4,m.pos.z,new THREE.Color(0x401010),14,.4,2);m.remove();}} // 불이 켜지면 인형은 사라짐
   else if(dolls.length){bkDollT-=dt;if(bkDollT<=0){bkDollT=12;const s=bkSpot(5+Math.random()*5);if(s)dolls[0].pos.set(s.x,11,s.z);} // 12초마다 다른 곳으로
@@ -5846,6 +5869,22 @@ function hwTick(dt){
   if(Math.random()<dt*.25)tone(118,122,.6,.012,'sawtooth');
   if(getBlock(Math.floor(player.pos.x),Math.floor(player.pos.y-.05),Math.floor(player.pos.z))===ELEV_FLOOR){bkElevT+=dt;if(bkElevT>2.5){bkElevT=-99;bkElevator();}}else bkElevT=0;}
 Object.assign(MOBDEF,{
+  buddy:{name:'동료',w:.5,h:1.1,hp:99999,fly:true,noclip:true,persist:true,fireproof:true,knock:0,color:0xffe24a,
+    sound:()=>{},drops:()=>[],
+    build(g){const gl=bas(0xffe24a),eyeM=bas(0x201a08),halo=new THREE.MeshBasicMaterial({color:0xfff2a0,transparent:true,opacity:.22,depthWrite:false});
+      const body=new THREE.Mesh(new THREE.SphereGeometry(.15,16,12),gl);body.position.y=.32;g.add(body);
+      const neck=new THREE.Mesh(new THREE.CylinderGeometry(.035,.045,.3,8),gl);neck.position.y=.56;g.add(neck);
+      const head=pivot(g,0,.7,0),ball=new THREE.Mesh(new THREE.SphereGeometry(.24,20,16),gl);ball.position.y=.2;head.add(ball);
+      const glow=new THREE.Mesh(new THREE.SphereGeometry(.38,16,12),halo);glow.position.y=.2;head.add(glow);
+      part(head,.06,.09,.02,eyeM,-.08,.25,-.23);part(head,.06,.09,.02,eyeM,.08,.25,-.23);part(head,.13,.03,.02,eyeM,0,.11,-.23); // 눈 · 입
+      return {head,body,eyeM,own:[gl,eyeM,halo],mats:[]};}, // 빛나는 재질은 맞았을 때 번쩍임(emissive)이 없어서 mats에서 뺌
+    onRemove(m){for(const x of m.u.own)x.dispose();},
+    ai(m,c,dt){m.hp=m.def.hp;m.face=true; // 플레이어 옆을 둥둥 떠다니며 따라옴 (멀어지면 순간이동)
+      const d=viewDir(),sx=Math.cos(player.yaw),sz=-Math.sin(player.yaw),tx=player.pos.x+sx*1.2+d.x*.8,tz=player.pos.z+sz*1.2+d.z*.8,ty=player.pos.y+.7+Math.sin(performance.now()/600)*.12;
+      if(Math.hypot(tx-m.pos.x,tz-m.pos.z)>12)m.pos.set(tx,ty,tz);m.vel.set((tx-m.pos.x)*3,(ty-m.pos.y)*3,(tz-m.pos.z)*3);},
+    anim(m,dt){const h=m.u.head,tw=m.twist; // 이상현상 2: 목이 옆으로 꺾임
+      h.rotation.z+=((tw?1.75:0)-h.rotation.z)*Math.min(1,(tw?14:4)*dt);h.rotation.x+=((tw?.5:0)-h.rotation.x)*Math.min(1,6*dt);
+      if(tw&&Math.random()<dt*3)h.rotation.z+=(Math.random()-.5)*.3;}},
   cursedoll:{name:'저주인형',w:.45,h:.8,hp:99999,fireproof:true,knock:0,color:0x8a7a5a,
     sound:()=>{},drops:()=>[],
     build(g){const sack=lam(0x8a7a5a,0,'cloth'),dark=lam(0x3a2a1a,0,'cloth'),red=bas(0xff2020),pin=lam(0xc8c8d0,0,'metal'),thr=bas(0x200a0a);
