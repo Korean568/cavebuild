@@ -142,6 +142,8 @@ body.cine #cineBars,body.cine #cineSkip{display:block} /* 연출 자막(#cineCap
 body.cine #hud,body.cine #crosshair,body.cine #stellarHud,body.cine #compass,body.cine #bossbar,body.cine #toasts{display:none!important}
 #gmHud{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:10;display:none;background:rgba(10,10,20,.72);border:2px solid #2a5ad0;padding:6px 14px;font-size:14px;text-align:center;pointer-events:none;text-shadow:1px 1px 0 #000}
 #stCount{position:fixed;top:12vh;left:50%;transform:translateX(-50%);z-index:10;font:bold 26px monospace;color:#ff4848;text-shadow:0 0 10px #f00,2px 2px 0 #000;display:none;pointer-events:none;letter-spacing:3px}
+#bkHud{position:fixed;top:52px;left:50%;transform:translateX(-50%);z-index:10;display:none;background:rgba(40,34,8,.78);border:2px solid #d8c25a;padding:6px 14px;font-size:14px;color:#ffeaa0;text-align:center;pointer-events:none;text-shadow:1px 1px 0 #000}
+#bkDark{position:fixed;inset:0;z-index:5;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 50%,rgba(0,0,0,.5) 0,rgba(0,0,0,.97) 24%)}
 #bossbar{position:fixed;top:12px;left:50%;transform:translateX(-50%);width:min(420px,70vw);display:none;text-align:center;pointer-events:none;text-shadow:2px 2px 0 #000;font-weight:bold;color:#9ffcff}
 #bossbar .bb{height:10px;background:#1a2a30;border:2px solid #000;margin-top:4px}
 #bossbar i{display:block;height:100%;background:linear-gradient(#8ff,#1a9aa8)}
@@ -224,7 +226,7 @@ body.mobile #toasts{top:72px}
 <div id="cookBook" class="overlay"><div id="cbIn"></div></div>
 <div id="signEd" class="overlay"><h2>🪧 표지판</h2><textarea id="signText" maxlength="80" rows="4" placeholder="표지판에 쓸 글 (Shift+Enter: 줄 바꿈)" style="width:min(440px,86vw);font:18px 'Malgun Gothic',sans-serif;padding:8px;box-sizing:border-box"></textarea><div><button class="btn" id="signOk">확인</button> <button class="btn" id="signCancel">취소</button></div></div>
 <div id="stellarMenu" class="overlay"><h2>🛰 스텔라 리모컨</h2><div class="list"></div><button class="btn" id="stCineBtn">🎬 연출: 켬</button><button class="btn" id="stMenuClose">닫기</button></div>
-<div id="cineFade"></div><div id="cineTitle">The Star’s Laser</div><div id="cineBars"><i></i><i></i></div><div id="cineCap"></div><div id="cineSkip">J · 연출 넘기기 ▶</div><div id="stCount"></div><div id="gmHud"></div>
+<div id="cineFade"></div><div id="cineTitle">The Star’s Laser</div><div id="cineBars"><i></i><i></i></div><div id="cineCap"></div><div id="cineSkip">J · 연출 넘기기 ▶</div><div id="stCount"></div><div id="gmHud"></div><div id="bkHud"></div><div id="bkDark"></div>
 <div id="debug"></div>
 <div id="compass"><span id="carrow">▲</span><span id="ctext"></span></div>
 <div id="toasts"></div>
@@ -242,6 +244,7 @@ body.mobile #toasts{top:72px}
   <div class="sub">캐고, 짓고, 살아남으세요</div>
   <button class="btn" id="btnPlay">▶ 플레이</button>
   <button class="btn" id="btnTSet">⚙ 설정</button>
+  <div id="hwBanner" style="display:none;margin:4px 0 8px;padding:6px 12px;background:rgba(30,10,40,.6);border:2px solid #ff8a1a;border-radius:6px;color:#ffb44a;font-weight:bold">🎃 할로윈 모드 — 흑요석을 캐면 <b>백룸</b>으로 떨어져요 · 이상현상 속에서 7일 버티기 · 할로윈 차원의 <b>잭오랜턴</b>을 쓰러뜨리면 엔딩</div>
   <div id="srBanner" style="display:none;margin:4px 0 8px;padding:6px 12px;background:rgba(0,0,0,.45);border:2px solid #ffd040;border-radius:6px;color:#ffe066;font-weight:bold">⏱ 스피드런 모드 — 로그인 필요 · 서바이벌만 (크리에이티브 X) · 엔딩까지 걸린 시간으로 랭킹</div>
   <button class="btn" id="btnRank" style="display:none">🏆 스피드런 랭킹</button>
   <button class="btn" id="btnWard">👕 탈의실</button>
@@ -297,7 +300,12 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.132 — 🌊 진짜 같은 물</h4>
+    <h4>🆕 v26.133 — 🎃 할로윈 모드</h4>
+    • 허브에서 <b>🎃 CAVEBUILD 할로윈</b>으로 들어가는 따로 된 모드예요 (세계도 따로 저장).<br>
+    • 흑요석을 캐면 발밑이 꺼지며 <b>백룸</b>으로 떨어져요. 가운데 스폰 방 둘레에 <b>실험실 · 도서관 · 투명 벽 미로 · 엘리베이터</b>가 있어요.<br>
+    • 백룸에서는 <b>이상현상</b>(정전 · 웃는 스마일러 · 등 뒤에 생기는 벽 · 발소리 · 보급품)이 일어나요. 스마일러는 쳐다보면 멈추니 눈을 떼지 마세요!<br>
+    • <b>7일</b>(백룸의 하루는 90초)을 버티면 프론티어로 돌아오며 <b>할로윈 열쇠</b>를 받아요. 열쇠를 쓰면 <b>할로윈 차원</b>으로 가고, 거기서 <b>잭오랜턴</b>을 쓰러뜨리면 엔딩이에요.
+    <h4>v26.132 — 🌊 진짜 같은 물</h4>
     • 고퀄 그래픽에서 바다에 <b>나무 · 언덕 · 구름이 거울처럼 비쳐요</b> (진짜 반사).<br>
     • 물 <b>깊이</b>에 따라 얕은 곳은 맑은 옥색으로 바닥이 비치고, 깊은 곳은 짙은 남색이에요. <b>물가</b>에는 하얀 거품이 넘실거리고, 물결이 조금 더 크게 출렁여요.
     <h4>v26.131 — 🌳 진짜 같은 나무 · 🪨 바위</h4>
@@ -841,8 +849,8 @@ function makeNoise(seed){
   return {n2,n3};
 }
 
-const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71,gold_block:72,titanium_block:73,uranium_ore:74,radium_ore:75,plutonium_ore:76,polonium_ore:77,protactinium_ore:78,gungnir:79,star_core:80,conduit:81,star_trace:82,super_alloy:83,nuke:84,star_ore:85,car_engine:86,plane_engine:87,wheel_side:88,wheel_tread:89,cushion:90,steer_face:91,steer_rim:92,drive_cushion:93,booster:94,button:95,lavender:96,sign:97,cooler_side:98,cooler_top:99,icm_side:100,icm_top:101,anvil:102,flower0:103,flower1:104,flower2:105,flower3:106,flower4:107,flower5:108,stove_side:109,stove_top:110,pot:111,plate:112};
-const ATW=8,ATH=16; // 타일 8×16칸 (512×1024)
+const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71,gold_block:72,titanium_block:73,uranium_ore:74,radium_ore:75,plutonium_ore:76,polonium_ore:77,protactinium_ore:78,gungnir:79,star_core:80,conduit:81,star_trace:82,super_alloy:83,nuke:84,star_ore:85,car_engine:86,plane_engine:87,wheel_side:88,wheel_tread:89,cushion:90,steer_face:91,steer_rim:92,drive_cushion:93,booster:94,button:95,lavender:96,sign:97,cooler_side:98,cooler_top:99,icm_side:100,icm_top:101,anvil:102,flower0:103,flower1:104,flower2:105,flower3:106,flower4:107,flower5:108,stove_side:109,stove_top:110,pot:111,plate:112,bk_wall:160,bk_carpet:161,bk_ceil:162,bk_light:163,lab:164,bookshelf:165,invis:166,elev:167,hw_grass_top:168,hw_grass_side:169,pumpkin_side:170,pumpkin_top:171,jack_face:172,grave:173};
+const ATW=8,ATH=24; // 타일 8×24칸 (512×1536)
 
 // ---------- 블록 & 아이템 정의 ----------
 const AIR=0,GRASS=1,DIRT=2,STONE=3,COBBLE=4,LOG=5,LEAVES=6,PLANKS=7,SAND=8,WATER=9,COAL_ORE=10,IRON_ORE=11,CRYSTAL_ORE=12,CORE=13,BENCH=14,KILN=15,GLASS=16,BRICK=17,SNOW=18,BED=19,LAMP=20,THORN=21,HELLSTONE=22,LAVA=23,DEMON_BRICK=24,P_HELL=25,P_CASTLE=26,P_CITY=27,P_END=28,ENDSTONE=29,DARKSTONE=30,WINDOW=31,ASPHALT=32,HELLGLOW=33,WINDOW_OFF=34,ESTONE_ORE=35,HS_ORE=36,IRON_BLOCK=37,OBSIDIAN=38,END_FRAME=39,END_FRAME_ON=40,MARKER=41,VOIDMOSS=42,VOIDLAMP=43,LADDER=44,CHEST=48,HOPPER=52;
@@ -987,6 +995,20 @@ defB(ICE_MAKER,'아이스크림 제조기',{side:TILE.icm_side,top:TILE.icm_top,
 const LAVENDER=1002,SIGN=1003; // 라벤더 벽(바라 가게) · 표지판(우클릭으로 글쓰기)
 defB(LAVENDER,'라벤더 벽',TILE.lavender,{hard:1.5,tool:'pick'});
 defB(SIGN,'표지판',TILE.sign,{hard:.8,tool:'axe',opaque:false,solid:false});
+// 🎃 할로윈 모드 블록: 백룸(벽지 · 카펫 · 천장 · 형광등 · 실험실 · 책장 · 투명 벽 · 엘리베이터) · 할로윈 차원(잔디 · 호박 · 잭오랜턴 · 묘비)
+const BK_WALL=1020,BK_CARPET=1021,BK_CEIL=1022,BK_LIGHT=1023,LAB_TILE=1024,BOOKSHELF=1025,INVIS_WALL=1026,ELEV_FLOOR=1027,HW_GRASS=1028,PUMPKIN=1029,JACK_O=1030,GRAVE=1031;
+defB(BK_WALL,'백룸 벽지',TILE.bk_wall,{hard:-1});
+defB(BK_CARPET,'백룸 카펫',TILE.bk_carpet,{hard:-1});
+defB(BK_CEIL,'백룸 천장',TILE.bk_ceil,{hard:-1});
+defB(BK_LIGHT,'형광등',TILE.bk_light,{hard:-1});
+defB(LAB_TILE,'실험실 타일',TILE.lab,{hard:-1});
+defB(BOOKSHELF,'책장',{side:TILE.bookshelf,top:TILE.planks,bottom:TILE.planks},{hard:1.5,tool:'axe'});
+defB(INVIS_WALL,'투명 벽',TILE.invis,{hard:-1,opaque:false});
+defB(ELEV_FLOOR,'엘리베이터 바닥',TILE.elev,{hard:-1});
+defB(HW_GRASS,'할로윈 잔디',{top:TILE.hw_grass_top,bottom:TILE.dirt,side:TILE.hw_grass_side},{hard:.6,tool:'shovel'});
+defB(PUMPKIN,'호박',{side:TILE.pumpkin_side,top:TILE.pumpkin_top,bottom:TILE.pumpkin_top},{hard:1,tool:'axe'});
+defB(JACK_O,'잭오랜턴 호박',[TILE.jack_face,TILE.jack_face,TILE.pumpkin_top,TILE.pumpkin_top,TILE.jack_face,TILE.jack_face],{hard:1,tool:'axe'});
+defB(GRAVE,'묘비',TILE.grave,{hard:2,tool:'pick'});
 const OPAQUE=new Uint8Array(BLK_N),SOLID=new Uint8Array(BLK_N);
 BL.forEach((b,i)=>{if(b){OPAQUE[i]=b.opaque?1:0;SOLID[i]=b.solid?1:0;}});
 const LIQUID=new Uint8Array(BLK_N),EMIT=new Uint8Array(BLK_N),LIGHT_SRC=new Uint8Array(BLK_N),PORTAL=new Uint8Array(BLK_N);
@@ -998,6 +1020,7 @@ const LADDER_OF=new Uint8Array(BLK_N),CONTAINER=new Uint8Array(BLK_N); // 사다
 LADDER_IDS.forEach(id=>LADDER_OF[id]=BL[id].face+1);BL.forEach((b,i)=>{if(b&&b.cont)CONTAINER[i]=b.cont;});
 for(const b of [P_HELL,P_CASTLE,P_CITY,P_END])PORTAL[b]=1;
 EMIT[RADIUM_ORE]=EMIT[STAR_ORE]=1; // 라듐은 스스로 희미하게 빛남 · 별의 힘 광석은 빨갛게 빛남
+EMIT[BK_LIGHT]=EMIT[JACK_O]=1;LIGHT_SRC[BK_LIGHT]=LIGHT_SRC[JACK_O]=1; // 🎃 형광등 · 잭오랜턴은 주변을 밝힘
 EMIT[THERMAL_CONDUIT]=EMIT[STAR_TRACE]=EMIT[STAR_CORE]=1;LIGHT_SRC[STAR_CORE]=1; // 별의 핵은 주변을 밝힘 · 열 도관과 별의 흔적은 스스로 빛남
 const RADIO=new Float32Array(512); // 방사능 세기 (초당 피해 기준)
 for(const [id,r] of [[URANIUM_ORE,.5],[RADIUM_ORE,.8],[PLUTONIUM_ORE,1],[POLONIUM_ORE,1.2],[PROTACTINIUM_ORE,.6],[URANIUM,.25],[RADIUM,.4],[PLUTONIUM,.5],[POLONIUM,.6],[PROTACTINIUM,.3]])RADIO[id]=r;
@@ -1558,7 +1581,59 @@ function buildPortalSites(data,cx,cz){
   }
 }
 
-const GEN={over:genOver,hell:genHell,castle:genCastle,city:genCity,end:genEnd};
+// --- 🟨 백룸 (할로윈 모드): 끝없는 노란 미로 · 가운데 스폰 방 둘레에 실험실(북) · 도서관(동) · 투명 벽 미로(남) · 엘리베이터(서) ---
+const BK_ROOMS=[{k:'spawn',x0:-8,x1:8,z0:-8,z1:8},{k:'lab',x0:-8,x1:8,z0:-32,z1:-16},{k:'lib',x0:16,x1:32,z0:-8,z1:8},{k:'glass',x0:-8,x1:8,z0:16,z1:32},{k:'elev',x0:-32,x1:-16,z0:-8,z1:8}];
+function bkHash(a,b,s){let h=Math.imul(a,374761393)^Math.imul(b,668265263)^Math.imul(s+seed*7,1442695041);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;}
+function bkRoom(x,z){for(const r of BK_ROOMS)if(x>=r.x0&&x<=r.x1&&z>=r.z0&&z<=r.z1)return r;return null;}
+function bkCol(x,z){ // 한 칸 기둥의 벽 블록 (0 = 빈 곳, -1 = 방 안)
+  const r=bkRoom(x,z);
+  if(r){if(x===r.x0||x===r.x1||z===r.z0||z===r.z1){const cm=(r.x0+r.x1)/2,zm=(r.z0+r.z1)/2,corner=(x===r.x0||x===r.x1)&&(z===r.z0||z===r.z1);
+      const door=!corner&&((z===r.z0||z===r.z1)?(x===cm||x===cm-1):(z===zm||z===zm-1));if(door)return 0;
+      return r.k==='lab'?LAB_TILE:r.k==='elev'?IRON_BLOCK:BK_WALL;}
+    return -1;}
+  const gx=((x%8)+8)%8,gz=((z%8)+8)%8;
+  if(bkHash(Math.floor(x/32),Math.floor(z/32),5)<.14)return gx===0&&gz===0?BK_WALL:0; // 기둥만 서 있는 넓은 방
+  if(gx===0&&gz===0)return BK_WALL;
+  if(gx===0){const h=bkHash(Math.floor(x/8),Math.floor(z/8),11);if(h<.3)return 0;const d=2+Math.floor(h*97)%4;return gz===d||gz===d+1?0:BK_WALL;}
+  if(gz===0){const h=bkHash(Math.floor(x/8),Math.floor(z/8),13);if(h<.3)return 0;const d=2+Math.floor(h*89)%4;return gx===d||gx===d+1?0:BK_WALL;}
+  return 0;}
+function bkFurnish(data,I,x,z,wx,wz,r){const cm=(r.x0+r.x1)/2,zm=(r.z0+r.z1)/2,P=(y,id)=>{data[I(x,y,z)]=id;};
+  if(r.k==='lab'){if((wz-r.z0)%4===2&&wx>r.x0+2&&wx<r.x1-2&&wx!==cm&&wx!==cm-1){P(11,IRON_BLOCK);if(bkHash(wx,wz,31)<.4)P(12,GLASS);} // 실험대 · 유리 진열장
+    if(wz===r.z0+2&&wx===r.x0+2)P(11,BENCH);if(wz===r.z0+2&&wx===r.x0+3)P(11,KILN);}
+  else if(r.k==='lib'){if((wx-r.x0)%3===0&&wz>r.z0+1&&wz<r.z1-1&&wz!==zm&&wz!==zm-1)for(let y=11;y<=13;y++)P(y,BOOKSHELF);}
+  else if(r.k==='glass'){const lx=wx-r.x0,lz=wz-r.z0,nearDoor=(Math.abs(wx-cm+.5)<1.5&&(lz<2||lz>14))||(Math.abs(wz-zm+.5)<1.5&&(lx<2||lx>14));
+    if(!nearDoor&&(lx%2===0||lz%2===0)&&((lx%2===0&&lz%2===0)||bkHash(wx,wz,41)<.42))for(let y=11;y<=13;y++)P(y,INVIS_WALL);}
+  else if(r.k==='elev'){const ax=wx-cm,az=wz-zm; // 가운데 2×2 엘리베이터 · 둘레 벽 (동쪽은 열림)
+    if(ax>=-1&&ax<=0&&az>=-1&&az<=0)P(10,ELEV_FLOOR);
+    else if(ax>=-2&&ax<=0&&az>=-2&&az<=1)for(let y=11;y<=13;y++)P(y,IRON_BLOCK);}}
+function genBack(data,cx,cz){
+  const I=(x,y,z)=>(y*16+z)*16+x;
+  for(let z=0;z<16;z++)for(let x=0;x<16;x++){
+    const wx=cx*16+x,wz=cz*16+z,r=bkRoom(wx,wz),w=bkCol(wx,wz);
+    data[I(x,0,z)]=CORE;for(let y=1;y<10;y++)data[I(x,y,z)]=BK_CEIL;
+    data[I(x,10,z)]=r&&r.k==='lab'?LAB_TILE:r&&r.k==='lib'?PLANKS:r&&r.k==='elev'?IRON_BLOCK:BK_CARPET;
+    const lt=((wx%4)+4)%4===2&&((wz%8)+8)%8===4&&bkHash(wx,wz,21)>.12; // 형광등 (가끔 나간 등)
+    data[I(x,14,z)]=lt&&w<=0?BK_LIGHT:BK_CEIL;data[I(x,15,z)]=BK_CEIL;
+    if(w>0)for(let y=11;y<=13;y++)data[I(x,y,z)]=w;
+    else if(w<0)bkFurnish(data,I,x,z,wx,wz,r);}}
+
+// --- 🎃 할로윈 차원: 보랏빛 밤 · 호박밭 · 죽은 나무 · 묘비 · 가운데 잭오랜턴 결투장 ---
+function hwTop(x,z){const r=Math.hypot(x,z),h=22+N1.n2(x/40,z/40)*6+N2.n2(x/13,z/13)*2.2;return r<30?20:r<42?Math.round(20+(h-20)*(r-30)/12):Math.round(h);}
+function genHallo(data,cx,cz){
+  const I=(x,y,z)=>(y*16+z)*16+x;
+  for(let z=0;z<16;z++)for(let x=0;x<16;x++){
+    const wx=cx*16+x,wz=cz*16+z,r=Math.hypot(wx+.5,wz+.5),top=Math.max(4,Math.min(CH-12,hwTop(wx,wz))),q=bkHash(wx,wz,77);
+    for(let y=0;y<=top;y++)data[I(x,y,z)]=y===0?CORE:y<top-3?STONE:y<top?DIRT:r<30?(r<26?((((wx>>1)+(wz>>1))&1)?DARKSTONE:BRICK):DARKSTONE):HW_GRASS;
+    if(r>=26&&r<27.5&&q<.6){for(let y=top+1;y<=top+2;y++)data[I(x,y,z)]=DARKSTONE;data[I(x,top+3,z)]=JACK_O;} // 결투장 둘레: 기둥 위 잭오랜턴
+    else if(r>=34){const patch=N2.n2(wx/20,wz/20)>.35;
+      if(q<(patch?.09:.012))data[I(x,top+1,z)]=q<.004?JACK_O:PUMPKIN; // 호박밭
+      else if(q>.985)data[I(x,top+1,z)]=GRAVE;}}
+  for(let wz=cz*16-1;wz<=cz*16+16;wz++)for(let wx=cx*16-1;wx<=cx*16+16;wx++){ // 죽은 나무 (잎 없는 줄기 · 옆 가지)
+    if(Math.hypot(wx,wz)<36||bkHash(wx,wz,91)>.006)continue;const top=hwTop(wx,wz),th=4+Math.floor(bkHash(wx,wz,92)*4);
+    for(let y=top+1;y<=top+th;y++)putW(data,cx,cz,wx,y,wz,LOG);
+    const a=Math.floor(bkHash(wx,wz,93)*4),dx=[1,-1,0,0][a],dz=[0,0,1,-1][a];putW(data,cx,cz,wx+dx,top+th-1,wz+dz,LOG);}}
+
+const GEN={over:genOver,hell:genHell,castle:genCastle,city:genCity,end:genEnd,back:genBack,hallo:genHallo};
 
 const VCELL=112,VCACHE=new Map();
 
@@ -1745,7 +1820,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.132 — 🌊 Realistic water</h4>
+    <h4>🆕 v26.133 — 🎃 Halloween mode</h4>
+    • A separate mode (own saves) from the hub: mining obsidian drops you into the Backrooms (lab, library, invisible-wall maze, elevator). Survive anomalies for 7 days to earn the Halloween Key, then defeat the Jack-o'-Lantern in the Halloween dimension for the ending.
+    <h4>v26.132 — 🌊 Realistic water</h4>
     • With HQ graphics the sea mirrors trees, hills and clouds (real reflections). Shallow water is clear turquoise and deep water dark blue, foam rolls along shorelines and waves are a bit bigger.
     <h4>v26.131 — 🌳 Realistic trees · 🪨 rocks</h4>
     • Tree crowns are built from 9 lumpy leaf clumps with leafy tufts sticking out (6 clumps were missing before), and stone/ore terrain is craggy with dark crevices like real rock.
@@ -2426,6 +2503,26 @@ T(TILE.hopper_side,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if((x===6||x=
     if(Math.abs(u-.5+.04*Math.sin(v*6))<.025&&v>.3)return mulc([98,72,44],grain(x,y,62,.15)); // 가는 줄기
     return null;});}
 T(TILE.hopper_bottom,(u,v,x,y)=>{const d=Math.max(Math.abs(u-.5),Math.abs(v-.5));return d<.14?[24,24,28]:d<.2?[70,72,78]:mulc(hopperMetal(u,v,x,y,283),Math.min(x,y,TS-1-x,TS-1-y)<2?.65:1);});
+// 🎃 할로윈 모드 그림
+T(TILE.bk_wall,(u,v,x,y)=>{const st=((x>>2)&1)?1:.94,dot=((x+4)%16<2&&(y+4)%16<2)?.88:1,dmp=v>.85?.92:1; // 노란 벽지: 세로 줄무늬 · 작은 점무늬 · 얼룩
+  return mulc([214,196,112],st*dot*dmp*(.86+.22*fbm(u,v,601,3,4))*grain(x,y,602,.06));});
+T(TILE.bk_carpet,(u,v,x,y)=>mulc(mixc([176,156,92],[118,102,58],clamp((fbm(u,v,612,2,3)-.45)*3,0,1)),(.85+.3*fbm(u,v,611,6,3))*grain(x,y,613,.18))); // 축축한 카펫
+T(TILE.bk_ceil,(u,v,x,y)=>{if(Math.min(x,y,TS-1-x,TS-1-y)<2)return [150,142,110];return mulc([226,218,180],(h2(x>>1,y>>1,621)<.08?.8:1)*(.94+.08*fbm(u,v,622,3,3)));}); // 흡음 천장 판
+T(TILE.bk_light,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y);if(e<3)return [170,168,150];const tb=Math.min(Math.abs(u-.33),Math.abs(u-.67));return mixc([236,238,222],[255,255,250],clamp(1-tb*8,0,1));}); // 형광등 판 (관 두 개)
+T(TILE.lab,(u,v,x,y)=>{if(x%16<1||y%16<1)return [168,176,180];return mulc([236,242,244],.96+.05*h2(x>>4,y>>4,631)+.03*fbm(u,v,632,4,2));}); // 하얀 실험실 타일
+T(TILE.bookshelf,(u,v,x,y)=>{const wood=k=>mulc([132,92,52],k*grain(x,y,641,.12));if(x<3||x>60||y<4||(y>=28&&y<36)||y>60)return wood(1); // 책장: 선반 두 칸 · 알록달록한 책
+  const row=y<32?0:1,W=5+row,bi=Math.floor((x-3)/W),hh=h2(bi,row,642),top=(row?36:4)+Math.floor(hh*8);if(y<top)return [40,28,18];
+  return mulc([[150,40,36],[40,70,130],[50,110,60],[120,90,40],[90,40,100],[180,150,60]][Math.floor(hh*6)],((x-3)%W===0?.6:1)*(y-top<2?1.15:1)*grain(x,y,643,.1));});
+T(TILE.invis,(u,v,x,y)=>h2(x,y,651)<.012?[220,240,255]:null); // 투명 벽: 아주 가끔 반짝이는 점만
+T(TILE.elev,(u,v,x,y)=>{const a=(x+y)%16,b=((x-y)%16+16)%16,ck=((x>>3)+(y>>3))%2,bump=ck?Math.abs(b-8)<1.5:Math.abs(a-8)<1.5;return mulc([150,154,160],(bump?1.25:.95)*(.92+.1*fbm(u,v,661,3,3)));}); // 줄무늬 철판
+T(TILE.hw_grass_top,(u,v,x,y)=>mulc(mixc([58,46,70],[92,70,58],fbm(u,v,671,5,4)),.8+.4*h2(x,y,672))); // 시든 보랏빛 풀
+T(TILE.hw_grass_side,(u,v,x,y)=>y<6+Math.floor(h2(x,0,673)*6)?mulc([70,54,80],.8+.4*h2(x,y,674)):dirtC(u,v,x,y));
+T(TILE.pumpkin_side,(u,v,x,y)=>mulc([232,128,30],(.7+.35*Math.abs(Math.sin(u*Math.PI*4)))*(v<.06||v>.94?.8:1)*grain(x,y,681,.08))); // 골이 진 호박
+T(TILE.pumpkin_top,(u,v,x,y)=>{const d=Math.hypot(u-.5,v-.5);if(d<.09)return mulc([70,90,40],grain(x,y,691,.2));return mulc([222,118,26],(.75+.3*Math.abs(Math.cos(Math.atan2(v-.5,u-.5)*4)))*(1-d*.3));});
+T(TILE.jack_face,(u,v,x,y)=>{const base=mulc([232,128,30],.7+.35*Math.abs(Math.sin(u*Math.PI*4))),glow=[255,214,80]; // 잭오랜턴: 세모 눈 · 톱니 웃음 (안에서 빛남)
+  const tri=(cx,cy,sz)=>{const dy=v-cy;return dy>-sz*.5&&dy<sz*.5&&Math.abs(u-cx)<(dy+sz*.5)*.6;};if(tri(.3,.34,.2)||tri(.7,.34,.2))return glow;
+  const du=u-.5,yU=.6-.6*du*du,yL=.8-1.4*du*du;if(Math.abs(du)<.3&&v>yU&&v<yL)return (Math.floor(u*10)%2===0&&v<yU+.05)?base:glow;return mulc(base,grain(x,y,701,.08));});
+T(TILE.grave,(u,v,x,y)=>{const c=mulc([128,128,134],(.85+.25*fbm(u,v,711,4,4))*grain(x,y,712,.12));if((Math.abs(u-.5)<.05&&v>.2&&v<.7)||(Math.abs(v-.36)<.05&&Math.abs(u-.5)<.18))return mulc(c,.6);return Math.min(x,y,TS-1-x,TS-1-y)<2?mulc(c,.75):c;}); // 묘비: 십자가
 actx.putImageData(AIMG,0,0);
 
 // 평균 색 (파티클용)
@@ -2477,6 +2574,7 @@ IT[HS_SCRAP]={name:'블레이즈스톤 조각',stack:64};
 IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
+const HW_KEY=350;IT[HW_KEY]={name:'할로윈 열쇠',stack:1,use:true}; // 🎃 백룸에서 7일을 버티면 받음 · 들고 우클릭하면 할로윈 차원
 IT[BOAT]={name:'보트',stack:1,use:true};
 IT[FISHING_ROD]={name:'낚싯대',stack:1,maxDur:64,use:true};
 IT[BUCKET]={name:'양동이',stack:16,bucket:true};
@@ -2757,6 +2855,7 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-8,Y-8);if(d>6.2)return null;if(d>5.2)return '#8a8a94';const a=X-8,b=Y-8;if(Math.abs(a)<1.1&&b<0&&b>-4.6)return nc;if(Math.abs(a)<.9&&b>=0&&b<4)return '#3a3a44';if(d<1)return '#222';return '#e8e2d0';});}
     case HS_SCRAP:{const r=mulberry32(21);return pixelIcon((X,Y)=>{const d=Math.hypot(X-8,Y-8.5);if(d>5.2+(r()-.5)*1.4)return null;return r()<.18?'#e0603c':r()<.5?'#3a2a2e':'#54404a';});}
     case HELLSTEEL:return pixelIcon((X,Y,x,y)=>{if(y<6||y>11)return null;const inset=(11-y)*.7;if(X<1.5+inset||X>14.5-inset)return null;if((x+y)%7===0)return '#e0603c';return y<8?'#6a5458':y<11?'#4a3a3e':'#2a1e22';});
+    case HW_KEY:return pixelIcon((X,Y)=>{const d=Math.hypot(X-5.5,Y-5.5);if(d<3.6){if(d<1.6)return null;return Math.abs(Math.sin(Math.atan2(Y-5.5,X-5.5)*4))>.5?'#ff9a2a':'#d86a10';}if(Y>7&&Y<9.2&&X>6.5&&X<14)return '#7a3ab0';if(X>11&&X<13&&Y>8&&Y<12)return '#5a2a90';if(X>8.5&&X<10.2&&Y>8&&Y<11)return '#5a2a90';return null;});
     case PORTAL_KEY:return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-5.5,Y-5.5);if(d<3.4)return d<1.5?null:(X+Y<11?'#9ffff0':'#2fd6c2');if(Y>7&&Y<9.2&&X>6.5&&X<14)return '#2fd6c2';if(X>11&&X<13&&Y>8&&Y<12)return '#1aa89a';if(X>8.5&&X<10.2&&Y>8&&Y<11)return '#1aa89a';return null;});
     case FISHING_ROD:return pixelIcon((X,Y)=>{const dx=X-12.5,dy=Y-2.5,a=(dx-dy)*Math.SQRT1_2,b=(dx+dy)*Math.SQRT1_2; // 낚싯대 + 낚싯줄 + 찌
       if(a>-14&&a<1&&Math.abs(b)<.62+(a<-10?.35:0))return a<-10?'#3a2618':b>0?HND_D:HND;
@@ -5581,6 +5680,8 @@ const DIM={
   castle:{name:'판데모니움',bg:[.07,.01,.03],fog:[14,72],light:.6,day:1,caveB:.42,stars:0},
   city:{name:'네크로폴리스',bg:[.04,.03,.09],fog:[18,76],light:.55,day:.42,caveB:.3,stars:.9},
   end:{name:'호라이즌',bg:[.17,.05,.26],fog:[30,78],light:.8,day:.85,caveB:.5,stars:1},
+  back:{name:'백룸',bg:[.42,.38,.16],fog:[6,46],light:.95,day:.9,caveB:.62,stars:0},
+  hallo:{name:'할로윈',bg:[.13,.05,.18],fog:[14,70],light:.5,day:.42,caveB:.3,stars:1},
 };
 let modsByDim={over:mods};
 function updateCompass(){
@@ -5601,6 +5702,8 @@ function arrivalOf(dim){
   if(dim==='castle')return {x:.5,y:11,z:40.5,yaw:0};
   if(dim==='city')return {x:.5,y:11,z:24.5,yaw:0};
   if(dim==='end')return {x:.5,y:endTop(0,36).top+1,z:36.5,yaw:0};
+  if(dim==='back')return {x:.5,y:11,z:.5,yaw:0};
+  if(dim==='hallo')return {x:.5,y:21,z:20.5,yaw:0};
   return null;
 }
 let portalLock=false,portalT=0,traveling=false,portalLockT=0;
@@ -5664,13 +5767,118 @@ function onArrive(dim,fromLoad){
   if(dim==='end'){achieve('end');
     if(!F.dragonDead){if(!has('dragon'))new Mob('dragon',0,55,0);if(!has('crystal'))for(const q of END_PILLARS)new Mob('crystal',q.x+.5,q.h+2,q.z+.5);}
     toast(F.dragonDead?'🐉 <b>호라이즌</b>... 드래곤은 더 이상 없습니다.':'🐉 <b>호라이즌</b>... 기둥 위 <b>엔딩 수정</b>을 부수세요! 수정이 남아 있으면 제단에 앉은 드래곤이 회복합니다.','ach');}
+  if(dim==='back'&&!bkQuiet)toast('🟨 <b>백룸</b>... 축축한 카펫 냄새 · 형광등 윙윙거리는 소리. <b>7일</b>을 버티면 돌아갈 수 있어요.<br>⚠ 이상현상이 일어나요. <b>웃는 얼굴</b>을 보면 눈을 떼지 마세요!','ach');bkQuiet=false;
+  if(dim==='hallo'){if(!has('jack')&&!F.jackDead)new Mob('jack',.5,21,.5);
+    toast(F.jackDead?'🎃 <b>할로윈</b>... 결투장은 조용합니다. 열쇠를 다시 쓰면 프론티어로 돌아가요.':'🎃 <b>할로윈</b>... 결투장 가운데에서 <b>잭오랜턴</b>이 웃고 있습니다! (열쇠를 다시 쓰면 프론티어로)','ach');}
   if(dim==='over'&&!fromLoad)toast('🏠 <b>프론티어</b>로 돌아왔습니다.');
 }
+
+// ===== 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석을 캐면 백룸 → 이상현상 속에서 7일 버티기 → 할로윈 열쇠 → 할로윈 차원의 잭오랜턴 =====
+const BK_DAY=90,BK_DAYS=7; // 백룸의 하루 (초) · 버텨야 하는 날
+let bkEvT=40,bkDark=0,bkElevT=0,bkQuiet=false;
+function hwFallToBack(){toast('🕳 흑요석 아래가 <b>꺼졌어요</b>... 어딘가로 떨어지고 있어요','ach');tone(220,40,1.2,.06,'sawtooth');
+  setTimeout(()=>{const F=world.flags;F.bkT=0;F.bkDay=1;bkEvT=40;travel('back',arrivalOf('back'));},700);}
+function hwUseKey(){
+  if(world.dim==='hallo'){travel('over',world.lastPos.over||world.spawn);return;}
+  if(world.dim!=='over'){toast('🎃 할로윈 열쇠는 <b>프론티어</b>에서만 쓸 수 있어요');return;}
+  swing=1;toast('🎃 열쇠를 돌리자 공기가 보랏빛으로 일렁여요...');travel('hallo',arrivalOf('hallo'));}
+function bkEscape(){const F=world.flags;F.bkDone=1;F.bkT=0;F.bkDay=0;bkDark=0;addItem(HW_KEY,1);invChanged();
+  travel('over',world.lastPos.over||world.spawn);SFX.ach();
+  setTimeout(()=>toast('🎃 백룸에서 <b>7일</b>을 버텼어요! 손에 <b>할로윈 열쇠</b>가 쥐어져 있어요 — 들고 우클릭하면 <b>할로윈 차원</b>으로 가요','ach'),900);}
+function bkSpawnSmiler(d){if(mobs.filter(m=>m.kind==='smiler').length>=3)return;
+  for(let t=0;t<24;t++){const a=Math.random()*6.28,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);
+    if(getBlock(x,11,z)===AIR&&getBlock(x,12,z)===AIR&&getBlock(x,13,z)===AIR){new Mob('smiler',x+.5,11,z+.5);return;}}}
+function bkElevator(){toast('🛗 엘리베이터가 덜컹거리며 움직여요...');tone(80,60,1.6,.05,'square');
+  setTimeout(()=>{if(world.dim!=='back')return;const a=Math.random()*6.28,d=160+Math.random()*200;bkQuiet=true;
+    travel('back',{x:Math.floor(Math.cos(a)*d/8)*8+4.5,y:11,z:Math.floor(Math.sin(a)*d/8)*8+4.5});
+    setTimeout(()=>toast('🛗 ...문이 열렸는데 처음 보는 복도예요'),900);},1600);}
+function bkAnomaly(day){const r=Math.random(),p=player.pos;
+  if(r<.3){bkDark=6+day;noise(.5,150,.25);toast('⚠ <b>이상현상</b> · 형광등이 전부 꺼졌어요...');if(Math.random()<.5+day*.06)bkSpawnSmiler(10);}
+  else if(r<.5){bkSpawnSmiler(14);toast('⚠ <b>이상현상</b> · 어둠 속에서 누군가 <b>웃고</b> 있어요... 쳐다보면 멈춰요. 눈을 떼지 마세요');for(let i=0;i<3;i++)tone(300+i*40,200,.25,.04,'triangle',i*.18);}
+  else if(r<.68){const sy=Math.sin(player.yaw),cy=Math.cos(player.yaw); // 등 뒤에 벽이 생김
+    for(let k=-2;k<=2;k++){const x=Math.floor(p.x+sy*3+cy*k),z=Math.floor(p.z+cy*3-sy*k);for(let y=11;y<=13;y++)if(getBlock(x,y,z)===AIR)setBlock(x,y,z,BK_WALL);}
+    noise(.35,220,.3);toast('⚠ <b>이상현상</b> · 등 뒤에서 쿵 소리... <b>벽</b>이 생겼어요');}
+  else if(r<.84){for(let i=0;i<8;i++)noise(.08,300,.08,i*.45);toast('⚠ <b>이상현상</b> · 멀리서 <b>발소리</b>가 다가와요...');setTimeout(()=>{if(world.dim==='back')bkSpawnSmiler(18);},4000);}
+  else{const d=viewDir();dropItem(Math.random()<.5?APPLE:COOKED_MEAT,2,p.x+d.x*1.5,p.y+.4,p.z+d.z*1.5,{spread:.6,up:2});toast('⚠ <b>이상현상</b> · 바닥에 누가 두고 간 <b>보급품</b>이 있어요');}}
+function hwTick(dt){
+  const hud=$('bkHud'),D=$('bkDark'),F=world.flags;
+  if(world.dim!=='back'||player.dead){if(hud.style.display!=='none')hud.style.display='none';D.style.opacity=0;bkDark=0;
+    if(world.dim!=='back'&&F.bkT>0&&!traveling){F.bkT=0;F.bkDay=0;toast('🟨 백룸에서 쓰러졌어요... 흑요석을 다시 캐면 <b>처음부터</b> 버텨야 해요');}return;}
+  F.bkT=(F.bkT||0)+dt;const day=Math.floor(F.bkT/BK_DAY)+1,left=Math.ceil(BK_DAY-F.bkT%BK_DAY);
+  if(F.bkT>=BK_DAY*BK_DAYS){bkEscape();return;}
+  const txt=`🟨 백룸 · <b>${day}일째</b> / ${BK_DAYS}일 · 다음 날까지 ${left}초`;hud.style.display='block';if(hud._t!==txt){hud.innerHTML=txt;hud._t=txt;}
+  if(day>(F.bkDay||1)){F.bkDay=day;toast(`🟨 백룸 <b>${day}일째</b>... ${day>=5?'이상현상이 점점 잦아져요':'계속 버티세요'}`);}
+  bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=35+Math.random()*35;bkAnomaly(day);}
+  if(bkDark>0){bkDark-=dt;D.style.opacity=bkDark<.6||Math.random()<.06?.35:.94;}else D.style.opacity=Math.random()<dt*.6?.25:0; // 정전 · 가끔 깜빡이는 형광등
+  if(Math.random()<dt*.25)tone(118,122,.6,.012,'sawtooth');
+  if(getBlock(Math.floor(player.pos.x),Math.floor(player.pos.y-.05),Math.floor(player.pos.z))===ELEV_FLOOR){bkElevT+=dt;if(bkElevT>2.5){bkElevT=-99;bkElevator();}}else bkElevT=0;}
+Object.assign(MOBDEF,{
+  smiler:{name:'스마일러',w:.7,h:2.3,hp:40,hostile:true,fireproof:true,knock:.4,color:0x08080a,
+    sound:()=>tone(520,260,.4,.03,'triangle'),drops:()=>[[COIN,Math.random()<.5?1:0]],
+    build(g){const blk=lam(0x0a0a0c,0,'rough'),eye=bas(0xfffbe0);
+      const legs=[-.15,.15].map(x=>{const p=pivot(g,x,1,0);part(p,.18,1,.18,blk,0,-.5,0);return p;});
+      part(g,.5,.8,.3,blk,0,1.4,0);const head=pivot(g,0,1.85,0);part(head,.5,.5,.5,blk,0,.25,0);
+      part(head,.1,.1,.02,eye,-.12,.33,-.26);part(head,.1,.1,.02,eye,.12,.33,-.26);
+      for(let i=0;i<7;i++){const t=(i-3)/3;part(head,.06,.06,.02,eye,t*.18,.13+t*t*.06,-.26);} // 하얀 웃는 입
+      const arms=[-1,1].map(s=>{const p=pivot(g,s*.33,1.75,0);part(p,.14,1.1,.14,blk,0,-.55,0);return p;});
+      return {legs,arms,head,mats:[blk]};},
+    ai(m,c,dt){const d=viewDir(),l=c.dist||1; // 쳐다보면 멈추고, 눈을 떼거나 불이 꺼지면 빠르게 다가옴
+      m.watched=!player.dead&&(-c.toX*d.x-c.toZ*d.z)/l>.5&&bkDark<=0&&canSee(m);m.face=true;
+      if(m.watched||c.dist>40||player.dead){steer(m,0,0,dt,20);return;}
+      toward(m,c,5.2,dt);autoJump(m);melee(m,c,1.4,7,1,'스마일러에게 잡혔습니다');},
+    anim(m,dt,hs){legSwing(m.u.legs,m.walk,.6*Math.min(1,hs));m.u.arms.forEach((a,i)=>a.rotation.x=m.watched?0:-.6+Math.sin(performance.now()/90+i)*.2);}},
+  pumpkinhead:{name:'호박머리',w:.6,h:2,hp:28,hostile:true,color:0xe07a1a,
+    sound:()=>SFX.groan(),drops:()=>[[PUMPKIN,Math.random()<.4?1:0],[COIN,Math.random()<.3?1:0]],
+    build(g){const cloth=lam(0x2a1a3a,0,'cloth'),pants=lam(0x1a1420,0,'cloth'),pk=lam(0xe07a1a,0,'skin'),glow=bas(0xffd040),stem=lam(0x3a5a20,0,'rough'),hand=lam(0x6a8a50,0,'skin');
+      const legs=[-.15,.15].map(x=>{const p=pivot(g,x,.8,0);part(p,.28,.8,.28,pants,0,-.4,0);return p;});
+      part(g,.62,.72,.36,cloth,0,1.16,0);
+      const head=pivot(g,0,1.52,0);part(head,.62,.56,.62,pk,0,.28,0);part(head,.1,.16,.1,stem,0,.62,0);
+      part(head,.14,.12,.02,glow,-.14,.36,-.32);part(head,.14,.12,.02,glow,.14,.36,-.32);part(head,.34,.08,.02,glow,0,.16,-.32);
+      const arms=[-1,1].map(s=>{const p=pivot(g,s*.43,1.42,0);part(p,.22,.72,.22,cloth,0,-.3,0);part(p,.2,.18,.2,hand,0,-.66,0);p.rotation.x=1.45;return p;});
+      return {legs,arms,head,mats:[cloth,pants,pk]};},
+    ai(m,c,dt){if(c.dist<26&&!player.dead){toward(m,c,2.6,dt);melee(m,c,1.3,4,1,'호박머리에게 당했습니다');}else wander(m,.8,dt);autoJump(m);},
+    anim(m,dt,hs){legSwing(m.u.legs,m.walk,.7*Math.min(1,hs));m.u.arms.forEach((a,i)=>a.rotation.x=1.45+Math.sin(performance.now()/500+i*2)*.1+(m.swingT>0?.5:0));}},
+  jack:{name:'잭오랜턴',w:2,h:4.6,hp:3200,hostile:true,boss:true,fireproof:true,knock:0,color:0xff8a1a,
+    sound:()=>tone(180,90,.5,.06,'sawtooth'),drops:()=>[[COIN,20],[JACK_O,4],[POTION,1]],
+    build(g){const robe=lam(0x1a0f26,0,'cloth'),robe2=lam(0x2e1a40,0,'cloth'),pk=lam(0xf08a1c,0,'skin'),pk2=lam(0xc2600e,0,'skin'),glow=bas(0xffd84a),stem=lam(0x2f4a1a,0,'rough'),bone=lam(0xd8d0c0,0,'bone'),blade=lam(0x9aa0aa,0,'metal');
+      const legs=[-.4,.4].map(x=>{const p=pivot(g,x,1.5,0);part(p,.5,1.5,.5,robe,0,-.75,0);return p;});
+      part(g,1.5,1.6,.9,robe,0,2.3,0);part(g,1.8,.4,1.1,robe2,0,3.1,0);part(g,1.2,.25,.95,robe2,0,1.55,0);
+      const head=pivot(g,0,3.3,0);
+      part(head,1.5,1.25,1.5,pk,0,.62,0);part(head,1.62,1.05,.5,pk2,0,.62,0);part(head,.5,1.05,1.62,pk2,0,.62,0); // 골이 진 큰 호박 머리
+      part(head,.2,.4,.2,stem,0,1.4,0).rotation.z=.3;
+      part(head,.36,.3,.04,glow,-.34,.82,-.82);part(head,.36,.3,.04,glow,.34,.82,-.82);part(head,.16,.14,.04,glow,0,.58,-.82);
+      for(let i=0;i<5;i++)part(head,.18,i%2?.14:.24,.04,glow,(i-2)*.2,.3+(i%2?.04:0),-.82); // 톱니 웃음
+      const arms=[-1,1].map(s=>{const p=pivot(g,s*.98,3,0);part(p,.4,1.4,.4,robe2,0,-.7,0);part(p,.3,.3,.3,bone,0,-1.45,0);return p;});
+      const sc=pivot(arms[1],0,-1.45,0);part(sc,.1,.1,2.8,stem,0,0,-.6);part(sc,.08,1.2,.4,blade,0,-.5,-1.95); // 큰 낫
+      return {legs,arms,head,mats:[robe,robe2,pk,pk2]};},
+    ai(m,c,dt){const rage=m.hp<m.def.hp/2;
+      if(player.dead||c.dist>56){m.face=false;wander(m,.6,dt);autoJump(m,10);return;}
+      m.face=true;
+      if(m.act==='swing'){steer(m,0,0,dt);m.actT-=dt;
+        if(m.actT<=0){m.act=null;m.atkCD=1.8;SFX.boom();spawnParticles(m.pos.x-Math.sin(m.yaw)*2,m.pos.y+.3,m.pos.z-Math.cos(m.yaw)*2,new THREE.Color(0xff8a1a),20,1.2,5);
+          if(c.dist<4.4&&c.dy>-2&&c.dy<4.6)hurtPlayer(rage?22:18,c.toX/(c.dist||1),c.toZ/(c.dist||1),'잭오랜턴의 낫에 베였습니다');}
+        return;}
+      toward(m,c,rage?2.6:2,dt);autoJump(m,10);
+      if(c.dist<3.8&&m.atkCD<=0){m.act='swing';m.actT=.7;SFX.charge();return;}
+      m.shootT-=dt;if(m.shootT<=0&&c.dist>4&&c.dist<40&&canSee(m)){m.shootT=rage?1.6:2.6;m.swingT=.4;SFX.fireball();for(let i=0;i<(rage?4:2);i++)mobShoot(m,'fire',13,6,.3,'잭오랜턴의 불붙은 호박에 맞았습니다');}
+      m.sumT=(m.sumT??10)-dt;if(m.sumT<=0){m.sumT=rage?12:18;for(let i=0;i<(rage?3:2);i++)new Mob('pumpkinhead',m.pos.x+(Math.random()-.5)*6,m.pos.y+.5,m.pos.z+(Math.random()-.5)*6);toast('🎃 잭오랜턴이 <b>호박머리</b>를 불러냈어요!');}
+      if(rage){m.tpT=(m.tpT??6)-dt;if(m.tpT<=0&&c.dist>8){m.tpT=7;spawnParticles(m.pos.x,m.pos.y+2,m.pos.z,new THREE.Color(0x8030c0),30,1.5,6);const a=Math.random()*6.28;
+        m.pos.set(player.pos.x+Math.sin(a)*4,player.pos.y+.5,player.pos.z+Math.cos(a)*4);while(entHits(m)&&m.pos.y<CH-2)m.pos.y+=1;tone(900,200,.4,.06,'sawtooth');toast('🎃 잭오랜턴이 <b>순간이동</b>했어요!');}}},
+    flash(m){return m.act==='swing'?(((m.actT*12)|0)%2):0;},
+    anim(m,dt,hs){legSwing(m.u.legs,m.walk*.6,.4*Math.min(1,hs));m.u.arms[1].rotation.x=m.act==='swing'?2.4:m.atkCD>1.4?.3:Math.sin(m.walk*.6)*.3*Math.min(1,hs);
+      m.u.arms[0].rotation.x=m.swingT>0?1.4:-Math.sin(m.walk*.6)*.3*Math.min(1,hs);m.u.head.rotation.z=Math.sin(performance.now()/400)*.08;},
+    onDeath(m){world.flags.jackDead=true;bossKilled('잭오랜턴');for(const o of [...mobs])if(o.kind==='pumpkinhead')o.remove();
+      for(let i=0;i<5;i++)setTimeout(()=>spawnParticles(m.pos.x,m.pos.y+2,m.pos.z,new THREE.Color(0xff8a1a),30,3,8),i*300);
+      setTimeout(()=>showEnding('jack'),2600);}},
+});
 
 // --- 차원별 몹 스폰 ---
 function spawnDim(){
   const hostile=mobs.filter(m=>m.def.hostile&&!m.def.boss).length,py=Math.floor(player.pos.y),r=Math.random();
   const tps=mobs.filter(m=>m.kind==='teleporter').length;
+  if(world.dim==='back'&&Math.random()<.04+world.flags.bkDay*.01)bkSpawnSmiler(22); // 🟨 백룸: 스마일러가 가끔
+  if(world.dim==='hallo'&&hostile<10&&Math.random()<.35){const a=Math.random()*6.28,d=14+Math.random()*16,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d),sf=surfaceAt(x,z);
+    if(sf&&Math.hypot(x,z)>32)new Mob(r<.45?'pumpkinhead':r<.75?'zombie':'skeleton',x+.5,sf.y,z+.5);}
   if(world.dim==='hell'&&tps<4&&Math.random()<.25){const s=caveSpot(10,26,py-10,py+8,3);if(s)new Mob('teleporter',s.x,s.y,s.z);}
   if(world.dim==='end'&&tps<8&&Math.random()<.35){const a=Math.random()*6.28,d=12+Math.random()*20,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d),sf=surfaceAt(x,z);
     if(sf&&sf.b===ENDSTONE)new Mob('teleporter',x+.5,sf.y,z+.5);}
@@ -5879,14 +6087,14 @@ function clickArmor(p){
 
 // ---------- 엔딩 ----------
 let endingOpen=false;
-function showEnding(){
+function showEnding(k){
   if(SPEEDRUN&&world.sr&&!world.sr.done){world.sr.done=true;saveGame();toast(`⏱ 완주! 기록 <b>${fmtT(world.sr.ms)}</b> — 저장하고 타이틀로 가면 랭킹에 올라가요`);}
   endingOpen=true;if(document.pointerLockElement)document.exitPointerLock();
   const st=world.stats,min=Math.floor(st.play/60);
-  const f=world.flags,more=[f.demonDead&&'어비스 깊은 곳 판데모니움에서 <b>불멸의 악마</b>를 넘어섰고,',f.guardDead&&'<b>네크로폴리스</b>에서 <b>다크가디언</b>을 쓰러뜨렸으며,'].filter(Boolean).join('<br>');
+  const f=world.flags,more=[f.demonDead&&'어비스 깊은 곳 판데모니움에서 <b>불멸의 악마</b>를 넘어섰고,',f.guardDead&&'<b>네크로폴리스</b>에서 <b>다크가디언</b>을 쓰러뜨렸으며,',f.bkDone&&'끝없는 노란 미로 <b>백룸</b>에서 이상현상 속에 7일을 버텼고,',k!=='jack'&&f.jackDead&&'<b>할로윈</b> 차원에서 <b>잭오랜턴</b>의 불을 꺼뜨렸으며,'].filter(Boolean).join('<br>');
   $('endscroll').innerHTML=`<div class="big">THE END</div><div class="dim">CAVEBUILD · 케이브빌드</div><br>
     당신은 끝없는 들판에서 첫 나무를 베었고,<br>어둠 속에서 등불을 밝혔습니다.<br><br>${more?more+'<br>':''}
-    마침내 세계의 끝, 호라이즌에서 <b>엔딩드래곤</b>을 잠재웠습니다.<br><br>
+    ${k==='jack'?'마침내 <b>할로윈</b> 차원에서 <b>잭오랜턴</b>의 불을 꺼뜨렸습니다. 🎃<br>호박밭 위로 보랏빛 밤이 조용히 걷혀 갑니다.':'마침내 세계의 끝, 호라이즌에서 <b>엔딩드래곤</b>을 잠재웠습니다.'}<br><br>
     <span class="dim">— 하지만 세계는 끝나지 않습니다 —</span><br><br>
     돌아갈 집이 있고,<br>아직 가 보지 못한 땅이 끝없이 펼쳐져 있으니까요.<br><br><br>
     <b>기록</b><br>생존한 날: ${st.days+1}일<br>처치한 몹: ${st.kills}마리<br>쓰러진 횟수: ${st.deaths}번<br>플레이 시간: ${min}분<br><br><br>
@@ -6386,6 +6594,7 @@ Object.assign(MOBDEF,{
 
 // ---------- 플레이어 로직 ----------
 const NOEJEOL=/\/noejeol\//.test(location.pathname); // 뇌절모드 (cavebuild/noejeol/)
+const HALLOWEEN=/\/halloween\//.test(location.pathname); // 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석 → 백룸 7일 → 할로윈 열쇠 → 잭오랜턴 · 세계는 따로 저장
 const SPEEDRUN=/\/speedrun\//.test(location.pathname); // 스피드런 모드 (cavebuild/speedrun/): 디버그 화면 · 스톱워치 · 랭킹 · 로그인 전용
 const HURT_DUR=.22; // 원래 아픔 소리 길이 (SFX.hurt의 tone 길이와 같음)
 const NJ_SND={},NJ_SPLASH_DUR=.8; // 뇌절모드 녹음 소리: 파일 · 쓸 구간(초) · 원래 소리와 같은 길이로 맞춰 재생
@@ -6649,6 +6858,7 @@ function toggleDoor(x,y,z){ // 문 여닫기 (위·아래 칸 함께)
 function breakBlock(x,y,z,id){
   const B=BL[id];
   setBlock(x,y,z,AIR);if(id===OBSIDIAN)breakPortalNear(x,y,z);
+  if(id===OBSIDIAN&&HALLOWEEN&&world.dim==='over'&&!world.flags.bkDone)hwFallToBack(); // 🎃 할로윈 모드: 흑요석 아래는 백룸
   if(DOOR_OF[id]){const oy=BL[id].door.t?y-1:y+1;if(DOOR_OF[getBlock(x,oy,z)])setBlock(x,oy,z,AIR);} // 문은 위·아래가 함께 부서짐
   if(id===LOG&&getBlock(x,y,z)!==LOG){ // 나무 원목을 모두 캐면 묘목이 떨어짐
     let log=false,leaf=false;for(let dy=-8;dy<=8&&!log;dy++)if(getBlock(x,y+dy,z)===LOG)log=true;
@@ -6689,6 +6899,7 @@ function updateEating(dt){const e=player.eating;if(!e)return;const s=held(); // 
 function useItem(){
   if(player.dead||isSpec())return;const s=held();
   if(s&&s.id===COOKBOOK){openCookBook();return;} // 요리 가이드북
+  if(s&&s.id===HW_KEY){hwUseKey();return;} // 🎃 할로윈 열쇠
   if(s&&s.id===CAPE){toast('👕 망토는 타이틀 화면의 <b>탈의실</b>에서 입을 수 있어요');return;}
   if(player.veh&&player.veh.btn){vehBoost(player.veh);return;} // 탄 채로 우클릭 = 버튼
   if(s&&s.id===EGG&&mobTarget&&mobTarget.kind==='cluck'&&!mobTarget.dead){s.count--;if(!s.count)inv[sel]=null;invChanged();swing=1;njEggVideo(mobTarget);return;} // 새에게 알을 주면 영상 → 끝나면 근육질로 변해 덤빔 (원래 게임 · 뇌절모드 모두)
@@ -7140,7 +7351,7 @@ if(MOBILE){
 }
 
 // ---------- 저장 ----------
-const SAVE_KEY=SPEEDRUN?'cubewild_save_v1_sr':'cubewild_save_v1',DB_NAME=SPEEDRUN?'cavebuild_speedrun':'cavebuild',DB_STORE='saves'; // 스피드런 세계는 따로 저장
+const SAVE_KEY=SPEEDRUN?'cubewild_save_v1_sr':HALLOWEEN?'cubewild_save_v1_hw':'cubewild_save_v1',DB_NAME=SPEEDRUN?'cavebuild_speedrun':HALLOWEEN?'cavebuild_halloween':'cavebuild',DB_STORE='saves'; // 스피드런 세계는 따로 저장
 // 저장소: IndexedDB (용량이 크고 비동기). 못 쓰는 환경이면 localStorage로 대신함
 let dbP=null,SAVED=null;
 function openDB(){if(!dbP)dbP=new Promise((res,rej)=>{try{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(DB_STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}});return dbP;}
@@ -7170,7 +7381,7 @@ function fromPortable(sv){ // 예전 형식([[인덱스,블록],...])도 읽음
   return {...sv,md};
 }
 // 세계 목록: IndexedDB 'worlds'(+ localStorage 사본)에 [{id,name,seed,mode,diff,t}], 각 세계는 'w:아이디'에 저장
-let WORLDS=[],CUR=null;const wKey=id=>'w:'+id,WL_LS=SPEEDRUN?'cavebuild-worlds-sr':'cavebuild-worlds';
+let WORLDS=[],CUR=null;const wKey=id=>'w:'+id,WL_LS=SPEEDRUN?'cavebuild-worlds-sr':HALLOWEEN?'cavebuild-worlds-hw':'cavebuild-worlds';
 function worldsSave(){idbPut('worlds',WORLDS).catch(()=>{});try{localStorage.setItem(WL_LS,JSON.stringify(WORLDS));}catch(e){}}
 function worldsLoad(){let ls=null;try{ls=JSON.parse(localStorage.getItem(WL_LS)||'null');}catch(e){}return idbGet('worlds').catch(()=>null).then(l=>l||ls||[]).catch(()=>ls||[]);}
 function loadWorld(id){let ls=null;try{const t=localStorage.getItem(SAVE_KEY+':'+id);if(t)ls=fromPortable(JSON.parse(t));}catch(e){}
@@ -7390,6 +7601,7 @@ async function openRank(){const el=$('wdIn');el.innerHTML='<h2>🏆 스피드런
   catch(e){rows=`<tr><td style="padding:10px;color:#ff8a8a">❌ ${e.message}</td></tr>`;}
   el.innerHTML=`<h2>🏆 스피드런 랭킹</h2><p style="text-align:center;font-size:13px;color:#aaa">엔딩까지 걸린 시간 · 사람마다 가장 빠른 기록</p><table style="margin:0 auto;border-collapse:collapse;font-size:15px">${rows}</table>${mine?`<p style="text-align:center;background:rgba(255,208,64,.15);border-radius:6px;padding:6px;margin:10px auto;max-width:360px">${mine}</p>`:''}<div style="text-align:center"><button class="wb gray" id="rkClose">닫기</button></div>`;$('rkClose').onclick=closeWard;}
 $('btnRank').onclick=openRank;
+if(HALLOWEEN){$('hwBanner').style.display='block';document.title='🎃 '+document.title;}
 if(SPEEDRUN){$('srBanner').style.display='block';$('btnRank').style.display='';
   try{const m=JSON.parse(localStorage.getItem('cb-sr-msg')||'null');if(m){localStorage.removeItem('cb-sr-msg');setTimeout(()=>{toast(`⏱ 서버 기록 <b>${fmtT(m.ms)}</b> 올림! 내 최고 ${fmtT(m.best)} · <b>${m.rank}등</b>`);openRank();},900);}}catch(e){}}
 $('btnQuit').onclick=()=>{mpBye();saveGame().then(async()=>{if(SPEEDRUN&&world.sr&&world.sr.done&&!world.sr.sent){try{const d=await cbApi({action:'sr_submit',token:accToken(),run:world.sr.run||''});world.sr.sent=true;await saveGame();try{localStorage.setItem('cb-sr-msg',JSON.stringify({ms:d.ms,rank:d.rank,best:d.best}));}catch(e){}}catch(e){alert('⏱ 기록을 올리지 못했어요: '+e.message.replace(/<[^>]+>/g,''));}} // 스피드런: 완주 기록을 랭킹에
@@ -7919,7 +8131,7 @@ function frame(now){
     if(!MP.on||MP.host||mpLocalMobs())spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);if(!MP.on||MP.host)updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
   }
-  updateSky(active?dt:0);
+  updateSky(active?dt:0);if(active)hwTick(dt);
   if(active)updateSurvival(dt);
   updateHand(dt);updateAvatar(dt);mpTick(dt);updateBobber(active?dt:0);updateFireworks(dt);updateNukes(active?dt:0);if(gm&&active)updateGM(dt);gunCD=Math.max(0,gunCD-dt);if(active)for(const f of MOD_TICK)try{f(dt);}catch(e){modErr('틱',e);}if(active||stCast)updateStellar(dt);else stHud();
   updateChunks();
