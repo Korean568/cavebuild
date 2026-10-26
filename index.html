@@ -300,7 +300,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.139 — 🎃 할로윈 모드 시작 상자 · 🛗 엘리베이터 뺌</h4>
+    <h4>🆕 v26.140 — 🥤 콜라</h4>
+    • (모든 모드) <b>콜라</b>가 생겼어요! 작업대에서 <b>철 주괴 1 · 사과 1 · 석탄 1</b> → 콜라 2캔.<br>
+    • 들고 우클릭하면 <b>따요</b>: 왼손에 캔을 들고 <b>오른손 검지로 따개를 들어 올리면 "칙!"</b> 하고, 다시 눌러 닫아요. 딴 콜라는 꾹 누르면 캔을 입에 대고 기울여 <b>꿀꺽꿀꺽</b> 마셔요 (배고픔 +3 · 마시고 나면 꺼억).<br>
+    • 백룸 보급품에도 가끔 콜라가 들어 있어요.
+    <h4>v26.139 — 🎃 할로윈 모드 시작 상자 · 🛗 엘리베이터 뺌</h4>
     • 새 세계를 만들면 <b>양옆 · 뒤 · 위는 투명 벽</b>, 앞은 <b>심층암 벽</b>(가운데 2칸만 <b>흑요석</b>)인 상자 안에서 시작해요.<br>
     • 손에 쥔 <b>호박</b>은 <b>흑요석만 한 번에</b> 캘 수 있는 유일한 아이템이에요 (다른 블록은 못 캐요). 흑요석을 캐면 백룸으로!<br>
     • 백룸에서 7일을 버티고 나오면 <b>상자 벽과 호박이 사라져요</b>. 백룸의 엘리베이터는 뺐어요.
@@ -1836,7 +1840,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.139 — 🎃 Halloween starting box · elevator removed</h4>
+    <h4>🆕 v26.140 — 🥤 Cola</h4>
+    • (All modes) Craft 2 Colas at a workbench from 1 Iron Ingot, 1 Apple and 1 Coal. Right-click to open it: holding the can in your left hand, your right index finger lifts the tab (pssst!) and presses it back down. Hold right-click to tilt it to your mouth and drink (+3 hunger, then a burp).
+    <h4>v26.139 — 🎃 Halloween starting box · elevator removed</h4>
     • New Halloween worlds start inside invisible walls with a bedrock wall in front (2 obsidian blocks in the middle). Your Pumpkin is the only item that mines obsidian in one hit (and nothing else). Escaping the Backrooms removes the box and the Pumpkin. The Backrooms elevator is gone.
     <h4>v26.138 — 🟡 Backrooms companion · ⚠ anomaly 2</h4>
     • A glowing yellow companion floats beside you in the Backrooms and tells you how to handle each anomaly. The Cursed Doll blackout now lasts 30 seconds. Anomaly 2: the companion's neck snaps and it talks in British English mixed with a Texas drawl for 20 seconds.
@@ -2602,6 +2608,7 @@ IT[HS_SCRAP]={name:'블레이즈스톤 조각',stack:64};
 IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
+const COLA=352,OPEN_COLA=353;IT[COLA]={name:'콜라',stack:16};IT[OPEN_COLA]={name:'딴 콜라',stack:1,food:3,drink:true}; // 🥤 콜라: 우클릭으로 따고 (따개를 들었다 눌러 닫음) 꾹 눌러 마심
 const HW_KEY=350,HW_PUMPKIN=351;IT[HW_PUMPKIN]={name:'호박',stack:1}; // 🎃 할로윈 모드 시작 아이템: 흑요석만 한 번에 캠 (다른 블록은 못 캠)
 IT[HW_KEY]={name:'할로윈 열쇠',stack:1,use:true}; // 🎃 백룸에서 7일을 버티면 받음 · 들고 우클릭하면 할로윈 차원
 IT[BOAT]={name:'보트',stack:1,use:true};
@@ -2724,6 +2731,7 @@ RECIPES.push(
   {out:BRICK,n:4,in:[[STONE,4]],st:'bench'},
   {out:BOW,n:1,in:[[STICK,3],[SILK,3]],st:'bench'},{out:CROSSBOW,n:1,in:[[STICK,3],[SILK,2],[IRON_INGOT,1]],st:'bench'},
   {out:ARROW,n:4,in:[[STICK,1],[FEATHER,1],[SPIKE,1]],st:'bench'},
+  {out:COLA,n:2,in:[[IRON_INGOT,1],[APPLE,1],[COAL,1]],st:'bench'}, // 🥤 콜라: 캔(철) · 단맛(사과) · 캐러멜 색(석탄)
   {out:THORN,n:2,in:[[SPIKE,3],[PLANKS,1]],st:'bench'},
   {out:HELL_COMPASS,n:1,in:[[IRON_INGOT,3],[ESTONE,1]],st:'bench'},
   {out:END_COMPASS,n:1,in:[[IRON_INGOT,3],[ESTONE,2]],st:'bench'},
@@ -2884,6 +2892,8 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-8,Y-8);if(d>6.2)return null;if(d>5.2)return '#8a8a94';const a=X-8,b=Y-8;if(Math.abs(a)<1.1&&b<0&&b>-4.6)return nc;if(Math.abs(a)<.9&&b>=0&&b<4)return '#3a3a44';if(d<1)return '#222';return '#e8e2d0';});}
     case HS_SCRAP:{const r=mulberry32(21);return pixelIcon((X,Y)=>{const d=Math.hypot(X-8,Y-8.5);if(d>5.2+(r()-.5)*1.4)return null;return r()<.18?'#e0603c':r()<.5?'#3a2a2e':'#54404a';});}
     case HELLSTEEL:return pixelIcon((X,Y,x,y)=>{if(y<6||y>11)return null;const inset=(11-y)*.7;if(X<1.5+inset||X>14.5-inset)return null;if((x+y)%7===0)return '#e0603c';return y<8?'#6a5458':y<11?'#4a3a3e':'#2a1e22';});
+    case COLA:case OPEN_COLA:return pixelIcon((X,Y,x,y)=>{if(x<4||x>11||y<2||y>14)return null;if(y<=3){if(y===2&&(x===4||x===11))return null;return id===OPEN_COLA&&y===3&&(x===6||x===7)?'#1a0a06':(x===8&&y===2?'#9aa0aa':'#d4d8de');}
+      if(y>=13)return y===14&&(x===4||x===11)?null:'#a8acb4';if(y>=10&&y<=11)return x===4?'#101a48':'#1a2a6a';if(x===4)return '#8a0c12';if(x===6&&y<9)return '#ff7a7a';return (x+y)%5===0&&y>4&&y<9?'#f2f2f2':'#c8141c';});
     case HW_PUMPKIN:return pixelIcon((X,Y,x,y)=>{if(y<=3&&x>=7&&x<=8)return y<=1&&x===8?'#6a8a30':'#4a6a20';const dx=(X-8)/6.6,dy=(Y-9.5)/5.4;if(dx*dx+dy*dy>1)return null;
       return Math.abs(Math.sin((X-8)*.55))<.18?'#b85a10':(dy<-.4?'#ffa040':'#ee8020');});
     case HW_KEY:return pixelIcon((X,Y)=>{const d=Math.hypot(X-5.5,Y-5.5);if(d<3.6){if(d<1.6)return null;return Math.abs(Math.sin(Math.atan2(Y-5.5,X-5.5)*4))>.5?'#ff9a2a':'#d86a10';}if(Y>7&&Y<9.2&&X>6.5&&X<14)return '#7a3ab0';if(X>11&&X<13&&Y>8&&Y<12)return '#5a2a90';if(X>8.5&&X<10.2&&Y>8&&Y<11)return '#5a2a90';return null;});
@@ -4544,7 +4554,17 @@ function updateHand(dt){
     if(heldModel&&held()&&held().id===CHOPSTICKS){let pc=heldModel.userData.piece;if(!pc){pc=new THREE.Mesh(new THREE.BoxGeometry(.05,.03,.04),new THREE.MeshStandardMaterial({color:0xffffff}));pc.position.set(0,.05,-.24);(heldModel.children[0]||heldModel).add(pc);heldModel.userData.piece=pc;}
       pc.material.color.copy(b.col);pc.visible=t>.4&&t<.85;}}
   else if(heldModel&&heldModel.userData.piece)heldModel.userData.piece.visible=false;
-  if(player.eating){const e=player.eating,k=Math.min(1,e.t/.22),q=k*k*(3-2*k),ch=Math.sin(e.t*17)*.022*q,lf=e.t>e.dur-.12?(e.dur-e.t)/.12:1; // 먹기: 손을 입으로 가져가 오물오물
+  if(player.colaOpen){const c=player.colaOpen,t=c.t,inK=ease(Math.min(1,t/.35)),outK=t>1.3?ease(Math.min(1,(t-1.3)/.5)):0,on=inK*(1-outK); // 🥤 왼손에 캔 · 오른손 검지로 따개를 들어 올렸다 다시 누름
+    const lift=t<.35?0:t<.75?ease((t-.35)/.4):t<1.1?1-ease((t-.75)/.35)*.92:.08;
+    if(!leftArm)buildLeftArm();setLeftPlate(0,0);leftArm.userData.cola=1;leftArm.visible=on>.02;
+    if(!colaCanL){colaCanL=buildItemModel(COLA).g;colaCanL.scale.setScalar(1.35);colaCanL.position.set(0,.105,-.25);colaCanL.rotation.set(0,-Math.PI/2,0);leftArm.add(colaCanL);}colaCanL.visible=true; // 따개 고리가 오른쪽을 봄
+    leftArm.position.set(-.45+.33*on,-.5+.28*on,-.45-.05*on);leftArm.rotation.set(.15,.35,.1);
+    handArm.position.set(.44-.244*on,-.3+.03*on+.025*lift,-.52+.017*on);handArm.rotation.set(-.02+.82*on,.42+.38*on,.16+.14*on); // 검지 끝이 따개 고리 밑에 오게
+    if(heldModel)heldModel.visible=false;const tab=colaCanL.getObjectByName('colaTab');if(tab)tab.rotation.x=lift*1.35;}
+  else if(leftArm&&leftArm.userData.cola){leftArm.userData.cola=0;if(!player.dine)leftArm.visible=false;if(colaCanL)colaCanL.visible=false;if(heldModel)heldModel.visible=true;}
+  if(player.eating&&IT[player.eating.id]&&IT[player.eating.id].drink){const e=player.eating,k=Math.min(1,e.t/.3),q=k*k*(3-2*k),lf=e.t>e.dur-.2?Math.max(0,(e.dur-e.t)/.2):1,w=q*lf,gl=Math.sin(e.t*18.5)*.006*w; // 🥤 마시기: 캔을 입에 대고 기울여 꿀꺽꿀꺽
+    handArm.position.set(.44-.305*w,-.3-.156*w+gl,-.52+.019*w);handArm.rotation.set(-.02+2.17*w+gl*4,.42-.37*w,.16-.11*w);}
+  else   if(player.eating){const e=player.eating,k=Math.min(1,e.t/.22),q=k*k*(3-2*k),ch=Math.sin(e.t*17)*.022*q,lf=e.t>e.dur-.12?(e.dur-e.t)/.12:1; // 먹기: 손을 입으로 가져가 오물오물
     handArm.position.set(.44-.3*q*lf,-.3+.12*q*lf+ch,-.52+.16*q*lf);handArm.rotation.set(-.02+.55*q*lf+ch*3,.42+.55*q*lf,.16+.35*q*lf);}
   if(bowAimNow()&&!player.dine&&!player.eating){if(!leftArm)buildLeftArm();setLeftPlate(0,0);leftArm.visible=true;leftArm.userData.bow=1;const pl=bowPull(),e=pl*pl*(3-2*pl); // 🏹 1인칭: 오른손은 활을 앞으로 들고 왼손이 시위를 뒤로 당김
     handArm.position.set(.16,-.2+bob*.3,-.62);handArm.rotation.set(.05,.08,.05);
@@ -4569,6 +4589,7 @@ function updateHand(dt){
   handFist+=(want-handFist)*Math.min(1,dt*(want>handFist?28:7));const fist=handFist;
   for(const f of handFingers){f.a.rotation.x=lerp(-.2,-1.12,fist);f.b.rotation.x=lerp(-.2,-1.3,fist);f.c.rotation.x=lerp(-.15,-.95,fist);} // 마디마다 차례로 굽혀 주먹을 쥠
   if(handThumbA){handThumbA.rotation.y=lerp(.75,.3,fist);handThumbB.rotation.x=lerp(-.2,-.55,fist);handThumbC.rotation.x=lerp(-.2,-.75,fist);}
+  if(player.colaOpen)handFingers.forEach((f,i)=>{f.a.rotation.x=i?-1.12:-.08;f.b.rotation.x=i?-1.3:-.08;f.c.rotation.x=i?-.95:-.05;}); // 🥤 검지만 펴서 따개를 들어 올림
   const L=Math.max(.3,light);handAmb.intensity=.8*L;handDir.intensity=1.1*L;handItem.material.color.setScalar(L);
   const bt=player.blockT=lerp(player.blockT||0,player.blocking?1:0,Math.min(1,dt*14));
   shieldMesh.visible=!!armor[4];
@@ -4953,6 +4974,11 @@ function buildItemModel0(id){
       m.side=THREE.DoubleSide;iMesh(g,IGEO.halfTorus,imat('bkh',0x7a7a86,'metal',.4,.6),0,.065,0,0,0,0,.075,.075,.075);
       if(id!==BUCKET)iMesh(g,IGEO.cyl,id===WATER_BUCKET?imat('bw',0x3a6ee0,null,.1,0,0x0a2a70,.3,.85):imat('bl',0xff8a20,null,.4,0,0xff6010,1),0,.045,0,0,0,0,.07,.006,.07);break;}
     case COIN:iMesh(g,IGEO.cyl,imat('coin',0xf2c230,'metal',.25,.9),0,0,0,Math.PI/2,0,0,.05,.012,.05);iBox(g,.05,.012,.004,imat('coinD',0xb8861a,'metal',.3,.9),0,0,.007);iBox(g,.012,.05,.004,imat('coinD',0xb8861a,'metal',.3,.9),0,0,.007);break;
+    case COLA:case OPEN_COLA:{const red=imat('cola',0xc8141c,'metal',.3,.5),sil=imat('colaS',0xd0d4da,'metal',.25,.8),blu=imat('colaB',0x1a2a6a,'metal',.3,.5),dk=imat('colaH',0x140806,null,.9); // 🥤 빨간 캔 · 남색 띠 · 은색 뚜껑 · 따개
+      iMesh(g,IGEO.cyl,red,0,0,0,0,0,0,.045,.11,.045);iMesh(g,IGEO.cyl,blu,0,-.028,0,0,0,0,.0456,.026,.0456);
+      iMesh(g,IGEO.cyl,sil,0,.059,0,0,0,0,.04,.008,.04);iMesh(g,IGEO.cyl,sil,0,-.059,0,0,0,0,.038,.008,.038);iMesh(g,IGEO.cyl,sil,0,.062,0,0,0,0,.043,.003,.043);
+      if(id===OPEN_COLA)iMesh(g,IGEO.cyl,dk,0,.0638,-.016,0,0,0,.009,.002,.013);
+      const tab=new THREE.Group();tab.name='colaTab';tab.position.set(0,.0655,.006);g.add(tab);iBox(tab,.017,.003,.032,sil,0,0,-.013);iBox(tab,.009,.0035,.012,dk,0,0,-.02);break;}
     case PORTAL_KEY:{const m=imat('key',0x2fd6c2,'metal',.25,.6,0x1aa89a,.4);iMesh(g,IGEO.torus,m,0,.07,0,0,0,0,.035,.035,.035);iBox(g,.016,.12,.016,m,0,-.03,0);iBox(g,.04,.014,.014,m,.02,-.07,0);iBox(g,.03,.014,.014,m,.015,-.04,0);break;}
     case FISHING_ROD:{grip=true;const w=imat('rod',0x8a5a32,'wood',.7),cork=imat('cork',0xb08a5a,'rough',.9),mt=imat('reel',0x9a9aa6,'metal',.35,.6);
       iBox(g,.04,.2,.04,cork,0,.02,0);iBox(g,.03,.5,.03,w,0,.36,0);iBox(g,.022,.38,.022,w,0,.8,0);iBox(g,.014,.16,.014,w,0,1.06,0); // 손잡이 · 점점 가늘어지는 대
@@ -5817,7 +5843,7 @@ function onArrive(dim,fromLoad){
 // ===== 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석을 캐면 백룸 → 이상현상 속에서 7일 버티기 → 할로윈 열쇠 → 할로윈 차원의 잭오랜턴 =====
 const BK_DAY=1800/7,BK_DAYS=7; // 백룸 30분 = 7일 (하루 약 4분 17초) · 버텨야 하는 날
 let bkEvT=40,bkDark=0,bkElevT=0,bkQuiet=false,bkSupT=6;
-function bkSupply(){const p=player.pos,d=viewDir(),R=[APPLE,COOKED_MEAT,COOKED_MEAT,APPLE,APPLE]; // 📦 보급품 (기본)
+function bkSupply(){const p=player.pos,d=viewDir(),R=[APPLE,COOKED_MEAT,COOKED_MEAT,APPLE,COLA]; // 📦 보급품 (기본)
   for(let i=0;i<2;i++)dropItem(R[Math.floor(Math.random()*R.length)],1+(Math.random()<.5?1:0),p.x+d.x*1.5,p.y+.4,p.z+d.z*1.5,{spread:.8,up:2});toast('📦 <b>보급품</b>이 떨어졌어요');}
 function hwBoxCells(f){const {x:bx,y:by,z:bz}=world.flags.hwBox;for(let x=bx-2;x<=bx+2;x++)for(let z=bz-1;z<=bz+2;z++)for(let y=by-1;y<=by+3;y++)f(x,y,z,bx,by,bz);}
 function hwBuildBox(){const bx=Math.floor(player.pos.x),by=Math.floor(player.pos.y),bz=Math.floor(player.pos.z),batch=new Set();world.flags.hwBox={x:bx,y:by,z:bz};
@@ -6975,7 +7001,7 @@ function eatColor(id){const c=ICON_CANVAS[id];if(!c)return new THREE.Color(0xc89
 let DINE_P=1.3,DINE_KF=[ // 오른손(젓가락) 키프레임: [단계, x, y, z, 회전x, 회전y, 회전z]
   [0,.38,-.29,-.5,0,.62,.12],[.28,.32,-.26,-.56,-.28,.74,.1],[.36,.32,-.25,-.56,-.24,.74,.1],[.55,.16,-.22,-.46,.3,.2,.1],[.66,.12,-.3,-.34,.4,.08,.1],[.85,.32,-.3,-.48,.05,.62,.12],[1,.38,-.29,-.5,0,.62,.12]]; // 손은 오른쪽에 두고 젓가락 끝만 접시 ↔ 입을 오감
 const PLATED=id=>id>=331&&id<=336||id>=340&&id<=345; // 접시 · 그릇에 담긴 요리
-let leftArm=null,leftPlate=null,leftPlateKey='';
+let leftArm=null,leftPlate=null,leftPlateKey='',colaCanL=null;
 function buildLeftArm(){leftArm=new THREE.Group(); // 왼손: 소매 · 손 · 손바닥 위 접시
   const cloth=new THREE.MeshStandardMaterial({color:0x34566c,roughness:.95}),skin=new THREE.MeshStandardMaterial({color:0xd8a07c,roughness:.62});
   part(leftArm,.2,.2,.2,cloth,0,0,.12);part(leftArm,.16,.15,.24,skin,0,-.004,-.1);part(leftArm,.18,.075,.16,skin,0,-.01,-.28);
@@ -6991,17 +7017,25 @@ function updateDine(dt){const d=player.dine;if(!d)return;const s=held();
     if(s.bites>=PLATE_BITES){s.bites=0;s.count--;if(!s.count)inv[sel]=null;if(IT[s.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(s.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}
       if(s.id===DARK_DISH||s.id===DARK_STEW){player.hungerAcc+=60;toast('🤢 맛이 이상해…');}SFX.eat();invChanged();stopDine();return;}}
   if(ph>.5&&ph<.95&&((d.t*5)|0)!==((prev*5)|0)){noise(.06,900+Math.random()*700,.05);const v=viewDir(),o=camera.position;spawnParticles(o.x+v.x*.4,o.y-.18+v.y*.4,o.z+v.z*.4,foodCol(d.id)[0],3,.05,1);}}
+function colaTick(dt){const c=player.colaOpen;if(!c)return;const s=held(); // 🥤 콜라 따기: 1.8초 동안 따개를 들어 올렸다(칙!) 다시 눌러 닫음 → 딴 콜라
+  if(!s||s.id!==COLA||sel!==c.sel||player.dead||invOpen){player.colaOpen=null;return;}
+  c.t+=dt;if(c.t>.12&&!c.clk){c.clk=1;tone(2400,1800,.03,.04,'square');}
+  if(c.t>.72&&!c.fz){c.fz=true;noise(.5,5200,.16);noise(.25,1800,.08,.05);tone(3000,900,.12,.03,'triangle');const d=viewDir(),o=camera.position;spawnParticles(o.x+d.x*.5,o.y-.08+d.y*.5,o.z+d.z*.5,new THREE.Color(0xe8e0d0),10,.04,1.6);}
+  if(c.t>1.05&&!c.cl){c.cl=1;tone(1600,1300,.03,.04,'square');}
+  if(c.t<1.8)return;player.colaOpen=null;s.count--;if(!s.count)inv[sel]={id:OPEN_COLA,count:1};else addItem(OPEN_COLA,1);invChanged();setHand();toast('🥤 <b>칙!</b> 콜라를 땄어요 — 꾹 눌러서 마셔요');}
 function updateEating(dt){const e=player.eating;if(!e)return;const s=held(); // 먹는 중: 부스러기 · 오물오물 소리 · 다 먹으면 배가 참
   if(!mouseR||invOpen||!s||s.id!==e.id||sel!==e.sel||player.dead){player.eating=null;return;}
-  e.t+=dt;e.ct-=dt;if(e.ct<=0){e.ct=.2+Math.random()*.08;noise(.07,900+Math.random()*900,.06);const d=viewDir(),o=camera.position;spawnParticles(o.x+d.x*.45,o.y-.18+d.y*.45,o.z+d.z*.45,eatColor(e.id),4,.06,1.2);}
+  e.t+=dt;e.ct-=dt;if(e.ct<=0&&IT[e.id].drink){e.ct=.34;tone(320,180,.12,.06,'sine');noise(.1,600,.03);} // 꿀꺽꿀꺽
+  else if(e.ct<=0){e.ct=.2+Math.random()*.08;noise(.07,900+Math.random()*900,.06);const d=viewDir(),o=camera.position;spawnParticles(o.x+d.x*.45,o.y-.18+d.y*.45,o.z+d.z*.45,eatColor(e.id),4,.06,1.2);}
   if(e.t<e.dur)return;player.eating=null;
   if(IT[s.id].bad&&Math.random()<.5){player.hungerAcc+=35;toast('윽... 속이 좀 안 좋다');}if(s.id===DARK_DISH){player.hungerAcc+=60;toast('🤢 탄 맛… 쓰다');}
-  player.food=Math.min(20,player.food+IT[s.id].food);s.count--;if(!s.count)inv[sel]=null;SFX.eat();if(IT[s.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(s.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}invChanged();renderStats();
+  player.food=Math.min(20,player.food+IT[s.id].food);s.count--;if(!s.count)inv[sel]=null;SFX.eat();if(IT[s.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(s.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}if(s.id===OPEN_COLA){toast('🥤 캬~ 시원하다!');setTimeout(()=>{tone(140,70,.35,.09,'sawtooth');noise(.3,300,.06);},600);}invChanged();renderStats();
   if(s.id===COOKED_MEAT||s.id===COOKED_FISH)achieve('cook');}
 function useItem(){
   if(player.dead||isSpec())return;const s=held();
   if(s&&s.id===COOKBOOK){openCookBook();return;} // 요리 가이드북
   if(s&&s.id===HW_KEY){hwUseKey();return;} // 🎃 할로윈 열쇠
+  if(s&&s.id===COLA){if(!player.colaOpen){player.colaOpen={t:0,sel,fz:false};swing=0;}return;} // 🥤 콜라 따기
   if(s&&s.id===CAPE){toast('👕 망토는 타이틀 화면의 <b>탈의실</b>에서 입을 수 있어요');return;}
   if(player.veh&&player.veh.btn){vehBoost(player.veh);return;} // 탄 채로 우클릭 = 버튼
   if(s&&s.id===EGG&&mobTarget&&mobTarget.kind==='cluck'&&!mobTarget.dead){s.count--;if(!s.count)inv[sel]=null;invChanged();swing=1;njEggVideo(mobTarget);return;} // 새에게 알을 주면 영상 → 끝나면 근육질로 변해 덤빔 (원래 게임 · 뇌절모드 모두)
@@ -8230,7 +8264,7 @@ function frame(now){
     if(!stFrozen()&&!gm){ // 스텔라 연출 · 미사일 조종 중에는 플레이어가 멈춤
     updatePlayer(dt);
     updateTarget();updateMining(dt);
-    if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}
+    if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}colaTick(dt);
     for(const m of [...mobs])mpMobUpdate(m,dt);
     if(!MP.on||MP.host||mpLocalMobs())spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);if(!MP.on||MP.host)updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
