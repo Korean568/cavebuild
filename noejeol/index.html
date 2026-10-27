@@ -301,7 +301,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.141 — ⚡ 콜라 효과 · 🍦 배고픔 두 줄</h4>
+    <h4>🆕 v26.142 — 🗓 이달의 모드</h4>
+    • 허브의 모드 칸이 <b>달마다 바뀌어요</b>: 12·1월 🎄 크리스마스(선물 배달) · 2월 🧧 설날(떡국 장사) · 3·4월 🏫 개학·만우절(학교 가기) · 5월 👑 어린이날(내가 왕이다) · 6월 🎗 현충일(독립운동가 기념관 방문) · 7월 ⚖ 제헌절(법을 만들고 재판) · 8월 🇰🇷 광복절(태극기 찾기) · 9월 🌕 추석(윷놀이) · 10월 🎃 할로윈(백룸) · 11월 🌾 농업인의 날(농사 짓기).<br>
+    • 지금은 10월 <b>할로윈 모드</b>만 열려 있고, 다른 달 모드는 차례로 만들어요. 할로윈 모드는 10월에만 들어갈 수 있어요.
+    <h4>v26.141 — ⚡ 콜라 효과 · 🍦 배고픔 두 줄</h4>
     • 콜라를 다 마시면 <b>30초 동안 1.4배 빨라져요</b>.<br>
     • <b>카라멜라떼맛 아이스크림</b>을 먹으면 <b>배고픔이 두 줄</b>(가득 찬 줄 위에 한 줄 더)이 돼요. 위 줄부터 줄어들어요.
     <h4>v26.140 — 🥤 콜라</h4>
@@ -1844,7 +1847,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.141 — ⚡ Cola boost · 🍦 double hunger bar</h4>
+    <h4>🆕 v26.142 — 🗓 Mode of the month</h4>
+    • The hub's event mode now changes every month (Christmas, Lunar New Year, school, Children's Day, Memorial Day, Constitution Day, Liberation Day, Chuseok, Halloween, Farmers' Day). Halloween is open in October only.
+    <h4>v26.141 — ⚡ Cola boost · 🍦 double hunger bar</h4>
     • Finishing a Cola makes you 1.4× faster for 30 seconds. Eating a Caramel Latte Ice Cream fills your hunger to two full rows.
     <h4>v26.140 — 🥤 Cola</h4>
     • (All modes) Craft 2 Colas at a workbench from 1 Iron Ingot, 1 Apple and 1 Coal. Right-click to open it: holding the can in your left hand, your right index finger lifts the tab (pssst!) and presses it back down. Hold right-click to tilt it to your mouth and drink (+3 hunger, then a burp).
@@ -7748,7 +7753,8 @@ async function openRank(){const el=$('wdIn');el.innerHTML='<h2>🏆 스피드런
   catch(e){rows=`<tr><td style="padding:10px;color:#ff8a8a">❌ ${e.message}</td></tr>`;}
   el.innerHTML=`<h2>🏆 스피드런 랭킹</h2><p style="text-align:center;font-size:13px;color:#aaa">엔딩까지 걸린 시간 · 사람마다 가장 빠른 기록</p><table style="margin:0 auto;border-collapse:collapse;font-size:15px">${rows}</table>${mine?`<p style="text-align:center;background:rgba(255,208,64,.15);border-radius:6px;padding:6px;margin:10px auto;max-width:360px">${mine}</p>`:''}<div style="text-align:center"><button class="wb gray" id="rkClose">닫기</button></div>`;$('rkClose').onclick=closeWard;}
 $('btnRank').onclick=openRank;
-if(HALLOWEEN){$('hwBanner').style.display='block';document.title='🎃 '+document.title;}
+if(HALLOWEEN){$('hwBanner').style.display='block';document.title='🎃 '+document.title;
+  if(new Date().getMonth()!==9){$('hwBanner').innerHTML='🎃 할로윈 모드는 <b>10월</b>에만 열려요 — 허브의 <b>이달의 모드</b>에서 이번 달 모드를 해 보세요';$('btnPlay').disabled=true;$('btnPlay').style.opacity=.5;}} // 🗓 달마다 바뀌는 모드: 할로윈은 10월
 if(SPEEDRUN){$('srBanner').style.display='block';$('btnRank').style.display='';
   try{const m=JSON.parse(localStorage.getItem('cb-sr-msg')||'null');if(m){localStorage.removeItem('cb-sr-msg');setTimeout(()=>{toast(`⏱ 서버 기록 <b>${fmtT(m.ms)}</b> 올림! 내 최고 ${fmtT(m.best)} · <b>${m.rank}등</b>`);openRank();},900);}}catch(e){}}
 $('btnQuit').onclick=()=>{mpBye();saveGame().then(async()=>{if(SPEEDRUN&&world.sr&&world.sr.done&&!world.sr.sent){try{const d=await cbApi({action:'sr_submit',token:accToken(),run:world.sr.run||''});world.sr.sent=true;await saveGame();try{localStorage.setItem('cb-sr-msg',JSON.stringify({ms:d.ms,rank:d.rank,best:d.best}));}catch(e){}}catch(e){alert('⏱ 기록을 올리지 못했어요: '+e.message.replace(/<[^>]+>/g,''));}} // 스피드런: 완주 기록을 랭킹에
