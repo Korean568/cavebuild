@@ -23,12 +23,14 @@ print('noejeol ok')
 os.makedirs(os.path.join(ROOT,'speedrun'),exist_ok=True)
 open(os.path.join(ROOT,'speedrun','index.html'),'w',encoding='utf-8',newline='\n').write(g)
 print('speedrun ok')
-# 할로윈 모드: 같은 게임을 cavebuild/halloween/ 으로 (흑요석 → 백룸 7일 → 할로윈 열쇠 → 잭오랜턴, 세계는 따로 저장)
+# 할로윈 모드는 이제 cavebuild/할로윈/ — 예전 주소(halloween/)는 새 주소로 넘김
 os.makedirs(os.path.join(ROOT,'halloween'),exist_ok=True)
-open(os.path.join(ROOT,'halloween','index.html'),'w',encoding='utf-8',newline='\n').write(g)
-print('halloween ok')
-# 🗓 이달의 모드: 같은 게임을 모드 주소마다 (게임이 주소로 모드를 알아내고, 세계는 모드마다 따로 저장)
-for ev in ['xmas','seollal','school','kids','memorial','law','liberation','chuseok','farm']:
+open(os.path.join(ROOT,'halloween','index.html'),'w',encoding='utf-8',newline='\n').write("""<!doctype html><html><head><meta charset="utf-8"><title>CAVEBUILD</title>
+<script>location.replace('../'+encodeURIComponent('할로윈')+'/'+location.search+location.hash);</script></head><body style="background:#111;color:#fff">🎃 <a href="../할로윈/" style="color:#ffb44a">할로윈 모드</a></body></html>
+""")
+print('halloween stub ok')
+# 🗓 이달의 모드: 같은 게임을 모드 주소마다 (게임이 주소로 모드를 알아내고, 세계는 모드마다 따로 저장) · 폴더 이름은 한국어
+for ev in ['할로윈','크리스마스','설날','개학만우절','어린이날','현충일','제헌절','광복절','추석','농업인의날']:
     os.makedirs(os.path.join(ROOT,ev),exist_ok=True)
     open(os.path.join(ROOT,ev,'index.html'),'w',encoding='utf-8',newline='\n').write(g)
 print('events ok')
