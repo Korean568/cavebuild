@@ -145,6 +145,7 @@ body.cine #hud,body.cine #crosshair,body.cine #stellarHud,body.cine #compass,bod
 #evHud{position:fixed;top:52px;left:50%;transform:translateX(-50%);z-index:10;display:none;background:rgba(20,16,40,.78);border:2px solid #ffd040;padding:6px 14px;font-size:14px;color:#fff3c0;text-align:center;pointer-events:none;text-shadow:1px 1px 0 #000;max-width:92vw}
 #evDlg .evbox{background:rgba(18,18,30,.95);border:3px solid #ffd040;padding:16px 20px;width:min(560px,90vw);color:#fff;font-size:15px;line-height:1.6;text-align:left}#evDlg .evbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#evDlg input{width:100%;box-sizing:border-box;font:15px 'Malgun Gothic',sans-serif;padding:6px;margin:3px 0}
 #evDlg .yb{display:flex;flex-wrap:wrap;gap:3px;margin:8px 0}#evDlg .yb i{width:30px;height:30px;border:2px solid #887;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;background:#2a2a38}#evDlg .yb i.c{border-color:#ffd040}
+@keyframes jsShake{0%{transform:translate(0,0) scale(1.05)}25%{transform:translate(-14px,9px) scale(1.12)}50%{transform:translate(12px,-10px) scale(1.06)}75%{transform:translate(-8px,-6px) scale(1.14)}100%{transform:translate(0,0) scale(1.05)}}
 #evCrash{position:fixed;inset:0;z-index:60;display:none;background:#0a1a8a;color:#fff;font:20px monospace;padding:12vh 10vw;white-space:pre-wrap}
 #bkHud{position:fixed;top:52px;left:50%;transform:translateX(-50%);z-index:10;display:none;background:rgba(40,34,8,.78);border:2px solid #d8c25a;padding:6px 14px;font-size:14px;color:#ffeaa0;text-align:center;pointer-events:none;text-shadow:1px 1px 0 #000}
 #bkDark{position:fixed;inset:0;z-index:5;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 50%,rgba(0,0,0,.5) 0,rgba(0,0,0,.97) 24%)}
@@ -304,7 +305,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.143 — 🗓 이달의 모드 9개 완성</h4>
+    <h4>🆕 v26.144 — ⚠ 백룸 이상현상 3 · 4 · 5</h4>
+    • 3: 뜬금없이 <b>십자가가 있는 방</b>이 생겨요. 십자가에 가까이 가면 <b>동료가 죽고</b>, 백룸 하루가 지나면 동료가 <b>괴물</b>이 되어 쫓아와요 (닿으면 즉사).<br>
+    • 4: 머리 위에서 <b>노란 무언가</b>가 따라다녀요. <b>위를 보면 점프스케어</b>!<br>
+    • 5: 1 · 3번을 뺀 이상현상이 <b>한꺼번에</b> 나와요. 동료의 목이 꺾일 때 브라우저 음성은 나오지 않아요.
+    <h4>v26.143 — 🗓 이달의 모드 9개 완성</h4>
     • 🎄 <b>크리스마스</b>(12·1월): 마을 사람에게 선물 10개 배달 · 눈이 내려요<br>
     • 🧧 <b>설날</b>(2월): 가래떡 + 계란 + 생고기로 떡국을 만들어 10그릇 팔기<br>
     • 🏫 <b>개학 · 만우절</b>(3·4월, 병맛): 학교에서 선생님 숙제(흙 10개 · 몹에게 인사 · 점프 50번) → 졸업 시험. 화면이 뒤집히고 몹 머리가 커지고 가짜 오류가 뜨는 장난이 일어나요<br>
@@ -1870,7 +1875,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.143 — 🗓 All monthly modes</h4>
+    <h4>🆕 v26.144 — ⚠ Backrooms anomalies 3 · 4 · 5</h4>
+    • A room with a cross appears (go near it and your companion dies, then returns a day later as a monster that kills on touch), a yellow thing follows above your head (look up and get a jumpscare), and anomaly 5 unleashes the others at once.
+    <h4>v26.143 — 🗓 All monthly modes</h4>
     • Christmas (deliver gifts), Lunar New Year (sell rice-cake soup), New Semester · April Fools (silly school), Children's Day (make mobs your servants), Memorial Day (independence memorial hall), Constitution Day (make laws and judge trials), Liberation Day (find hidden Korean flags), Chuseok (play yutnori under a giant moon) and Farmers' Day (grow and harvest rice). Each opens only in its months and has its own ending.
     <h4>v26.142 — 🗓 Mode of the month</h4>
     • The hub's event mode now changes every month (Christmas, Lunar New Year, school, Children's Day, Memorial Day, Constitution Day, Liberation Day, Chuseok, Halloween, Farmers' Day). Halloween is open in October only.
@@ -5855,7 +5862,7 @@ function travel(dest,pos){
   if(traveling)return;traveling=true;SFX.portal();$('fade').style.opacity=1;
   setTimeout(()=>{try{enterDim(dest,pos);}catch(e){console.warn('차원 이동 실패',e);toast('차원 이동 중 문제가 생겼어요: '+(e&&e.message||e));}finally{$('fade').style.opacity=0;traveling=false;}},450); // 오류가 나도 다시 이동할 수 있게
 }
-const MS_SKIP=new Set(['villager','vguard','buddy','cursedoll']); // 마을 주민 · 가디언은 마을/가디언 기록으로 따로 되살아남
+const MS_SKIP=new Set(['villager','vguard','buddy','cursedoll','buddyx']); // 마을 주민 · 가디언은 마을/가디언 기록으로 따로 되살아남
 function mobList(){if(MP.on&&!MP.host)return null;return mobs.filter(m=>!m.dead&&!m.removed&&!m.net&&!m.village&&!MS_SKIP.has(m.kind)).slice(0,80)
   .map(m=>({k:m.kind,x:Math.round(m.pos.x*100)/100,y:Math.round(m.pos.y*100)/100,z:Math.round(m.pos.z*100)/100,hp:Math.round(m.hp*10)/10,p:m.prof,sv:m.servant?1:0}));}
 function mobSnap(){const o={...(world.mobSave||{})},L=mobList();if(L)o[world.dim]=L;return o;}
@@ -5926,7 +5933,8 @@ function hwUseKey(){
   if(world.dim==='hallo'){travel('over',world.lastPos.over||world.spawn);return;}
   if(world.dim!=='over'){toast('🎃 할로윈 열쇠는 <b>프론티어</b>에서만 쓸 수 있어요');return;}
   swing=1;toast('🎃 열쇠를 돌리자 공기가 보랏빛으로 일렁여요...');travel('hallo',arrivalOf('hallo'));}
-function bkEscape(){const F=world.flags;F.bkDone=1;F.bkT=0;F.bkDay=0;bkDark=0;addItem(HW_KEY,1);invChanged();
+function hwCompReset(){const F=world.flags;delete F.compDead;delete F.compMon;delete F.crossUsed;delete F.cross;bkYelEnd(true);}
+function bkEscape(){const F=world.flags;F.bkDone=1;F.bkT=0;F.bkDay=0;bkDark=0;hwCompReset();addItem(HW_KEY,1);invChanged();
   travel('over',world.lastPos.over||world.spawn);SFX.ach();
   setTimeout(hwUnbox,1300);
   setTimeout(()=>toast('🎃 백룸에서 <b>7일</b>을 버텼어요! 손에 <b>할로윈 열쇠</b>가 쥐어져 있어요 — 들고 우클릭하면 <b>할로윈 차원</b>으로 가요','ach'),900);}
@@ -5938,34 +5946,66 @@ const BK_ANOM=[ // ⚠ 이상현상 목록 (사용자님이 정한 것)
   day=>{bkDark=30;bkDollT=12;noise(.5,150,.25);const s=bkSpot(6+Math.random()*4);if(s)new Mob('cursedoll',s.x,11,s.z); // 1: 불이 30초간 꺼지고 저주인형
     toast('⚠ <b>이상현상</b> · 불이 꺼졌어요... 어딘가에 <b>저주인형</b>이 있어요!');
     compSay('불이 꺼졌어! <b>저주인형</b>이 나왔어. 인형 쪽을 <b>쳐다보지 말고</b>, 인형 눈에 띄지 않게 <b>벽 뒤에 숨어</b>! 30초만 버티면 불이 다시 켜져.',1500);},
-  day=>{const b=compEnsure();if(!b)return;bkTwist=20;bkTwistI=0;b.twist=true;b.u.eyeM.color.setHex(0xff1010);noise(.15,900,.35);tone(90,40,.4,.08,'square'); // 2: 동료의 목이 꺾이며 영국식 + 텍사스 영어
+  day=>{const b=compEnsure();if(!b){BK_ANOM[3](day);return;}bkTwist=20;bkTwistI=0;b.twist=true;b.u.eyeM.color.setHex(0xff1010);noise(.15,900,.35);tone(90,40,.4,.08,'square'); // 2: 동료의 목이 꺾이며 영국식 + 텍사스 영어
     toast('⚠ <b>이상현상</b> · 동료의 목이 <b>꺾였어요</b>...');},
+  day=>{const F=world.flags;if(F.crossUsed||F.compDead!=null){BK_ANOM[3](day);return;}F.crossUsed=1;bkCrossRoom(); // 3: 뜬금없이 십자가가 있는 방 (가까이 가면 동료가 죽고, 1일 뒤 괴물이 되어 쫓아옴)
+    toast('⚠ <b>이상현상</b> · 어디선가 <b>방 하나</b>가 생겼어요... 안에 <b>십자가</b>가 있어요');compSay('...저 방 뭔가 이상해. 왠지 <b>십자가</b> 가까이는 가면 안 될 것 같아.',1500);},
+  day=>{bkYelStart(); // 4: 머리 위에 노란 무언가가 따라다님 · 위를 보면 점프스케어
+    toast('⚠ <b>이상현상</b> · 머리 위에서 <b>무언가</b>가 따라오고 있어요...');compSay('쉿... 머리 위에 뭔가 있어. <b>절대 위를 쳐다보지 마!</b> 30초만 참아.',1200);},
+  day=>{toast('⚠⚠ <b>이상현상들이 한꺼번에</b> 몰려와요!');for(const i of [1,3])BK_ANOM[i](day);}, // 5: 1 · 3번을 뺀 모든 이상현상
 ];
+let bkYel=null,bkYelT=0;
+function bkCrossRoom(){const d=viewDir(),l=Math.hypot(d.x,d.z)||1,cx=Math.floor(player.pos.x+d.x/l*7),cz=Math.floor(player.pos.z+d.z/l*7),fx=Math.abs(d.x)>Math.abs(d.z)?Math.sign(d.x):0,fz=fx?0:Math.sign(d.z)||-1; // 앞쪽 7칸에 5×5 방 · 문은 나를 보게
+  const back=[cx+fx*2,cz+fz*2],batch=new Set();
+  for(let x=cx-2;x<=cx+2;x++)for(let z=cz-2;z<=cz+2;z++)for(let y=11;y<=13;y++){const edge=Math.abs(x-cx)===2||Math.abs(z-cz)===2,door=(fx?x===cx-fx*2:z===cz-fz*2)&&(fx?Math.abs(z-cz)<=0:Math.abs(x-cx)<=0)&&y<=12;
+    setBlock(x,y,z,edge&&!door?BK_WALL:AIR,batch);}
+  const bx=cx+fx*1,bz=cz+fz*1,sx=fz?1:0,sz=fx?1:0; // 십자가: 안쪽 벽 앞 · 세로 3칸 + 가로 팔
+  for(let y=11;y<=13;y++)setBlock(bx,y,bz,PLANKS,batch);setBlock(bx+sx,12,bz+sz,PLANKS,batch);setBlock(bx-sx,12,bz-sz,PLANKS,batch);setBlock(cx,14,cz,BK_LIGHT,batch);
+  for(const k of batch){const [a,b]=k.split(',').map(Number);remeshAt(a,b);}world.flags.cross={x:bx+.5,z:bz+.5};noise(.6,90,.35);}
+function bkYelStart(){bkYelEnd(true);const g=new THREE.Group(),m=new THREE.MeshLambertMaterial({color:0xe8c830,emissive:0x302400}); // 노랗고 흐물흐물한 덩어리
+  for(let i=0;i<7;i++){const b=new THREE.Mesh(new THREE.SphereGeometry(.22+Math.random()*.18,12,8),m);b.position.set((Math.random()-.5)*.6,(Math.random()-.5)*.3,(Math.random()-.5)*.6);g.add(b);}
+  for(let i=0;i<5;i++){const t=new THREE.Mesh(new THREE.CylinderGeometry(.04,.01,.5+Math.random()*.4,6),m);t.position.set((Math.random()-.5)*.6,-.4,(Math.random()-.5)*.6);g.add(t);} // 흘러내리는 줄기
+  g.position.set(player.pos.x,player.pos.y+2.6,player.pos.z);scene.add(g);bkYel={g,m};bkYelT=30;}
+function bkYelEnd(quiet){if(!bkYel)return;scene.remove(bkYel.g);bkYel.g.traverse(o=>{if(o.geometry)o.geometry.dispose();});bkYel.m.dispose();bkYel=null;if(!quiet)toast('...머리 위에 있던 게 <b>사라졌어요</b>');}
+function bkJumpscare(){bkYelEnd(true);const c=$('evCrash');const cv=document.createElement('canvas');cv.width=480;cv.height=480;const x=cv.getContext('2d'); // 화면 가득 노란 얼굴 · 큰 비명
+  x.fillStyle='#000';x.fillRect(0,0,480,480);const gr=x.createRadialGradient(240,230,40,240,240,230);gr.addColorStop(0,'#fff27a');gr.addColorStop(.7,'#d8b020');gr.addColorStop(1,'#000');x.fillStyle=gr;x.beginPath();x.ellipse(240,240,210,235,0,0,7);x.fill();
+  x.fillStyle='#000';for(const ex of [150,330]){x.beginPath();x.ellipse(ex,190,48,64,ex<240?-.3:.3,0,7);x.fill();}x.fillStyle='#ff1a1a';for(const ex of [150,330]){x.beginPath();x.arc(ex+(ex<240?6:-6),200,7,0,7);x.fill();}
+  x.fillStyle='#120000';x.beginPath();x.ellipse(240,350,120,80,0,0,7);x.fill();x.fillStyle='#f4f0e0';for(let i=0;i<9;i++){x.beginPath();x.moveTo(132+i*24,300);x.lineTo(144+i*24,330);x.lineTo(156+i*24,300);x.fill();x.beginPath();x.moveTo(132+i*24,405);x.lineTo(144+i*24,375);x.lineTo(156+i*24,405);x.fill();}
+  c.textContent='';c.style.cssText='display:block;background:#000;padding:0;display:flex;align-items:center;justify-content:center';cv.style.cssText='height:100vh;width:auto;animation:jsShake .06s infinite';c.appendChild(cv);
+  noise(1.1,4000,.6);noise(1.1,900,.5);tone(900,180,1.1,.25,'sawtooth');tone(1300,300,1,.18,'square');
+  setTimeout(()=>{c.style.cssText='';c.textContent='';},1100);}
 let bkTwist=0,bkTwistI=0;
 const COMP_EN=["Blimey, y'all... I reckon the lights are fixin' to go out, innit?","Howdy, old chap. Fancy a spot of tea with the folks behind the wallpaper?",
   "Bless your heart, mate. You've been walkin' in circles since Tuesday, y'all.","Cheerio, partner. Ain't nobody leavin' this here corridor, love.",
   "Don't you fret, darlin'. I'm right as rain... right as rain... right as rain."];
-function compEnsure(){let b=mobs.find(m=>m.kind==='buddy'&&!m.dead); // 🟡 백룸 동료: 없으면 옆에 생김
+function compEnsure(){if(world.flags.compDead!=null)return null;let b=mobs.find(m=>m.kind==='buddy'&&!m.dead); // 🟡 백룸 동료: 없으면 옆에 생김
   if(!b){const d=viewDir();b=new Mob('buddy',player.pos.x+d.x*1.5,player.pos.y+.6,player.pos.z+d.z*1.5);
     if(!world.flags.compHi){world.flags.compHi=1;compSay('안녕! 난 백룸 <b>동료</b>야. 이상현상이 오면 <b>대처법</b>을 알려 줄게. 7일만 같이 버티자!',800);}}
   return b;}
-function compSay(t,delay=0){setTimeout(()=>{if(world.dim==='back')toast('🟡 <b>동료</b>: '+t);},delay);}
+function compSay(t,delay=0){setTimeout(()=>{if(world.dim==='back'&&world.flags.compDead==null)toast('🟡 <b>동료</b>: '+t);},delay);}
 function compTTS(t){try{const S=speechSynthesis,u=new SpeechSynthesisUtterance(t),vs=S.getVoices(),v=vs.find(x=>/en-GB/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));
   if(v)u.voice=v;u.lang=v?v.lang:'en-GB';u.rate=.8;u.pitch=.5;S.speak(u);}catch(e){}}
 function bkAnomaly(day){BK_ANOM[Math.floor(Math.random()*BK_ANOM.length)](day);}
 function hwTick(dt){
   const hud=$('bkHud'),D=$('bkDark'),F=world.flags;
   if(world.dim!=='back'||player.dead){if(hud.style.display!=='none')hud.style.display='none';D.style.opacity=0;bkDark=0;
-    if(world.dim!=='back'&&F.bkT>0&&!traveling){F.bkT=0;F.bkDay=0;toast('🟨 백룸에서 쓰러졌어요... 흑요석을 다시 캐면 <b>처음부터</b> 버텨야 해요');}return;}
+    if(world.dim!=='back'&&F.bkT>0&&!traveling){F.bkT=0;F.bkDay=0;hwCompReset();toast('🟨 백룸에서 쓰러졌어요... 흑요석을 다시 캐면 <b>처음부터</b> 버텨야 해요');}return;}
   F.bkT=(F.bkT||0)+dt;const day=Math.floor(F.bkT/BK_DAY)+1,left=Math.ceil(BK_DAY-F.bkT%BK_DAY);
   if(F.bkT>=BK_DAY*BK_DAYS){bkEscape();return;}
   const txt=`🟨 백룸 · <b>${day}일째</b> / ${BK_DAYS}일 · 다음 날까지 ${Math.floor(left/60)}분 ${left%60}초`;hud.style.display='block';if(hud._t!==txt){hud.innerHTML=txt;hud._t=txt;}
   if(day>(F.bkDay||1)){F.bkDay=day;toast(`🟨 백룸 <b>${day}일째</b>... ${day>=5?'이상현상이 점점 잦아져요':'계속 버티세요'}`);}
   bkSupT-=dt;if(bkSupT<=0){bkSupT=120+Math.random()*60;bkSupply();}
   compEnsure();
-  if(bkTwist>0){bkTwist-=dt;const n=Math.floor((20-bkTwist)/5);if(n>=bkTwistI&&bkTwistI<4&&bkTwist>0){const t=COMP_EN[(Math.random()*COMP_EN.length)|0];bkTwistI=n+1;toast('🟡 <b>동료</b>: <i>'+t+'</i>');compTTS(t);}
+  if(bkTwist>0){bkTwist-=dt;const n=Math.floor((20-bkTwist)/5);if(n>=bkTwistI&&bkTwistI<4&&bkTwist>0){const t=COMP_EN[(Math.random()*COMP_EN.length)|0];bkTwistI=n+1;toast('🟡 <b>동료</b>: <i>'+t+'</i>');}
     if(bkTwist<=0){const b=mobs.find(m=>m.kind==='buddy'&&!m.dead);if(b){b.twist=false;b.u.eyeM.color.setHex(0x201a08);}compSay('...어? 방금 내가 뭐라고 했어? 머리가 좀 아파... 괜찮아, 계속 가자!');}}
-  if(bkDark<=0&&bkTwist<=0)bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=50+Math.random()*50;bkAnomaly(day);} // 이상현상이 끝난 뒤에 다음 이상현상
+  if(F.cross&&F.compDead==null&&Math.hypot(F.cross.x-player.pos.x,F.cross.z-player.pos.z)<2.4){F.compDead=F.bkT; // ✝ 십자가에 가까이 가면 동료가 죽음
+    const b=mobs.find(m=>m.kind==='buddy'&&!m.dead);if(b){spawnParticles(b.pos.x,b.pos.y+.6,b.pos.z,new THREE.Color(0xffe24a),30,.5,2);b.remove();}
+    noise(.8,200,.4);tone(400,60,1.2,.08,'sawtooth');toast('✝ 십자가에 다가가자... <b>동료가 쓰러졌어요</b>. 대답이 없어요...','ach');}
+  if(F.compDead!=null&&!F.compMon&&F.bkT-F.compDead>=BK_DAY){F.compMon=1;toast('⚠ <b>동료</b>가 돌아왔어요... 그런데 모습이 이상해요. <b>도망치세요! 닿으면 즉사!</b>','ach');tone(70,40,1.5,.1,'sawtooth');} // 1일 뒤 괴물이 되어 돌아옴
+  if(F.compMon&&!mobs.some(m=>m.kind==='buddyx'&&!m.dead)){const sp=bkSpot(22)||bkSpot(14);if(sp)new Mob('buddyx',sp.x,11,sp.z);}
+  if(bkYel){bkYelT-=dt;const g=bkYel.g;g.position.x+=(player.pos.x-g.position.x)*Math.min(1,dt*4);g.position.z+=(player.pos.z-g.position.z)*Math.min(1,dt*4);g.position.y=player.pos.y+2.5+Math.sin(performance.now()/400)*.08;g.rotation.y+=dt*.7;
+    if(player.pitch>.75)bkJumpscare();else if(bkYelT<=0)bkYelEnd();} // 위를 보면 점프스케어
+  if(bkDark<=0&&bkTwist<=0&&!bkYel)bkEvT-=dt*(1+day*.15);if(bkEvT<=0){bkEvT=50+Math.random()*50;bkAnomaly(day);} // 이상현상이 끝난 뒤에 다음 이상현상
   const dolls=mobs.filter(m=>m.kind==='cursedoll'&&!m.dead);
   if(bkDark<=0){for(const m of dolls){spawnParticles(m.pos.x,m.pos.y+.4,m.pos.z,new THREE.Color(0x401010),14,.4,2);m.remove();}} // 불이 켜지면 인형은 사라짐
   else if(dolls.length){bkDollT-=dt;if(bkDollT<=0){bkDollT=12;const s=bkSpot(5+Math.random()*5);if(s)dolls[0].pos.set(s.x,11,s.z);} // 12초마다 다른 곳으로
@@ -5973,6 +6013,18 @@ function hwTick(dt){
   if(bkDark>0){bkDark-=dt;D.style.opacity=bkDark<.6||Math.random()<.06?.35:.94;}else D.style.opacity=Math.random()<dt*.6?.25:0; // 정전 · 가끔 깜빡이는 형광등
   if(Math.random()<dt*.25)tone(118,122,.6,.012,'sawtooth');}
 Object.assign(MOBDEF,{
+  buddyx:{name:'괴물이 된 동료',w:.6,h:1.8,hp:99999,hostile:true,keep:true,persist:true,fireproof:true,knock:0,color:0x3a3008,
+    sound:()=>tone(90,55,.6,.05,'sawtooth'),drops:()=>[],
+    build(g){const sk=lam(0x6a5410,0,'skin'),dk=lam(0x18120a,0,'rough'),eye=bas(0xff1010),mouth=bas(0x080000);
+      const legs=[-.12,.12].map(x=>{const p=pivot(g,x,.75,0);part(p,.12,.75,.12,dk,0,-.375,0);return p;});
+      part(g,.36,.6,.22,dk,0,1.05,0);
+      const head=pivot(g,0,1.4,0),ball=new THREE.Mesh(new THREE.SphereGeometry(.26,16,12),sk);ball.position.y=.22;head.add(ball);
+      part(head,.09,.12,.02,eye,-.09,.28,-.25);part(head,.09,.12,.02,eye,.09,.28,-.25);part(head,.2,.1,.02,mouth,0,.1,-.25); // 빨간 눈 · 벌어진 입
+      const arms=[-1,1].map(s=>{const p=pivot(g,s*.24,1.3,0);part(p,.08,1.1,.08,dk,0,-.55,0);part(p,.12,.18,.06,sk,0,-1.15,0);return p;}); // 바닥까지 늘어진 팔
+      return {legs,arms,head,mats:[sk,dk]};},
+    ai(m,c,dt){m.hp=m.def.hp;m.face=true;if(player.dead||c.dist>60){steer(m,0,0,dt);return;}toward(m,c,4.2,dt);autoJump(m);
+      if(c.dist<1.1&&c.dy>-1.6&&c.dy<2.2)hurtPlayer(999,0,0,'괴물이 된 동료에게 잡혔습니다',true);}, // 닿으면 즉사 (크리에이티브 · 관전은 안전)
+    anim(m,dt,hs){legSwing(m.u.legs,m.walk,.8*Math.min(1,hs));m.u.head.rotation.z=1.55+Math.sin(performance.now()/70)*.12;m.u.arms.forEach((a,i)=>a.rotation.x=Math.sin(performance.now()/120+i*2)*.4);}},
   buddy:{name:'동료',w:.5,h:1.1,hp:99999,fly:true,noclip:true,persist:true,fireproof:true,knock:0,color:0xffe24a,
     sound:()=>{},drops:()=>[],
     build(g){const gl=bas(0xffe24a),eyeM=bas(0x201a08),halo=new THREE.MeshBasicMaterial({color:0xfff2a0,transparent:true,opacity:.22,depthWrite:false});
