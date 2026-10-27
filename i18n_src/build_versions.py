@@ -27,3 +27,8 @@ print('speedrun ok')
 os.makedirs(os.path.join(ROOT,'halloween'),exist_ok=True)
 open(os.path.join(ROOT,'halloween','index.html'),'w',encoding='utf-8',newline='\n').write(g)
 print('halloween ok')
+# 🗓 이달의 모드: 같은 게임을 모드 주소마다 (게임이 주소로 모드를 알아내고, 세계는 모드마다 따로 저장)
+for ev in ['xmas','seollal','school','kids','memorial','law','liberation','chuseok','farm']:
+    os.makedirs(os.path.join(ROOT,ev),exist_ok=True)
+    open(os.path.join(ROOT,ev,'index.html'),'w',encoding='utf-8',newline='\n').write(g)
+print('events ok')
