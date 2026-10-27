@@ -30,7 +30,13 @@ open(os.path.join(ROOT,'halloween','index.html'),'w',encoding='utf-8',newline='\
 """)
 print('halloween stub ok')
 # 🗓 이달의 모드: 같은 게임을 모드 주소마다 (게임이 주소로 모드를 알아내고, 세계는 모드마다 따로 저장) · 폴더 이름은 한국어
-for ev in ['할로윈','크리스마스','설날','개학만우절','어린이날','현충일','제헌절','광복절','추석','농업인의날']:
+for ev in ['할로윈','크리스마스','설날','개학','만우절','한글날','어린이날','현충일','제헌절','광복절','추석','농업인의날']:
     os.makedirs(os.path.join(ROOT,ev),exist_ok=True)
     open(os.path.join(ROOT,ev,'index.html'),'w',encoding='utf-8',newline='\n').write(g)
 print('events ok')
+# 예전 주소(개학만우절/)는 만우절로 넘김 (개학 · 만우절은 따로 된 게임)
+os.makedirs(os.path.join(ROOT,'개학만우절'),exist_ok=True)
+open(os.path.join(ROOT,'개학만우절','index.html'),'w',encoding='utf-8',newline='\n').write("""<!doctype html><html><head><meta charset="utf-8"><title>CAVEBUILD</title>
+<script>location.replace('../'+encodeURIComponent('만우절')+'/'+location.search+location.hash);</script></head><body style="background:#111;color:#fff">🤡 <a href="../만우절/" style="color:#ffb44a">만우절 모드</a></body></html>
+""")
+print('stub ok')
