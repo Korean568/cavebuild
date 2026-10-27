@@ -305,7 +305,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.147 — 📜 한글날 모드 · 🏫 개학 / 🤡 만우절 따로</h4>
+    <h4>🆕 v26.148 — 🧩 HTML 모드가 게임 모양을 바꾸던 문제</h4>
+    • HTML 모드의 스타일(글꼴 · 배경 · 버튼)이 게임 화면까지 바꾸던 문제를 고쳤어요. 이제 HTML 모드는 <b>따로 된 창</b> 안에서만 돌아가요 (— 접기 · ⤢ 크게 · ✕ 닫기). 모드 안에서도 <b>CB</b>를 그대로 쓸 수 있어요.<br>
+    • 예전 방식으로 넣은 HTML 모드는 자동으로 꺼 뒀어요. 모드 메뉴에서 지우고 다시 넣어 주세요.
+    <h4>v26.147 — 📜 한글날 모드 · 🏫 개학 / 🤡 만우절 따로</h4>
     • 10월에 할로윈 아래 <b>📜 한글날</b> 모드가 생겼어요: 세계에 흩어진 <b>자모 블록</b>(ㅎㅜㄴㅁㅣㄴㅈㅓㅇㅡㅁ)을 모아 <b>훈민정음</b>을 완성하고, <b>세종대왕</b>의 우리말 퀴즈(맞춤법 · 순우리말)를 5문제 중 4문제 이상 맞히면 엔딩. 한글날 모드에서는 언어가 <b>한국어</b>만 있어요.<br>
     • <b>개학</b>과 <b>만우절</b>은 다른 게임이 됐어요: 🏫 개학은 평범한 학교(출석 · 수업 20초 · 원목 5개 숙제 · 점프 20번 · 기말고사 3문제), 🤡 만우절은 병맛 학교(장난 주의). 3·4월에 개학 아래에 만우절이 생겨요.
     <h4>v26.146 — 🧩 HTML 모드 고침</h4>
@@ -1886,7 +1889,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.147 — 📜 Hangul Day mode · school and April Fools split</h4>
+    <h4>🆕 v26.148 — 🧩 HTML mods no longer restyle the game</h4>
+    • HTML mods now run in their own window (iframe), so their styles can't change the game screen; CB still works inside. Old-style HTML mods were turned off — remove and re-add them.
+    <h4>v26.147 — 📜 Hangul Day mode · school and April Fools split</h4>
     • October adds a Hangul Day mode under Halloween (collect Hangul letters to spell 훈민정음 and pass King Sejong's Korean quiz; the language is fixed to Korean). New Semester and April Fools are now separate modes.
     <h4>v26.146 — 🧩 HTML mods fixed</h4>
     • HTML mods now open in a window over the game, and their scripts run like a real web page (onclick, window.onload, external scripts and stylesheets). Re-add HTML mods added before this update.
@@ -8150,7 +8155,8 @@ const CB={version:'v26.30',
   explode:(x,y,z,r)=>explode(x,y,z,r||3,'모드 폭발에 휘말렸습니다'),flash:(o,t,c)=>flash(o,t,c),shake:(a,t)=>shake(a,t),sound:n=>SFX[n]&&SFX[n](),
   THREE};
 window.CB=CB;
-function modRunAll(){for(const m of MP_SMODS?MP_SMODS.mods:modLoad()){if(!m.on&&!MP_SMODS)continue;MOD_RAN.push({name:m.name,code:m.code});modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
+function modRunAll(){if(!MP_SMODS){const L=modLoad();let off=0;for(const m of L)if(m.on&&/className='mod-html'/.test(m.code||'')&&!/srcdoc/.test(m.code||'')){m.on=false;off++;}if(off){modSave(L);setTimeout(()=>toast('🧩 예전 방식으로 넣은 <b>HTML 모드</b>가 게임 화면 모양을 바꿔서 꺼 뒀어요. 모드 메뉴에서 지우고 <b>다시 넣어</b> 주세요'),2500);}} // 옛 HTML 모드는 스타일이 게임으로 새서 끔
+  for(const m of MP_SMODS?MP_SMODS.mods:modLoad()){if(!m.on&&!MP_SMODS)continue;MOD_RAN.push({name:m.name,code:m.code});modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
 function modRender(){const L=modLoad();$('modList').innerHTML=L.length?L.map((m,i)=>`<div class="mi${m.on?'':' off'}"><b>${m.name.replace(/</g,'&lt;')}</b>${modBroken[m.name]?`<small>오류</small>`:''}<button data-t="${i}">${m.on?'켜짐':'꺼짐'}</button><button data-d="${i}">삭제</button></div>`).join(''):'<div class="mi"><b>아직 넣은 모드가 없어요</b></div>';}
 const modBroken={};
 try{modRunAll();}catch(e){}
@@ -8158,23 +8164,16 @@ $('btnMods').onclick=()=>{modRender();$('modPanel').classList.add('show');};
 $('btnModClose').onclick=()=>$('modPanel').classList.remove('show');
 $('btnModReload').onclick=()=>location.reload();
 $('btnModAdd').onclick=()=>$('modFile').click();
-function modFromHTML(t,name){const d=new DOMParser().parseFromString(t,'text/html'); // 🧩 HTML 모드 → JS: 게임 위에 뜨는 창 · <style>은 붙이고 · <script>는 진짜 웹페이지처럼 차례로 (전역 · onload도 실행)
-  const css=[...d.querySelectorAll('style')].map(x=>x.textContent).join(' ');const scripts=[...d.querySelectorAll('script')].map(x=>x.getAttribute('src')?{src:x.getAttribute('src')}:{code:x.textContent});
-  for(const x of [...d.querySelectorAll('style,script,link[rel=stylesheet]')])x.remove();const links=[...new DOMParser().parseFromString(t,'text/html').querySelectorAll('link[rel=stylesheet]')].map(x=>x.getAttribute('href')).filter(Boolean);
-  const body=d.body?d.body.innerHTML.trim():'',title=name||(d.title||'HTML 모드');
+function modFromHTML(t,name){const title=name||((t.match(/<title>([^<]*)<\/title>/i)||[])[1]||'HTML 모드'); // 🧩 HTML 모드 → 게임 위에 뜨는 창 속 iframe (스타일이 게임으로 새지 않음 · 모드 안에서 CB 그대로 사용)
+  const inj='<script>try{window.CB=parent.CB;}catch(e){}<\/script>',html=/<head[^>]*>/i.test(t)?t.replace(/<head[^>]*>/i,m=>m+inj):inj+t;
   return '('+(function(P){
-    for(const h of P.links){const l=document.createElement('link');l.rel='stylesheet';l.href=h;document.head.appendChild(l);}
-    if(P.css){const s=document.createElement('style');s.textContent=P.css;document.head.appendChild(s);}
-    if(P.body){const w=document.createElement('div');w.className='mod-html';w.style.cssText='position:fixed;right:12px;top:64px;z-index:45;width:min(460px,92vw);max-height:78vh;display:flex;flex-direction:column;background:#fff;color:#111;border:3px solid #ffd040;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.5);font-family:sans-serif';
-      const bar=document.createElement('div');bar.style.cssText='display:flex;align-items:center;gap:6px;padding:4px 8px;background:#ffd040;color:#222;font-weight:bold;font-size:13px;cursor:default';bar.innerHTML='<span style="flex:1">🧩 </span>';bar.firstChild.textContent+=P.title;
-      const mn=document.createElement('button');mn.textContent='—';const cl=document.createElement('button');cl.textContent='✕';for(const b of [mn,cl]){b.style.cssText='border:0;background:#fff8;border-radius:4px;cursor:pointer;font-weight:bold;width:24px';bar.appendChild(b);}
-      const c=document.createElement('div');c.style.cssText='overflow:auto;padding:8px';c.innerHTML=P.body;mn.onclick=()=>{c.style.display=c.style.display==='none'?'':'none';};cl.onclick=()=>w.remove();w.append(bar,c);document.body.appendChild(w);}
-    const q=[],wa=window.addEventListener,da=document.addEventListener,ol=window.onload;
-    window.addEventListener=function(e,f,o){if(e==='load'||e==='DOMContentLoaded'){q.push([window,f,e]);return;}return wa.call(this,e,f,o);};
-    document.addEventListener=function(e,f,o){if(e==='DOMContentLoaded'||e==='readystatechange'){q.push([document,f,e]);return;}return da.call(this,e,f,o);};
-    let i=0;const done=()=>{window.addEventListener=wa;document.addEventListener=da;for(const [o,f,e] of q)try{f.call(o,new Event(e));}catch(err){console.warn(err);}if(window.onload&&window.onload!==ol)try{window.onload(new Event('load'));}catch(err){console.warn(err);}};
-    const next=()=>{if(i>=P.scripts.length){done();return;}const it=P.scripts[i++],s=document.createElement('script');if(it.src){s.src=it.src;s.onload=s.onerror=next;document.head.appendChild(s);}else{s.textContent=it.code;document.head.appendChild(s);next();}};next();
-  }).toString()+')('+JSON.stringify({css,scripts,links,body,title})+');';}
+    const w=document.createElement('div');w.className='mod-html';const small='position:fixed;right:12px;top:64px;z-index:45;width:min(480px,92vw);display:flex;flex-direction:column;background:#fff;border:3px solid #ffd040;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.5);overflow:hidden',big='position:fixed;inset:40px;z-index:45;display:flex;flex-direction:column;background:#fff;border:3px solid #ffd040;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.5);overflow:hidden';w.style.cssText=small;
+    const bar=document.createElement('div');bar.style.cssText='display:flex;align-items:center;gap:6px;padding:4px 8px;background:#ffd040;color:#222;font:bold 13px sans-serif';const tt=document.createElement('span');tt.style.flex='1';tt.textContent='🧩 '+P.title;bar.appendChild(tt);
+    const f=document.createElement('iframe');f.style.cssText='border:0;width:100%;height:min(60vh,520px);background:#fff;display:block';f.srcdoc=P.html;let isBig=false;
+    const btn=(s,fn)=>{const b=document.createElement('button');b.textContent=s;b.style.cssText='border:0;background:#fff8;border-radius:4px;cursor:pointer;font-weight:bold;min-width:24px';b.onclick=fn;bar.appendChild(b);};
+    btn('—',()=>{f.style.display=f.style.display==='none'?'block':'none';});btn('⤢',()=>{isBig=!isBig;w.style.cssText=isBig?big:small;f.style.height=isBig?'100%':'min(60vh,520px)';f.style.flex=isBig?'1':'';});btn('✕',()=>w.remove());
+    w.append(bar,f);document.body.appendChild(w);
+  }).toString()+')('+JSON.stringify({html,title})+');';}
 $('modFile').onchange=async e=>{const L=modLoad();for(const f of e.target.files){const h=/\.html?$/i.test(f.name),raw=await f.text(),name=f.name.replace(/\.(js|html?)$/i,''),code=h?modFromHTML(raw,name):raw;const i=L.findIndex(m=>m.name===name);if(i>=0)L[i].code=code;else L.push({name,code,on:true});}
   modSave(L);e.target.value='';modRender();toast('🧩 모드를 넣었어요. <b>새로고침</b>하면 적용돼요');};
 $('modList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const L=modLoad();
