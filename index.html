@@ -307,7 +307,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.154 — 🎄 눈 덮인 크리스마스 · 🔑 멀티는 로그인</h4>
+    <h4>🆕 v26.155 — 🎄 잎에도 눈</h4>
+    • 크리스마스 모드에서 나무 잎에도 하얀 눈이 덮여요.
+    <h4>v26.154 — 🎄 눈 덮인 크리스마스 · 🔑 멀티는 로그인</h4>
     • 🎄 크리스마스 모드: 다시 <b>눈이 내리고</b>, 세계의 땅이 모두 <b>눈으로 덮이고</b>, 바다와 강은 <b>꽁꽁 얼어</b> 얼음 위를 걸을 수 있어요 (얼음 블록을 캐면 얼음).<br>
     • 🔑 멀티플레이(방 열기 · 참가)는 <b>로그인</b>해야 할 수 있어요.
     <h4>v26.153 — 💻 명령어 20개 더 · 눈 · 비 효과 뺌</h4>
@@ -1921,7 +1923,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.154 — 🎄 Snowy Christmas · 🔑 log in for multiplayer</h4>
+    <h4>🆕 v26.155 — 🎄 Snow on leaves</h4>
+    • In Christmas mode, tree leaves are covered in snow too.
+    <h4>v26.154 — 🎄 Snowy Christmas · 🔑 log in for multiplayer</h4>
     • Christmas mode has snowfall again, snow-covered ground and frozen seas and rivers. Multiplayer now requires logging in.
     <h4>v26.153 — 💻 20 more commands · snow and rain removed</h4>
     • /tphere, /tpall, /near, /tpr, /time add, /timefreeze, /freeze, /gravity, /killmobs, /lightning, /itemrain, /walls, /cyl, /pyramid, /house, /drain, /dance, /confetti and /afk. Christmas snow and /weather were removed.
@@ -2687,6 +2691,10 @@ actx.putImageData(AIMG,0,0);
   actx.fillStyle='#efe2c0';actx.fillRect(ox,oy,TS,TS);actx.strokeStyle='#8a6a3a';actx.lineWidth=4;actx.strokeRect(ox+2,oy+2,TS-4,TS-4);
   actx.fillStyle='#1a1410';actx.font=`bold ${Math.round(TS*.7)}px "Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif`;actx.textAlign='center';actx.textBaseline='middle';actx.fillText(ch,ox+TS/2,oy+TS/2+2);
   const d=actx.getImageData(ox,oy,TS,TS).data;for(let y=0;y<TS;y++)for(let x=0;x<TS;x++){const a=(y*TS+x)*4,b=((oy+y)*atlas.width+ox+x)*4;for(let k=0;k<4;k++)AIMG.data[b+k]=d[a+k];}});
+if((()=>{try{return /\/(크리스마스|xmas)\//.test(decodeURIComponent(location.pathname));}catch(e){return false;}})()){const t=TILE.leaves,ox=(t%ATW)*TS,oy=Math.floor(t/ATW)*TS,W=atlas.width,D=AIMG.data; // 🎄 크리스마스: 잎에도 눈 (잎 그림을 눈 덮인 잎으로 · 나무 잎 덩어리와 잎 다발 모두)
+  for(let y=0;y<TS;y++)for(let x=0;x<TS;x++){const i=((oy+y)*W+ox+x)*4;if(D[i+3]<10)continue;const n=fbm(x/TS,y/TS,761,4,3)*.7+h2(x>>1,y>>1,762)*.3;
+    if(n>.4){const k=.86+.14*h2(x,y,763);D[i]=236*k+19;D[i+1]=242*k+13;D[i+2]=250*k+5;}}
+  actx.putImageData(AIMG,0,0);}
 
 // 평균 색 (파티클용)
 const TILE_COLOR=[];
