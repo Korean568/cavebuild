@@ -311,7 +311,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.164 — 🔑 명령어는 OP · 어드민만 · 🧩 .js 로 서버 시스템 · 캐릭터 · 🪲 가시벌레</h4>
+    <h4>🆕 v26.165 — 💻 명령어 15개 더 (서버 운영 · 전투)</h4>
+    • 서버 운영: /rules(누구나 보기) · /setrules · /setmotd(들어오는 사람 환영 인사) · /pvp on|off · /mobspawn on|off · /kit 도구|음식|건축 · /armor<br>
+    • 전투 · 아이템: /fireball · /arrowrain · /laser · /shockwave · /magnet · /clearitems
+    <h4>v26.164 — 🔑 명령어는 OP · 어드민만 · 🧩 .js 로 서버 시스템 · 캐릭터 · 🪲 가시벌레</h4>
     • 🔑 명령어는 그 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요. 혼자 하는 세계 · 방장은 OP이고, 친구는 방장이 <b>/op 닉네임</b>으로 OP를 줘야 해요 (/deop · /ops).<br>
     • 🧩 .js 모드로 <b>서버 시스템</b>과 <b>캐릭터</b>를 만들 수 있어요: CB.command(명령어) · CB.mob(캐릭터) · CB.spawn · CB.on('tick' · 'chat' · 'join' · 'break' · 'place' · 'death' · 'kill') · CB.say · CB.title · CB.hud(안내판) · CB.isOp · CB.players · CB.run. 🧩 모드 → 📄 예시 모드 받기에 예시가 있어요.<br>
     • 🪲 가시벌레는 <b>낮에 햇빛을 받으면 타 죽고</b>, 어비스 · 네크로폴리스에는 나오지 않아요.
@@ -1964,7 +1967,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.164 — 🔑 OP-only commands · 🧩 server systems & characters in .js · 🪲 spike bugs</h4>
+    <h4>🆕 v26.165 — 💻 15 more commands</h4>
+    • /rules, /setrules, /setmotd, /pvp, /mobspawn, /kit, /armor, /fireball, /arrowrain, /laser, /shockwave, /magnet and /clearitems.
+    <h4>v26.164 — 🔑 OP-only commands · 🧩 server systems & characters in .js · 🪲 spike bugs</h4>
     • Commands need OP or admin (single player and room hosts are OP; hosts give OP with /op). .js mods can add commands, characters (CB.mob), events (CB.on) and HUDs. Spike bugs burn in daylight and no longer spawn in the Abyss or Necropolis.
     <h4>v26.163 — 💻 20 more commands</h4>
     • /bomb, /bombrain, /airstrike, /clonemob, /mobsize, /healmob, /timespeed, /hp, /mute, /screenshot, /flatten, /maze, /forest, /plant, /snow, /circle, /rps and /joke.
@@ -5936,7 +5941,7 @@ function caveSpot(minD,maxD,yMin,yMax,tall=2){
   return null;
 }
 function spawnMobs(dt){
-  spawnT-=dt;if(spawnT>0)return;spawnT=1;
+  spawnT-=dt;if(spawnT>0)return;spawnT=1;if(world.flags.nospawn)return; // 💻 /mobspawn off
   for(const m of mobs)if(m.def.boss&&!m.dead&&!m.net)(world.flags.bossHp||(world.flags.bossHp={}))[m.kind]=m.hp; // 💗 보스 체력 기억 (멀리 가서 사라져도)
   for(const m of [...mobs])if(!m.def.persist&&m.dist()>(m.def.boss?140:90))m.remove();
   if(world.dim!=='over'){spawnDim();return;}
@@ -8537,7 +8542,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
     sn.golems=[];sn.mobQ={};if(!mpModSame(d.mods)){c.send({t:'mods',mods:MOD_RAN,ids:modIds()});return;}c.P=P;c.send({t:'world',id:P.id,host:MP.me.nick,snap:sn,players:mpPlayersFor(c),pvp:MP.pvp});c.ready=true;
     for(const g of groundItems){if(!g.gid)g.gid='H.'+(++MP.gn);c.send(mpGiMsg(g));} // 지금 바닥에 있는 아이템
     for(const b of boats){if(!b.bid)b.bid='H.b'+(++MP.gn);c.send({t:'bi',b:b.bid,d:world.dim,x:b.pos.x,y:b.pos.y,z:b.pos.z,ya:b.yaw});}
-    mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();if((world.flags.ops||[]).some(n=>n.toLowerCase()===nick.toLowerCase()))c.send({t:'op',on:1});modEmit('join',nick);return;}
+    mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();if((world.flags.ops||[]).some(n=>n.toLowerCase()===nick.toLowerCase()))c.send({t:'op',on:1});if(world.flags.motd)setTimeout(()=>c.send({t:'c',n:'📢 서버',m:world.flags.motd}),1500);modEmit('join',nick);return;}
   if(!c.P)return;
   if(d.t==='p'){d.id=c.P.id;const P=MP.peers.get(c.P.id);if(P)mpPos(P,d);mpSend(d,c);}
   else if(d.t==='b'&&Array.isArray(d.L)){mpApply(d.L);mpSend(d,c);}
@@ -8792,6 +8797,8 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
   ['/timespeed 배수','하루가 흐르는 빠르기 (0.1~20)'],['/hp 숫자','내 체력 정하기'],['/mute','소리 끄기 (/unmute 켜기)'],['/screenshot','지금 화면 저장'],
   ['/flatten [반지름]','주변 땅 평평하게'],['/maze 블록 [크기]','앞에 미로'],['/forest [그루]','주변에 숲'],['/plant [반지름]','주변에 꽃'],['/snow [반지름]','주변 땅에 눈'],['/circle 블록 반지름','땅에 원 그리기'],
   ['/rps 가위|바위|보','가위바위보'],['/joke','아재개그'],
+  ['/rules','서버 규칙 보기 (누구나)'],['/setrules 글','서버 규칙 정하기 (줄바꿈은 |)'],['/setmotd 글','들어오는 사람 환영 인사'],['/pvp on|off','PvP 켜고 끄기 (방장)'],['/mobspawn on|off','몹이 저절로 생기기 켜고 끄기'],
+  ['/kit [도구|음식|건축]','시작 꾸러미 받기'],['/armor','철 갑옷 한 벌 입기'],['/fireball','화염구 쏘기'],['/arrowrain','주변에 화살 비'],['/laser','앞으로 레이저 (몹 관통)'],['/shockwave','주변 몹 날려 보내기'],['/magnet','주변 바닥 아이템 끌어오기'],['/clearitems','주변 바닥 아이템 지우기'],
   ['/op 닉네임 · /deop 닉네임 · /ops','OP 주기 · 빼기 · 목록 (방장) — OP · 어드민만 명령어를 쓸 수 있어요'],
   ['/un명령어','그 명령어 되돌리기 (예: /unfly · /ungod · /untree · /ungive · /unsummon · /untp · /ungamemode · /unspeed)']];
 function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
@@ -8826,6 +8833,11 @@ function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
     case 'difficulty':case '난이도':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}setDiff(S.diff);cmdOut('난이도를 되돌렸어요');break;
     case 'fov':case '시야':case 'zoom':case '확대':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}camera.fov=S.fov;camera.updateProjectionMatrix();player.zoomFov=0;cmdOut('시야각을 되돌렸어요');break;
     case 'give':case '주기':case 'clear':case '비우기':case 'sort':case '정리':case 'invload':case 'rename':case '이름':case 'more':case '가득':case 'repair':case '수리':restoreInv();break;
+    case 'mobspawn':case '몹생성':world.flags.nospawn=false;cmdOut('몹이 다시 저절로 생겨요');break;
+    case 'setmotd':case '환영인사':world.flags.motd='';cmdOut('환영 인사를 지웠어요');break;
+    case 'setrules':case '규칙정하기':world.flags.rules='';cmdOut('규칙을 지웠어요');break;
+    case 'pvp':if(MP.on&&MP.host){MP.pvp=false;mpSend({t:'cfg',pvp:false});renderMP();}cmdOut('⚔ PvP 끔');break;
+    case 'kit':case '꾸러미':case 'armor':case '갑옷':restoreInv();if(x==='armor'||x==='갑옷'){for(let pi=0;pi<4;pi++)armor[pi]=null;invChanged();renderStats();}break;
     case 'timespeed':case '시간속도':world.flags.tsp=0;cmdOut('하루 빠르기 원래대로');break;
     case 'mute':case '음소거':window.CMD_MUTE=false;cmdOut('🔊 소리 켜짐');break;
     case 'mobsize':case '몹크기':{const m=mobTarget;if(!m||m.dead){cmdOut('몹을 보고 써요',1);break;}m.g.scale.setScalar(1);cmdOut('몹 크기 원래대로');break;}
@@ -8841,7 +8853,7 @@ function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
     default:cmdOut(`/${mpEsc(x)} 는 되돌릴 수 없어요 (/undo 는 건축 · /back 은 순간이동)`,1);}}
 let CMD_SW=0;
 function runCmd0(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'').toLowerCase(),P=player.pos; // 💻 명령어 (싱글 · 방장은 다 쓰고, 친구는 /help · /list · /me 만)
-  if(!cmdIsOp()&&!['help','도움말','list','목록','me'].includes(c)&&!(MOD_CMDS[c]&&MOD_CMDS[c].op===false)){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요 (방장에게 /op 를 받아요)',1);return;}
+  if(!cmdIsOp()&&!['help','도움말','list','목록','me','rules','규칙'].includes(c)&&!(MOD_CMDS[c]&&MOD_CMDS[c].op===false)){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요 (방장에게 /op 를 받아요)',1);return;}
   const num=(v,base)=>{if(v===undefined)return NaN;if(v[0]==='~')return base+(v.length>1?+v.slice(1):0);return +v;};
   switch(c){
     case 'help':case '도움말':evDlg('💻 <b>명령어</b> (T 또는 / 를 눌러 입력) · <b>/un명령어</b> 로 되돌리기'+(cmdIsOp()?' · 🔑 나는 OP':' · 🔒 OP가 없어요 (방장에게 /op 를 받아요)')+'<br><br>'+CMD_HELP.concat(Object.entries(MOD_CMDS).map(([k,v])=>['/'+k,'🧩 '+(v.desc||'모드 명령어')])).map(([k,d])=>`<b>${k}</b> — ${d}`).join('<br>'),[['닫기']]);break;
@@ -9026,6 +9038,24 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'
     case 'rps':case '가위바위보':{const H=['가위','바위','보'],m=H.indexOf(a[0]),c2=Math.random()*3|0;if(m<0){cmdOut('/rps 가위 · 바위 · 보',1);break;}const r=(m-c2+3)%3;cmdOut(`✊ 나: ${H[m]} · 컴퓨터: ${H[c2]} → <b>${r===0?'비겼어요':r===1?'이겼어요! 🎉':'졌어요 😢'}</b>`);break;}
     case 'joke':case '개그':{const J=[['왕이 넘어지면?','킹콩'],['세상에서 가장 뜨거운 과일은?','천도복숭아'],['소가 웃으면?','우하하'],['바나나가 웃으면?','바나나킥'],['오리가 얼면?','언덕'],['세상에서 가장 가난한 왕은?','최저임금'],['딸기가 직장을 잃으면?','딸기시럽'],['차가 놀라면?','카놀라유'],['자동차를 톡 치면?','카톡'],['아몬드가 죽으면?','다이아몬드']],q=J[Math.random()*J.length|0];
       cmdOut(`😆 ${q[0]}`);setTimeout(()=>toast(`😆 → <b>${q[1]}</b>!`),2200);break;}
+    case 'rules':case '규칙':evDlg('📜 <b>서버 규칙</b><br><br>'+(world.flags.rules?mpEsc(world.flags.rules).split('|').map((l,i)=>`${i+1}. ${l.trim()}`).join('<br>'):'아직 규칙이 없어요 (OP가 /setrules 로 정해요)'),[['확인']]);break;
+    case 'setrules':case '규칙정하기':{const t=a.join(' ').slice(0,300);if(!t){cmdOut('/setrules 욕하지 않기 | 남의 집 부수지 않기',1);break;}world.flags.rules=t;cmdOut('📜 규칙을 정했어요 (/rules 로 누구나 볼 수 있어요)');if(MP.on&&MP.host)mpSend({t:'c',n:'📜 규칙',m:t.slice(0,80)});break;}
+    case 'setmotd':case '환영인사':{const t=a.join(' ').slice(0,80);world.flags.motd=t||'';cmdOut(t?'📢 환영 인사: '+mpEsc(t):'환영 인사를 지웠어요');break;}
+    case 'pvp':{if(!MP.on||!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const v=(a[0]||'').toLowerCase();MP.pvp=v==='on'||v==='켬'?true:v==='off'||v==='끔'?false:!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();cmdOut('⚔ PvP '+(MP.pvp?'<b>켬</b>':'<b>끔</b>'));break;}
+    case 'mobspawn':case '몹생성':{const v=(a[0]||'').toLowerCase();world.flags.nospawn=v==='off'||v==='끔'?true:v==='on'||v==='켬'?false:!world.flags.nospawn;cmdOut(world.flags.nospawn?'🚫 몹이 저절로 생기지 않아요':'몹이 다시 저절로 생겨요');break;}
+    case 'kit':case '꾸러미':{const k=(a[0]||'도구').toLowerCase(),G=[];
+      if(k==='도구'||k==='tools'){IT.forEach((t,i)=>{if(t&&t.tool&&/^철 /.test(t.name))G.push([i,1]);});G.push([COOKED_MEAT,8]);}
+      else if(k==='음식'||k==='food')G.push([COOKED_MEAT,16],[APPLE,16],[COLA,4]);else if(k==='건축'||k==='build')G.push([PLANKS,64],[COBBLE,64],[GLASS,32],[LAMP,8]);else{cmdOut('/kit 도구 · 음식 · 건축',1);break;}
+      for(const [id,n] of G){const left=addItem(id,n);if(left>0)dropAtPlayer(id,left);}invChanged();cmdOut(`🎒 <b>${mpEsc(k)}</b> 꾸러미를 받았어요`);break;}
+    case 'armor':case '갑옷':{let n=0;for(let pi=0;pi<4;pi++){const id=armorId(1,pi);if(IT[id]){armor[pi]={id,count:1,dur:IT[id].maxDur};n++;}}invChanged();renderStats();lastStats='';cmdOut(`🛡 철 갑옷 ${n}개를 입었어요`);break;}
+    case 'fireball':case '화염구':{const d=viewDir(),o=camera.position.clone().addScaledVector(d,.8);shoot('fire',o,d,22,10,'player','화염구에 맞았습니다');swing=1;cmdOut('🔥 화염구!');break;}
+    case 'arrowrain':case '화살비':{for(let i=0;i<30;i++)setTimeout(()=>{const o=new THREE.Vector3(P.x+(Math.random()-.5)*24,P.y+18,P.z+(Math.random()-.5)*24);shoot('arrow',o,new THREE.Vector3((Math.random()-.5)*.1,-1,(Math.random()-.5)*.1).normalize(),18,6,'player','화살 비에 맞았습니다');},i*60);cmdOut('🏹 화살 비!');break;}
+    case 'laser':case '레이저':{const d=viewDir(),o=camera.position.clone(),h=raycast(o,d,60),L=h?h.dist:60;flashBeam(o.clone().add(new THREE.Vector3(0,-.2,0)),o.clone().addScaledVector(d,L),0xff2040,.12,.35);let n=0;
+      for(const m of mobs){if(m.dead)continue;const hw=m.w/2+.2,t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){m.hurt(14,d.x*.3,d.z*.3);n++;}}tone(1800,600,.25,.06,'sawtooth');cmdOut(`⚡ 레이저! (${n}마리 맞음)`);break;}
+    case 'shockwave':case '충격파':{let n=0;for(const m of mobs){if(m.dead||m.def.boss)continue;const dx=m.pos.x-P.x,dz=m.pos.z-P.z,d=Math.hypot(dx,dz);if(d<8&&d>.1){m.vel.x+=dx/d*16;m.vel.z+=dz/d*16;m.vel.y=8;m.hurt(4,dx/d,dz/d);n++;}}
+      spawnParticles(P.x,P.y+.5,P.z,new THREE.Color(0xa0d0ff),30,3,3);noise(.5,300,.3);shake(.6,.5);cmdOut(`💥 충격파! (${n}마리)`);break;}
+    case 'magnet':case '자석':{let n=0;for(const g of groundItems){if(Math.hypot(g.pos.x-P.x,g.pos.z-P.z)<32){g.pos.set(P.x,P.y+.5,P.z);if(g.vel)g.vel.set(0,0,0);n++;}}cmdOut(`🧲 바닥 아이템 ${n}개를 끌어왔어요`);break;}
+    case 'clearitems':case '아이템청소':{let n=0;for(let i=groundItems.length-1;i>=0;i--){const g=groundItems[i];if(Math.hypot(g.pos.x-P.x,g.pos.z-P.z)<48){removeGroundItem(i);n++;}}cmdOut(`🧹 바닥 아이템 ${n}개를 지웠어요`);break;}
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
     case 'op':case 'deop':{if(!MP.on||!MP.host){cmdOut('멀티플레이 <b>방장</b>만 OP를 줄 수 있어요',1);break;}const nk=a[0]||'',O=world.flags.ops||(world.flags.ops=[]),on=c==='op';if(!nk){cmdOut('/op 닉네임 · /deop 닉네임',1);break;}
       const i=O.findIndex(n=>n.toLowerCase()===nk.toLowerCase());if(on&&i<0)O.push(nk);if(!on&&i>=0)O.splice(i,1);const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'op',on:on?1:0});
