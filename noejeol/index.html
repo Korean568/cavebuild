@@ -40,6 +40,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malg
 @keyframes tin{from{transform:translateX(40px);opacity:0}}
 .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(0,0,0,.55);z-index:10}
 .overlay.show{display:flex}
+#mpRooms{max-height:180px;overflow:auto;margin:4px 0}.mpr{display:flex;align-items:center;gap:8px;padding:5px 8px;margin:3px 0;background:rgba(0,0,0,.25);border-radius:6px;font-size:14px}.mpr span{flex:1;text-align:left}.mpr small{display:block;opacity:.7;font-size:12px}.mpr .btn{padding:4px 12px;margin:0}
+.mpPubRow{display:flex;gap:6px;justify-content:center;margin:6px 0}.mpPubRow .btn{margin:0}.mpPubRow .btn.on{outline:3px solid #ffd040}
 #mpChat{position:fixed;left:10px;bottom:96px;width:min(420px,70vw);display:none;z-index:16;font:15px sans-serif;padding:8px 10px;background:rgba(0,0,0,.7);color:#fff;border:2px solid #888;outline:none}
 #mpChatBtn{position:fixed;left:8px;top:64px;z-index:9;display:none;font-size:20px;background:rgba(0,0,0,.45);border:2px solid #666;color:#fff;border-radius:6px;padding:4px 8px}body.mpon #mpChatBtn{display:block}
 #mpBody{font-size:15px;line-height:1.6;margin-bottom:8px}#mpBody .code{font-size:40px;letter-spacing:8px;font-weight:bold;color:#ffe066;margin:6px 0}#mpBody .tip{font-size:13px;color:#aaa}#mpBody ul{list-style:none;padding:0;margin:6px 0}
@@ -306,7 +308,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.149 — 🎮 게임 모드 · 🧩 HTML 모드 스타일은 게임 전체에</h4>
+    <h4>🆕 v26.150 — 🌍 공개 · 🔒 비공개 방 · 💻 명령어</h4>
+    • 멀티플레이 방을 열 때 <b>🔒 비공개</b>(방 코드를 아는 사람만) · <b>🌍 공개</b>(누구나)를 골라요. 연 뒤에도 바꿀 수 있어요.<br>
+    • 플레이 → <b>🌍 공개 방</b> 목록에서 바로 참가할 수 있어요 (방 이름 · 방장 · 인원 · 모드).<br>
+    • <b>T</b>나 <b>/</b>를 눌러 <b>명령어</b>를 쓸 수 있어요 (혼자 할 때도): /help · /gamemode · /time set · /tp · /give · /summon · /heal · /kill · /clear · /fly · /spawnpoint · /difficulty · /seed · /list · /me. 멀티플레이에서는 방장만 쓸 수 있어요 (친구는 /help · /list · /me).
+    <h4>v26.149 — 🎮 게임 모드 · 🧩 HTML 모드 스타일은 게임 전체에</h4>
     • 🧩 모드 메뉴 맨 위에 <b>🎮 게임 모드</b>가 생겼어요: 뇌절모드 · 스피드런 · 할로윈 · 한글날 · 크리스마스 … 를 고르면 <b>타이틀까지 그 모드</b>로 열려요. 파일을 복사하지 않아서 그 모드가 업데이트되면 <b>자동으로 최신</b>이에요. 이달의 모드도 언제든 할 수 있어요.<br>
     • 케이브빌드 모드 파일(index.html)을 모드로 넣으면 게임 모드에서 고르라고 알려 줘요.<br>
     • HTML 모드의 &lt;style&gt;은 다시 <b>게임 전체</b>(타이틀 포함)에 적용돼요. 본문은 게임 위 창으로 떠요.
@@ -855,7 +861,8 @@ body.mobile #toasts{top:72px}
   <h3 class="sub">🎮 모드</h3><div id="tMode" class="modeRow"><button data-m="creative">🛠 크리에이티브</button><button data-m="survival">⚔ 서바이벌</button><button data-m="spectator">👁 관전</button></div><div class="modeDesc" id="tModeDesc"></div>
   <h3 class="sub">🔥 난이도</h3><div id="tDiff" class="modeRow"><button data-d="safe">🕊 세이프</button><button data-d="easy">🙂 쉬움</button><button data-d="normal">⚖ 보통</button><button data-d="hard">😈 어려움</button><button data-d="hardcore">💀 하드코어</button></div><div class="modeDesc" id="tDiffDesc"></div>
     <button class="btn" id="btnNew">새 세계 만들기</button></div>
-  <div class="ppsec"><h3>🌐 친구 세계 참가</h3><input id="mpCode" type="text" maxlength="6" placeholder="방 코드 6자리" autocomplete="off" style="text-transform:uppercase"><button class="btn" id="mpJoinBtn">참가하기</button></div>
+  <div class="ppsec"><h3>🌍 공개 방 <button class="btn" id="mpRoomsRe" style="padding:2px 10px;font-size:13px">🔄</button></h3><div id="mpRooms" class="mpRooms"></div></div>
+  <div class="ppsec"><h3>🌐 친구 세계 참가 (방 코드)</h3><input id="mpCode" type="text" maxlength="6" placeholder="방 코드 6자리" autocomplete="off" style="text-transform:uppercase"><button class="btn" id="mpJoinBtn">참가하기</button></div>
   <div class="ppsec"><h3>🗂 전에 하던 서버</h3><div id="worldList"></div></div>
   <button class="btn" id="btnPlayClose">닫기</button></div></div>
 <div id="tSettings" class="overlay"><div class="ppbox">
@@ -1896,7 +1903,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.149 — 🎮 Game modes · HTML mod styles apply to the whole game</h4>
+    <h4>🆕 v26.150 — 🌍 Public / 🔒 private rooms · 💻 commands</h4>
+    • Open multiplayer rooms as private (code only) or public (listed for anyone under Play → Public rooms). Press T or / for commands such as /help, /gamemode, /time set, /tp, /give, /summon, /heal, /fly (host or single player).
+    <h4>v26.149 — 🎮 Game modes · HTML mod styles apply to the whole game</h4>
     • The Mods menu has a Game mode picker (Overkill, Speedrun, Halloween, Hangul Day, Christmas…) that opens the game in that mode, title included, always at the latest version. HTML mod styles apply to the whole game again.
     <h4>v26.148 — 🧩 HTML mods no longer restyle the game</h4>
     • HTML mods now run in their own window (iframe), so their styles can't change the game screen; CB still works inside. Old-style HTML mods were turned off — remove and re-add them.
@@ -7773,7 +7782,7 @@ addEventListener('keydown',e=>{
   else if(e.code==='KeyQ'){e.preventDefault();if(locked)dropHeld(e.ctrlKey||e.metaKey);}
   else if(/^Digit[1-9]$/.test(e.code)&&!invOpen)selectSlot(+e.code[5]-1);
   else if(e.code==='KeyP')cycleView();
-  else if(e.code==='KeyT'&&MP.on&&!invOpen){e.preventDefault();mpChatOpen();} // 🌐 채팅
+  else if((e.code==='KeyT'||e.code==='Slash')&&running&&!invOpen&&!player.dead){e.preventDefault();mpChatOpen(e.code==='Slash'?'/':'');} // 🌐 채팅 · 💻 명령어 (/)
   else if(e.code==='KeyJ'&&stCast)stCast.skip=true; // 연출 넘기기
   else if(held()&&held().id===STELLAR_REMOTE&&!invOpen){if(e.code==='KeyK')stSelect(0);else if(e.code==='KeyI')stSelect(1);else if(e.code==='KeyU')stSelect(2);else if(e.code==='KeyH')stMenu();else if(e.code==='KeyJ')stCineToggle();}
   else if(e.code==='F3'||e.code==='Backquote'){if(!SPEEDRUN){debugOn=!debugOn;$('debug').style.display=debugOn?'block':'none';}} // 스피드런은 디버그 화면을 끌 수 없음
@@ -8032,7 +8041,7 @@ function renderTSettings(){if(SPEEDRUN){if(wantMode!=='survival')wantMode='survi
   for(const b of $('tMode').children)b.classList.toggle('on',b.dataset.m===wantMode);$('tModeDesc').textContent=MODE_INFO[wantMode][1];
   for(const b of $('tDiff').children)b.classList.toggle('on',b.dataset.d===wantDiff);$('tDiffDesc').textContent=DIFF_INFO[wantDiff][1];}
 function saveWant(){try{localStorage.setItem('cavebuild-newworld',JSON.stringify({m:wantMode,d:wantDiff}));}catch(e){}}
-$('btnPlay').onclick=()=>{audio();SFX.click();renderWorlds();renderNewInfo();$('playPanel').classList.add('show');};
+$('btnPlay').onclick=()=>{audio();SFX.click();renderWorlds();renderNewInfo();$('playPanel').classList.add('show');mpRoomsLoad();};
 $('btnPlayClose').onclick=()=>$('playPanel').classList.remove('show');
 $('btnTSet').onclick=()=>{SFX.click();renderTSettings();$('tSettings').classList.add('show');};
 $('btnTSetClose').onclick=()=>$('tSettings').classList.remove('show');
@@ -8269,7 +8278,9 @@ function mpPack(o){const s=JSON.stringify(o);if(s.length<=200000)return [s];cons
   for(let i=0;i<n;i++)R.push(JSON.stringify({t:'_ch',k,i,n,s:s.slice(i*200000,(i+1)*200000)}));return R;}
 function mpUnpack(B,raw){let d;try{d=JSON.parse(raw);}catch(e){return null;}if(!d||d.t!=='_ch')return d; // 잘린 조각을 다시 이어 붙임
   const a=B[d.k]||(B[d.k]=[]);a[d.i]=d.s;a.c=(a.c||0)+1;if(a.c<d.n)return null;delete B[d.k];try{return JSON.parse(a.join(''));}catch(e){return null;}}
-function mpWS(code,role){const ws=new WebSocket(MP_RELAY+'/room/'+code+'?role='+role);ws.ping=setInterval(()=>{try{ws.readyState===1&&ws.send('p');}catch(e){}},20000);ws.addEventListener('close',()=>clearInterval(ws.ping));return ws;}
+function mpModeName(){return EVENT&&EV_INFO[EVENT]?EV_INFO[EVENT].ico+' '+EV_INFO[EVENT].name:NOEJEOL?'🤯 뇌절모드':'CAVEBUILD';} // 공개 방 목록에 보이는 모드 이름
+function mpPubInfo(){return {name:(world.name||'World').slice(0,30),nick:MP.me?MP.me.nick:'',mode:mpModeName()};}
+function mpWS(code,role,extra){const ws=new WebSocket(MP_RELAY+'/room/'+code+'?role='+role+(extra||''));ws.ping=setInterval(()=>{try{ws.readyState===1&&ws.send('p');}catch(e){}},20000);ws.addEventListener('close',()=>clearInterval(ws.ping));return ws;}
 function mpMe(){const capeOn=!!CAPES[WARD.cape]&&accOwned().includes(WARD.cape);return {nick:nickNow()||((LANG==='en'?'Guest':'손님')+(1000+Math.random()*9000|0)),skin:skinNow||DEFAULT_SKIN,cape:capeOn?WARD.cape:''};}
 function mpOk(){if(SPEEDRUN){toast(mpL('⏱ 스피드런에서는 멀티플레이를 할 수 없어요 (랭킹 때문)','⏱ Multiplayer is off in speedrun'));return false;}
   if(!CB_ONSITE){toast(mpL('🌐 멀티플레이는 게임 주소(korean568.github.io/cavebuild)에서만 돼요','🌐 Multiplayer only works on the game site'));return false;}return true;}
@@ -8295,9 +8306,9 @@ function mpChatShow(n,m){toast(`💬 <b>${mpEsc(n)}</b>: ${mpEsc(m)}`);}
 // 방장: 방 열기 → 친구가 들어오면 세계를 통째로 보내 줌
 function mpHost(){if(!mpOk()||MP.on||MP.ws)return;MP.me=mpMe();renderMP(mpL('방을 여는 중…','Opening room…'));
   const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];
-  const ws=mpWS(code,'host'),byId=new Map();MP.ws=ws;
+  const pi=mpPubInfo(),ws=mpWS(code,'host',MP.pubSel?`&pub=1&name=${encodeURIComponent(pi.name)}&nick=${encodeURIComponent(pi.nick)}&mode=${encodeURIComponent(pi.mode)}`:''),byId=new Map();MP.ws=ws;MP.pub=!!MP.pubSel; // 🌍 공개 방이면 로비에 올림
   ws.onmessage=ev=>{const s=ev.data;if(typeof s!=='string')return;
-    if(s[0]==='{'){const d=JSON.parse(s);if(d.t==='_ok'){MP.on=MP.host=true;MP.myId='H';mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 Room open! Code: <b>${code}</b>`));}
+    if(s[0]==='{'){const d=JSON.parse(s);if(d.t==='_ok'){MP.on=MP.host=true;MP.myId='H';mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 ${MP.pub?'🌍 <b>공개</b>':'🔒 <b>비공개</b>'} 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 ${MP.pub?'Public':'Private'} room open! Code: <b>${code}</b>`));}
       else if(d.t==='_err'){ws.onclose=null;MP.ws=null;if(d.m==='taken')mpHost();else{toast('🌐 '+mpEsc(d.m));renderMP();}}return;}
     const i=s.indexOf('|'),gid=s.slice(0,i),raw=s.slice(i+1);
     if(raw==='{"t":"_join"}'){const c={id:gid,open:true,B:{},send(o){if(!this.open||ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(gid+'|'+x);},close(){this.open=false;}}; // 친구 한 명 = 가짜 연결
@@ -8544,30 +8555,71 @@ if(MP_SMODS&&MP_SMODS.code)setTimeout(()=>{toast(mpL(`🧩 방장 모드 ${MP_SM
 // 🎮 게임 모드도 함께 (누가 바꾸든 모두에게)
 function mpModeIn(d){if(!MODE_INFO[d.m]||world.mode===d.m||world.flags&&world.flags.hcDead)return;MP.rx=1;try{setMode(d.m);}finally{MP.rx=0;}try{renderSettings();}catch(e){}toast(mpL('🌐 게임 모드가 바뀌었어요: ','🌐 Game mode changed: ')+MODE_INFO[world.mode][0]);}
 // 채팅 (T · 모바일 💬)
-function mpChatOpen(){if(!MP.on||MP.chat)return;MP.chat=true;for(const k in keys)keys[k]=false;mouseL=mouseR=false;const el=$('mpChat');el.value='';el.style.display='block';
+function mpChatOpen(pre){if(MP.chat||!running)return;MP.chat=true;for(const k in keys)keys[k]=false;mouseL=mouseR=false;const el=$('mpChat');el.value=pre||'';el.placeholder=MP.on?'채팅 · /명령어 (/help) · Enter 보내기 · Esc 닫기':'명령어 (/help) · Enter 실행 · Esc 닫기';el.style.display='block';
   try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>el.focus(),30);}
+const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에이티브|관전','게임 모드'],['/time set 낮|정오|밤|자정|0~24000','시간'],['/tp x y z · /tp 닉네임','순간이동 (~ 는 지금 위치 기준)'],
+  ['/give 아이템이름 [개수]','아이템 받기'],['/summon 몹이름 [마리]','몹 소환'],['/heal','체력 · 배고픔 가득'],['/kill','쓰러지기'],['/clear','인벤토리 비우기'],['/fly','날기 켜고 끄기'],
+  ['/spawnpoint','여기를 스폰 지점으로'],['/difficulty 세이프|쉬움|보통|어려움|하드코어','난이도'],['/seed','세계 시드'],['/list','같이 있는 사람'],['/me 할 말','행동 말하기']];
+function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
+function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
+function cmdItems(){const L=[];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
+function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'').toLowerCase(),P=player.pos; // 💻 명령어 (싱글 · 방장은 다 쓰고, 친구는 /help · /list · /me 만)
+  if(MP.on&&!MP.host&&!['help','도움말','list','목록','me'].includes(c)){cmdOut('이 명령어는 <b>방장</b>만 쓸 수 있어요',1);return;}
+  const num=(v,base)=>{if(v===undefined)return NaN;if(v[0]==='~')return base+(v.length>1?+v.slice(1):0);return +v;};
+  switch(c){
+    case 'help':case '도움말':evDlg('💻 <b>명령어</b> (T 또는 / 를 눌러 입력)<br><br>'+CMD_HELP.map(([k,d])=>`<b>${k}</b> — ${d}`).join('<br>'),[['닫기']]);break;
+    case 'gamemode':case 'gm':case '게임모드':{const v=(a[0]||'').toLowerCase(),m={survival:'survival',s:'survival','0':'survival','서바이벌':'survival',creative:'creative',c:'creative','1':'creative','크리에이티브':'creative',spectator:'spectator',sp:'spectator','3':'spectator','관전':'spectator'}[v];
+      if(!m){cmdOut('/gamemode 서바이벌 · 크리에이티브 · 관전',1);break;}setMode(m);cmdOut('게임 모드: <b>'+(m==='survival'?'서바이벌':m==='creative'?'크리에이티브':'관전')+'</b>');break;}
+    case 'time':case '시간':{const v=(a[0]==='set'||a[0]==='설정'?a[1]:a[0]||'').toLowerCase(),T={day:.05,'낮':.05,noon:.25,'정오':.25,night:.55,'밤':.55,midnight:.75,'자정':.75,sunrise:0,'아침':0,sunset:.5,'저녁':.5}[v];
+      const t=T!==undefined?T:isFinite(+v)&&v!==''?((+v%24000)+24000)%24000/24000:null;if(t===null){cmdOut('/time set 낮 · 정오 · 밤 · 자정 · 0~24000',1);break;}world.time=t;updateSky(0);cmdOut('시간을 바꿨어요');break;}
+    case 'tp':case 'teleport':case '순간이동':{if(a.length>=3){const x=num(a[0],P.x),y=num(a[1],P.y),z=num(a[2],P.z);if(![x,y,z].every(isFinite)){cmdOut('/tp x y z',1);break;}player.pos.set(x,Math.max(1,Math.min(CH+40,y)),z);player.vel.set(0,0,0);player.peakY=player.pos.y;loadNear(4);cmdOut(`(${Math.round(x)}, ${Math.round(y)}, ${Math.round(z)}) 로 이동했어요`);}
+      else if(a[0]){const T=[...MP.peers.values()].find(q=>q.nick.toLowerCase()===a[0].toLowerCase());const g=T&&T.A&&T.A.g;if(!g){cmdOut('그 사람을 찾지 못했어요',1);break;}player.pos.set(g.position.x,g.position.y,g.position.z);player.vel.set(0,0,0);player.peakY=player.pos.y;cmdOut(`<b>${mpEsc(T.nick)}</b> 님에게 갔어요`);}
+      else cmdOut('/tp x y z · /tp 닉네임',1);break;}
+    case 'give':case '주기':{const n=a.length>1&&isFinite(+a[a.length-1])?Math.max(1,Math.min(999,+a.pop())):1,q=a.join(' ');const id=/^\d+$/.test(q)&&(BL[+q]||IT[+q])?+q:q?cmdFind(q,cmdItems()):null;
+      if(id==null){cmdOut('그런 아이템이 없어요 · /give 다이아몬드 3',1);break;}const left=addItem(id,n);if(left>0)dropAtPlayer(id,left);invChanged();cmdOut(`<b>${info(id).name}</b> ${n}개를 받았어요`);break;}
+    case 'summon':case '소환':{const n=a.length>1&&isFinite(+a[a.length-1])?Math.max(1,Math.min(20,+a.pop())):1,q=a.join(' ').toLowerCase();const k=MOBDEF[q]?q:cmdFind(q,Object.entries(MOBDEF).map(([k2,d])=>[d.name,k2]));
+      if(!k||!q){cmdOut('그런 몹이 없어요 · /summon 좀비 3',1);break;}const d=viewDir();let made=0;for(let i=0;i<n;i++){try{const m=new Mob(k,P.x+d.x*3+(Math.random()-.5)*2,P.y+.2,P.z+d.z*3+(Math.random()-.5)*2);if(!m.dead)made++;}catch(e){}}cmdOut(`<b>${MOBDEF[k].name}</b> ${made}마리를 소환했어요`);break;}
+    case 'heal':case '회복':player.hp=maxHp();player.food=Math.max(player.food,20);player.air=10;renderStats();cmdOut('체력과 배고픔을 가득 채웠어요');break;
+    case 'kill':case '자살':if(isCreative()||isSpec()){cmdOut('크리에이티브 · 관전에서는 쓰러질 수 없어요',1);break;}player.hp=0;die('명령어로 쓰러졌습니다');break;
+    case 'clear':case '비우기':for(let i=0;i<inv.length;i++)inv[i]=null;invChanged();cmdOut('인벤토리를 비웠어요');break;
+    case 'fly':case '날기':player.flying=!player.flying;if(player.flying)player.vel.y=Math.max(player.vel.y,4);cmdOut(player.flying?'🦅 날기 <b>켜짐</b> (스페이스 위 · Shift 아래)':'날기 <b>꺼짐</b>');break;
+    case 'spawnpoint':case '스폰':world.spawn={x:P.x,y:P.y,z:P.z};cmdOut('여기를 스폰 지점으로 정했어요');break;
+    case 'difficulty':case '난이도':{const v=(a[0]||'').toLowerCase(),d={safe:'safe','세이프':'safe',easy:'easy','쉬움':'easy',normal:'normal','보통':'normal',hard:'hard','어려움':'hard',hardcore:'hardcore','하드코어':'hardcore'}[v];if(!d){cmdOut('/difficulty 세이프 · 쉬움 · 보통 · 어려움 · 하드코어',1);break;}setDiff(d);cmdOut('난이도를 바꿨어요');break;}
+    case 'seed':case '시드':cmdOut('세계 시드: <b>'+seed+'</b>');break;
+    case 'list':case '목록':cmdOut(MP.on?'👥 '+[MP.me.nick+'(나)',...mpList()].map(mpEsc).join(' · '):'혼자 하고 있어요');break;
+    case 'me':{const m=a.join(' ').slice(0,70);if(!m){cmdOut('/me 할 말',1);break;}const nk=MP.on?MP.me.nick:(nickNow()||'나');if(MP.on)mpSend({t:'c',n:'*',m:nk+' '+m});toast(`✨ <i>${mpEsc(nk)} ${mpEsc(m)}</i>`);break;}
+    default:cmdOut(`모르는 명령어예요: /${mpEsc(c)} · <b>/help</b>`,1);}}
 function mpChatClose(){if(!MP.chat)return;MP.chat=false;const el=$('mpChat');el.style.display='none';el.blur();if(running&&!paused)lockPointer();}
 $('mpChat').addEventListener('keydown',e=>{e.stopPropagation();if(e.isComposing)return;
   if(e.code==='Escape'){e.preventDefault();mpChatClose();}
-  else if(e.key==='Enter'){e.preventDefault();const m=$('mpChat').value.trim().slice(0,80);if(m&&MP.on){mpSend({t:'c',n:MP.me.nick,m});mpChatShow(MP.me.nick,m);}mpChatClose();}});
+  else if(e.key==='Enter'){e.preventDefault();const m=$('mpChat').value.trim().slice(0,80);mpChatClose();if(m[0]==='/')runCmd(m);else if(m&&MP.on){mpSend({t:'c',n:MP.me.nick,m});mpChatShow(MP.me.nick,m);}else if(m)toast('💻 명령어는 <b>/</b> 로 시작해요 · <b>/help</b>');}});
 $('mpChat').addEventListener('keyup',e=>e.stopPropagation());
 $('mpChatBtn').onclick=e=>{e.preventDefault();mpChatOpen();};
 // 일시정지 → 🌐 멀티플레이 창
 function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   if(busy)h=`<div>${busy}</div>`;
   else if(SPEEDRUN)h=mpL('⏱ 스피드런에서는 멀티플레이를 할 수 없어요 (랭킹 때문)','⏱ Multiplayer is off in speedrun');
-  else if(!MP.on)h=`<div>${mpL('친구가 이 세계에 같이 들어올 수 있게 <b>방</b>을 열어요.','Open a <b>room</b> so friends can join this world.')}</div><button class="btn" id="mpHostBtn">🌐 ${mpL('방 열기','Open room')}</button>`;
+  else if(!MP.on)h=`<div>${mpL('친구가 이 세계에 같이 들어올 수 있게 <b>방</b>을 열어요.','Open a <b>room</b> so friends can join this world.')}</div><div class="mpPubRow"><button class="btn${MP.pubSel?'':' on'}" data-pub="0">🔒 ${mpL('비공개','Private')}</button><button class="btn${MP.pubSel?' on':''}" data-pub="1">🌍 ${mpL('공개','Public')}</button></div><div class="tip">${MP.pubSel?mpL('🌍 공개: 누구나 <b>공개 방 목록</b>에서 들어올 수 있어요','🌍 Public: anyone can join from the room list'):mpL('🔒 비공개: <b>방 코드</b>를 아는 사람만 들어올 수 있어요','🔒 Private: only people with the code can join')}</div><button class="btn" id="mpHostBtn">🌐 ${mpL('방 열기','Open room')}</button>`;
   else if(MP.host)h=`<div>${mpL('방 코드 (친구에게 알려 주세요)','Room code (share with friends)')}</div><div class="code">${MP.code}</div><button class="btn" id="mpCopy">📋 ${mpL('코드 복사','Copy code')}</button>`;
   else h=`<div>🌐 <b>${mpEsc(MP.hostNick)}</b> ${mpL('님의 세계','\'s world')} · ${mpL('방 코드','Code')} <b>${MP.code}</b></div>`;
+  if(MP.on&&MP.host)h+=`<button class="btn" id="mpPubT">${MP.pub?'🌍 '+mpL('공개 방 (누구나)','Public room'):'🔒 '+mpL('비공개 방 (코드만)','Private room')} · ${mpL('바꾸기','switch')}</button>`;
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
   if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`:'');
-  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌐 친구 세계 참가에 코드를 넣어요 · T: 채팅<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
+  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌍 공개 방 목록이나 🌐 방 코드로 들어와요 · T: 채팅 · /: 명령어<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
   if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;
+  el.querySelectorAll('[data-pub]').forEach(b=>b.onclick=()=>{MP.pubSel=b.dataset.pub==='1';renderMP();});
+  if($('mpPubT'))$('mpPubT').onclick=()=>{MP.pub=!MP.pub;try{MP.ws&&MP.ws.send('!pub'+JSON.stringify({on:MP.pub?1:0,...mpPubInfo()}));}catch(e){}toast(MP.pub?mpL('🌍 이제 <b>공개</b> 방이에요','🌍 Room is now public'):mpL('🔒 이제 <b>비공개</b> 방이에요 (코드를 아는 사람만)','🔒 Room is now private'));renderMP();};
   if($('mpCopy'))$('mpCopy').onclick=()=>{try{navigator.clipboard.writeText(MP.code).then(()=>toast(mpL('📋 방 코드를 복사했어요','📋 Copied')));}catch(e){}};}
 $('btnMP').onclick=()=>{renderMP();$('pause').classList.remove('show');$('mpUI').classList.add('show');};
 $('mpClose').onclick=()=>{$('mpUI').classList.remove('show');if(running)$('pause').classList.add('show');};
 $('mpJoinBtn').onclick=()=>mpJoin($('mpCode').value);
+async function mpRoomsLoad(){const el=$('mpRooms');if(!el)return;if(SPEEDRUN){el.innerHTML='<div class="mpr">⏱ 스피드런에서는 멀티플레이를 할 수 없어요</div>';return;}el.innerHTML=`<div class="mpr">${mpL('불러오는 중…','Loading…')}</div>`; // 🌍 공개 방 목록
+  try{const L=await (await fetch(MP_RELAY.replace(/^wss/,'https')+'/rooms',{cache:'no-store'})).json();
+    el.innerHTML=L.length?L.map(r=>`<div class="mpr"><span>🌍 <b>${mpEsc(r.name||'World')}</b> · ${mpEsc(r.nick||'?')} · 👥 ${r.n}/${r.max}<small>${mpEsc(r.mode||'')}${r.mode&&r.mode!==mpModeName()?' · '+mpL('다른 모드','other mode'):''}</small></span><button class="btn" data-join="${mpEsc(r.code)}">${mpL('참가','Join')}</button></div>`).join(''):`<div class="mpr">${mpL('지금 열린 공개 방이 없어요 · 방 코드를 받았다면 아래에 넣어요','No public rooms right now')}</div>`;
+    el.querySelectorAll('[data-join]').forEach(b=>b.onclick=()=>mpJoin(b.dataset.join));}
+  catch(e){el.innerHTML=`<div class="mpr">${mpL('공개 방 목록을 불러오지 못했어요','Could not load public rooms')}</div>`;}}
+$('mpRoomsRe').onclick=mpRoomsLoad;
 $('mpCode').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.isComposing)mpJoin($('mpCode').value);});
 
 // ---------- 🎬 고퀄 그래픽 ----------
