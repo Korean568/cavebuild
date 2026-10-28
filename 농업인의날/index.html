@@ -311,7 +311,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.165 — 💻 명령어 15개 더 (서버 운영 · 전투)</h4>
+    <h4>🆕 v26.166 — 🔨 /ban · 밴 해머 · 🔑 서버 설정은 OP만</h4>
+    • 멀티플레이에서 <b>Mods · 게임 모드 · 난이도 · 언어</b>는 서버 <b>OP</b>(어드민 포함)만 바꿀 수 있어요. OP가 언어를 바꾸면 방 전체가 그 언어로, OP 친구는 켠 모드를 서버에 적용할 수 있어요.<br>
+    • <b>/ban 닉네임</b>: 내보내고 다시 못 들어오게 · <b>/unban</b> · <b>/banlist</b><br>
+    • <b>/give banhammer</b>: 🔨 <b>밴 해머</b> (크리에이티브 목록에는 없고 명령어로만). 플레이어를 치면 밴, 몹을 치면 한 방에 없애요.
+    <h4>v26.165 — 💻 명령어 15개 더 (서버 운영 · 전투)</h4>
     • 서버 운영: /rules(누구나 보기) · /setrules · /setmotd(들어오는 사람 환영 인사) · /pvp on|off · /mobspawn on|off · /kit 도구|음식|건축 · /armor<br>
     • 전투 · 아이템: /fireball · /arrowrain · /laser · /shockwave · /magnet · /clearitems
     <h4>v26.164 — 🔑 명령어는 OP · 어드민만 · 🧩 .js 로 서버 시스템 · 캐릭터 · 🪲 가시벌레</h4>
@@ -900,6 +904,7 @@ body.mobile #toasts{top:72px}
   <div class="mwarn">⚠ 모드는 이 게임 안에서 마음대로 코드를 실행해요. <b>믿을 수 있는 사람이 만든 모드만</b> 넣으세요. 바꾼 뒤에는 새로고침해야 적용돼요.</div>
   <div class="mrow" style="align-items:center;gap:8px"><b>🎮 게임 모드</b><select id="gmSel" style="flex:1;font-size:15px;padding:4px"></select></div>
   <div style="font-size:12px;opacity:.75;margin:-4px 0 8px">고르면 타이틀까지 그 모드로 바뀌어요 · 모드가 업데이트되면 자동으로 최신이에요 (이달의 모드도 언제든 할 수 있어요)</div>
+  <button id="modSrv" style="display:none;margin:0 0 8px;padding:6px 12px;font-weight:bold">🌐 켠 모드를 이 서버에 적용 (OP)</button>
   <div id="modList"></div>
   <div class="mrow"><input id="modUrl" type="url" placeholder="🔗 모드 주소 https://… (.js · .html) — 늘 최신으로 불러와요" autocomplete="off" style="flex:1;min-width:0;font-size:14px;padding:6px"><button class="btn" id="btnModUrl">🔗 주소로 추가</button></div>
   <div class="mrow"><button class="btn" id="btnModAdd">➕ 모드 파일(.js · .html) 추가</button><button class="btn" id="btnModEx">📄 예시 모드 받기</button></div>
@@ -1967,7 +1972,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.165 — 💻 15 more commands</h4>
+    <h4>🆕 v26.166 — 🔨 /ban · Ban hammer · 🔑 OP-only server settings</h4>
+    • In multiplayer only OPs (and admins) can change Mods, game mode, difficulty and language. /ban, /unban, /banlist. /give banhammer gives a 🔨 Ban hammer (not in creative): hit a player to ban them, hit a mob to remove it.
+    <h4>v26.165 — 💻 15 more commands</h4>
     • /rules, /setrules, /setmotd, /pvp, /mobspawn, /kit, /armor, /fireball, /arrowrain, /laser, /shockwave, /magnet and /clearitems.
     <h4>v26.164 — 🔑 OP-only commands · 🧩 server systems & characters in .js · 🪲 spike bugs</h4>
     • Commands need OP or admin (single player and room hosts are OP; hosts give OP with /op). .js mods can add commands, characters (CB.mob), events (CB.on) and HUDs. Spike bugs burn in daylight and no longer spawn in the Abyss or Necropolis.
@@ -2292,8 +2299,9 @@ function trNode(n){
   for(let c=n.firstChild;c;c=c.nextSibling)trNode(c);}
 const HELP_KO=(document.querySelector('#title .help:not(.upd)')||{}).innerHTML||'',UPD_KO=(document.querySelector('#title .help.upd')||{}).innerHTML||'';
 function applyHelp(){const h=document.querySelector('#title .help:not(.upd)'),u=document.querySelector('#title .help.upd');if(h)h.innerHTML=LANG==='ko'?HELP_KO:(LD.HELP||HELP_EN);if(u)u.innerHTML=LANG==='ko'?UPD_KO:UPD_EN;}
-function setLang(l){ // 새로고침 없이 바로 바꿈 (게임 중이어도 튕기지 않음)
-  if(EVENT==='hangul')return; // 📜 한글날 모드는 한국어만
+function setLang(l,rx){ // 새로고침 없이 바로 바꿈 (게임 중이어도 튕기지 않음)
+  if(EVENT==='hangul')return;
+  try{if(!rx&&MP.on){if(!cmdIsOp()){NOOP_T();return;}if(l!==LANG)mpSend({t:'lang',l});}}catch(e){} // 🔑 멀티: OP만 · 방 전체 언어가 바뀜 // 📜 한글날 모드는 한국어만
   try{localStorage.setItem(LANG_KEY,l);}catch(e){}if(l===LANG)return;LANG=l;document.documentElement.lang=l;loadDict(l);trCache.clear();I18N_KEYS=null;
   applyHelp();trNode(document.body);try{if($('title').classList.contains('show'))drawTitleBg();}catch(e){}
   try{langPicker($('tLang'));langPicker($('setLang'));renderWorlds();renderTSettings();if($('settings').classList.contains('show'))renderSettings();if(running)updModeBtn();}catch(e){}}
@@ -2813,6 +2821,7 @@ IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
 const COLA=352,OPEN_COLA=353;IT[COLA]={name:'콜라',stack:16};IT[OPEN_COLA]={name:'딴 콜라',stack:1,food:3,drink:true}; // 🥤 콜라: 우클릭으로 따고 (따개를 들었다 눌러 닫음) 꾹 눌러 마심
+const BANHAMMER=372;IT[BANHAMMER]={name:'밴 해머',stack:1,secret:1}; // 🔨 /give banhammer 로만 얻음 · 플레이어를 치면 밴, 몹을 치면 없앰
 const BOMB=371;IT[BOMB]={name:'폭탄',stack:16}; // 💣 던지는 폭탄: 우클릭으로 던지면 데굴데굴 굴러가다 3초 뒤 펑
 const GIFT=360,RICE_CAKE=361,TTEOKGUK=362,CROWN=363,SCEPTER=364,GAVEL=365,SONGPYEON=366,YUT=367,HOE=368,RICE_SEED=369,RICE=370; // 🗓 이달의 모드 아이템
 IT[GIFT]={name:'선물 상자',stack:16};IT[RICE_CAKE]={name:'가래떡',stack:64,food:2};IT[TTEOKGUK]={name:'떡국',stack:16,food:8};IT[CROWN]={name:'왕관',stack:1};IT[SCEPTER]={name:'왕의 홀',stack:1};
@@ -3102,6 +3111,7 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-8,Y-8);if(d>6.2)return null;if(d>5.2)return '#8a8a94';const a=X-8,b=Y-8;if(Math.abs(a)<1.1&&b<0&&b>-4.6)return nc;if(Math.abs(a)<.9&&b>=0&&b<4)return '#3a3a44';if(d<1)return '#222';return '#e8e2d0';});}
     case HS_SCRAP:{const r=mulberry32(21);return pixelIcon((X,Y)=>{const d=Math.hypot(X-8,Y-8.5);if(d>5.2+(r()-.5)*1.4)return null;return r()<.18?'#e0603c':r()<.5?'#3a2a2e':'#54404a';});}
     case HELLSTEEL:return pixelIcon((X,Y,x,y)=>{if(y<6||y>11)return null;const inset=(11-y)*.7;if(X<1.5+inset||X>14.5-inset)return null;if((x+y)%7===0)return '#e0603c';return y<8?'#6a5458':y<11?'#4a3a3e':'#2a1e22';});
+    case BANHAMMER:return pixelIcon((X,Y,x,y)=>{if(x>=3&&x<=12&&y>=1&&y<=6)return y===1||y===6||x===3||x===12?'#ffd040':(x+y)%5===0?'#ff6a6a':'#c01818';if(x>=7&&x<=8&&y>=7&&y<=15)return y%3===0?'#3a2414':'#6a4424';return null;});
     case BOMB:return pixelIcon((X,Y,x,y)=>{if(y<=2&&x>=10&&x<=12)return (x+y)%2?'#ffd040':'#ff6020';if(y>=2&&y<=4&&x>=8&&x<=10&&x-8===4-y)return '#c8a070';const d=Math.hypot(X-7,Y-9.5);if(d<5.4){if(d<1.6&&X<7&&Y<9)return '#7a7a88';return d>4.6?'#101014':'#24242c';}if(y>=3&&y<=4&&x>=6&&x<=8)return '#5a5a64';return null;});
     case GIFT:return pixelIcon((X,Y,x,y)=>{if(x<2||x>13||y<4||y>14)return y===3&&(x===6||x===9)||y===2&&(x===5||x===10)?'#ffd040':null;return x===7||x===8||y===8?'#ffd040':(x+y)%7===0?'#ff8a8a':'#d81e2a';});
     case RICE_CAKE:return pixelIcon((X,Y,x,y)=>{for(const r of [5,9,13])if(Math.abs(Y-r)<1.6&&x>=2&&x<=13)return x===2||x===13?'#d8d8cc':'#f6f6ee';return null;});
@@ -5239,6 +5249,8 @@ function buildItemModel0(id){
       const bt=new THREE.Mesh(new THREE.CircleGeometry(.07,16),W);bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);}else{const m=plateModel({id,bites:0});m.scale.setScalar(.46);g.add(m);}break;} // 그릇 (수프는 건더기까지)
     case SPATULA:{const M=imat('spatM',0xc8ccd4,'metal',.3,.7),H=imat('spatH',0x5a3a22,'wood',.8);iBox(g,.11,.01,.12,M,0,.27,0);iBox(g,.015,.18,.015,M,0,.15,.02);iBox(g,.03,.09,.03,H,0,.04,.02);break;}
     case 331:case 332:case 333:case 334:case 335:case 336:{const m=plateModel({id,bites:0});m.scale.setScalar(.36);g.add(m);break;} // 접시째 (요리마다 다른 모양)
+    case BANHAMMER:{const hd=imat('banH',0xc01818,'metal',.35,.6,0x500000,.5),gd=imat('banG',0xffc830,'metal',.25,.85),wd=imat('banW',0x4a2c16,'wood',.8),gl=imat('banL',0xffe0e0,null,.2,0,0xff3030,1.6); // 🔨 밴 해머 3D: 금테 두른 빨간 망치 머리 · 나무 자루 · 빛나는 줄
+      iMesh(g,IGEO.cyl,wd,0,.11,0,0,0,0,.018,.22,.018);iMesh(g,IGEO.cyl,gd,0,.012,0,0,0,0,.024,.02,.024);iBox(g,.2,.09,.09,hd,0,.25,0);iBox(g,.03,.1,.1,gd,-.1,.25,0);iBox(g,.03,.1,.1,gd,.1,.25,0);iBox(g,.15,.015,.095,gl,0,.25,0);break;}
     case BOMB:{const bk=imat('bombB',0x1c1c22,'metal',.35,.6),cap=imat('bombC',0x6a6a74,'metal',.35,.7),fz=imat('bombF',0xc8a070,'cloth',.9),sp=imat('bombS',0xffb030,null,.3,0,0xff6010,1.4); // 💣 폭탄 3D: 둥근 쇠공 · 뚜껑 · 심지 · 불꽃
       iMesh(g,IGEO.sph,bk,0,.075,0,0,0,0,.075,.075,.075);iMesh(g,IGEO.cyl,cap,0,.15,0,0,0,0,.028,.025,.028);iMesh(g,IGEO.cyl,fz,.012,.178,0,0,0,-.5,.006,.04,.006);iMesh(g,IGEO.sph,sp,.024,.2,0,0,0,0,.012,.012,.012);iMesh(g,IGEO.sph,imat('bombH',0x9a9aa6,'metal',.2,.8),-.03,.1,-.05,0,0,0,.016,.012,.01);break;}
     case GIFT:{const r=imat('giftR',0xd81e2a,null,.5),y=imat('giftY',0xffc830,'metal',.3,.4); // 🎁 선물 상자: 빨간 상자 · 금색 리본 · 나비 매듭
@@ -7719,7 +7731,8 @@ function sleep(t){
 function attack(){
   if(isSpec())return;
   const mace=heldTool()&&heldTool().type==='mace';
-  if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?2.5:.4; // 철퇴는 무거워서 2.5초마다 휘두름
+  if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?2.5:.4;
+  if(held()&&held().id===BANHAMMER){banHammerHit(mobTarget);return;} // 철퇴는 무거워서 2.5초마다 휘두름
   const t=heldTool();let dmg=t?t.dmg:HAND_DMG;const spp=held()&&held().id===SPIDER_PUNCH&&spiderOn();if(spp){dmg=18;SFX.smash();} // 스파이더맨 펀치
   if(mace){ // 철퇴: 높은 곳에서 떨어지며 칠수록 더 셈 (처음 3칸은 칸당 +4, 다음 5칸은 +2, 그 뒤로 +1) · 달리면서 머리를 치면 1.5배
     const fall=player.onGround||player.inWater?0:Math.max(0,player.peakY-player.pos.y),M=mobTarget;
@@ -8248,10 +8261,10 @@ function updModeBtn(){$('btnMode').textContent='⚙ 서버 설정 · '+(MODE_INF
 // 서버 설정: 일시정지에서 언제든 5가지 모드 중 하나로 바꿈
 function renderSettings(){renderGfx();const m=world.mode||'survival',d=world.diff||'normal';for(const b of $('setMode').children)b.classList.toggle('on',b.dataset.m===m);$('setDesc').textContent=MODE_INFO[m][1];
   for(const b of $('setDiff').children)b.classList.toggle('on',b.dataset.d===d);$('setDiffDesc').textContent=DIFF_INFO[d][1];}
-$('setDiff').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.d===world.diff)return;if(world.flags.hcDead){toast(world.flags.banned?'🚫 밴당한 세계는 관전만 할 수 있어요':'💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setDiff(b.dataset.d);renderSettings();toast('난이도: <b>'+DIFF_INFO[world.diff][0]+'</b>');});
+$('setDiff').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.d===world.diff)return;if(MP.on&&!cmdIsOp()){NOOP_T();return;}if(MP.on&&!MP.host){mpSend({t:'df',d:b.dataset.d});toast('🌐 방장에게 난이도 변경을 보냈어요');return;}if(world.flags.hcDead){toast(world.flags.banned?'🚫 밴당한 세계는 관전만 할 수 있어요':'💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setDiff(b.dataset.d);renderSettings();toast('난이도: <b>'+DIFF_INFO[world.diff][0]+'</b>');});
 $('btnMode').onclick=()=>{renderSettings();$('pause').classList.remove('show');$('settings').classList.add('show');};
 $('btnSetClose').onclick=()=>{$('settings').classList.remove('show');$('pause').classList.add('show');};
-$('setMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.m===world.mode)return;if(world.flags.hcDead){toast(world.flags.banned?'🚫 밴당한 세계는 관전만 할 수 있어요':'💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setMode(b.dataset.m);renderSettings();toast('게임 모드: <b>'+MODE_INFO[world.mode][0]+'</b>');if(MP.on)mpSend({t:'gm',m:world.mode});});
+$('setMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.m===world.mode)return;if(MP.on&&!cmdIsOp()){NOOP_T();return;}if(world.flags.hcDead){toast(world.flags.banned?'🚫 밴당한 세계는 관전만 할 수 있어요':'💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setMode(b.dataset.m);renderSettings();toast('게임 모드: <b>'+MODE_INFO[world.mode][0]+'</b>');if(MP.on)mpSend({t:'gm',m:world.mode});});
 let lastSpaceT=0;function spaceTap(){const n=performance.now();if((isCreative()||canFly())&&n-lastSpaceT<300&&!player.boat){player.flying=!player.flying;if(player.flying)player.vel.y=Math.max(player.vel.y,5);toast(player.flying?'🕊 날기 시작 (스페이스: 위 · C: 아래)':'날기 그만');lastSpaceT=0;}else lastSpaceT=n;}
 function parseSeed(t){ // 숫자는 그대로, 글자는 같은 글자면 늘 같은 숫자로
   t=(t||'').trim();if(!t)return null;
@@ -8379,7 +8392,8 @@ function modUrlRun(m){fetch(m.url,{cache:'no-store'}).then(r=>{if(!r.ok)throw ne
 function modRender(){const L=modLoad();$('modList').innerHTML=L.length?L.map((m,i)=>`<div class="mi${m.on?'':' off'}"><b>${m.url?'🔗 ':''}${m.name.replace(/</g,'&lt;')}</b>${modBroken[m.name]?`<small>오류</small>`:''}<button data-t="${i}">${m.on?'켜짐':'꺼짐'}</button><button data-d="${i}">삭제</button></div>`).join(''):'<div class="mi"><b>아직 넣은 모드가 없어요</b></div>';}
 const modBroken={};
 try{modRunAll();}catch(e){}
-$('btnMods').onclick=()=>{modRender();$('modPanel').classList.add('show');};
+$('btnMods').onclick=()=>{if(MP.on&&!cmdIsOp()){NOOP_T();return;}modRender();$('modPanel').classList.add('show');$('modSrv').style.display=MP.on&&!MP.host?'':'none';};
+$('modSrv').onclick=()=>{if(!MP.on||MP.host||!cmdIsOp())return;const L=modLoad().filter(m=>m.on).map(m=>({name:m.name,code:m.code||'',url:m.url}));mpSend({t:'smods',mods:L});toast(`🌐 내 모드 ${L.length}개를 방장 서버에 보냈어요 (방을 다시 열면 적용)`);};
 {const sel=$('gmSel');sel.innerHTML=GMODES.map(([id,n])=>`<option value="${id}">${n}</option>`).join('');sel.value=GM_HERE;sel.onchange=()=>gmGo(sel.value);} // 🎮 게임 모드 고르기
 $('btnModClose').onclick=()=>$('modPanel').classList.remove('show');
 $('btnModReload').onclick=()=>location.reload();
@@ -8532,6 +8546,7 @@ function mpHost(){if(!mpOk()||MP.on||MP.ws)return;MP.me=mpMe();renderMP(mpL('방
   ws.onclose=()=>{if(MP.ws!==ws)return;const was=MP.on;MP.ws=null;if(was){toast(mpL('🌐 중계 서버와 연결이 끊겨서 방이 닫혔어요','🌐 Lost the relay server — room closed'));mpStop();}else{toast(mpL('🌐 중계 서버에 연결하지 못했어요','🌐 Could not reach the relay server'));renderMP();}};}
 function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   if(d.t==='hi'){if(!running)return;const nick=String(d.nick||'?').slice(0,16);
+    if((world.flags.bans||[]).some(x=>x.toLowerCase()===nick.toLowerCase())){c.send({t:'no',m:mpL('🔨 이 방에서 밴당했어요','🔨 You are banned from this room')});return;}
     if(nick===MP.me.nick||[...MP.conns].some(x=>x.P&&x.P.nick===nick)){c.send({t:'no',m:mpL('같은 닉네임이 이미 방에 있어요','That nickname is already in the room')});return;}
     const P={id:'g'+(++MP.gid),nick,skin:typeof d.skin==='string'&&d.skin.length<200000?d.skin:'',cape:CAPES[d.cape]?d.cape:''};
     for(const d of world.vehicles||[])if(!d.vid)d.vid='H.v'+(++MP.gn); // 탈것 번호
@@ -8564,7 +8579,12 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='br'){mpBoatDel(d.b);mpSend(d,c);}
   else if(d.t==='bp'){mpBoatPos(d);mpSend(d,c);}
   else if(d.t==='vi'){mpVehIn(d.d);mpSend(d,c);}
-  else if(d.t==='gm'){mpModeIn(d);mpSend(d,c);}
+  else if(d.t==='gm'){if(!mpConnOp(c))return;mpModeIn(d);mpSend(d,c);}
+  else if(d.t==='df'){if(!mpConnOp(c)||!DIFF_INFO[d.d])return;setDiff(d.d);try{renderSettings();}catch(e){}toast(mpL('🌐 OP가 난이도를 바꿨어요: ','🌐 An OP changed difficulty: ')+DIFF_INFO[d.d][0]);}
+  else if(d.t==='lang'){if(!mpConnOp(c)||typeof d.l!=='string')return;setLang(d.l,1);mpSend(d,c);}
+  else if(d.t==='banreq'){if(mpConnOp(c))mpBanNick(d.n);}
+  else if(d.t==='smods'){if(!mpConnOp(c)||!Array.isArray(d.mods))return;const L=d.mods.filter(m=>m&&typeof m.name==='string'&&(typeof m.code==='string'||typeof m.url==='string')).slice(0,40).map(m=>({name:m.name.slice(0,60),code:m.code||'',url:m.url||undefined,on:true}));
+    modSave(L);mpSend({t:'c',n:'🧩 서버',m:c.P.nick+' 님(OP)이 서버 모드를 '+L.length+'개로 바꿨어요 · 방을 다시 열면 적용'});toast(mpL(`🧩 OP <b>${mpEsc(c.P.nick)}</b> 님이 서버 모드를 바꿨어요 — 새로고침 후 방을 다시 열면 적용돼요`,'🧩 An OP changed the server mods — reopen the room to apply'));}
   else if(d.t==='vr'){mpVehDel(d.v);mpSend(d,c);}
   else if(d.t==='vp'){mpVehPos(d);mpSend(d,c);}
   else if(d.t==='vb'){const v=VEH.find(q=>q.d.vid===d.v);if(v)v.boost=v.d.boost=!!d.b;mpSend(d,c);}
@@ -8622,7 +8642,8 @@ function mpGuestRecv(d){
   else if(d.t==='cfg'){MP.pvp=d.pvp!==false;toast('⚔ PvP: '+(MP.pvp?mpL('켬','ON'):mpL('끔','OFF')));}
   else if(d.t==='op'){MP.op=!!d.on;toast(d.on?'🔑 방장이 <b>OP</b>를 줬어요 — 이제 명령어를 쓸 수 있어요 (/help)':'🔑 OP가 없어졌어요');} // 💻 /op
   else if(d.t==='tpto'){player.pos.set(d.x,d.y,d.z);player.vel.set(0,0,0);player.peakY=d.y;toast(mpL('🌐 방장이 나를 불렀어요','🌐 The host teleported you'));} // 💻 /tphere · /tpall
-  else if(d.t==='kick')mpEnd(mpL('방장이 방에서 내보냈어요','The host removed you from the room')); // 💻 /kick
+  else if(d.t==='kick')mpEnd(d.ban?mpL('🔨 이 방에서 밴당했어요','🔨 You were banned from this room'):mpL('방장이 방에서 내보냈어요','The host removed you from the room'));
+  else if(d.t==='lang'){if(typeof d.l==='string')setLang(d.l,1);} // 🔑 OP가 바꾼 방 언어
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
 function mpEnd(m){if(!MP.on)return;MP.on=false;toast('🌐 '+m+mpL(' — 타이틀로 돌아가요',' — returning to title'));setTimeout(()=>$('btnQuit').click(),2500);}
@@ -8698,6 +8719,14 @@ function mpWithDummies(L){if(!MP.on)return L;const R=L.slice(); // 친구 캐릭
   for(const P of MP.peers.values()){const t=P.t;if(!t||t.v||t.d!==world.dim||!P.A.g.visible)continue;
     if(!P.dm)P.dm={pvp:true,id:P.id,kind:'player',def:{name:P.nick},w:.6,h:1.8,dead:false,pos:P.A.g.position,hurt(dmg,kx,kz){mpPvp(P,dmg,kx,kz);}};R.push(P.dm);}
   return R;}
+function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x,M.pos.y+M.h/2,M.pos.z,new THREE.Color(0xff2020),24,.6,4); // 🔨 밴 해머
+  if(M.pvp){if(!cmdIsOp()){NOOP_T();return;}const nk=M.def.name;if(MP.host)mpBanNick(nk);else mpSend({t:'banreq',n:nk});toast(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요`);return;}
+  if(M.def.boss&&!cmdIsOp()){NOOP_T();return;}M.hurt(1e6,0,0);toast('🔨 쾅! <b>'+(M.def.name||'몹')+'</b>을(를) 없앴어요');}
+function NOOP_T(){toast(mpL('🔑 이 서버에서는 <b>OP</b>(또는 어드민)만 바꿀 수 있어요','🔑 Only server OPs (or admins) can change this'));}
+// 🔨 밴: 방장이 명단에 넣고 내보냄 · 다시 들어오려 해도 막힘
+function mpConnOp(c){const n=c&&c.P?c.P.nick:'';return n==='운영자'||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
+function mpBanNick(nk){nk=String(nk||'').slice(0,16);if(!nk||nk==='운영자'||nk===MP.me.nick)return false;const B=world.flags.bans||(world.flags.bans=[]);if(!B.some(x=>x.toLowerCase()===nk.toLowerCase()))B.push(nk);
+  const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'kick',ban:1});mpSend({t:'c',n:'🔨 서버',m:nk+' 님이 밴당했어요'});return true;}
 function mpPvp(P,dmg,kx,kz){if(!MP.pvp){toast(mpL('⚔ 이 방은 PvP가 꺼져 있어요','⚔ PvP is off in this room'));return;}
   const sp=player.sprinting?1.7:1;mpHurtTo(P.id,dmg,kx*sp,kz*sp,'',1);P.red=.35;SFX.mobhit();
   spawnParticles(P.A.g.position.x,P.A.g.position.y+1.2,P.A.g.position.z,new THREE.Color(0xc02020),6,.3,2);}
@@ -8799,11 +8828,12 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
   ['/rps 가위|바위|보','가위바위보'],['/joke','아재개그'],
   ['/rules','서버 규칙 보기 (누구나)'],['/setrules 글','서버 규칙 정하기 (줄바꿈은 |)'],['/setmotd 글','들어오는 사람 환영 인사'],['/pvp on|off','PvP 켜고 끄기 (방장)'],['/mobspawn on|off','몹이 저절로 생기기 켜고 끄기'],
   ['/kit [도구|음식|건축]','시작 꾸러미 받기'],['/armor','철 갑옷 한 벌 입기'],['/fireball','화염구 쏘기'],['/arrowrain','주변에 화살 비'],['/laser','앞으로 레이저 (몹 관통)'],['/shockwave','주변 몹 날려 보내기'],['/magnet','주변 바닥 아이템 끌어오기'],['/clearitems','주변 바닥 아이템 지우기'],
+['/ban 닉네임','방에서 밴 (다시 못 들어옴)'],['/unban 닉네임 · /banlist','밴 풀기 · 밴 명단'],['/give banhammer','🔨 밴 해머 (플레이어를 치면 밴 · 몹을 치면 없앰)'],
   ['/op 닉네임 · /deop 닉네임 · /ops','OP 주기 · 빼기 · 목록 (방장) — OP · 어드민만 명령어를 쓸 수 있어요'],
   ['/un명령어','그 명령어 되돌리기 (예: /unfly · /ungod · /untree · /ungive · /unsummon · /untp · /ungamemode · /unspeed)']];
 function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
 function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
-function cmdItems(){const L=[];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
+function cmdItems(){const L=[['banhammer',BANHAMMER],['ban hammer',BANHAMMER]];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
 let CMD_CUR='',CMD_LAST={},CMD_MOBS={};
 function cmdIsAdmin(){return nickNow()==='운영자';} // 🛡 어드민 = CAVEBUILD 운영자 계정
 function cmdIsOp(){return cmdIsAdmin()||!MP.on||MP.host||!!MP.op;} // 🔑 혼자 하는 세계 · 방장은 OP, 친구는 방장이 /op 를 줘야
@@ -8838,6 +8868,7 @@ function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
     case 'setrules':case '규칙정하기':world.flags.rules='';cmdOut('규칙을 지웠어요');break;
     case 'pvp':if(MP.on&&MP.host){MP.pvp=false;mpSend({t:'cfg',pvp:false});renderMP();}cmdOut('⚔ PvP 끔');break;
     case 'kit':case '꾸러미':case 'armor':case '갑옷':restoreInv();if(x==='armor'||x==='갑옷'){for(let pi=0;pi<4;pi++)armor[pi]=null;invChanged();renderStats();}break;
+    case 'ban':case '밴':{const B=world.flags.bans||[],nk=String(MP.lastBan||'').toLowerCase(),i=B.findIndex(x=>x.toLowerCase()===nk);if(i>=0){cmdOut(`🔓 <b>${mpEsc(B[i])}</b> 님의 밴을 풀었어요`);B.splice(i,1);}else cmdOut('되돌릴 밴이 없어요',1);break;}
     case 'timespeed':case '시간속도':world.flags.tsp=0;cmdOut('하루 빠르기 원래대로');break;
     case 'mute':case '음소거':window.CMD_MUTE=false;cmdOut('🔊 소리 켜짐');break;
     case 'mobsize':case '몹크기':{const m=mobTarget;if(!m||m.dead){cmdOut('몹을 보고 써요',1);break;}m.g.scale.setScalar(1);cmdOut('몹 크기 원래대로');break;}
@@ -9056,6 +9087,10 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'
       spawnParticles(P.x,P.y+.5,P.z,new THREE.Color(0xa0d0ff),30,3,3);noise(.5,300,.3);shake(.6,.5);cmdOut(`💥 충격파! (${n}마리)`);break;}
     case 'magnet':case '자석':{let n=0;for(const g of groundItems){if(Math.hypot(g.pos.x-P.x,g.pos.z-P.z)<32){g.pos.set(P.x,P.y+.5,P.z);if(g.vel)g.vel.set(0,0,0);n++;}}cmdOut(`🧲 바닥 아이템 ${n}개를 끌어왔어요`);break;}
     case 'clearitems':case '아이템청소':{let n=0;for(let i=groundItems.length-1;i>=0;i--){const g=groundItems[i];if(Math.hypot(g.pos.x-P.x,g.pos.z-P.z)<48){removeGroundItem(i);n++;}}cmdOut(`🧹 바닥 아이템 ${n}개를 지웠어요`);break;}
+    case 'ban':case '밴':{if(!MP.on){cmdOut('멀티플레이 방에서만 쓸 수 있어요',1);break;}const nk=a[0]||'';if(!nk){cmdOut('/ban 닉네임',1);break;}if(nk==='운영자'||nk===MP.me.nick){cmdOut('그 사람은 밴할 수 없어요',1);break;}
+      if(MP.host)mpBanNick(nk);else mpSend({t:'banreq',n:nk});MP.lastBan=nk;cmdOut(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요 (/unban 으로 풀기)`);break;}
+    case 'unban':case '밴해제':{if(!MP.on||!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const nk=(a[0]||'').toLowerCase(),B=world.flags.bans||[],i=B.findIndex(x=>x.toLowerCase()===nk);if(i<0){cmdOut('밴 명단에 없어요 · /banlist',1);break;}cmdOut(`🔓 <b>${mpEsc(B[i])}</b> 님의 밴을 풀었어요`);B.splice(i,1);break;}
+    case 'banlist':case '밴목록':cmdOut('🔨 밴 명단: '+((world.flags.bans||[]).map(mpEsc).join(' · ')||'없어요'));break;
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
     case 'op':case 'deop':{if(!MP.on||!MP.host){cmdOut('멀티플레이 <b>방장</b>만 OP를 줄 수 있어요',1);break;}const nk=a[0]||'',O=world.flags.ops||(world.flags.ops=[]),on=c==='op';if(!nk){cmdOut('/op 닉네임 · /deop 닉네임',1);break;}
       const i=O.findIndex(n=>n.toLowerCase()===nk.toLowerCase());if(on&&i<0)O.push(nk);if(!on&&i>=0)O.splice(i,1);const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'op',on:on?1:0});
