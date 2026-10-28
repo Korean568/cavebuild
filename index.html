@@ -145,7 +145,7 @@ body.cine #hud,body.cine #crosshair,body.cine #stellarHud,body.cine #compass,bod
 #gmHud{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:10;display:none;background:rgba(10,10,20,.72);border:2px solid #2a5ad0;padding:6px 14px;font-size:14px;text-align:center;pointer-events:none;text-shadow:1px 1px 0 #000}
 #stCount{position:fixed;top:12vh;left:50%;transform:translateX(-50%);z-index:10;font:bold 26px monospace;color:#ff4848;text-shadow:0 0 10px #f00,2px 2px 0 #000;display:none;pointer-events:none;letter-spacing:3px}
 #evHud{position:fixed;top:52px;left:50%;transform:translateX(-50%);z-index:10;display:none;background:rgba(20,16,40,.78);border:2px solid #ffd040;padding:6px 14px;font-size:14px;color:#fff3c0;text-align:center;pointer-events:none;text-shadow:1px 1px 0 #000;max-width:92vw}
-#evDlg .evbox{background:rgba(18,18,30,.95);border:3px solid #ffd040;padding:16px 20px;width:min(560px,90vw);color:#fff;font-size:15px;line-height:1.6;text-align:left}#evDlg .evbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#evDlg input{width:100%;box-sizing:border-box;font:15px 'Malgun Gothic',sans-serif;padding:6px;margin:3px 0}
+#evDlg .evbox{max-height:84vh;overflow:auto;background:rgba(18,18,30,.95);border:3px solid #ffd040;padding:16px 20px;width:min(560px,90vw);color:#fff;font-size:15px;line-height:1.6;text-align:left}#evDlg .evbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#evDlg input{width:100%;box-sizing:border-box;font:15px 'Malgun Gothic',sans-serif;padding:6px;margin:3px 0}
 #evDlg .yb{display:flex;flex-wrap:wrap;gap:3px;margin:8px 0}#evDlg .yb i{width:30px;height:30px;border:2px solid #887;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;background:#2a2a38}#evDlg .yb i.c{border-color:#ffd040}
 @keyframes jsShake{0%{transform:translate(0,0) scale(1.05)}25%{transform:translate(-14px,9px) scale(1.12)}50%{transform:translate(12px,-10px) scale(1.06)}75%{transform:translate(-8px,-6px) scale(1.14)}100%{transform:translate(0,0) scale(1.05)}}
 #evCrash{position:fixed;inset:0;z-index:60;display:none;background:#0a1a8a;color:#fff;font:20px monospace;padding:12vh 10vw;white-space:pre-wrap}
@@ -307,7 +307,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.150 — 🌍 공개 · 🔒 비공개 방 · 💻 명령어</h4>
+    <h4>🆕 v26.151 — 💻 명령어 20개 더</h4>
+    • /setblock · /fill(네모로 채우기 · 공기로 지우기) · /speed(이동 속도) · /god(무적) · /feed · /day · /night · /pos(좌표) · /spawn · /dim(차원 이동) · /locate 마을 · /explode · /firework · /repair · /more · /rename · /butcher(적 몹 없애기) · /title(큰 글씨) · /calc(계산기) · /kick(방장이 친구 내보내기). /help로 전부 볼 수 있어요.
+    <h4>v26.150 — 🌍 공개 · 🔒 비공개 방 · 💻 명령어</h4>
     • 멀티플레이 방을 열 때 <b>🔒 비공개</b>(방 코드를 아는 사람만) · <b>🌍 공개</b>(누구나)를 골라요. 연 뒤에도 바꿀 수 있어요.<br>
     • 플레이 → <b>🌍 공개 방</b> 목록에서 바로 참가할 수 있어요 (방 이름 · 방장 · 인원 · 모드).<br>
     • <b>T</b>나 <b>/</b>를 눌러 <b>명령어</b>를 쓸 수 있어요 (혼자 할 때도): /help · /gamemode · /time set · /tp · /give · /summon · /heal · /kill · /clear · /fly · /spawnpoint · /difficulty · /seed · /list · /me. 멀티플레이에서는 방장만 쓸 수 있어요 (친구는 /help · /list · /me).
@@ -1902,7 +1904,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.150 — 🌍 Public / 🔒 private rooms · 💻 commands</h4>
+    <h4>🆕 v26.151 — 💻 20 more commands</h4>
+    • /setblock, /fill, /speed, /god, /feed, /day, /night, /pos, /spawn, /dim, /locate, /explode, /firework, /repair, /more, /rename, /butcher, /title, /calc and /kick. Type /help for the full list.
+    <h4>v26.150 — 🌍 Public / 🔒 private rooms · 💻 commands</h4>
     • Open multiplayer rooms as private (code only) or public (listed for anyone under Play → Public rooms). Press T or / for commands such as /help, /gamemode, /time set, /tp, /give, /summon, /heal, /fly (host or single player).
     <h4>v26.149 — 🎮 Game modes · HTML mod styles apply to the whole game</h4>
     • The Mods menu has a Game mode picker (Overkill, Speedrun, Halloween, Hangul Day, Christmas…) that opens the game in that mode, title included, always at the latest version. HTML mod styles apply to the whole game again.
@@ -7112,7 +7116,7 @@ function njEggVideo(bird){if($('njVid'))return; // 뇌절모드 영상: 끝까�
 let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 앞의 숨 들이키는 소리(0.2~0.5초)는 빼고 목소리 부분(0.5~1.07초)만, 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
     const a=njHurtA.cloneNode(),S0=.5,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
 function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){if(MP.proxy){mpHurtTo(MP.proxy.id,dmg,kx,kz,cause);return;} // 🌐 방장 몹이 친구를 때림
-  if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec())return; // 크리에이티브·관전: 다치지 않음
+  if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec()||player.god)return; // 💻 /god: 무적 // 크리에이티브·관전: 다치지 않음
   if(!bypass&&(stFrozen()||gm))return; // 스텔라 연출 · 미사일 조종 중엔 몹에게 맞지 않음
   if(!bypass)dmg*=DIFF_MUL[world.diff||'normal']||1; // 난이도: EASY 0.5배 · DIFFICULTY · HARDCORE 1.5배
   // 방패: 정면(약 ±70°)에서 오는 공격을 막음. 대미지 30 이상은 절반만 막고 5초간 막기 불가
@@ -7217,7 +7221,7 @@ function updatePlayer(dt){
   // 방패 막기: 우클릭 기능이 없는 아이템(무기·도구·맨손)을 든 채 우클릭 유지
   const h0=held(),hi=h0&&IT[h0.id],hasUse=h0&&(isBlk(h0.id)||(hi&&(hi.food||hi.bow||hi.armor||hi.bucket||hi.use))||h0.id===LASER||h0.id===POTION);
   p.shieldCD=Math.max(0,(p.shieldCD||0)-dt);p.blocking=!!(mouseR&&armor[4]&&!invOpen&&!hasUse&&p.shieldCD<=0);
-  let sp=sprint&&!p.blocking?5.8:4.3;if(p.colaT>0)sp*=1.4; // 🥤 콜라 효과
+  let sp=sprint&&!p.blocking?5.8:4.3;if(p.colaT>0)sp*=1.4;if(p.spdMul)sp*=p.spdMul; // 🥤 콜라 효과 · 💻 /speed
   if(p.inWater)sp*=p.graceT>0?.85:.55;if(p.blocking)sp*=.4;if(p.crouch)sp*=.33;
   const s=Math.sin(p.yaw),c=Math.cos(p.yaw);
   let wx=-s*fz+c*fx,wz=-c*fz-s*fx;const l=Math.hypot(wx,wz);if(l>0){const q=Math.min(1,l)*sp/l;wx*=q;wz*=q;}
@@ -8406,6 +8410,7 @@ function mpGuestRecv(d){
   else if(d.t==='vb'){const v=VEH.find(q=>q.d.vid===d.v);if(v)v.boost=v.d.boost=!!d.b;}
   else if(d.t==='gno')mpGiDel(d.g);
   else if(d.t==='cfg'){MP.pvp=d.pvp!==false;toast('⚔ PvP: '+(MP.pvp?mpL('켬','ON'):mpL('끔','OFF')));}
+  else if(d.t==='kick')mpEnd(mpL('방장이 방에서 내보냈어요','The host removed you from the room')); // 💻 /kick
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
 function mpEnd(m){if(!MP.on)return;MP.on=false;toast('🌐 '+m+mpL(' — 타이틀로 돌아가요',' — returning to title'));setTimeout(()=>$('btnQuit').click(),2500);}
@@ -8558,7 +8563,11 @@ function mpChatOpen(pre){if(MP.chat||!running)return;MP.chat=true;for(const k in
   try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>el.focus(),30);}
 const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에이티브|관전','게임 모드'],['/time set 낮|정오|밤|자정|0~24000','시간'],['/tp x y z · /tp 닉네임','순간이동 (~ 는 지금 위치 기준)'],
   ['/give 아이템이름 [개수]','아이템 받기'],['/summon 몹이름 [마리]','몹 소환'],['/heal','체력 · 배고픔 가득'],['/kill','쓰러지기'],['/clear','인벤토리 비우기'],['/fly','날기 켜고 끄기'],
-  ['/spawnpoint','여기를 스폰 지점으로'],['/difficulty 세이프|쉬움|보통|어려움|하드코어','난이도'],['/seed','세계 시드'],['/list','같이 있는 사람'],['/me 할 말','행동 말하기']];
+  ['/spawnpoint','여기를 스폰 지점으로'],['/difficulty 세이프|쉬움|보통|어려움|하드코어','난이도'],['/seed','세계 시드'],['/list','같이 있는 사람'],['/me 할 말','행동 말하기'],
+  ['/setblock x y z 블록','블록 하나 놓기'],['/fill x1 y1 z1 x2 y2 z2 블록','네모로 채우기 (공기 = 지우기 · 2만 칸까지)'],['/speed 배수','이동 속도 (0.5~5 · /speed 1 원래대로)'],['/god','무적 켜고 끄기'],
+  ['/feed','배고픔 가득'],['/day · /night','낮 · 밤으로'],['/pos','지금 좌표'],['/spawn','스폰 지점으로'],['/dim 차원','차원 이동 (프론티어 · 어비스 · 판데모니움 · 네크로폴리스 · 호라이즌)'],
+  ['/locate 마을','가장 가까운 마을'],['/explode [크기]','보는 곳에 폭발 (1~8)'],['/firework [개수]','폭죽'],['/repair','든 아이템 내구도 가득'],['/more','든 아이템을 가득'],['/rename 이름','든 아이템 이름 바꾸기'],
+  ['/butcher','주변 적 몹 없애기'],['/title 글','화면에 큰 글씨'],['/calc 식','계산기 (예: /calc 12*3+4)'],['/kick 닉네임','친구 내보내기 (방장)']];
 function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
 function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
 function cmdItems(){const L=[];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
@@ -8587,7 +8596,38 @@ function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||''
     case 'seed':case '시드':cmdOut('세계 시드: <b>'+seed+'</b>');break;
     case 'list':case '목록':cmdOut(MP.on?'👥 '+[MP.me.nick+'(나)',...mpList()].map(mpEsc).join(' · '):'혼자 하고 있어요');break;
     case 'me':{const m=a.join(' ').slice(0,70);if(!m){cmdOut('/me 할 말',1);break;}const nk=MP.on?MP.me.nick:(nickNow()||'나');if(MP.on)mpSend({t:'c',n:'*',m:nk+' '+m});toast(`✨ <i>${mpEsc(nk)} ${mpEsc(m)}</i>`);break;}
+    case 'setblock':case '블록':{const x=Math.floor(num(a[0],P.x)),y=Math.floor(num(a[1],P.y)),z=Math.floor(num(a[2],P.z)),q=a.slice(3).join(' ');const id=cmdBlock(q);
+      if(![x,y,z].every(isFinite)||id==null){cmdOut('/setblock x y z 블록 (예: /setblock ~ ~ ~2 돌)',1);break;}if(y<1||y>=CH){cmdOut('높이는 1~'+(CH-1)+'이에요',1);break;}setBlock(x,y,z,id);cmdOut(`(${x}, ${y}, ${z})에 <b>${id?BL[id].name:'공기'}</b>`);break;}
+    case 'fill':case '채우기':{const v=[0,1,2,3,4,5].map(i=>Math.floor(num(a[i],i%3===0?P.x:i%3===1?P.y:P.z))),q=a.slice(6).join(' '),id=cmdBlock(q);
+      if(!v.every(isFinite)||id==null){cmdOut('/fill x1 y1 z1 x2 y2 z2 블록 (예: /fill ~-2 ~-1 ~-2 ~2 ~-1 ~2 유리)',1);break;}
+      const [x0,x1]=[Math.min(v[0],v[3]),Math.max(v[0],v[3])],[y0,y1]=[Math.max(1,Math.min(v[1],v[4])),Math.min(CH-1,Math.max(v[1],v[4]))],[z0,z1]=[Math.min(v[2],v[5]),Math.max(v[2],v[5])],n=(x1-x0+1)*(y1-y0+1)*(z1-z0+1);
+      if(n>20000){cmdOut(`너무 커요 (${n}칸 · 2만 칸까지)`,1);break;}const batch=new Set();for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++)for(let z=z0;z<=z1;z++)setBlock(x,y,z,id,batch);
+      for(const k of batch){const [cx,cz]=k.split(',').map(Number);remeshAt(cx,cz);}cmdOut(`${n}칸을 <b>${id?BL[id].name:'공기'}</b>(으)로 채웠어요`);break;}
+    case 'speed':case '속도':{const v=+a[0];if(!(v>=.5&&v<=5)){cmdOut('/speed 0.5~5 (1 = 원래대로)',1);break;}player.spdMul=v===1?0:v;cmdOut(`이동 속도 <b>${v}배</b>`);break;}
+    case 'god':case '무적':player.god=!player.god;cmdOut(player.god?'🛡 무적 <b>켜짐</b>':'무적 <b>꺼짐</b>');break;
+    case 'feed':case '배부르게':player.food=Math.max(player.food,20);renderStats();cmdOut('배고픔을 가득 채웠어요');break;
+    case 'day':case '낮':world.time=.05;updateSky(0);cmdOut('☀ 낮이 됐어요');break;
+    case 'night':case '밤':world.time=.55;updateSky(0);cmdOut('🌙 밤이 됐어요');break;
+    case 'pos':case '좌표':case 'xyz':cmdOut(`📍 X ${P.x.toFixed(1)} · Y ${P.y.toFixed(1)} · Z ${P.z.toFixed(1)} · ${DIM[world.dim].name}`);break;
+    case 'spawn':{const sp=world.spawn;if(world.dim!=='over'){travel('over',sp);cmdOut('프론티어 스폰 지점으로 가요');break;}player.pos.set(sp.x,sp.y,sp.z);player.vel.set(0,0,0);player.peakY=sp.y;loadNear(4);cmdOut('스폰 지점으로 이동했어요');break;}
+    case 'dim':case 'dimension':case '차원':{const q=(a[0]||'').toLowerCase(),k=Object.keys(DIM).find(d=>d===q||DIM[d].name===a[0]||DIM[d].name.toLowerCase().startsWith(q)&&q);
+      if(!k){cmdOut('/dim '+Object.values(DIM).map(d=>d.name).join(' · '),1);break;}if(k===world.dim){cmdOut('이미 '+DIM[k].name+'에 있어요',1);break;}
+      const pos=k==='over'?(world.lastPos.over||world.spawn):k==='hell'?{x:Math.floor(P.x)+.5,y:40,z:Math.floor(P.z)+.5,hell:true}:arrivalOf(k);if(!pos){cmdOut('그 차원으로는 갈 수 없어요',1);break;}travel(k,pos);cmdOut('🌀 <b>'+DIM[k].name+'</b>(으)로 가요');break;}
+    case 'locate':case '찾기':{if(world.dim!=='over'){cmdOut('마을은 프론티어에서만 찾을 수 있어요',1);break;}const L=villagesNear(P.x,P.z,1500);let b=null,bd=1e9;for(const v of L){const d=Math.hypot(v.x-P.x,v.z-P.z);if(d<bd){bd=d;b=v;}}
+      cmdOut(b?`🏘 가장 가까운 마을: X ${Math.round(b.x)} · Z ${Math.round(b.z)} (${Math.round(bd)}m)`:'1500m 안에 마을이 없어요',!b);break;}
+    case 'explode':case '폭발':{const r=Math.max(1,Math.min(8,+a[0]||3)),h=raycast(camera.position,viewDir(),40),q=h?{x:h.x+.5,y:h.y+.5,z:h.z+.5}:{x:P.x+viewDir().x*8,y:P.y+1,z:P.z+viewDir().z*8};explode(q.x,q.y,q.z,r,'명령어 폭발에 휘말렸습니다');cmdOut('💥 펑!');break;}
+    case 'firework':case '폭죽':{const n=Math.max(1,Math.min(10,+a[0]||3));for(let i=0;i<n;i++)setTimeout(()=>{try{launchFirework(P.x+(Math.random()-.5)*6,P.y+1,P.z+(Math.random()-.5)*6);}catch(e){}},i*250);cmdOut('🎆 폭죽 '+n+'개');break;}
+    case 'repair':case '수리':{const h=held(),mx=h&&IT[h.id]&&IT[h.id].maxDur;if(!mx){cmdOut('내구도가 있는 아이템을 들어 주세요',1);break;}h.dur=mx;invChanged();cmdOut('🔧 <b>'+info(h.id).name+'</b>을(를) 고쳤어요');break;}
+    case 'more':case '가득':{const h=held();if(!h){cmdOut('아이템을 들어 주세요',1);break;}h.count=Math.max(h.count,info(h.id).stack||64);invChanged();cmdOut('<b>'+info(h.id).name+'</b> '+h.count+'개');break;}
+    case 'rename':case '이름':{const h=held(),nm=a.join(' ').slice(0,30);if(!h||!nm){cmdOut('아이템을 들고 /rename 이름',1);break;}h.name=nm;invChanged();cmdOut('🏷 이름을 <b>'+mpEsc(nm)+'</b>(으)로 바꿨어요');break;}
+    case 'butcher':case 'killall':case '청소':{let n=0;for(const m of [...mobs])if(m.def.hostile&&!m.def.boss&&!m.servant&&m.dist()<80){m.remove();n++;}cmdOut(`🧹 적 몹 ${n}마리를 없앴어요`);break;}
+    case 'title':case '제목':{const t=a.join(' ').slice(0,40);if(!t){cmdOut('/title 글',1);break;}cmdTitle(t);if(MP.on)mpSend({t:'c',n:'📢',m:t});break;}
+    case 'calc':case '계산':{const e=a.join('');if(!/^[\d+\-*/().%\s^]+$/.test(e)){cmdOut('/calc 숫자와 + - * / ( ) % ^ 만 써요',1);break;}try{const r=Function('return ('+e.replace(/\^/g,'**')+')')();cmdOut(`🧮 ${mpEsc(a.join(' '))} = <b>${+r.toFixed(10)}</b>`);}catch(err){cmdOut('계산할 수 없는 식이에요',1);}break;}
+    case 'kick':case '내보내기':{if(!MP.on||!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===(a[0]||'').toLowerCase());if(!c2){cmdOut('그 사람을 찾지 못했어요 · /list',1);break;}c2.send({t:'kick'});cmdOut(`👢 <b>${mpEsc(c2.P.nick)}</b> 님을 내보냈어요`);break;}
     default:cmdOut(`모르는 명령어예요: /${mpEsc(c)} · <b>/help</b>`,1);}}
+function cmdBlock(q){q=(q||'').trim();if(!q)return null;if(/^(공기|air|0)$/i.test(q))return AIR;if(/^\d+$/.test(q))return isBlk(+q)?+q:null;const L=[];BL.forEach((b,i)=>{if(b&&i)L.push([b.name,i]);});return cmdFind(q,L);}
+function cmdTitle(t){let el=$('cmdTitle');if(!el){el=document.createElement('div');el.id='cmdTitle';el.style.cssText='position:fixed;left:0;right:0;top:28%;text-align:center;z-index:30;pointer-events:none;font:900 min(9vw,72px) sans-serif;color:#fff;text-shadow:4px 4px 0 #000,0 0 18px rgba(0,0,0,.6);transition:opacity .5s';document.body.appendChild(el);}
+  el.textContent=t;el.style.opacity=1;clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity=0,3000);}
 function mpChatClose(){if(!MP.chat)return;MP.chat=false;const el=$('mpChat');el.style.display='none';el.blur();if(running&&!paused)lockPointer();}
 $('mpChat').addEventListener('keydown',e=>{e.stopPropagation();if(e.isComposing)return;
   if(e.code==='Escape'){e.preventDefault();mpChatClose();}
