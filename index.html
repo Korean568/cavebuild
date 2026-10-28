@@ -308,7 +308,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.161 — 💻 /un명령어 · 명령어 10개 더</h4>
+    <h4>🆕 v26.162 — 💣 폭탄</h4>
+    • <b>폭탄</b>이 생겼어요! 작업대에서 <b>석탄 2 · 철 주괴 1 · 거미줄 1</b> → 폭탄 2개 (/give 폭탄).<br>
+    • 들고 우클릭하면 <b>던져요</b>: 포물선으로 날아가 튕기고 데굴데굴 굴러가다가, 심지가 타들어가서 <b>3초 뒤 펑!</b> 블록도 부서지고 근처 몹 · 사람도 다쳐요.
+    <h4>v26.161 — 💻 /un명령어 · 명령어 10개 더</h4>
     • 모든 명령어 앞에 <b>un</b>을 붙이면 되돌려요: /unfly · /ungod · /untree · /unhouse · /ungive · /unsummon · /unpet · /untp · /unhome · /ungamemode · /untime · /unspeed · /uneffect · /unsky …<br>
     • 새 명령어: /sky(하늘 색) · /coords(좌표판) · /stopwatch · /quake · /jumpscare · /sing · /fireworkshow · /zoom · /randomblock · /worldname
     <h4>v26.160 — 💻 명령어 26개 더</h4>
@@ -1951,7 +1954,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.161 — 💻 /un-commands · 10 more</h4>
+    <h4>🆕 v26.162 — 💣 Bombs</h4>
+    • Craft 2 Bombs from 2 Coal, 1 Iron Ingot and 1 Silk. Right-click to throw: it bounces and rolls, then explodes after 3 seconds.
+    <h4>v26.161 — 💻 /un-commands · 10 more</h4>
     • Put “un” before any command to undo it (/unfly, /ungod, /untree, /ungive, /unsummon, /untp, /ungamemode …). New: /sky, /coords, /stopwatch, /quake, /jumpscare, /sing, /fireworkshow, /zoom, /randomblock, /worldname.
     <h4>v26.160 — 💻 26 more commands</h4>
     • /tree, /snowman, /bridge, /tunnel, /platform, /dome, /tower, /freezewater, /melt, /ores, /wp, /share, /pet, /tame, /msg, /countdown, /timer, /8ball, /trail, /bounce, /meteor, /sort, /invsave, /invload and /grow.
@@ -2789,6 +2794,7 @@ IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
 const COLA=352,OPEN_COLA=353;IT[COLA]={name:'콜라',stack:16};IT[OPEN_COLA]={name:'딴 콜라',stack:1,food:3,drink:true}; // 🥤 콜라: 우클릭으로 따고 (따개를 들었다 눌러 닫음) 꾹 눌러 마심
+const BOMB=371;IT[BOMB]={name:'폭탄',stack:16}; // 💣 던지는 폭탄: 우클릭으로 던지면 데굴데굴 굴러가다 3초 뒤 펑
 const GIFT=360,RICE_CAKE=361,TTEOKGUK=362,CROWN=363,SCEPTER=364,GAVEL=365,SONGPYEON=366,YUT=367,HOE=368,RICE_SEED=369,RICE=370; // 🗓 이달의 모드 아이템
 IT[GIFT]={name:'선물 상자',stack:16};IT[RICE_CAKE]={name:'가래떡',stack:64,food:2};IT[TTEOKGUK]={name:'떡국',stack:16,food:8};IT[CROWN]={name:'왕관',stack:1};IT[SCEPTER]={name:'왕의 홀',stack:1};
 IT[GAVEL]={name:'의사봉',stack:1};IT[SONGPYEON]={name:'송편',stack:64,food:4};IT[YUT]={name:'윷',stack:1};IT[HOE]={name:'괭이',stack:1};IT[RICE_SEED]={name:'볍씨',stack:64};IT[RICE]={name:'쌀',stack:64};
@@ -2915,6 +2921,7 @@ RECIPES.push(
   {out:BOW,n:1,in:[[STICK,3],[SILK,3]],st:'bench'},{out:CROSSBOW,n:1,in:[[STICK,3],[SILK,2],[IRON_INGOT,1]],st:'bench'},
   {out:ARROW,n:4,in:[[STICK,1],[FEATHER,1],[SPIKE,1]],st:'bench'},
   {out:COLA,n:2,in:[[IRON_INGOT,1],[APPLE,1],[COAL,1]],st:'bench'},
+  {out:BOMB,n:2,in:[[COAL,2],[IRON_INGOT,1],[SILK,1]],st:'bench'}, // 💣 폭탄: 화약(석탄) · 쇠 껍데기 · 심지(거미줄)
   {out:TTEOKGUK,n:2,in:[[RICE_CAKE,1],[EGG,1],[RAW_MEAT,1]],st:'bench'},{out:HOE,n:1,in:[[STICK,2],[IRON_INGOT,1]],st:'bench'}, // 🧧 떡국 · 🌾 괭이 // 🥤 콜라: 캔(철) · 단맛(사과) · 캐러멜 색(석탄)
   {out:THORN,n:2,in:[[SPIKE,3],[PLANKS,1]],st:'bench'},
   {out:HELL_COMPASS,n:1,in:[[IRON_INGOT,3],[ESTONE,1]],st:'bench'},
@@ -3076,6 +3083,7 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-8,Y-8);if(d>6.2)return null;if(d>5.2)return '#8a8a94';const a=X-8,b=Y-8;if(Math.abs(a)<1.1&&b<0&&b>-4.6)return nc;if(Math.abs(a)<.9&&b>=0&&b<4)return '#3a3a44';if(d<1)return '#222';return '#e8e2d0';});}
     case HS_SCRAP:{const r=mulberry32(21);return pixelIcon((X,Y)=>{const d=Math.hypot(X-8,Y-8.5);if(d>5.2+(r()-.5)*1.4)return null;return r()<.18?'#e0603c':r()<.5?'#3a2a2e':'#54404a';});}
     case HELLSTEEL:return pixelIcon((X,Y,x,y)=>{if(y<6||y>11)return null;const inset=(11-y)*.7;if(X<1.5+inset||X>14.5-inset)return null;if((x+y)%7===0)return '#e0603c';return y<8?'#6a5458':y<11?'#4a3a3e':'#2a1e22';});
+    case BOMB:return pixelIcon((X,Y,x,y)=>{if(y<=2&&x>=10&&x<=12)return (x+y)%2?'#ffd040':'#ff6020';if(y>=2&&y<=4&&x>=8&&x<=10&&x-8===4-y)return '#c8a070';const d=Math.hypot(X-7,Y-9.5);if(d<5.4){if(d<1.6&&X<7&&Y<9)return '#7a7a88';return d>4.6?'#101014':'#24242c';}if(y>=3&&y<=4&&x>=6&&x<=8)return '#5a5a64';return null;});
     case GIFT:return pixelIcon((X,Y,x,y)=>{if(x<2||x>13||y<4||y>14)return y===3&&(x===6||x===9)||y===2&&(x===5||x===10)?'#ffd040':null;return x===7||x===8||y===8?'#ffd040':(x+y)%7===0?'#ff8a8a':'#d81e2a';});
     case RICE_CAKE:return pixelIcon((X,Y,x,y)=>{for(const r of [5,9,13])if(Math.abs(Y-r)<1.6&&x>=2&&x<=13)return x===2||x===13?'#d8d8cc':'#f6f6ee';return null;});
     case TTEOKGUK:return pixelIcon((X,Y,x,y)=>{const dx=(X-8)/6.5,dy=(Y-7)/4;if(y>=7&&y<=13&&Math.abs(X-8)<6.5-(y-7)*.5)return y>=12?'#8a5a30':'#b07a44';if(dx*dx+dy*dy<1)return (x+y*2)%5===0?'#ffffff':(x%4===1&&y===6)?'#3a7a30':'#f0e6c8';return null;});
@@ -5212,6 +5220,8 @@ function buildItemModel0(id){
       const bt=new THREE.Mesh(new THREE.CircleGeometry(.07,16),W);bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);}else{const m=plateModel({id,bites:0});m.scale.setScalar(.46);g.add(m);}break;} // 그릇 (수프는 건더기까지)
     case SPATULA:{const M=imat('spatM',0xc8ccd4,'metal',.3,.7),H=imat('spatH',0x5a3a22,'wood',.8);iBox(g,.11,.01,.12,M,0,.27,0);iBox(g,.015,.18,.015,M,0,.15,.02);iBox(g,.03,.09,.03,H,0,.04,.02);break;}
     case 331:case 332:case 333:case 334:case 335:case 336:{const m=plateModel({id,bites:0});m.scale.setScalar(.36);g.add(m);break;} // 접시째 (요리마다 다른 모양)
+    case BOMB:{const bk=imat('bombB',0x1c1c22,'metal',.35,.6),cap=imat('bombC',0x6a6a74,'metal',.35,.7),fz=imat('bombF',0xc8a070,'cloth',.9),sp=imat('bombS',0xffb030,null,.3,0,0xff6010,1.4); // 💣 폭탄 3D: 둥근 쇠공 · 뚜껑 · 심지 · 불꽃
+      iMesh(g,IGEO.sph,bk,0,.075,0,0,0,0,.075,.075,.075);iMesh(g,IGEO.cyl,cap,0,.15,0,0,0,0,.028,.025,.028);iMesh(g,IGEO.cyl,fz,.012,.178,0,0,0,-.5,.006,.04,.006);iMesh(g,IGEO.sph,sp,.024,.2,0,0,0,0,.012,.012,.012);iMesh(g,IGEO.sph,imat('bombH',0x9a9aa6,'metal',.2,.8),-.03,.1,-.05,0,0,0,.016,.012,.01);break;}
     case GIFT:{const r=imat('giftR',0xd81e2a,null,.5),y=imat('giftY',0xffc830,'metal',.3,.4); // 🎁 선물 상자: 빨간 상자 · 금색 리본 · 나비 매듭
       iBox(g,.15,.13,.15,r,0,.065,0);iBox(g,.155,.135,.03,y,0,.065,0);iBox(g,.03,.135,.155,y,0,.065,0);
       iMesh(g,IGEO.torus,y,-.025,.14,0,0,Math.PI/2,.5,.025,.025,.025);iMesh(g,IGEO.torus,y,.025,.14,0,0,Math.PI/2,-.5,.025,.025,.025);break;}
@@ -7547,6 +7557,7 @@ function useItem(){
   if(s&&s.id===COOKBOOK){openCookBook();return;} // 요리 가이드북
   if(s&&s.id===HW_KEY){hwUseKey();return;} // 🎃 할로윈 열쇠
   if(EVENT&&!HALLOWEEN&&evUse(s))return; // 🗓 이달의 모드: 선물 · 떡국 · 왕의 홀 · 의사봉 · 윷 · 괭이 · 볍씨 · 선생님
+  if(s&&s.id===BOMB){if(performance.now()<(player.bombCD||0))return;player.bombCD=performance.now()+450;throwBomb();if(!isCreative()){s.count--;if(!s.count)inv[sel]=null;invChanged();}return;} // 💣 폭탄 던지기
   if(s&&s.id===COLA){if(!player.colaOpen){player.colaOpen={t:0,sel,fz:false};swing=0;}return;} // 🥤 콜라 따기
   if(s&&s.id===CAPE){toast('👕 망토는 타이틀 화면의 <b>탈의실</b>에서 입을 수 있어요');return;}
   if(player.veh&&player.veh.btn){vehBoost(player.veh);return;} // 탄 채로 우클릭 = 버튼
@@ -8945,7 +8956,14 @@ function cmdEdit(E,isUndo){const batch=new Set(),old=[]; // 💻 건축 명령�
   for(const k of batch){const [cx,cz]=k.split(',').map(Number);remeshAt(cx,cz);}if(!isUndo&&old.length){CMDUNDO.push({c:CMD_CUR,L:old});if(CMDUNDO.length>8)CMDUNDO.shift();}}
 function cmdMark(){player.backPos={x:player.pos.x,y:player.pos.y,z:player.pos.z,dim:world.dim};}
 let cmdT=0;
-function cmdTick(dt){const p=player,E=p.eff; // 💻 효과 시간 · 재생 · 야간 투시 · 비
+const BOMBS=[];
+function throwBomb(){const d=viewDir(),o=camera.position,g=new THREE.Group(),bk=new THREE.Mesh(new THREE.SphereGeometry(.17,14,10),new THREE.MeshLambertMaterial({color:0x1c1c22})),sp=new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),new THREE.MeshBasicMaterial({color:0xffb030})); // 💣 던진 폭탄: 포물선 · 튕김 · 굴러감 · 3초 뒤 폭발
+  sp.position.y=.22;g.add(bk,sp);g.position.set(o.x+d.x*.6,o.y-.15+d.y*.6,o.z+d.z*.6);scene.add(g);BOMBS.push({g,sp,v:new THREE.Vector3(d.x*13,d.y*13+3.5,d.z*13),t:3});swing=1;tone(300,180,.12,.06,'triangle');noise(.3,3000,.04);}
+function bombTick(dt){for(let i=BOMBS.length-1;i>=0;i--){const b=BOMBS[i],P=b.g.position;b.t-=dt;b.v.y-=22*dt;
+    for(const ax of ['x','y','z']){const n=P[ax]+b.v[ax]*dt,q=P.clone();q[ax]=n;const bl=getBlock(Math.floor(q.x),Math.floor(q.y-(ax==='y'&&b.v.y<0?.17:0)),Math.floor(q.z));if(bl>0&&SOLID[bl]){b.v[ax]*=-.35;if(ax==='y'){b.v.x*=.75;b.v.z*=.75;}if(Math.abs(b.v[ax])>1.5)tone(220,160,.05,.03,'square');}else P[ax]=n;}
+    b.g.rotation.x+=b.v.z*dt*4;b.g.rotation.z-=b.v.x*dt*4;b.sp.material.color.setHex(Math.random()<.5?0xffd040:0xff5010);if(Math.random()<dt*20)spawnParticles(P.x,P.y+.25,P.z,new THREE.Color(0xffb030),1,.05,1);
+    if(b.t<=0){scene.remove(b.g);b.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});BOMBS.splice(i,1);explode(P.x,P.y,P.z,3.2,'폭탄에 휘말렸습니다');}}}
+function cmdTick(dt){const p=player,E=p.eff;bombTick(dt); // 💻 효과 시간 · 재생 · 야간 투시 · 비
   if(E){for(const k in E){E[k]-=dt;if(E[k]<=0){delete E[k];toast('✨ 효과가 끝났어요');}}
     if(E.regen>0){cmdT+=dt;if(cmdT>1){cmdT=0;if(!p.dead)p.hp=Math.min(maxHp(),p.hp+1);}}
     if(E.night>0)dayU.value=Math.max(dayU.value,.95);}
