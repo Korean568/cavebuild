@@ -308,7 +308,13 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.159 — 🟩 백룸 탈출구 · 🚁 구조 · 🔗 주소 모드 · 🎃🎄 디테일</h4>
+    <h4>🆕 v26.160 — 💻 명령어 26개 더</h4>
+    • 건축: /tree · /snowman · /bridge · /tunnel · /platform · /dome · /tower · /freezewater · /melt<br>
+    • 탐색: /ores(광석 찾기) · /wp set · go · list · del(웨이포인트) · /share(좌표 알리기)<br>
+    • 펫: /pet 몹 · /tame(보는 몹 길들이기) · 멀티: /msg(귓속말)<br>
+    • 재미: /countdown · /timer · /8ball · /trail(무지개 꼬리) · /bounce · /meteor(운석 비)<br>
+    • 인벤토리: /sort · /invsave · /invload · 농사: /grow
+    <h4>v26.159 — 🟩 백룸 탈출구 · 🚁 구조 · 🔗 주소 모드 · 🎃🎄 디테일</h4>
     • 🎃 할로윈 모드 순서: <b>백룸</b> → 프론티어에서 <b>장비 맞추기</b> → <b>할로윈 차원</b>에서 잭오랜턴과 결투 (위쪽에 지금 할 일이 나와요).<br>
     • 🟩 백룸 어딘가에 <b>EXIT 탈출구</b>가 있어 더 빨리 나갈 수 있어요. 하지만 <b>가짜 탈출구</b>도 있어요 (잘 보면 티가 나요). 가짜에 들어가면 문이 사라지고 십자가와 저주인형이 있는 방에 갇혀요.<br>
     • 🚁 7일을 버티면 천장이 뚫리고 <b>구조되는 장면</b>이 나와요. 백룸에서 쓰러지면 <b>백룸에서 다시 깨어나요</b> (버틴 날은 그대로).<br>
@@ -1942,7 +1948,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.159 — 🟩 Backrooms exits · 🚁 rescue · 🔗 URL mods · details</h4>
+    <h4>🆕 v26.160 — 💻 26 more commands</h4>
+    • /tree, /snowman, /bridge, /tunnel, /platform, /dome, /tower, /freezewater, /melt, /ores, /wp, /share, /pet, /tame, /msg, /countdown, /timer, /8ball, /trail, /bounce, /meteor, /sort, /invsave, /invload and /grow.
+    <h4>v26.159 — 🟩 Backrooms exits · 🚁 rescue · 🔗 URL mods · details</h4>
     • Halloween flow: Backrooms → gear up on the Frontier → duel in the Halloween dimension. Find a real EXIT to escape early (fake exits trap you with a cross and a cursed doll), get rescued after 7 days, and respawn in the Backrooms if you die. Mods can be added by URL. Snowy grass tufts in Christmas mode and pumpkins on the grass in Halloween mode.
     <h4>v26.158 — 🎮 Title look fixed</h4>
     • Old CAVEBUILD game files that were added as HTML mods restyled the whole game; they are now removed automatically.
@@ -8711,7 +8719,11 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
   ['/tphere 닉네임 · /tpall','친구를 내 자리로 (방장)'],['/near','친구들과의 거리'],['/tpr','멀리 아무 데나 순간이동'],['/time add 숫자','시간 앞으로 (1000 = 1시간)'],['/timefreeze','시간 멈추기 · 다시 흐르기'],
   ['/freeze','몹 멈추기 · 다시 움직이기'],['/gravity 배수','내 중력 (0.1~3)'],['/killmobs','주변 몹 모두 없애기 (보스 빼고)'],['/lightning','보는 곳에 번개'],['/itemrain 아이템 [개수]','하늘에서 아이템 비'],
   ['/walls 블록','영역 둘레에 벽'],['/cyl 블록 반지름 높이','원기둥'],['/pyramid 블록 크기','피라미드'],['/house','앞에 작은 집 짓기'],['/drain [반지름]','주변 물 · 용암 없애기'],
-  ['/dance','빙글빙글 춤'],['/confetti','꽃가루'],['/afk','자리 비움 알리기']];
+  ['/dance','빙글빙글 춤'],['/confetti','꽃가루'],['/afk','자리 비움 알리기'],
+  ['/tree','보는 곳에 나무'],['/snowman','보는 곳에 눈사람'],['/bridge 블록 [길이]','앞으로 다리 (64칸까지)'],['/tunnel [길이]','앞으로 3×3 터널'],['/platform 블록 [반지름]','발밑에 둥근 발판'],['/dome 블록 반지름','반구 돔'],['/tower 블록 높이','앞에 속이 빈 탑'],
+  ['/ores [반지름]','주변 광석 찾기'],['/wp set|go|list|del 이름','웨이포인트 (여러 곳 저장)'],['/share','친구에게 내 좌표 알려 주기'],['/pet 몹이름','따라다니는 펫 소환'],['/tame','보고 있는 몹 길들이기'],['/msg 닉네임 말','귓속말 (방장)'],
+  ['/countdown [초]','큰 글씨 카운트다운'],['/timer 초 [말]','알림 타이머'],['/8ball 질문','운세 공'],['/trail','발자국 꼬리 효과'],['/bounce','높이 튀어 오르기'],['/meteor [개수]','운석 비'],
+  ['/sort','인벤토리 정리'],['/invsave 이름 · /invload 이름','인벤토리 저장 · 불러오기'],['/grow','주변 벼 다 자라게'],['/freezewater [반지름]','물을 얼음으로 (/melt 반대로)']];
 function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
 function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
 function cmdItems(){const L=[];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
@@ -8824,6 +8836,48 @@ function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||''
       cmdEdit(E);cmdOut(`🚰 물 · 용암 ${E.length}칸을 없앴어요`);break;}
     case 'dance':case '춤':player.danceT=2.5;cmdOut('💃 빙글빙글~');if(MP.on)mpSend({t:'c',n:'💃',m:MP.me.nick+'님이 춤춰요'});break;
     case 'confetti':case '꽃가루':{for(const col of [0xff4060,0xffd040,0x40d0ff,0x70ff70,0xc070ff])spawnParticles(P.x,P.y+2,P.z,new THREE.Color(col),14,1.6,6);tone(900,1500,.15,.05,'triangle');cmdOut('🎉 축하해요!');break;}
+    case 'tree':case '나무':{const h=raycast(camera.position,viewDir(),30);if(!h){cmdOut('땅을 보고 써요',1);break;}const x=h.x,y=h.y+1,z=h.z,t=4+Math.floor(Math.random()*3),E=[];for(let i=0;i<t;i++)E.push([x,y+i,z,LOG]);
+      for(let dx=-2;dx<=2;dx++)for(let dy=-1;dy<=2;dy++)for(let dz=-2;dz<=2;dz++){if(dx*dx+dz*dz+dy*dy*1.5>6.5||(!dx&&!dz&&dy<1))continue;E.push([x+dx,y+t-1+dy,z+dz,LEAVES]);}cmdEdit(E);cmdOut('🌳 나무를 심었어요');break;}
+    case 'snowman':case '눈사람':{const h=raycast(camera.position,viewDir(),30);if(!h){cmdOut('땅을 보고 써요',1);break;}const x=h.x,y=h.y+1,z=h.z;cmdEdit([[x,y,z,SNOW],[x,y+1,z,SNOW],[x,y+2,z,JACK_O],[x-1,y+1,z,LOG],[x+1,y+1,z,LOG]]);cmdOut('⛄ 눈사람을 만들었어요');break;}
+    case 'bridge':case '다리':{const L=a.length>1&&isFinite(+a[a.length-1])?Math.max(1,Math.min(64,+a.pop())):16,id=cmdBlock(a.join(' '))??PLANKS,d=viewDir(),ax=Math.abs(d.x)>Math.abs(d.z),sx=ax?Math.sign(d.x):0,sz=ax?0:Math.sign(d.z),y=Math.floor(P.y)-1,E=[];
+      for(let i=1;i<=L;i++)for(let w=-1;w<=1;w++)E.push([Math.floor(P.x)+sx*i+(ax?0:w),y,Math.floor(P.z)+sz*i+(ax?w:0),id]);cmdEdit(E);cmdOut(`🌉 다리 ${L}칸`);break;}
+    case 'tunnel':case '터널':{const L=Math.max(1,Math.min(64,Math.floor(+a[0]||16))),d=viewDir(),ax=Math.abs(d.x)>Math.abs(d.z),sx=ax?Math.sign(d.x):0,sz=ax?0:Math.sign(d.z),y=Math.floor(P.y),E=[];
+      for(let i=1;i<=L;i++)for(let w=-1;w<=1;w++)for(let hh=0;hh<3;hh++){const X=Math.floor(P.x)+sx*i+(ax?0:w),Z=Math.floor(P.z)+sz*i+(ax?w:0),b=getBlock(X,y+hh,Z);if(b>0&&BL[b]&&BL[b].hard>=0)E.push([X,y+hh,Z,AIR]);}cmdEdit(E);cmdOut(`⛏ 터널 ${L}칸 (${E.length}블록)`);break;}
+    case 'platform':case '발판':{const r=a.length>1&&isFinite(+a[a.length-1])?Math.max(1,Math.min(16,Math.floor(+a.pop()))):4,id=cmdBlock(a.join(' '))??GLASS,y=Math.floor(P.y)-1,E=[];
+      for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++)if(Math.hypot(x,z)<=r+.5)E.push([Math.floor(P.x)+x,y,Math.floor(P.z)+z,id]);cmdEdit(E);cmdOut(`⭕ 발판 ${E.length}칸`);break;}
+    case 'dome':case '돔':{const r=Math.floor(+a.pop()),id=cmdBlock(a.join(' '));if(!(r>=2&&r<=16)||id==null){cmdOut('/dome 유리 6 (반지름 2~16)',1);break;}const o=[Math.floor(P.x),Math.floor(P.y),Math.floor(P.z)],E=[];
+      for(let x=-r;x<=r;x++)for(let y=0;y<=r;y++)for(let z=-r;z<=r;z++){const dd=Math.hypot(x,y,z);if(dd<=r+.5&&dd>r-.5)E.push([o[0]+x,o[1]+y,o[2]+z,id]);}cmdEdit(E);cmdOut(`⛺ 돔 ${E.length}칸`);break;}
+    case 'tower':case '탑':{const hh=Math.floor(+a.pop()),id=cmdBlock(a.join(' '));if(!(hh>=2&&hh<=60)||id==null){cmdOut('/tower 돌벽돌 20 (높이 2~60)',1);break;}const d=viewDir(),l=Math.hypot(d.x,d.z)||1,cx=Math.floor(P.x+d.x/l*5),cz=Math.floor(P.z+d.z/l*5),y0=Math.floor(P.y),E=[];
+      for(let x=-2;x<=2;x++)for(let z=-2;z<=2;z++)for(let y=0;y<hh;y++){const edge=Math.abs(x)===2||Math.abs(z)===2;if(edge&&!(y<2&&z===2&&x===0))E.push([cx+x,y0+y,cz+z,(y%4===2&&(x===0||z===0))?GLASS:id]);else if(!edge)E.push([cx+x,y0+y,cz+z,AIR]);}
+      for(let x=-2;x<=2;x++)for(let z=-2;z<=2;z++)if((Math.abs(x)===2||Math.abs(z)===2)&&(x+z)%2===0)E.push([cx+x,y0+hh,cz+z,id]);cmdEdit(E);cmdOut(`🗼 탑 ${hh}칸`);break;}
+    case 'ores':case '광석':{const r=Math.max(4,Math.min(24,Math.floor(+a[0]||16))),o=[Math.floor(P.x),Math.floor(P.y),Math.floor(P.z)],C={};let near=null,nd=1e9;
+      for(let x=-r;x<=r;x++)for(let y=-r;y<=r;y++)for(let z=-r;z<=r;z++){const b=getBlock(o[0]+x,o[1]+y,o[2]+z);if(b>0&&BL[b]&&/광석$/.test(BL[b].name)){C[BL[b].name]=(C[BL[b].name]||0)+1;const dd=Math.hypot(x,y,z);if(dd<nd){nd=dd;near=[o[0]+x,o[1]+y,o[2]+z,BL[b].name];}}}
+      const L=Object.entries(C).sort((p1,p2)=>p2[1]-p1[1]).slice(0,7);cmdOut(L.length?`💎 ${r}칸 안: ${L.map(([n,k])=>n.replace(/ 광석$/,'')+' '+k).join(' · ')}<br>가장 가까운 ${near[3]}: X ${near[0]} Y ${near[1]} Z ${near[2]} (${Math.round(nd)}칸)`:'근처에 광석이 없어요');break;}
+    case 'wp':case 'waypoint':case '웨이포인트':{const W=world.flags.wps||(world.flags.wps={}),sub=(a[0]||'list').toLowerCase(),nm=a.slice(1).join(' ').slice(0,20);
+      if(sub==='set'||sub==='저장'){if(!nm){cmdOut('/wp set 이름',1);break;}W[nm]={x:P.x,y:P.y,z:P.z,dim:world.dim};cmdOut(`📌 <b>${mpEsc(nm)}</b> 저장`);}
+      else if(sub==='go'||sub==='가기'){const w=W[nm];if(!w){cmdOut('그 웨이포인트가 없어요 · /wp list',1);break;}cmdMark();if(w.dim!==world.dim){travel(w.dim,{x:w.x,y:w.y,z:w.z});}else{player.pos.set(w.x,w.y,w.z);player.vel.set(0,0,0);player.peakY=w.y;loadNear(4);}cmdOut(`📌 <b>${mpEsc(nm)}</b>(으)로`);}
+      else if(sub==='del'||sub==='지우기'){if(!W[nm]){cmdOut('그 웨이포인트가 없어요',1);break;}delete W[nm];cmdOut('📌 지웠어요');}
+      else{const L=Object.entries(W);cmdOut(L.length?'📌 '+L.map(([n,w])=>`${mpEsc(n)} (${Math.round(w.x)}, ${Math.round(w.y)}, ${Math.round(w.z)} · ${DIM[w.dim].name})`).join(' · '):'웨이포인트가 없어요 · /wp set 이름');}break;}
+    case 'share':case '공유':{const t=`📍 ${Math.round(P.x)}, ${Math.round(P.y)}, ${Math.round(P.z)} (${DIM[world.dim].name})`;if(MP.on)mpSend({t:'c',n:MP.me.nick,m:t});toast(t);break;}
+    case 'pet':case '펫':{const q=a.join(' ').toLowerCase(),k=MOBDEF[q]?q:cmdFind(q,Object.entries(MOBDEF).map(([k2,d2])=>[d2.name,k2]));if(!k||!q||MOBDEF[k].boss){cmdOut('/pet 수풀꼬꼬 (보스는 안 돼요)',1);break;}
+      const d=viewDir(),m=new Mob(k,P.x+d.x*2,P.y+.2,P.z+d.z*2);if(!m.dead){m.servant=true;m.angry=0;m.victim=null;}cmdOut(`🐾 <b>${MOBDEF[k].name}</b> 펫이 따라와요`);break;}
+    case 'tame':case '길들이기':{const m=mobTarget;if(!m||m.dead){cmdOut('몹을 보고 써요',1);break;}if(m.def.boss){cmdOut('보스는 길들일 수 없어요',1);break;}m.servant=true;m.angry=0;m.victim=null;spawnParticles(m.pos.x,m.pos.y+m.h,m.pos.z,new THREE.Color(0xff80c0),14,.4,2);cmdOut(`💕 <b>${m.def.name}</b>을(를) 길들였어요`);break;}
+    case 'msg':case 'w':case '귓속말':{if(!MP.on||!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요 (친구는 채팅으로)',1);break;}const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===(a[0]||'').toLowerCase()),m=a.slice(1).join(' ').slice(0,70);
+      if(!c2||!m){cmdOut('/msg 닉네임 할 말',1);break;}c2.send({t:'c',n:'💌 '+MP.me.nick+' (귓속말)',m});cmdOut(`💌 ${mpEsc(c2.P.nick)}님에게: ${mpEsc(m)}`);break;}
+    case 'countdown':case '카운트다운':{const n=Math.max(1,Math.min(10,Math.floor(+a[0]||3)));for(let i=0;i<=n;i++)setTimeout(()=>{const t=i<n?String(n-i):'시작!';cmdTitle(t);tone(i<n?660:990,i<n?660:1320,.15,.08,'square');if(MP.on&&MP.host)mpSend({t:'c',n:'⏱',m:t});},i*1000);break;}
+    case 'timer':case '타이머':{const sec=Math.floor(+a[0]),msg=a.slice(1).join(' ').slice(0,40)||'타이머 끝!';if(!(sec>=1&&sec<=3600)){cmdOut('/timer 60 고기 뒤집기',1);break;}setTimeout(()=>{toast('⏰ <b>'+mpEsc(msg)+'</b>');for(let i=0;i<3;i++)tone(1200,1200,.12,.08,'square',i*.25);},sec*1000);cmdOut(`⏰ ${sec}초 뒤에 알려 줄게요`);break;}
+    case '8ball':case '운세':{const A=['확실해요!','아마도요','물론이죠','다시 물어보세요','글쎄요...','아닌 것 같아요','절대 아니에요','별이 그렇다고 하네요','지금은 말할 수 없어요','좋은 예감이 들어요'];cmdOut(`🎱 ${mpEsc(a.join(' ')||'...')} → <b>${A[Math.random()*A.length|0]}</b>`);break;}
+    case 'trail':case '꼬리':player.trail=!player.trail;cmdOut(player.trail?'🌈 꼬리 효과 <b>켜짐</b>':'꼬리 효과 꺼짐');break;
+    case 'bounce':case '튀기':player.vel.y=18;player.peakY=player.pos.y+30;cmdOut('🦘 슝!');break;
+    case 'meteor':case '운석':{const n=Math.max(1,Math.min(10,Math.floor(+a[0]||3)));for(let i=0;i<n;i++)setTimeout(()=>{const x=P.x+(Math.random()-.5)*40,z=P.z+(Math.random()-.5)*40,sf=surfaceAt(Math.floor(x),Math.floor(z));if(!sf)return;const T=new THREE.Vector3(x,sf.y,z);
+        flashBeam(new THREE.Vector3(x+12,sf.y+60,z-8),T,0xff8030,.8,.5);setTimeout(()=>explode(x,sf.y,z,2.5,'운석에 맞았습니다'),400);},i*700+Math.random()*300);cmdOut(`☄ 운석 ${n}개가 떨어져요!`);break;}
+    case 'sort':case '정리':{const L=inv.slice(9).filter(Boolean).sort((p1,p2)=>p1.id-p2.id);for(let i=9;i<36;i++)inv[i]=L[i-9]||null;invChanged();cmdOut('🗂 인벤토리를 정리했어요 (핫바는 그대로)');break;}
+    case 'invsave':{const nm=(a.join(' ')||'기본').slice(0,20),S=world.flags.invs||(world.flags.invs={});S[nm]=JSON.parse(JSON.stringify(inv));cmdOut(`💾 인벤토리 <b>${mpEsc(nm)}</b> 저장`);break;}
+    case 'invload':{const nm=(a.join(' ')||'기본').slice(0,20),S=world.flags.invs||{};if(!S[nm]){cmdOut('그 이름으로 저장한 인벤토리가 없어요',1);break;}const L=JSON.parse(JSON.stringify(S[nm]));for(let i=0;i<36;i++)inv[i]=L[i]||null;invChanged();cmdOut(`📂 인벤토리 <b>${mpEsc(nm)}</b> 불러옴`);break;}
+    case 'grow':case '자라라':{const E=world.flags.ev;if(!E||!E.crops){cmdOut('자랄 벼가 없어요 (농업인의 날 모드)',1);break;}let n=0;for(const k in E.crops){E.crops[k]=(E.clk||0)-999;n++;}E.ct=0;cmdOut(`🌾 벼 ${n}포기가 쑥쑥 자라요`);break;}
+    case 'freezewater':case 'melt':case '얼리기':case '녹이기':{const melt=c==='melt'||c==='녹이기',r=Math.max(1,Math.min(12,Math.floor(+a[0]||6))),o=[Math.floor(P.x),Math.floor(P.y),Math.floor(P.z)],E=[];
+      for(let x=-r;x<=r;x++)for(let y=-r;y<=r;y++)for(let z=-r;z<=r;z++){const b=getBlock(o[0]+x,o[1]+y,o[2]+z);if(melt?b===ICE_BLOCK:(b>0&&LIQ_KIND[b]===1&&!LIQ_KIND[getBlock(o[0]+x,o[1]+y+1,o[2]+z)]))E.push([o[0]+x,o[1]+y,o[2]+z,melt?WATER:ICE_BLOCK]);}
+      cmdEdit(E);cmdOut(melt?`💧 얼음 ${E.length}칸을 녹였어요`:`🧊 물 ${E.length}칸을 얼렸어요`);break;}
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
     default:cmdOut(`모르는 명령어예요: /${mpEsc(c)} · <b>/help</b>`,1);}}
 let MOB_FRZ=false;
@@ -8839,7 +8893,8 @@ function cmdTick(dt){const p=player,E=p.eff; // 💻 효과 시간 · 재생 · 
   if(E){for(const k in E){E[k]-=dt;if(E[k]<=0){delete E[k];toast('✨ 효과가 끝났어요');}}
     if(E.regen>0){cmdT+=dt;if(cmdT>1){cmdT=0;if(!p.dead)p.hp=Math.min(maxHp(),p.hp+1);}}
     if(E.night>0)dayU.value=Math.max(dayU.value,.95);}
-  if(p.danceT>0){p.danceT-=dt;p.yaw+=dt*9;}} // 💃 /dance
+  if(p.danceT>0){p.danceT-=dt;p.yaw+=dt*9;}
+  if(p.trail&&Math.random()<dt*25)spawnParticles(p.pos.x,p.pos.y+.1,p.pos.z,new THREE.Color().setHSL(performance.now()/2000%1,.9,.6),1,.15,1);} // 💃 /dance · 🌈 /trail
 function cmdBlock(q){q=(q||'').trim();if(!q)return null;if(/^(공기|air|0)$/i.test(q))return AIR;if(/^\d+$/.test(q))return isBlk(+q)?+q:null;const L=[];BL.forEach((b,i)=>{if(b&&i)L.push([b.name,i]);});return cmdFind(q,L);}
 function cmdTitle(t){let el=$('cmdTitle');if(!el){el=document.createElement('div');el.id='cmdTitle';el.style.cssText='position:fixed;left:0;right:0;top:28%;text-align:center;z-index:30;pointer-events:none;font:900 min(9vw,72px) sans-serif;color:#fff;text-shadow:4px 4px 0 #000,0 0 18px rgba(0,0,0,.6);transition:opacity .5s';document.body.appendChild(el);}
   el.textContent=t;el.style.opacity=1;clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity=0,3000);}
