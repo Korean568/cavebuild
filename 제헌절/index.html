@@ -310,7 +310,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.162 — 💣 폭탄</h4>
+    <h4>🆕 v26.163 — 💻 명령어 20개 더</h4>
+    • 💣 /bomb · /bombrain(폭탄 비) · /airstrike(공습) · 🐾 /clonemob · /mobsize · /healmob · ⏩ /timespeed · /hp · 🔇 /mute · 📸 /screenshot<br>
+    • 🚜 /flatten(평평하게) · /maze(미로) · /forest(숲) · /plant(꽃) · /snow · /circle · 🎮 /rps(가위바위보) · /joke(아재개그). 모두 /un명령어 로 되돌릴 수 있는 건 되돌려요.
+    <h4>v26.162 — 💣 폭탄</h4>
     • <b>폭탄</b>이 생겼어요! 작업대에서 <b>석탄 2 · 철 주괴 1 · 거미줄 1</b> → 폭탄 2개 (/give 폭탄).<br>
     • 들고 우클릭하면 <b>던져요</b>: 포물선으로 날아가 튕기고 데굴데굴 굴러가다가, 심지가 타들어가서 <b>3초 뒤 펑!</b> 블록도 부서지고 근처 몹 · 사람도 다쳐요.
     <h4>v26.161 — 💻 /un명령어 · 명령어 10개 더</h4>
@@ -1956,7 +1959,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.162 — 💣 Bombs</h4>
+    <h4>🆕 v26.163 — 💻 20 more commands</h4>
+    • /bomb, /bombrain, /airstrike, /clonemob, /mobsize, /healmob, /timespeed, /hp, /mute, /screenshot, /flatten, /maze, /forest, /plant, /snow, /circle, /rps and /joke.
+    <h4>v26.162 — 💣 Bombs</h4>
     • Craft 2 Bombs from 2 Coal, 1 Iron Ingot and 1 Silk. Right-click to throw: it bounces and rolls, then explodes after 3 seconds.
     <h4>v26.161 — 💻 /un-commands · 10 more</h4>
     • Put “un” before any command to undo it (/unfly, /ungod, /untree, /ungive, /unsummon, /untp, /ungamemode …). New: /sky, /coords, /stopwatch, /quake, /jumpscare, /sing, /fireworkshow, /zoom, /randomblock, /worldname.
@@ -3331,8 +3336,8 @@ let AC=null,NB=null;
 function audio(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();NB=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;}catch(e){}}
   if(AC&&AC.state==='suspended'){try{AC.resume();}catch(e){}} // 멈춰 있던 소리를 다시 켬
   return AC;}
-function noise(dur,freq,vol,delay=0){const a=audio();if(!a)return;const t=a.currentTime+delay;const s=a.createBufferSource();s.buffer=NB;const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=freq;const g=a.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f).connect(g).connect(a.destination);s.start(t,Math.random()*.5);s.stop(t+dur+.02);}
-function tone(f0,f1,dur,vol,type='sine',delay=0){const a=audio();if(!a)return;const t=a.currentTime+delay;const o=a.createOscillator();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);const g=a.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(a.destination);o.start(t);o.stop(t+dur+.02);}
+function noise(dur,freq,vol,delay=0){if(window.CMD_MUTE)return;const a=audio();if(!a)return;const t=a.currentTime+delay;const s=a.createBufferSource();s.buffer=NB;const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=freq;const g=a.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f).connect(g).connect(a.destination);s.start(t,Math.random()*.5);s.stop(t+dur+.02);}
+function tone(f0,f1,dur,vol,type='sine',delay=0){if(window.CMD_MUTE)return;const a=audio();if(!a)return;const t=a.currentTime+delay;const o=a.createOscillator();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);const g=a.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(a.destination);o.start(t);o.stop(t+dur+.02);}
 function bnoise(dur,freq,q,vol,delay=0,att=.005,type='bandpass',f1=0){ // 걸러낸 잡음 (부드럽게 시작, 주파수가 미끄러질 수 있음)
   const a=audio();if(!a)return;const t=a.currentTime+delay,s=a.createBufferSource();s.buffer=NB;const f=a.createBiquadFilter();f.type=type;f.frequency.setValueAtTime(freq,t);if(f1)f.frequency.exponentialRampToValueAtTime(f1,t+dur);f.Q.value=q;
   const g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+att);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f).connect(g).connect(a.destination);s.start(t,Math.random()*.5);s.stop(t+dur+.02);}
@@ -7721,7 +7726,7 @@ function attack(){
 
 // ---------- 하늘/시간 ----------
 function updateSky(dt){
-  if(!paused&&!world.flags.tfz){const nt=world.time+dt/DAY_LEN;if(nt>=1)world.stats.days++;world.time=nt%1;}
+  if(!paused&&!world.flags.tfz){const nt=world.time+dt/DAY_LEN*(world.flags.tsp||1);if(nt>=1)world.stats.days++;world.time=nt%1;}
   const overW=world.dim==='over',E=DIM[world.dim];sunMesh.visible=moonMesh.visible=clouds.visible=overW;
   skyDome.position.copy(camera.position);
   if(!overW){light=E.light;dayU.value=E.day;skyColor.setRGB(...E.bg);scene.fog.color.copy(skyColor);skyDome.material.uniforms.top.value.copy(skyColor).multiplyScalar(.7);skyDome.material.uniforms.hor.value.copy(skyColor);amb.intensity=.55;sunL.intensity=.25;
@@ -8743,6 +8748,10 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
   ['/countdown [초]','큰 글씨 카운트다운'],['/timer 초 [말]','알림 타이머'],['/8ball 질문','운세 공'],['/trail','발자국 꼬리 효과'],['/bounce','높이 튀어 오르기'],['/meteor [개수]','운석 비'],
   ['/sort','인벤토리 정리'],['/invsave 이름 · /invload 이름','인벤토리 저장 · 불러오기'],['/grow','주변 벼 다 자라게'],['/freezewater [반지름]','물을 얼음으로 (/melt 반대로)'],
   ['/sky 색','하늘 색 (빨강 · 분홍 · 보라 · 초록 · 노랑 · 주황 · 검정 · 하양 · 기본)'],['/coords','왼쪽 위 좌표판 (방향 · 집까지 거리)'],['/stopwatch','스톱워치 시작 · 멈춤'],['/quake','지진'],['/jumpscare','깜짝!'],['/sing','노래'],['/fireworkshow','불꽃놀이'],['/zoom','망원경 확대'],['/randomblock','보는 곳에 아무 블록'],['/worldname 이름','세계 이름 바꾸기'],
+  ['/bomb','폭탄 던지기'],['/bombrain [개수]','하늘에서 폭탄 비'],['/airstrike','앞으로 줄지어 폭격'],['/clonemob','보는 몹 복제'],['/mobsize 배수','보는 몹 크기 (0.3~4)'],['/healmob','보는 몹 체력 가득'],
+  ['/timespeed 배수','하루가 흐르는 빠르기 (0.1~20)'],['/hp 숫자','내 체력 정하기'],['/mute','소리 끄기 (/unmute 켜기)'],['/screenshot','지금 화면 저장'],
+  ['/flatten [반지름]','주변 땅 평평하게'],['/maze 블록 [크기]','앞에 미로'],['/forest [그루]','주변에 숲'],['/plant [반지름]','주변에 꽃'],['/snow [반지름]','주변 땅에 눈'],['/circle 블록 반지름','땅에 원 그리기'],
+  ['/rps 가위|바위|보','가위바위보'],['/joke','아재개그'],
   ['/un명령어','그 명령어 되돌리기 (예: /unfly · /ungod · /untree · /ungive · /unsummon · /untp · /ungamemode · /unspeed)']];
 function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
 function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
@@ -8774,7 +8783,10 @@ function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
     case 'difficulty':case '난이도':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}setDiff(S.diff);cmdOut('난이도를 되돌렸어요');break;
     case 'fov':case '시야':case 'zoom':case '확대':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}camera.fov=S.fov;camera.updateProjectionMatrix();player.zoomFov=0;cmdOut('시야각을 되돌렸어요');break;
     case 'give':case '주기':case 'clear':case '비우기':case 'sort':case '정리':case 'invload':case 'rename':case '이름':case 'more':case '가득':case 'repair':case '수리':restoreInv();break;
-    case 'summon':case '소환':case 'pet':case '펫':{const L=CMD_MOBS[x]||[];let n=0;for(const m of L)if(!m.dead){m.remove();n++;}delete CMD_MOBS[x];cmdOut(n?`↩ /${mpEsc(x)} 로 부른 ${n}마리를 없앴어요`:'되돌릴 몹이 없어요',!n);break;}
+    case 'timespeed':case '시간속도':world.flags.tsp=0;cmdOut('하루 빠르기 원래대로');break;
+    case 'mute':case '음소거':window.CMD_MUTE=false;cmdOut('🔊 소리 켜짐');break;
+    case 'mobsize':case '몹크기':{const m=mobTarget;if(!m||m.dead){cmdOut('몹을 보고 써요',1);break;}m.g.scale.setScalar(1);cmdOut('몹 크기 원래대로');break;}
+    case 'summon':case '소환':case 'pet':case '펫':case 'clonemob':case '몹복제':{const L=CMD_MOBS[x]||[];let n=0;for(const m of L)if(!m.dead){m.remove();n++;}delete CMD_MOBS[x];cmdOut(n?`↩ /${mpEsc(x)} 로 부른 ${n}마리를 없앴어요`:'되돌릴 몹이 없어요',!n);break;}
     case 'tame':case '길들이기':{let n=0;for(const m of mobs)if(m.servant&&!m.dead&&(m===mobTarget||!mobTarget)){m.servant=false;n++;}cmdOut(n?`💔 ${n}마리가 다시 야생으로 돌아갔어요`:'보고 있는 펫이 없어요',!n);break;}
     case 'sethome':case '집정하기':delete world.flags.home;cmdOut('집을 지웠어요');break;
     case 'title':case '제목':{const el=$('cmdTitle');if(el)el.style.opacity=0;cmdOut('큰 글씨를 지웠어요');break;}
@@ -8947,6 +8959,30 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'
     case 'zoom':case '확대':{if(player.zoomFov){camera.fov=player.zoomFov;player.zoomFov=0;}else{player.zoomFov=camera.fov;camera.fov=25;}camera.updateProjectionMatrix();cmdOut(player.zoomFov?'🔭 확대 (/zoom 한 번 더 = 원래대로)':'확대 끔');break;}
     case 'randomblock':case '랜덤블록':{const h=raycast(camera.position,viewDir(),30);if(!h){cmdOut('블록을 보고 써요',1);break;}const L=[];BL.forEach((b,i)=>{if(b&&i&&!LIQUID[i]&&b.hard>=0&&b.solid!==false)L.push(i);});const id=L[Math.random()*L.length|0];cmdEdit([[h.x+h.n[0],h.y+h.n[1],h.z+h.n[2],id]]);cmdOut(`🎲 <b>${BL[id].name}</b>`);break;}
     case 'worldname':case '세계이름':{const nm=a.join(' ').slice(0,30);if(!nm){cmdOut('/worldname 새 이름',1);break;}world.name=nm;cmdOut(`🌍 세계 이름: <b>${mpEsc(nm)}</b>`);break;}
+    case 'bomb':case '폭탄':throwBomb();cmdOut('💣 휙!');break;
+    case 'bombrain':case '폭탄비':{const n=Math.max(1,Math.min(15,Math.floor(+a[0]||6)));for(let i=0;i<n;i++)setTimeout(()=>{bombDrop(P.x+(Math.random()-.5)*30,P.y+20,P.z+(Math.random()-.5)*30);},i*200);cmdOut(`💣 폭탄 ${n}개가 쏟아져요!`);break;}
+    case 'airstrike':case '공습':{const d=viewDir(),l=Math.hypot(d.x,d.z)||1;for(let i=0;i<10;i++)setTimeout(()=>bombDrop(P.x+d.x/l*(6+i*3),P.y+18,P.z+d.z/l*(6+i*3)),i*150);cmdOut('✈ 공습!');break;}
+    case 'clonemob':case '몹복제':{const m=mobTarget;if(!m||m.dead){cmdOut('몹을 보고 써요',1);break;}if(m.def.boss){cmdOut('보스는 복제할 수 없어요',1);break;}const c2=new Mob(m.kind,m.pos.x+1,m.pos.y+.2,m.pos.z);if(!c2.dead){c2.hp=m.hp;c2.servant=!!m.servant;}cmdOut(`👯 <b>${m.def.name}</b>을(를) 복제했어요`);break;}
+    case 'mobsize':case '몹크기':{const m=mobTarget,v=+a[0];if(!m||m.dead){cmdOut('몹을 보고 써요',1);break;}if(!(v>=.3&&v<=4)){cmdOut('/mobsize 0.3~4',1);break;}m.g.scale.setScalar(v);cmdOut(`🔍 <b>${m.def.name}</b> 크기 ${v}배 (보이는 크기만)`);break;}
+    case 'healmob':case '몹치료':{const m=mobTarget;if(!m||m.dead){cmdOut('몹을 보고 써요',1);break;}m.hp=m.def.hp;spawnParticles(m.pos.x,m.pos.y+m.h,m.pos.z,new THREE.Color(0xff6080),12,.4,2);cmdOut(`💗 <b>${m.def.name}</b> 체력 가득`);break;}
+    case 'timespeed':case '시간속도':{const v=+a[0];if(!(v>=.1&&v<=20)){cmdOut('/timespeed 0.1~20 (1 = 원래대로)',1);break;}world.flags.tsp=v===1?0:v;cmdOut(`⏩ 하루가 ${v}배 빠르기로 흘러요`);break;}
+    case 'hp':case '체력':{const v=Math.floor(+a[0]);if(!(v>=1)){cmdOut('/hp 1~'+maxHp(),1);break;}player.hp=Math.min(maxHp(),v);renderStats();cmdOut(`❤ 체력 ${player.hp}`);break;}
+    case 'mute':case '음소거':window.CMD_MUTE=!window.CMD_MUTE;cmdOut(window.CMD_MUTE?'🔇 소리 꺼짐 (/unmute)':'🔊 소리 켜짐');break;
+    case 'screenshot':case '스크린샷':{try{renderer.render(scene,camera);const u=renderer.domElement.toDataURL('image/png'),el=document.createElement('a');el.href=u;el.download='cavebuild-'+Date.now()+'.png';el.click();cmdOut('📸 화면을 저장했어요');}catch(e){cmdOut('화면을 저장하지 못했어요',1);}break;}
+    case 'flatten':case '평평':{const r=Math.max(2,Math.min(16,Math.floor(+a[0]||6))),o=[Math.floor(P.x),Math.floor(P.y),Math.floor(P.z)],E=[];
+      for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++){if(Math.hypot(x,z)>r+.5)continue;for(let y=0;y<=14;y++){const b=getBlock(o[0]+x,o[1]+y,o[2]+z);if(b>0&&BL[b]&&BL[b].hard>=0)E.push([o[0]+x,o[1]+y,o[2]+z,AIR]);}const f=getBlock(o[0]+x,o[1]-1,o[2]+z);if(f===AIR||LIQ_KIND[f])E.push([o[0]+x,o[1]-1,o[2]+z,GRASS]);}
+      cmdEdit(E);cmdOut(`🚜 반지름 ${r} 땅을 평평하게 (${E.length}칸)`);break;}
+    case 'maze':case '미로':{const n=a.length>1&&isFinite(+a[a.length-1])?Math.max(3,Math.min(15,Math.floor(+a.pop()))):7,id=cmdBlock(a.join(' '))??COBBLE,W=n*2+1,G=Array.from({length:W},()=>Array(W).fill(1)),st=[[1,1]];G[1][1]=0;
+      while(st.length){const [cx,cz]=st[st.length-1],D=[[2,0],[-2,0],[0,2],[0,-2]].sort(()=>Math.random()-.5).filter(([dx,dz])=>cx+dx>0&&cx+dx<W-1&&cz+dz>0&&cz+dz<W-1&&G[cx+dx][cz+dz]);if(!D.length){st.pop();continue;}const [dx,dz]=D[0];G[cx+dx/2][cz+dz/2]=0;G[cx+dx][cz+dz]=0;st.push([cx+dx,cz+dz]);}
+      G[1][0]=0;G[W-2][W-1]=0;const d=viewDir(),l=Math.hypot(d.x,d.z)||1,ox=Math.floor(P.x+d.x/l*3)-(d.x<0?W:0),oz=Math.floor(P.z+d.z/l*3)-(d.z<0?W:0),y=Math.floor(P.y),E=[];
+      for(let i=0;i<W;i++)for(let j=0;j<W;j++)for(let h=0;h<3;h++)E.push([ox+i,y+h,oz+j,G[i][j]?id:AIR]);cmdEdit(E);cmdOut(`🌀 ${n}×${n} 미로를 만들었어요`);break;}
+    case 'forest':case '숲':{const n=Math.max(1,Math.min(20,Math.floor(+a[0]||8))),E=[];for(let k=0;k<n;k++){const x=Math.floor(P.x+(Math.random()-.5)*30),z=Math.floor(P.z+(Math.random()-.5)*30),sf=surfaceAt(x,z);if(!sf)continue;E.push(...cmdTreeCells(x,sf.y,z));}cmdEdit(E);cmdOut(`🌲 나무 ${n}그루를 심었어요`);break;}
+    case 'plant':case '꽃':{const r=Math.max(2,Math.min(16,Math.floor(+a[0]||8))),E=[];for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++){if(Math.random()>.18||Math.hypot(x,z)>r)continue;const X=Math.floor(P.x)+x,Z=Math.floor(P.z)+z,sf=surfaceAt(X,Z);if(sf&&(sf.b===GRASS||sf.b===DIRT))E.push([X,sf.y,Z,FLOWERS[Math.random()*FLOWERS.length|0]]);}cmdEdit(E);cmdOut(`🌼 꽃 ${E.length}송이`);break;}
+    case 'snow':case '눈':{const r=Math.max(2,Math.min(16,Math.floor(+a[0]||8))),E=[];for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++){if(Math.hypot(x,z)>r)continue;const X=Math.floor(P.x)+x,Z=Math.floor(P.z)+z,sf=surfaceAt(X,Z);if(sf&&(sf.b===GRASS||sf.b===DIRT||sf.b===SAND))E.push([X,sf.y-1,Z,SNOW]);}cmdEdit(E);cmdOut(`❄ 땅 ${E.length}칸에 눈이 덮였어요`);break;}
+    case 'circle':case '원':{const r=Math.floor(+a.pop()),id=cmdBlock(a.join(' '));if(!(r>=2&&r<=30)||id==null){cmdOut('/circle 돌 8 (반지름 2~30)',1);break;}const y=Math.floor(P.y)-1,E=[];for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++){const d=Math.hypot(x,z);if(d<=r+.5&&d>r-.5)E.push([Math.floor(P.x)+x,y,Math.floor(P.z)+z,id]);}cmdEdit(E);cmdOut(`⭕ 원 ${E.length}칸`);break;}
+    case 'rps':case '가위바위보':{const H=['가위','바위','보'],m=H.indexOf(a[0]),c2=Math.random()*3|0;if(m<0){cmdOut('/rps 가위 · 바위 · 보',1);break;}const r=(m-c2+3)%3;cmdOut(`✊ 나: ${H[m]} · 컴퓨터: ${H[c2]} → <b>${r===0?'비겼어요':r===1?'이겼어요! 🎉':'졌어요 😢'}</b>`);break;}
+    case 'joke':case '개그':{const J=[['왕이 넘어지면?','킹콩'],['세상에서 가장 뜨거운 과일은?','천도복숭아'],['소가 웃으면?','우하하'],['바나나가 웃으면?','바나나킥'],['오리가 얼면?','언덕'],['세상에서 가장 가난한 왕은?','최저임금'],['딸기가 직장을 잃으면?','딸기시럽'],['차가 놀라면?','카놀라유'],['자동차를 톡 치면?','카톡'],['아몬드가 죽으면?','다이아몬드']],q=J[Math.random()*J.length|0];
+      cmdOut(`😆 ${q[0]}`);setTimeout(()=>toast(`😆 → <b>${q[1]}</b>!`),2200);break;}
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
     default:cmdOut(`모르는 명령어예요: /${mpEsc(c)} · <b>/help</b>`,1);}}
 let MOB_FRZ=false;
@@ -8959,6 +8995,9 @@ function cmdEdit(E,isUndo){const batch=new Set(),old=[]; // 💻 건축 명령�
 function cmdMark(){player.backPos={x:player.pos.x,y:player.pos.y,z:player.pos.z,dim:world.dim};}
 let cmdT=0;
 const BOMBS=[];
+function bombDrop(x,y,z){const g=new THREE.Group(),bk=new THREE.Mesh(new THREE.SphereGeometry(.17,14,10),new THREE.MeshLambertMaterial({color:0x1c1c22})),sp=new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),new THREE.MeshBasicMaterial({color:0xffb030})); // 💣 하늘에서 떨어지는 폭탄
+  sp.position.y=.22;g.add(bk,sp);g.position.set(x,y,z);scene.add(g);BOMBS.push({g,sp,v:new THREE.Vector3(0,-2,0),t:2.6});}
+function cmdTreeCells(x,y,z){const t=4+Math.floor(Math.random()*3),E=[];for(let i=0;i<t;i++)E.push([x,y+i,z,LOG]);for(let dx=-2;dx<=2;dx++)for(let dy=-1;dy<=2;dy++)for(let dz=-2;dz<=2;dz++){if(dx*dx+dz*dz+dy*dy*1.5>6.5||(!dx&&!dz&&dy<1))continue;E.push([x+dx,y+t-1+dy,z+dz,LEAVES]);}return E;}
 function throwBomb(){const d=viewDir(),o=camera.position,g=new THREE.Group(),bk=new THREE.Mesh(new THREE.SphereGeometry(.17,14,10),new THREE.MeshLambertMaterial({color:0x1c1c22})),sp=new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),new THREE.MeshBasicMaterial({color:0xffb030})); // 💣 던진 폭탄: 포물선 · 튕김 · 굴러감 · 3초 뒤 폭발
   sp.position.y=.22;g.add(bk,sp);g.position.set(o.x+d.x*.6,o.y-.15+d.y*.6,o.z+d.z*.6);scene.add(g);BOMBS.push({g,sp,v:new THREE.Vector3(d.x*13,d.y*13+3.5,d.z*13),t:3});swing=1;tone(300,180,.12,.06,'triangle');noise(.3,3000,.04);}
 function bombTick(dt){for(let i=BOMBS.length-1;i>=0;i--){const b=BOMBS[i],P=b.g.position;b.t-=dt;b.v.y-=22*dt;
