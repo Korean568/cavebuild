@@ -310,7 +310,13 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.158 — 🎮 타이틀이 바뀌던 문제</h4>
+    <h4>🆕 v26.159 — 🟩 백룸 탈출구 · 🚁 구조 · 🔗 주소 모드 · 🎃🎄 디테일</h4>
+    • 🎃 할로윈 모드 순서: <b>백룸</b> → 프론티어에서 <b>장비 맞추기</b> → <b>할로윈 차원</b>에서 잭오랜턴과 결투 (위쪽에 지금 할 일이 나와요).<br>
+    • 🟩 백룸 어딘가에 <b>EXIT 탈출구</b>가 있어 더 빨리 나갈 수 있어요. 하지만 <b>가짜 탈출구</b>도 있어요 (잘 보면 티가 나요). 가짜에 들어가면 문이 사라지고 십자가와 저주인형이 있는 방에 갇혀요.<br>
+    • 🚁 7일을 버티면 천장이 뚫리고 <b>구조되는 장면</b>이 나와요. 백룸에서 쓰러지면 <b>백룸에서 다시 깨어나요</b> (버틴 날은 그대로).<br>
+    • 🔗 🧩 모드에 <b>주소(도메인)</b>를 넣어 모드를 불러올 수 있어요 (.js · .html, 늘 최신). 마켓에도 주소로 올릴 수 있어요.<br>
+    • 🎄 크리스마스: 눈 위로 끝에 눈이 얹힌 풀이 삐죽 · 🎃 할로윈 모드: 잔디 위에 꽃 대신 <b>호박</b>과 잭오랜턴.
+    <h4>v26.158 — 🎮 타이틀이 바뀌던 문제</h4>
     • 예전에 🧩 모드로 넣은 <b>케이브빌드 게임 파일</b>이 게임 전체 모양(타이틀 글씨 · 배경 · 버튼)을 바꾸던 문제를 고쳤어요. 그런 모드는 자동으로 지워요.
     <h4>v26.157 — 🎮 모드 파일을 넣으면 바로 그 모드</h4>
     • 케이브빌드 모드 파일(크리스마스 · 할로윈 · 뇌절모드 … 폴더의 index.html)을 🧩 모드에 넣으면 <b>그 모드가 바로 열려요</b>. 늘 최신 버전으로 열려요. 예전에 받은 파일이면 어떤 모드로 열지 고르거나 파일 그대로 열 수 있어요.
@@ -872,6 +878,7 @@ body.mobile #toasts{top:72px}
   <div class="mrow" style="align-items:center;gap:8px"><b>🎮 게임 모드</b><select id="gmSel" style="flex:1;font-size:15px;padding:4px"></select></div>
   <div style="font-size:12px;opacity:.75;margin:-4px 0 8px">고르면 타이틀까지 그 모드로 바뀌어요 · 모드가 업데이트되면 자동으로 최신이에요 (이달의 모드도 언제든 할 수 있어요)</div>
   <div id="modList"></div>
+  <div class="mrow"><input id="modUrl" type="url" placeholder="🔗 모드 주소 https://… (.js · .html) — 늘 최신으로 불러와요" autocomplete="off" style="flex:1;min-width:0;font-size:14px;padding:6px"><button class="btn" id="btnModUrl">🔗 주소로 추가</button></div>
   <div class="mrow"><button class="btn" id="btnModAdd">➕ 모드 파일(.js · .html) 추가</button><button class="btn" id="btnModEx">📄 예시 모드 받기</button></div>
   <div class="mrow"><button class="btn" id="btnModReload">🔄 새로고침해서 적용</button><button class="btn" id="btnModClose">닫기</button></div>
   <input type="file" id="modFile" accept=".js,.html,.htm,text/javascript,text/html" multiple hidden>
@@ -946,8 +953,8 @@ function makeNoise(seed){
   return {n2,n3};
 }
 
-const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71,gold_block:72,titanium_block:73,uranium_ore:74,radium_ore:75,plutonium_ore:76,polonium_ore:77,protactinium_ore:78,gungnir:79,star_core:80,conduit:81,star_trace:82,super_alloy:83,nuke:84,star_ore:85,car_engine:86,plane_engine:87,wheel_side:88,wheel_tread:89,cushion:90,steer_face:91,steer_rim:92,drive_cushion:93,booster:94,button:95,lavender:96,sign:97,cooler_side:98,cooler_top:99,icm_side:100,icm_top:101,anvil:102,flower0:103,flower1:104,flower2:105,flower3:106,flower4:107,flower5:108,stove_side:109,stove_top:110,pot:111,plate:112,bk_wall:160,bk_carpet:161,bk_ceil:162,bk_light:163,lab:164,bookshelf:165,invis:166,elev:167,hw_grass_top:168,hw_grass_side:169,pumpkin_side:170,pumpkin_top:171,jack_face:172,grave:173,taeguk:174,farmland:175,rice0:176,rice1:177,rice2:178,blackboard:179,jamo0:180,ice:189};
-const ATW=8,ATH=24; // 타일 8×24칸 (512×1536)
+const TILE={grass_top:0,grass_side:1,dirt:2,stone:3,cobble:4,log_side:5,log_top:6,leaves:7,planks:8,sand:9,water:10,coal:11,iron:12,crystal:13,core:14,bench_top:15,bench_side:16,kiln_front:17,kiln_side:18,kiln_top:19,glass:20,brick:21,snow_top:22,snow_side:23,bed_top:24,bed_side:25,lamp:26,thorn:27,hellstone:28,lava:29,demonbrick:30,p_hell:31,p_castle:32,p_city:33,p_end:34,endstone:35,darkstone:36,window:37,asphalt:38,hellglow:39,window_off:40,estone_ore:41,hs_ore:42,iron_block:43,obsidian:44,kframe_side:45,kframe_top:46,kframe_on:47,marker:48,voidmoss:49,voidlamp:50,ladder:51,chest_front:52,chest_side:53,chest_top:54,hopper_top:55,hopper_side:56,hopper_bottom:57,tuft:58,door_bottom:59,door_top:60,sapling:61,copper_ore:62,gold_ore:63,titanium_ore:64,diamond_ore:65,reddia_ore:66,blackdia_ore:67,copper_block:68,diamond_block:69,reddia_block:70,blackdia_block:71,gold_block:72,titanium_block:73,uranium_ore:74,radium_ore:75,plutonium_ore:76,polonium_ore:77,protactinium_ore:78,gungnir:79,star_core:80,conduit:81,star_trace:82,super_alloy:83,nuke:84,star_ore:85,car_engine:86,plane_engine:87,wheel_side:88,wheel_tread:89,cushion:90,steer_face:91,steer_rim:92,drive_cushion:93,booster:94,button:95,lavender:96,sign:97,cooler_side:98,cooler_top:99,icm_side:100,icm_top:101,anvil:102,flower0:103,flower1:104,flower2:105,flower3:106,flower4:107,flower5:108,stove_side:109,stove_top:110,pot:111,plate:112,bk_wall:160,bk_carpet:161,bk_ceil:162,bk_light:163,lab:164,bookshelf:165,invis:166,elev:167,hw_grass_top:168,hw_grass_side:169,pumpkin_side:170,pumpkin_top:171,jack_face:172,grave:173,taeguk:174,farmland:175,rice0:176,rice1:177,rice2:178,blackboard:179,jamo0:180,ice:189,exit_door:190,fake_door:191,exit_sign:192,fake_sign:193};
+const ATW=8,ATH=28; // 타일 8×28칸 (512×1792)
 
 // ---------- 블록 & 아이템 정의 ----------
 const AIR=0,GRASS=1,DIRT=2,STONE=3,COBBLE=4,LOG=5,LEAVES=6,PLANKS=7,SAND=8,WATER=9,COAL_ORE=10,IRON_ORE=11,CRYSTAL_ORE=12,CORE=13,BENCH=14,KILN=15,GLASS=16,BRICK=17,SNOW=18,BED=19,LAMP=20,THORN=21,HELLSTONE=22,LAVA=23,DEMON_BRICK=24,P_HELL=25,P_CASTLE=26,P_CITY=27,P_END=28,ENDSTONE=29,DARKSTONE=30,WINDOW=31,ASPHALT=32,HELLGLOW=33,WINDOW_OFF=34,ESTONE_ORE=35,HS_ORE=36,IRON_BLOCK=37,OBSIDIAN=38,END_FRAME=39,END_FRAME_ON=40,MARKER=41,VOIDMOSS=42,VOIDLAMP=43,LADDER=44,CHEST=48,HOPPER=52;
@@ -1118,6 +1125,9 @@ FLOWER_OF[RICE0]=FLOWER_OF[RICE1]=FLOWER_OF[RICE2]=1; // 벼는 꽃처럼 엇갈
 const JAMO=['ㅎ','ㅜ','ㄴ','ㅁ','ㅣ','ㅈ','ㅓ','ㅇ','ㅡ'],JAMO0=1050; // 📜 한글날: 훈민정음을 이루는 자모 블록 (1050~1058)
 JAMO.forEach((ch,i)=>defB(JAMO0+i,'자모 '+ch,TILE.jamo0+i,{hard:.3}));
 const ICE_BLOCK=1046;defB(ICE_BLOCK,'얼음 블록',TILE.ice,{hard:.5,tool:'pick',drop:292}); // 🎄 크리스마스 모드: 언 바다 · 강 (캐면 얼음)
+const EXIT_DOOR=1047,FAKE_DOOR=1048,EXIT_SIGN=1049,FAKE_SIGN=1050; // 🟩 백룸 탈출구 (진짜 · 가짜) · 위에 붙는 EXIT 표지
+defB(EXIT_DOOR,'탈출구',TILE.exit_door,{hard:-1,solid:false});defB(FAKE_DOOR,'탈출구?',TILE.fake_door,{hard:-1,solid:false});defB(EXIT_SIGN,'EXIT 표지',TILE.exit_sign,{hard:-1});defB(FAKE_SIGN,'EXIT 표지?',TILE.fake_sign,{hard:-1});
+let SPOOKY=false; // 🎃 할로윈 모드: 잔디 위에 호박 (메인 · 워커 모두)
 let WINTER=false; // 🎄 크리스마스 모드: 땅은 눈으로 덮이고 물은 얼음 (메인 · 워커 모두)
 const OPAQUE=new Uint8Array(BLK_N),SOLID=new Uint8Array(BLK_N);
 BL.forEach((b,i)=>{if(b){OPAQUE[i]=b.opaque?1:0;SOLID[i]=b.solid?1:0;}});
@@ -1130,7 +1140,7 @@ const LADDER_OF=new Uint8Array(BLK_N),CONTAINER=new Uint8Array(BLK_N); // 사다
 LADDER_IDS.forEach(id=>LADDER_OF[id]=BL[id].face+1);BL.forEach((b,i)=>{if(b&&b.cont)CONTAINER[i]=b.cont;});
 for(const b of [P_HELL,P_CASTLE,P_CITY,P_END])PORTAL[b]=1;
 EMIT[RADIUM_ORE]=EMIT[STAR_ORE]=1; // 라듐은 스스로 희미하게 빛남 · 별의 힘 광석은 빨갛게 빛남
-EMIT[BK_LIGHT]=EMIT[JACK_O]=1;LIGHT_SRC[BK_LIGHT]=LIGHT_SRC[JACK_O]=1; // 🎃 형광등 · 잭오랜턴은 주변을 밝힘
+EMIT[BK_LIGHT]=EMIT[JACK_O]=1;EMIT[1047]=EMIT[1048]=EMIT[1049]=EMIT[1050]=1;LIGHT_SRC[BK_LIGHT]=LIGHT_SRC[JACK_O]=1; // 🎃 형광등 · 잭오랜턴은 주변을 밝힘
 EMIT[THERMAL_CONDUIT]=EMIT[STAR_TRACE]=EMIT[STAR_CORE]=1;LIGHT_SRC[STAR_CORE]=1; // 별의 핵은 주변을 밝힘 · 열 도관과 별의 흔적은 스스로 빛남
 const RADIO=new Float32Array(512); // 방사능 세기 (초당 피해 기준)
 for(const [id,r] of [[URANIUM_ORE,.5],[RADIUM_ORE,.8],[PLUTONIUM_ORE,1],[POLONIUM_ORE,1.2],[PROTACTINIUM_ORE,.6],[URANIUM,.25],[RADIUM,.4],[PLUTONIUM,.5],[POLONIUM,.6],[PROTACTINIUM,.3]])RADIO[id]=r;
@@ -1208,7 +1218,7 @@ function genOver(data,cx,cz){
   // 꽃: 잔디 위에 무리 지어 핌 (무리마다 한 가지 색)
   for(let z=0;z<16;z++)for(let x=0;x<16;x++){const h=heights[z*16+x];if(des[z*16+x]||h<=SEA+1||h>=CH-2||data[I(x,h,z)]!==GRASS||data[I(x,h+1,z)]!==AIR)continue;
     const wx=cx*16+x,wz=cz*16+z;if(N2.n2(wx/22+71,wz/22-43)<.42)continue;const hr=(Math.imul(wx,73856093)^Math.imul(wz,19349663))>>>0;if(hr%100>=16)continue;
-    const pc=(Math.imul(Math.floor(wx/14),2654435761)^Math.imul(Math.floor(wz/14),40503))>>>0;data[I(x,h+1,z)]=FLOWERS[pc%6];}
+    const pc=(Math.imul(Math.floor(wx/14),2654435761)^Math.imul(Math.floor(wz/14),40503))>>>0;if(SPOOKY){if(hr%100<7)data[I(x,h+1,z)]=hr%5===0?JACK_O:PUMPKIN;continue;}data[I(x,h+1,z)]=FLOWERS[pc%6];} // 🎃 할로윈 모드: 꽃 대신 호박 · 가끔 잭오랜턴
   buildPortalSites(data,cx,cz);
   buildVillages(data,cx,cz);
   if(WINTER)winterize(data);
@@ -1934,7 +1944,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.158 — 🎮 Title look fixed</h4>
+    <h4>🆕 v26.159 — 🟩 Backrooms exits · 🚁 rescue · 🔗 URL mods · details</h4>
+    • Halloween flow: Backrooms → gear up on the Frontier → duel in the Halloween dimension. Find a real EXIT to escape early (fake exits trap you with a cross and a cursed doll), get rescued after 7 days, and respawn in the Backrooms if you die. Mods can be added by URL. Snowy grass tufts in Christmas mode and pumpkins on the grass in Halloween mode.
+    <h4>v26.158 — 🎮 Title look fixed</h4>
     • Old CAVEBUILD game files that were added as HTML mods restyled the whole game; they are now removed automatically.
     <h4>v26.157 — 🎮 Adding a mode file opens that mode</h4>
     • Adding a CAVEBUILD mode file (index.html) in Mods now opens that mode right away, always at the latest version.
@@ -2707,6 +2719,13 @@ actx.putImageData(AIMG,0,0);
 ['ㅎ','ㅜ','ㄴ','ㅁ','ㅣ','ㅈ','ㅓ','ㅇ','ㅡ'].forEach((ch,i)=>{const t=TILE.jamo0+i,ox=(t%ATW)*TS,oy=Math.floor(t/ATW)*TS; // 📜 자모 블록: 한지 바탕에 먹 글씨 (모드가 그림을 다시 그려도 남게 AIMG에도 씀)
   actx.fillStyle='#efe2c0';actx.fillRect(ox,oy,TS,TS);actx.strokeStyle='#8a6a3a';actx.lineWidth=4;actx.strokeRect(ox+2,oy+2,TS-4,TS-4);
   actx.fillStyle='#1a1410';actx.font=`bold ${Math.round(TS*.7)}px "Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif`;actx.textAlign='center';actx.textBaseline='middle';actx.fillText(ch,ox+TS/2,oy+TS/2+2);
+  const d=actx.getImageData(ox,oy,TS,TS).data;for(let y=0;y<TS;y++)for(let x=0;x<TS;x++){const a=(y*TS+x)*4,b=((oy+y)*atlas.width+ox+x)*4;for(let k=0;k<4;k++)AIMG.data[b+k]=d[a+k];}});
+
+[[TILE.exit_door,0],[TILE.fake_door,1]].forEach(([t,fake])=>T(t,(u,v,x,y)=>{const e=Math.min(x,y,TS-1-x); // 🟩 탈출구 문: 철 문틀 · 안쪽은 빛 (가짜는 살짝 붉은 빛)
+  if(e<5)return mulc([96,100,104],.85+.2*h2(x>>1,y>>1,771));const g=1-Math.abs(u-.5)*1.4;return fake?mulc([255,214,196],.55+.45*g):mulc([226,255,236],.55+.45*g);}));
+actx.putImageData(AIMG,0,0);
+[[TILE.exit_sign,'EXIT','#1a9a3a'],[TILE.fake_sign,'ƎXIT','#6a9a1a']].forEach(([t,txt,bg])=>{const ox=(t%ATW)*TS,oy=Math.floor(t/ATW)*TS; // 🟩 EXIT 표지 (가짜는 E가 거꾸로 · 색이 누렇게)
+  actx.fillStyle=bg;actx.fillRect(ox,oy,TS,TS);actx.strokeStyle='#e8ffe8';actx.lineWidth=3;actx.strokeRect(ox+3,oy+16,TS-6,TS-32);actx.fillStyle='#f4fff4';actx.font=`bold ${Math.round(TS*.3)}px sans-serif`;actx.textAlign='center';actx.textBaseline='middle';actx.fillText(txt,ox+TS/2,oy+TS/2+1);
   const d=actx.getImageData(ox,oy,TS,TS).data;for(let y=0;y<TS;y++)for(let x=0;x<TS;x++){const a=(y*TS+x)*4,b=((oy+y)*atlas.width+ox+x)*4;for(let k=0;k<4;k++)AIMG.data[b+k]=d[a+k];}});
 
 // 평균 색 (파티클용)
@@ -4321,7 +4340,7 @@ let WK=null,wEpoch=0,wId=0,wMeshN=0;const wJobs=new Map(),wGenPend=new Set();
 function initWorker(){
   try{
     const src=$('wcore').textContent+MOD_WSRC+`
-NAT_R=${NAT_R};WINTER=${WINTER};
+NAT_R=${NAT_R};WINTER=${WINTER};SPOOKY=${SPOOKY};
 const world={dim:'over',homeVillage:null};let hvKey='';
 onmessage=e=>{const j=e.data;
   if(j.seed!==seed||!N1){seed=j.seed;initNoise();SITES=null;VCACHE.clear();}
@@ -6051,16 +6070,27 @@ function hwUnbox(){const F=world.flags;if(F.hwBox){const batch=new Set(); // 백
     for(const k of batch){const [cx,cz]=k.split(',').map(Number);remeshAt(cx,cz);}delete F.hwBox;}
   for(let i=0;i<inv.length;i++)if(inv[i]&&inv[i].id===HW_PUMPKIN)inv[i]=null;invChanged();}
 function hwFallToBack(){toast('🕳 흑요석 아래가 <b>꺼졌어요</b>... 어딘가로 떨어지고 있어요','ach');tone(220,40,1.2,.06,'sawtooth');
-  setTimeout(()=>{const F=world.flags;F.bkT=0;F.bkDay=1;bkEvT=40;bkSupT=6;travel('back',arrivalOf('back'));},700);}
+  setTimeout(()=>{const F=world.flags;F.bkT=0;F.bkDay=1;bkEvT=40;bkSupT=6;bkExitsInit();travel('back',arrivalOf('back'));setTimeout(()=>compSay('어딘가에 초록색 <b>EXIT</b> 문이 있대. 찾으면 7일을 안 기다려도 나갈 수 있어! 근데... <b>가짜</b>도 있대. 잘 보면 티가 난대.',4000),1500);},700);}
+function bkExitsInit(){const F=world.flags;F.bkEx=[];for(let i=0;i<6;i++){const real=i<2,a=Math.random()*6.28,d=real?130+Math.random()*90:45+Math.random()*120;F.bkEx.push({x:Math.round(Math.cos(a)*d),z:Math.round(Math.sin(a)*d),real,st:0});}} // 진짜 2 · 가짜 4
 function hwUseKey(){
   if(world.dim==='hallo'){travel('over',world.lastPos.over||world.spawn);return;}
   if(world.dim!=='over'){toast('🎃 할로윈 열쇠는 <b>프론티어</b>에서만 쓸 수 있어요');return;}
   swing=1;toast('🎃 열쇠를 돌리자 공기가 보랏빛으로 일렁여요...');travel('hallo',arrivalOf('hallo'));}
 function hwCompReset(){const F=world.flags;delete F.compDead;delete F.compMon;delete F.crossUsed;delete F.cross;bkYelEnd(true);}
-function bkEscape(){const F=world.flags;F.bkDone=1;F.bkT=0;F.bkDay=0;bkDark=0;hwCompReset();addItem(HW_KEY,1);invChanged();
+let bkResc=null;
+function bkRescue(kind){if(bkResc)return;bkResc={t:0,kind};bkDark=0;const F=world.flags; // 🚁 구조 애니메이션 (7일 · 진짜 탈출구)
+  if(kind==='exit'){toast('🟩 <b>EXIT</b> 문을 열자 눈부신 빛이 쏟아져요...','ach');}
+  else{toast('📻 "...생존자 확인! 구조대 진입한다!"','ach');const x=Math.floor(player.pos.x),z=Math.floor(player.pos.z),E=[];for(let dx=-1;dx<=1;dx++)for(let dz=-1;dz<=1;dz++)for(let y=14;y<=15;y++)E.push([x+dx,y,z+dz]); // 천장이 뚫림
+    setTimeout(()=>{if(world.dim!=='back')return;const b=new Set();for(const [a,y,c] of E)setBlock(a,y,c,AIR,b);for(const k of b){const [cx,cz]=k.split(',').map(Number);remeshAt(cx,cz);}noise(.8,300,.3);toast('🚁 천장이 뚫리고 구조 줄이 내려와요!');},1200);}}
+function bkRescueTick(dt){const r=bkResc;r.t+=dt;const P=player.pos,W=$('bkDark'); // 빛 · 들어 올려짐 · 하얗게 → 프론티어
+  if(Math.random()<dt*8)flashBeam(new THREE.Vector3(P.x,P.y+30,P.z),new THREE.Vector3(P.x,P.y,P.z),0xfff8d0,.9+Math.random()*.5,.25);
+  if(r.kind!=='exit'&&r.t>2.2){P.y+=dt*3.2;player.vel.set(0,0,0);player.peakY=P.y;} // 줄에 매달려 올라감
+  W.style.background='#fff';W.style.opacity=Math.max(0,Math.min(1,(r.t-(r.kind==='exit'?.6:3.4))/1.2));
+  if(r.t>(r.kind==='exit'?2:4.8)){bkResc=null;W.style.background='';W.style.opacity=0;bkEscape(r.kind);}}
+function bkEscape(kind){const F=world.flags;F.bkDone=1;F.bkT=0;F.bkDay=0;bkDark=0;hwCompReset();addItem(HW_KEY,1);invChanged();
   travel('over',world.lastPos.over||world.spawn);SFX.ach();
   setTimeout(hwUnbox,1300);
-  setTimeout(()=>toast('🎃 백룸에서 <b>7일</b>을 버텼어요! 손에 <b>할로윈 열쇠</b>가 쥐어져 있어요 — 들고 우클릭하면 <b>할로윈 차원</b>으로 가요','ach'),900);}
+  setTimeout(()=>toast((kind==='exit'?'🟩 <b>탈출구</b>로 빠져나왔어요!':'🚁 <b>구조</b>됐어요! 백룸에서 7일을 버텼어요.')+' 손에 <b>할로윈 열쇠</b>가 있어요.<br>🛡 프론티어에서 <b>장비를 맞춘 뒤</b> 열쇠를 들고 우클릭해 <b>할로윈 차원</b>에서 잭오랜턴과 결투하세요!','ach'),900);}
 function bkSpot(d){for(let t=0;t<24;t++){const a=Math.random()*6.28,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d); // 백룸에서 몹이 설 빈자리
     if(getBlock(x,11,z)===AIR&&getBlock(x,12,z)===AIR&&getBlock(x,13,z)===AIR)return {x:x+.5,z:z+.5};}return null;}
 function bkSpawnSmiler(d){if(mobs.filter(m=>m.kind==='smiler').length>=3)return;const s=bkSpot(d);if(s)new Mob('smiler',s.x,11,s.z);}
@@ -6077,7 +6107,13 @@ const BK_ANOM=[ // ⚠ 이상현상 목록 (사용자님이 정한 것)
     toast('⚠ <b>이상현상</b> · 머리 위에서 <b>무언가</b>가 따라오고 있어요...');compSay('쉿... 머리 위에 뭔가 있어. <b>절대 위를 쳐다보지 마!</b> 30초만 참아.',1200);},
   day=>{toast('⚠⚠ <b>이상현상들이 한꺼번에</b> 몰려와요!');for(const i of [1,3])BK_ANOM[i](day);}, // 5: 1 · 3번을 뺀 모든 이상현상
 ];
-let bkYel=null,bkYelT=0;
+let bkYel=null,bkYelT=0,bkExT=0;
+function bkFakeExit(){const F=world.flags,px=Math.floor(player.pos.x),pz=Math.floor(player.pos.z),q=(F.bkEx||[]).find(e=>e.st===1&&!e.real&&Math.abs(e.x-px)<=2&&Math.abs(e.z-pz)<=2); // ✝ 가짜 탈출구: 문이 사라지고 십자가 · 저주인형이 있는 방
+  const E=[];if(q){q.st=2;E.push([q.x,11,q.z,AIR],[q.x,12,q.z,AIR],[q.x,13,q.z,AIR]);}
+  for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++)for(let y=11;y<=13;y++){const edge=Math.abs(x)===3||Math.abs(z)===3,gap=z===3&&x===0&&y<=12;E.push([px+x,y,pz+z,edge&&!gap?BK_WALL:AIR]);} // 방 (뒤쪽에 좁은 틈 하나)
+  for(let y=11;y<=13;y++)E.push([px,y,pz-2,PLANKS]);E.push([px-1,12,pz-2,PLANKS],[px+1,12,pz-2,PLANKS]);cmdEdit(E,true);F.cross={x:px+.5,z:pz-1.5};
+  player.pos.x=px+.5;player.pos.z=pz+1.5;player.vel.set(0,0,0);bkDark=20;bkDollT=12;new Mob('cursedoll',px+2.5,11,pz-1.5);noise(.6,90,.4);tone(200,50,1,.08,'sawtooth');
+  toast('✝ <b>가짜 탈출구</b>였어요! 문이 사라지고... 십자가와 <b>저주인형</b>이 있는 방이에요. 인형을 보지 마세요!','ach');compSay('가짜였어...! 인형 쪽을 쳐다보지 마. 그리고 십자가 가까이는...',1200);}
 function bkCrossRoom(){const d=viewDir(),l=Math.hypot(d.x,d.z)||1,cx=Math.floor(player.pos.x+d.x/l*7),cz=Math.floor(player.pos.z+d.z/l*7),fx=Math.abs(d.x)>Math.abs(d.z)?Math.sign(d.x):0,fz=fx?0:Math.sign(d.z)||-1; // 앞쪽 7칸에 5×5 방 · 문은 나를 보게
   const back=[cx+fx*2,cz+fz*2],batch=new Set();
   for(let x=cx-2;x<=cx+2;x++)for(let z=cz-2;z<=cz+2;z++)for(let y=11;y<=13;y++){const edge=Math.abs(x-cx)===2||Math.abs(z-cz)===2,door=(fx?x===cx-fx*2:z===cz-fz*2)&&(fx?Math.abs(z-cz)<=0:Math.abs(x-cx)<=0)&&y<=12;
@@ -6111,16 +6147,25 @@ function compTTS(t){try{const S=speechSynthesis,u=new SpeechSynthesisUtterance(t
 function bkAnomaly(day){BK_ANOM[Math.floor(Math.random()*BK_ANOM.length)](day);}
 function hwTick(dt){
   const hud=$('bkHud'),D=$('bkDark'),F=world.flags;
-  if(world.dim!=='back'||player.dead){if(hud.style.display!=='none')hud.style.display='none';D.style.opacity=0;bkDark=0;
+  if(world.dim!=='back'||player.dead){D.style.opacity=0;bkDark=0;
+    const st=HALLOWEEN&&!player.dead&&!F.jackDead?(world.dim==='hallo'?'🎃 <b>결투</b>: 잭오랜턴을 쓰러뜨리세요!':world.dim==='over'?(F.bkDone?'🛡 <b>장비를 맞추세요</b> → 할로윈 열쇠를 들고 우클릭하면 <b>할로윈 차원</b>에서 결투':F.hwBox?'🕳 앞의 <b>흑요석</b>을 호박으로 캐면 <b>백룸</b>으로...':''):''):''; // 🎃 할로윈 순서: 백룸 → 프론티어에서 장비 → 할로윈 차원 결투
+    if(st){hud.style.display='block';if(hud._t!==st){hud.innerHTML=st;hud._t=st;}}else if(hud.style.display!=='none')hud.style.display='none';
     if(world.dim!=='back'&&F.bkT>0&&!traveling){F.bkT=0;F.bkDay=0;hwCompReset();toast('🟨 백룸에서 쓰러졌어요... 흑요석을 다시 캐면 <b>처음부터</b> 버텨야 해요');}return;}
   F.bkT=(F.bkT||0)+dt;const day=Math.floor(F.bkT/BK_DAY)+1,left=Math.ceil(BK_DAY-F.bkT%BK_DAY);
-  if(F.bkT>=BK_DAY*BK_DAYS){bkEscape();return;}
+  if(bkResc){bkRescueTick(dt);return;}
+  if(F.bkT>=BK_DAY*BK_DAYS){bkRescue('rescue');return;}
   const txt=`🟨 백룸 · <b>${day}일째</b> / ${BK_DAYS}일 · 다음 날까지 ${Math.floor(left/60)}분 ${left%60}초`;hud.style.display='block';if(hud._t!==txt){hud.innerHTML=txt;hud._t=txt;}
   if(day>(F.bkDay||1)){F.bkDay=day;toast(`🟨 백룸 <b>${day}일째</b>... ${day>=5?'이상현상이 점점 잦아져요':'계속 버티세요'}`);}
   bkSupT-=dt;if(bkSupT<=0){bkSupT=120+Math.random()*60;bkSupply();}
   compEnsure();
   if(bkTwist>0){bkTwist-=dt;const n=Math.floor((20-bkTwist)/5);if(n>=bkTwistI&&bkTwistI<4&&bkTwist>0){const t=COMP_EN[(Math.random()*COMP_EN.length)|0];bkTwistI=n+1;toast('🟡 <b>동료</b>: <i>'+t+'</i>');}
     if(bkTwist<=0){const b=mobs.find(m=>m.kind==='buddy'&&!m.dead);if(b){b.twist=false;b.u.eyeM.color.setHex(0x201a08);}compSay('...어? 방금 내가 뭐라고 했어? 머리가 좀 아파... 괜찮아, 계속 가자!');}}
+  bkExT=(bkExT||0)-dt;if(bkExT<=0&&F.bkEx){bkExT=.5;for(const q of F.bkEx){if(q.st!==0||Math.hypot(q.x-player.pos.x,q.z-player.pos.z)>50||!getChunk(q.x>>4,q.z>>4))continue; // 🟩 가까이 오면 탈출구를 세움
+      let sp=null;for(let r=0;r<8&&!sp;r++)for(let dx=-r;dx<=r&&!sp;dx++)for(let dz=-r;dz<=r;dz++){const x=q.x+dx,z=q.z+dz;let ok=true;for(let ox=-1;ox<=1&&ok;ox++)for(let y=11;y<=13;y++)if(getBlock(x+ox,y,z)!==AIR){ok=false;break;}if(ok){sp=[x,z];break;}}
+      if(!sp){q.x+=8;continue;}q.x=sp[0];q.z=sp[1];q.st=1;const D=q.real?EXIT_DOOR:FAKE_DOOR,S=q.real?EXIT_SIGN:FAKE_SIGN;cmdEdit([[q.x,11,q.z,D],[q.x,12,q.z,D],[q.x,13,q.z,S],[q.x-1,11,q.z,BK_WALL],[q.x-1,12,q.z,BK_WALL],[q.x-1,13,q.z,BK_WALL],[q.x+1,11,q.z,BK_WALL],[q.x+1,12,q.z,BK_WALL],[q.x+1,13,q.z,BK_WALL]],true);}}
+  {const fb=getBlock(Math.floor(player.pos.x),Math.floor(player.pos.y+.2),Math.floor(player.pos.z)),hb=getBlock(Math.floor(player.pos.x),Math.floor(player.pos.y+1.2),Math.floor(player.pos.z));
+    if(fb===EXIT_DOOR||hb===EXIT_DOOR){bkRescue('exit');return;}
+    if(fb===FAKE_DOOR||hb===FAKE_DOOR){bkFakeExit();return;}}
   if(F.cross&&F.compDead==null&&Math.hypot(F.cross.x-player.pos.x,F.cross.z-player.pos.z)<2.4){F.compDead=F.bkT; // ✝ 십자가에 가까이 가면 동료가 죽음
     const b=mobs.find(m=>m.kind==='buddy'&&!m.dead);if(b){spawnParticles(b.pos.x,b.pos.y+.6,b.pos.z,new THREE.Color(0xffe24a),30,.5,2);b.remove();}
     noise(.8,200,.4);tone(400,60,1.2,.08,'sawtooth');toast('✝ 십자가에 다가가자... <b>동료가 쓰러졌어요</b>. 대답이 없어요...','ach');}
@@ -7171,7 +7216,7 @@ if(GM_ON&&!GM_HERE&&/github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostn
 const NOEJEOL=/\/noejeol\//.test(location.pathname)||window.CB_MODE==='noejeol'; // 뇌절모드 (cavebuild/noejeol/)
 const EV_DIR={'할로윈':'halloween','크리스마스':'xmas','설날':'seollal','개학':'school','만우절':'fools','한글날':'hangul','개학만우절':'fools','어린이날':'kids','현충일':'memorial','제헌절':'law','광복절':'liberation','추석':'chuseok','농업인의날':'farm'}; // 🗓 이달의 모드 폴더 (한국어 이름)
 const EVENT=(()=>{if(EV_DIR[window.CB_MODE])return EV_DIR[window.CB_MODE];let p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}for(const k in EV_DIR)if(p.includes('/'+k+'/'))return EV_DIR[k];const m=p.match(/\/(halloween|xmas|seollal|school|fools|hangul|kids|memorial|law|liberation|chuseok|farm)\//);return m?m[1]:'';})();
-const HALLOWEEN=EVENT==='halloween';if(EVENT==='xmas')WINTER=true; // 🎄 눈 덮인 세계 // 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석 → 백룸 7일 → 할로윈 열쇠 → 잭오랜턴 · 세계는 따로 저장
+const HALLOWEEN=EVENT==='halloween';if(HALLOWEEN)SPOOKY=true; // 🎃 잔디 위 호박if(EVENT==='xmas')WINTER=true; // 🎄 눈 덮인 세계 // 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석 → 백룸 7일 → 할로윈 열쇠 → 잭오랜턴 · 세계는 따로 저장
 const SPEEDRUN=/\/speedrun\//.test(location.pathname)||window.CB_MODE==='speedrun'; // 스피드런 모드 (cavebuild/speedrun/): 디버그 화면 · 스톱워치 · 랭킹 · 로그인 전용
 const HURT_DUR=.22; // 원래 아픔 소리 길이 (SFX.hurt의 tone 길이와 같음)
 const NJ_SND={},NJ_SPLASH_DUR=.8; // 뇌절모드 녹음 소리: 파일 · 쓸 구간(초) · 원래 소리와 같은 길이로 맞춰 재생
@@ -7235,8 +7280,9 @@ function die(cause){if(MP.on)try{mpDied(cause);}catch(e){}
 function respawn(){
   if(HALLOWEEN&&world.flags.hwBox)setTimeout(hwGivePumpkin,300); // 🎃 상자에 갇혀 있으면 호박을 다시 줌
   player.dead=false;player.boat=null;player.hp=20;player.food=20;player.air=10;player.vel.set(0,0,0);
-  const s=world.spawn;
-  if(world.dim!=='over')enterDim('over',s);
+  let s=world.spawn;
+  if(HALLOWEEN&&world.dim==='back'){s=arrivalOf('back');toast('🟨 백룸에서 다시 깨어났어요... 아직 나갈 수 없어요');} // 🎃 백룸에서 쓰러지면 백룸에서 부활 (버틴 날은 그대로)
+  else if(world.dim!=='over')enterDim('over',s);
   player.pos.set(s.x,s.y,s.z);player.peakY=s.y;
   loadNear(8);
   // 스폰 지점이 막혔으면 위로 올림
@@ -8256,12 +8302,18 @@ const CB={version:'v26.30',
     try{renderHotbar();if(invOpen)renderInv();}catch(e){}return true;},
   setItemIcon(id,img){if(!IT[id]&&!BL[id]||!img)return false;const c=makeCanvas(48,48),g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(img,0,0,48,48);ICON_CANVAS[id]=c;ICON[id]=c.toDataURL(); // 아이템 아이콘 바꾸기
     try{renderHotbar();if(invOpen)renderInv();}catch(e){}return true;},
+  loadUrl:u=>modUrlRun({name:String(u).split('/').filter(Boolean).pop()||String(u),url:String(u)}), // 🔗 주소의 모드 불러오기 (마켓 모드도 이걸로 늘 최신)
   explode:(x,y,z,r)=>explode(x,y,z,r||3,'모드 폭발에 휘말렸습니다'),flash:(o,t,c)=>flash(o,t,c),shake:(a,t)=>shake(a,t),sound:n=>SFX[n]&&SFX[n](),
   THREE};
 window.CB=CB;
 function modRunAll(){if(!MP_SMODS){const L=modLoad(),K=L.filter(m=>!/const ATW=\d+,ATH=\d+/.test(m.code||''));if(K.length<L.length){modSave(K);setTimeout(()=>toast('🎮 모드로 넣어 둔 <b>케이브빌드 게임 파일</b>을 지웠어요 (게임 모양이 바뀌던 원인). 그 파일을 다시 넣으면 그 모드가 바로 열려요'),2500);}} // 예전에 HTML 모드로 들어간 게임 파일은 게임 전체 스타일을 바꿔서 지움
-  for(const m of MP_SMODS?MP_SMODS.mods:modLoad()){if(!m.on&&!MP_SMODS)continue;MOD_RAN.push({name:m.name,code:m.code});modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
-function modRender(){const L=modLoad();$('modList').innerHTML=L.length?L.map((m,i)=>`<div class="mi${m.on?'':' off'}"><b>${m.name.replace(/</g,'&lt;')}</b>${modBroken[m.name]?`<small>오류</small>`:''}<button data-t="${i}">${m.on?'켜짐':'꺼짐'}</button><button data-d="${i}">삭제</button></div>`).join(''):'<div class="mi"><b>아직 넣은 모드가 없어요</b></div>';}
+  for(const m of MP_SMODS?MP_SMODS.mods:modLoad()){if(!m.on&&!MP_SMODS)continue;if(m.url){MOD_RAN.push({name:m.name,code:'CB.loadUrl('+JSON.stringify(m.url)+');'});modUrlRun(m);continue;} // 🔗 주소 모드는 늘 최신으로
+    MOD_RAN.push({name:m.name,code:m.code});modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
+function modUrlRun(m){fetch(m.url,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(t=>{ // 🔗 주소(도메인)에 올린 모드: .js 는 그대로, .html 은 HTML 모드로
+    if(/const ATW=\d+,ATH=\d+/.test(t)){toast('🎮 그 주소는 케이브빌드 게임 파일이에요 — 🎮 게임 모드에서 골라 주세요');return;}
+    const code=/\.html?(\?|#|$)/i.test(m.url)||/^\s*</.test(t)?modFromHTML(t,m.name):t;const was=modCur;modCur=m.name;try{new Function('CB',code)(CB);}finally{modCur=was;}})
+  .catch(e=>{modBroken[m.name]=1;toast('🔗 모드 <b>'+mpEsc(m.name)+'</b>를 불러오지 못했어요 ('+mpEsc(e.message||e)+')');});}
+function modRender(){const L=modLoad();$('modList').innerHTML=L.length?L.map((m,i)=>`<div class="mi${m.on?'':' off'}"><b>${m.url?'🔗 ':''}${m.name.replace(/</g,'&lt;')}</b>${modBroken[m.name]?`<small>오류</small>`:''}<button data-t="${i}">${m.on?'켜짐':'꺼짐'}</button><button data-d="${i}">삭제</button></div>`).join(''):'<div class="mi"><b>아직 넣은 모드가 없어요</b></div>';}
 const modBroken={};
 try{modRunAll();}catch(e){}
 $('btnMods').onclick=()=>{modRender();$('modPanel').classList.add('show');};
@@ -8269,6 +8321,11 @@ $('btnMods').onclick=()=>{modRender();$('modPanel').classList.add('show');};
 $('btnModClose').onclick=()=>$('modPanel').classList.remove('show');
 $('btnModReload').onclick=()=>location.reload();
 $('btnModAdd').onclick=()=>$('modFile').click();
+$('modUrl').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')$('btnModUrl').click();});
+$('btnModUrl').onclick=()=>{const u=$('modUrl').value.trim();if(!/^https?:\/\/[^\s]+$/.test(u)){toast('🔗 https:// 로 시작하는 주소를 넣어 주세요');return;} // 🔗 주소로 모드 추가
+  let U;try{U=new URL(u);}catch(e){toast('🔗 주소가 이상해요');return;}let path=U.pathname;try{path=decodeURIComponent(path);}catch(e){}
+  const gm=U.host===location.host&&GMODES.find(g=>g[0]&&path.includes('/'+g[0]+'/'));if(gm){toast('🎮 <b>'+gm[1]+'</b>를 열어요');setTimeout(()=>gmGo(gm[0]),600);return;} // 케이브빌드 모드 주소면 그 모드로
+  const L=modLoad(),name=(path.split('/').filter(Boolean).pop()||U.host).replace(/\.(js|html?)$/i,'').slice(0,40)||U.host;L.push({name,url:u,on:true});modSave(L);$('modUrl').value='';modRender();toast('🔗 주소 모드를 넣었어요. <b>새로고침</b>하면 적용돼요 (주소의 파일이 바뀌면 자동으로 최신)');};
 function modFromHTML(t,name){const d=new DOMParser().parseFromString(t,'text/html'); // 🧩 HTML 모드 → JS: <style>은 게임 전체에 (타이틀까지 모드대로) · 본문은 게임 위에 뜨는 창 · <script>는 진짜 웹페이지처럼 차례로 (전역 · onload도 실행)
   const css=[...d.querySelectorAll('style')].map(x=>x.textContent).join(' ');const scripts=[...d.querySelectorAll('script')].map(x=>x.getAttribute('src')?{src:x.getAttribute('src')}:{code:x.textContent});
   for(const x of [...d.querySelectorAll('style,script,link[rel=stylesheet]')])x.remove();const links=[...new DOMParser().parseFromString(t,'text/html').querySelectorAll('link[rel=stylesheet]')].map(x=>x.getAttribute('href')).filter(Boolean);
@@ -8332,9 +8389,9 @@ function stepUp(e,ax,d){ // 둥근 지형의 한 칸 턱은 걸어서 올라감 
   const b=getBlock(ax==='x'?Math.floor(p.x+sg*(hw+.05)):Math.floor(p.x),fy,ax==='z'?Math.floor(p.z+sg*(hw+.05)):Math.floor(p.z));if(!(b>0&&NATB[b]))return false;
   const oy=p.y,o=p[ax];p.y=fy+1;if(entHits(e)){p.y=oy;return false;}if(moveAxis(e,ax,d)){p.y=oy;p[ax]=o;return false;}p.gOff=(p.gOff||0)-(p.y-oy);return true;}
 function surfY(x,z,y0){let lo=y0-1,hi=y0+.7;for(let i=0;i<7;i++){const m=(lo+hi)/2;if(gFld(x,m,z)>.5)lo=m;else hi=m;}return (lo+hi)/2;} // 곡면 지형의 땅 높이 // 풀밭 (인스턴스 메시 하나로 수천 다발)
-function grassClumpGeo(){const P=[],C=[],I=[],R=mulberry32(77);
+function grassClumpGeo(){const P=[],C=[],I=[],R=mulberry32(77),W=typeof WINTER!=='undefined'&&WINTER; // 🎄 겨울: 끝이 하얗게 눈이 얹힌 풀
   for(let k=0;k<16;k++){const x=(R()-.5)*.8,z=(R()-.5)*.8,h=.2+R()*.42,w=.016+R()*.016,a=R()*Math.PI,ca=Math.cos(a),sa=Math.sin(a),lx=(R()-.5)*.5,lz=(R()-.5)*.5,dry=R()<.08,g=R();
-    const c0=dry?[.42,.4,.22]:[.14+g*.06,.27+g*.08,.08],c1=dry?[.78,.74,.46]:[.42+g*.16,.62+g*.12,.2+g*.08],b0=P.length/3; // 뿌리는 어둡고 끝은 밝음
+    const c0=dry?[.42,.4,.22]:[.14+g*.06,.27+g*.08,.08],c1=W?[.95,.97,1]:dry?[.78,.74,.46]:[.42+g*.16,.62+g*.12,.2+g*.08],b0=P.length/3; // 뿌리는 어둡고 끝은 밝음
     for(const [o,t] of [[-1,0],[1,0],[-.65,.45],[.65,.45],[-.3,.8],[.3,.8],[0,1]]){const bend=t*t*h;P.push(x+ca*o*w+lx*bend,t*h,z+sa*o*w+lz*bend);const c=mixc(c0,c1,t);C.push(c[0],c[1],c[2]);}
     I.push(b0,b0+1,b0+2,b0+1,b0+3,b0+2,b0+2,b0+3,b0+4,b0+3,b0+5,b0+4,b0+4,b0+5,b0+6);}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);return g;}
@@ -8348,7 +8405,7 @@ function updateGrassField(dt){
   if(key===GF.key&&GF.t>0)return;GF.key=key;GF.t=1.2; // 2칸 움직이거나 1.2초마다 다시 깔기 (블록을 캐면 풀도 사라짐)
   if(!NATB)natTable();GDN.clear();const Rr=MOBILE?10:19,M=new THREE.Matrix4(),Q=new THREE.Quaternion(),Y=new THREE.Vector3(0,1,0),V=new THREE.Vector3(),S=new THREE.Vector3();let n=0;
   for(let dz=-Rr;dz<=Rr;dz++)for(let dx=-Rr;dx<=Rr;dx++){const d=Math.hypot(dx,dz);if(d>Rr)continue;const wx=px+dx,wz=pz+dz,c=chunks.get(ckey(wx>>4,wz>>4));if(!c)continue;
-    const y=c.hm[(wz&15)*16+(wx&15)];if(y<0||y>=CH-1||c.data[(y*16+(wz&15))*16+(wx&15)]!==GRASS||c.data[((y+1)*16+(wz&15))*16+(wx&15)])continue;
+    const y=c.hm[(wz&15)*16+(wx&15)];if(y<0||y>=CH-1||(c.data[(y*16+(wz&15))*16+(wx&15)]!==GRASS&&!(WINTER&&c.data[(y*16+(wz&15))*16+(wx&15)]===SNOW))||c.data[((y+1)*16+(wz&15))*16+(wx&15)])continue;
     const fade=Math.min(1,(Rr-d)/4); // 가장자리는 작게 → 경계가 안 보임
     for(let k=0;k<(MOBILE?1:2)&&n<4200;k++){const h=Math.imul(wx*2+k,374761393)^Math.imul(wz,668265263),r1=((h>>>8)&1023)/1023,r2=((h>>>18)&1023)/1023;
       Q.setFromAxisAngle(Y,r1*6.28);const sc=(.75+.5*r2)*fade;const gx=wx+.25+.5*r1,gz=wz+.25+.5*r2;M.compose(V.set(gx,surfY(gx,gz,y+1)-.03,gz),Q,S.set(sc,sc*(.8+.5*r1),sc));GF.mesh.setMatrixAt(n++,M);}}
