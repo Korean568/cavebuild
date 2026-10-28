@@ -307,7 +307,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.155 — 🎄 잎에도 눈</h4>
+    <h4>🆕 v26.156 — 🎄 앙상한 겨울나무 · 🧊 새 아이템도 모두 3D</h4>
+    • 크리스마스 모드의 나무는 잎이 모두 떨어진 <b>앙상한 겨울나무</b>예요.<br>
+    • 선물 상자 · 가래떡 · 떡국 · 왕관 · 왕의 홀 · 의사봉 · 송편 · 윷 · 괭이 · 볍씨 · 쌀 · 할로윈 열쇠 · 호박이 손에 들면 <b>3D</b>로 보여요.
+    <h4>v26.155 — 🎄 잎에도 눈</h4>
     • 크리스마스 모드에서 나무 잎에도 하얀 눈이 덮여요.
     <h4>v26.154 — 🎄 눈 덮인 크리스마스 · 🔑 멀티는 로그인</h4>
     • 🎄 크리스마스 모드: 다시 <b>눈이 내리고</b>, 세계의 땅이 모두 <b>눈으로 덮이고</b>, 바다와 강은 <b>꽁꽁 얼어</b> 얼음 위를 걸을 수 있어요 (얼음 블록을 캐면 얼음).<br>
@@ -1203,7 +1206,8 @@ function genOver(data,cx,cz){
   buildVillages(data,cx,cz);
   if(WINTER)winterize(data);
 }
-function winterize(data){const I=(x,y,z)=>(y*16+z)*16+x; // 🎄 기둥마다 맨 위: 잔디 · 흙 · 모래 → 눈, 물 → 얼음, 꽃 · 묘목은 눈에 묻힘
+function winterize(data){const I=(x,y,z)=>(y*16+z)*16+x; // 🎄 잎은 모두 떨어지고 (앙상한 겨울나무) · 기둥마다 맨 위: 잔디 · 흙 · 모래 → 눈, 물 → 얼음, 꽃 · 묘목은 눈에 묻힘
+  for(let i=0;i<data.length;i++)if(data[i]===LEAVES)data[i]=AIR;
   for(let z=0;z<16;z++)for(let x=0;x<16;x++)for(let y=CH-1;y>0;y--){const t=data[I(x,y,z)];if(t===AIR)continue;
     if(FLOWER_OF[t]||t===SAPLING){data[I(x,y,z)]=AIR;continue;}
     if(t===GRASS||t===DIRT||t===SAND)data[I(x,y,z)]=SNOW;else if(LIQ_KIND[t]===1)data[I(x,y,z)]=ICE_BLOCK;break;}}
@@ -1923,7 +1927,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.155 — 🎄 Snow on leaves</h4>
+    <h4>🆕 v26.156 — 🎄 Bare winter trees · new items are 3D</h4>
+    • Christmas trees have no leaves, and all the new event items now have 3D models.
+    <h4>v26.155 — 🎄 Snow on leaves</h4>
     • In Christmas mode, tree leaves are covered in snow too.
     <h4>v26.154 — 🎄 Snowy Christmas · 🔑 log in for multiplayer</h4>
     • Christmas mode has snowfall again, snow-covered ground and frozen seas and rivers. Multiplayer now requires logging in.
@@ -2691,10 +2697,6 @@ actx.putImageData(AIMG,0,0);
   actx.fillStyle='#efe2c0';actx.fillRect(ox,oy,TS,TS);actx.strokeStyle='#8a6a3a';actx.lineWidth=4;actx.strokeRect(ox+2,oy+2,TS-4,TS-4);
   actx.fillStyle='#1a1410';actx.font=`bold ${Math.round(TS*.7)}px "Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif`;actx.textAlign='center';actx.textBaseline='middle';actx.fillText(ch,ox+TS/2,oy+TS/2+2);
   const d=actx.getImageData(ox,oy,TS,TS).data;for(let y=0;y<TS;y++)for(let x=0;x<TS;x++){const a=(y*TS+x)*4,b=((oy+y)*atlas.width+ox+x)*4;for(let k=0;k<4;k++)AIMG.data[b+k]=d[a+k];}});
-if((()=>{try{return /\/(크리스마스|xmas)\//.test(decodeURIComponent(location.pathname));}catch(e){return false;}})()){const t=TILE.leaves,ox=(t%ATW)*TS,oy=Math.floor(t/ATW)*TS,W=atlas.width,D=AIMG.data; // 🎄 크리스마스: 잎에도 눈 (잎 그림을 눈 덮인 잎으로 · 나무 잎 덩어리와 잎 다발 모두)
-  for(let y=0;y<TS;y++)for(let x=0;x<TS;x++){const i=((oy+y)*W+ox+x)*4;if(D[i+3]<10)continue;const n=fbm(x/TS,y/TS,761,4,3)*.7+h2(x>>1,y>>1,762)*.3;
-    if(n>.4){const k=.86+.14*h2(x,y,763);D[i]=236*k+19;D[i+1]=242*k+13;D[i+2]=250*k+5;}}
-  actx.putImageData(AIMG,0,0);}
 
 // 평균 색 (파티클용)
 const TILE_COLOR=[];
@@ -5169,6 +5171,34 @@ function buildItemModel0(id){
       const bt=new THREE.Mesh(new THREE.CircleGeometry(.07,16),W);bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);}else{const m=plateModel({id,bites:0});m.scale.setScalar(.46);g.add(m);}break;} // 그릇 (수프는 건더기까지)
     case SPATULA:{const M=imat('spatM',0xc8ccd4,'metal',.3,.7),H=imat('spatH',0x5a3a22,'wood',.8);iBox(g,.11,.01,.12,M,0,.27,0);iBox(g,.015,.18,.015,M,0,.15,.02);iBox(g,.03,.09,.03,H,0,.04,.02);break;}
     case 331:case 332:case 333:case 334:case 335:case 336:{const m=plateModel({id,bites:0});m.scale.setScalar(.36);g.add(m);break;} // 접시째 (요리마다 다른 모양)
+    case GIFT:{const r=imat('giftR',0xd81e2a,null,.5),y=imat('giftY',0xffc830,'metal',.3,.4); // 🎁 선물 상자: 빨간 상자 · 금색 리본 · 나비 매듭
+      iBox(g,.15,.13,.15,r,0,.065,0);iBox(g,.155,.135,.03,y,0,.065,0);iBox(g,.03,.135,.155,y,0,.065,0);
+      iMesh(g,IGEO.torus,y,-.025,.14,0,0,Math.PI/2,.5,.025,.025,.025);iMesh(g,IGEO.torus,y,.025,.14,0,0,Math.PI/2,-.5,.025,.025,.025);break;}
+    case RICE_CAKE:{const w=imat('ttok',0xf4f2e8,null,.55);for(let k=0;k<3;k++)iMesh(g,IGEO.cyl,w,(k-1)*.045,.02+(k===1?.035:0),0,Math.PI/2,0,0,.02,.18,.02);break;} // 가래떡 세 가닥
+    case TTEOKGUK:{const b=imat('tgBowl',0x8a5a30,'wood',.7),s2=imat('tgSoup',0xefe4c8,null,.4),t=imat('tgTtok',0xffffff,null,.5),gn=imat('tgGr',0x3a8a30,null,.6),eg=imat('tgEgg',0xf0c040,null,.5); // 🧧 떡국: 그릇 · 국물 · 떡 · 지단 · 파
+      const c=new THREE.Mesh(new THREE.CylinderGeometry(.08,.05,.06,16,1,true),b);c.material.side=THREE.DoubleSide;c.position.y=.03;g.add(c);iMesh(g,IGEO.cyl,b,0,.002,0,0,0,0,.05,.004,.05);
+      iMesh(g,IGEO.cyl,s2,0,.052,0,0,0,0,.074,.004,.074);for(let k=0;k<6;k++){const a=k/6*6.28;iMesh(g,IGEO.cyl,t,Math.cos(a)*.04,.056,Math.sin(a)*.04,0,a,0,.018,.006,.011);}
+      iBox(g,.03,.006,.006,eg,.0,.058,.0);iBox(g,.006,.006,.03,eg,.01,.059,-.01);iMesh(g,IGEO.sph,gn,-.02,.058,.02,0,0,0,.008,.004,.008);break;}
+    case CROWN:{const gd=imat('crown',0xffc830,'metal',.25,.7,0x6a4a00,.2),rb=imat('crRuby',0xe02a3a,null,.15,0,0x600010,.5); // 👑 왕관
+      const ring=new THREE.Mesh(new THREE.CylinderGeometry(.085,.08,.06,20,1,true),gd);ring.material.side=THREE.DoubleSide;ring.position.y=.03;g.add(ring);
+      for(let k=0;k<5;k++){const a=k/5*6.28;iMesh(g,IGEO.cone,gd,Math.cos(a)*.08,.085,Math.sin(a)*.08,0,0,0,.02,.05,.02);iMesh(g,IGEO.sph,rb,Math.cos(a)*.086,.035,Math.sin(a)*.086,0,0,0,.011,.011,.011);}break;}
+    case SCEPTER:{grip=true;const gd=imat('scGold',0xffc830,'metal',.25,.7,0x6a4a00,.2),rb=imat('crRuby',0xe02a3a,null,.15,0,0x600010,.5); // 👑 왕의 홀: 금 막대 · 고리 · 큰 루비
+      iMesh(g,IGEO.cyl,gd,0,.2,0,0,0,0,.018,.56,.018);iMesh(g,IGEO.torus,gd,0,.47,0,Math.PI/2,0,0,.035,.035,.035);iMesh(g,IGEO.sph,rb,0,.52,0,0,0,0,.045,.045,.045);iMesh(g,IGEO.cone,gd,0,.58,0,0,0,0,.015,.04,.015);iMesh(g,IGEO.sph,gd,0,-.08,0,0,0,0,.028,.028,.028);break;}
+    case GAVEL:{grip=true;const w=imat('gvW',0x8a5630,'wood',.7),d=imat('gvD',0x5a3418,'wood',.7); // ⚖ 의사봉: 자루 · 원통 머리 · 띠
+      iMesh(g,IGEO.cyl,w,0,.12,0,0,0,0,.018,.36,.018);iMesh(g,IGEO.cyl,w,0,.32,0,0,0,Math.PI/2,.05,.2,.05);iMesh(g,IGEO.cyl,d,-.07,.32,0,0,0,Math.PI/2,.052,.02,.052);iMesh(g,IGEO.cyl,d,.07,.32,0,0,0,Math.PI/2,.052,.02,.052);break;}
+    case SONGPYEON:{const C=[0xf4d4e0,0xd8ecc0,0xf6f6ee]; // 🌕 송편 세 개 (반달 모양)
+      C.forEach((c,k)=>{const m=imat('sp'+k,c,null,.6),b=new THREE.Mesh(new THREE.SphereGeometry(.05,16,10,0,Math.PI*2,0,Math.PI/2),m);b.scale.set(1,.85,.55);b.position.set((k-1)*.07,.005,k===1?-.03:.01);b.rotation.y=k*.6;g.add(b);});break;}
+    case YUT:{const w=imat('yutW',0xe8c890,'wood',.7),dk=imat('yutD',0x3a2410,null,.8); // 🥢 윷 네 가락 · 등에 X 표시
+      for(let k=0;k<4;k++){const x=(k-1.5)*.04;iBox(g,.03,.26,.02,w,x,.13,0);iBox(g,.02,.004,.021,dk,x,.11,.001,0,0,.6);iBox(g,.02,.004,.021,dk,x,.11,.001,0,0,-.6);}break;}
+    case HOE:{grip=true;const w=imat('hoeW',0x8a5630,'wood',.75),m=imat('hoeM',0xb8bcc4,'metal',.35,.7); // 🌾 괭이: 긴 자루 · 꺾인 쇠날
+      iMesh(g,IGEO.cyl,w,0,.22,0,0,0,0,.018,.62,.018);iBox(g,.16,.03,.03,m,.06,.52,0);iBox(g,.03,.09,.06,m,.13,.47,0);break;}
+    case RICE_SEED:{const m=imat('seed',0xc89a48,null,.7);for(let k=0;k<14;k++){const a=k*2.4,r=.02+(k%5)*.012;iMesh(g,IGEO.sph,m,Math.cos(a)*r,.01+(k%3)*.008,Math.sin(a)*r,0,a,0,.012,.008,.007);}break;} // 볍씨 한 줌
+    case RICE:{const sk=imat('riceSack',0xd8c49a,'cloth',.9),w=imat('riceW',0xfbfbf6,null,.6),st=imat('riceStr',0x8a6a3a,null,.8); // 🍚 쌀 자루: 자루 · 묶은 끈 · 위에 흰 쌀
+      iMesh(g,IGEO.sph,sk,0,.07,0,0,0,0,.08,.08,.075);iMesh(g,IGEO.cyl,sk,0,.15,0,0,0,0,.04,.04,.04);iMesh(g,IGEO.torus,st,0,.14,0,Math.PI/2,0,0,.04,.04,.04);iMesh(g,IGEO.sph,w,0,.175,0,0,0,0,.035,.015,.035);break;}
+    case HW_KEY:{const pk=imat('hwkP',0xff8a1a,null,.4,0,0x803000,.3),pu=imat('hwkV',0x7a3ab0,'metal',.3,.6); // 🎃 할로윈 열쇠: 호박 손잡이 · 보라 자루 · 이빨
+      iMesh(g,IGEO.sph,pk,0,.1,0,0,0,0,.04,.035,.04);iMesh(g,IGEO.cyl,imat('hwkS',0x3a6a20,null,.6),0,.14,0,0,0,0,.006,.02,.006);iBox(g,.016,.12,.016,pu,0,.02,0);iBox(g,.04,.014,.014,pu,.02,-.03,0);iBox(g,.03,.014,.014,pu,.015,0,0);break;}
+    case HW_PUMPKIN:{const o=imat('hwPk',0xe87a1c,null,.5),o2=imat('hwPk2',0xc85e10,null,.5),st=imat('hwPkS',0x4a6a20,'wood',.8); // 🎃 호박: 골이 진 주황 덩어리 · 꼭지
+      for(let k=0;k<6;k++){const a=k/6*6.28;iMesh(g,IGEO.sph,k%2?o:o2,Math.cos(a)*.03,.07,Math.sin(a)*.03,0,a,0,.05,.06,.035);}iMesh(g,IGEO.cyl,st,0,.14,0,.2,0,.2,.008,.03,.008);break;}
     case ICE:{const m=imat('ice',0xb8e0f8,null,.1,0,0x406080,.15,.8);iBox(g,.15,.15,.15,m,0,.075,0);break;}
     case CARAMEL:{const m=imat('caramel',0xb8742a,null,.3),w=imat('caramelW',0xf0e0c0,null,.6);iBox(g,.1,.07,.07,m,0,.035,0);iBox(g,.04,.04,.06,w,-.07,.035,0);iBox(g,.04,.04,.06,w,.07,.035,0);break;}
     case SORBET:{const cup=imat('sbCup',0xe8e0f0,null,.5),sc=imat('sbScoop',0xd8f0a0,null,.5);const c=new THREE.Mesh(new THREE.CylinderGeometry(.065,.045,.08,14),cup);c.position.y=.04;g.add(c);
