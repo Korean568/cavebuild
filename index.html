@@ -307,7 +307,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.152 — 💻 명령어 25개 더 (건축 · 효과 · 날씨 · 이동)</h4>
+    <h4>🆕 v26.153 — 💻 명령어 20개 더 · 눈 · 비 효과 뺌</h4>
+    • /tphere · /tpall(방장이 친구 부르기) · /near · /tpr(랜덤 순간이동) · /time add · /timefreeze · /freeze(몹 멈추기) · /gravity · /killmobs · /lightning(번개) · /itemrain · /walls · /cyl · /pyramid · /house(작은 집) · /drain(물 빼기) · /dance · /confetti · /afk.<br>
+    • 크리스마스 모드의 눈과 /weather(비)는 뺐어요.
+    <h4>v26.152 — 💻 명령어 25개 더 (건축 · 효과 · 날씨 · 이동)</h4>
     • 건축: /pos1 · /pos2 로 영역을 정하고 /copy · /paste · /replace · /sphere · /hsphere · /undo (setblock · fill 도 되돌릴 수 있어요).<br>
     • 효과: /effect 속도 · 점프 · 재생 · 야간투시 [초] · /jump 배수 · /weather 비 · 맑음.<br>
     • 이동: /sethome · /home · /back · /top · /up 칸. 그 밖에 /fov · /fps · /stats · /mobs · /roll · /flip · /clock · /say · /ver.
@@ -1908,7 +1911,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.152 — 💻 25 more commands</h4>
+    <h4>🆕 v26.153 — 💻 20 more commands · snow and rain removed</h4>
+    • /tphere, /tpall, /near, /tpr, /time add, /timefreeze, /freeze, /gravity, /killmobs, /lightning, /itemrain, /walls, /cyl, /pyramid, /house, /drain, /dance, /confetti and /afk. Christmas snow and /weather were removed.
+    <h4>v26.152 — 💻 25 more commands</h4>
     • Building (/pos1, /pos2, /copy, /paste, /replace, /sphere, /hsphere, /undo), effects (/effect, /jump, /weather), travel (/sethome, /home, /back, /top, /up) and /fov, /fps, /stats, /mobs, /roll, /flip, /clock, /say, /ver.
     <h4>v26.151 — 💻 20 more commands</h4>
     • /setblock, /fill, /speed, /god, /feed, /day, /night, /pos, /spawn, /dim, /locate, /explode, /firework, /repair, /more, /rename, /butcher, /title, /calc and /kick. Type /help for the full list.
@@ -4397,7 +4402,7 @@ function physics(e,dt){
   e.inWater=!(e.def&&e.def.fly)&&isLiquidAt(e.pos.x,e.pos.y+e.h*.35,e.pos.z);
   if(e.def&&e.def.fly){}
   else if(e.inWater){e.vel.y-=9*dt;e.vel.y*=1-2.2*dt;e.vel.y=Math.max(e.vel.y,-3.5);}
-  else{e.vel.y-=28*dt;e.vel.y=Math.max(e.vel.y,-50);}
+  else{e.vel.y-=28*dt*(e===player&&player.gravMul?player.gravMul:1);e.vel.y=Math.max(e.vel.y,-50);} // 💻 /gravity
   const steps=Math.max(1,Math.ceil(Math.max(Math.abs(e.vel.x),Math.abs(e.vel.y),Math.abs(e.vel.z))*dt/.35));
   const sdt=dt/steps;let landed=false;e.hitH=false;
   for(let s=0;s<steps;s++){
@@ -5699,7 +5704,7 @@ class Mob{
       if(b.dead)this.boat=null;
       else{this.pos.set(b.pos.x,b.pos.y+.2,b.pos.z);this.vel.set(0,0,0);this.g.position.copy(this.pos);this.g.rotation.y=this.yaw;if(d.anim)d.anim(this,dt,0);
         const e=this.hurtT>0?.6:0;for(const mm of this.u.mats)mm.emissive.setRGB(e,0,0);return;}}
-    if(this.servant)evServantAI(this,c,dt);else d.ai(this,c,dt);if(this.dead)return; // 👑 신하는 왕을 따라다님
+    if(MOB_FRZ){this.vel.x=this.vel.z=0;}else if(this.servant)evServantAI(this,c,dt);else d.ai(this,c,dt);if(this.dead)return; // 👑 신하는 왕을 따라다님
     if(this.inWater&&!d.fly&&!d.aquatic)this.vel.y=Math.max(this.vel.y,this.hitH?6.8:2.5);
     this.soundT-=dt;if(this.soundT<=0){this.soundT=5+Math.random()*9;if(dist<16)d.sound();}
     if(d.burn&&light>.8){let covered=false;for(let y=Math.floor(this.pos.y+this.h);y<CH;y++){const b=getBlock(Math.floor(this.pos.x),y,Math.floor(this.pos.z));if(b>0&&b!==LEAVES&&LIQ_KIND[b]!==1&&b!==GLASS){covered=true;break;}}
@@ -6255,7 +6260,6 @@ function evTick(dt){const F=world.flags,hud=$('evHud');if(!F.ev||world.dim!=='ov
   if(EVENT==='farm'&&E.crops){E.clk=(E.clk||0)+dt;E.ct=(E.ct||0)-dt;if(E.ct<=0){E.ct=1; // 벼가 자람: 45초마다 한 단계
     for(const k in E.crops){const [x,y,z]=k.split(',').map(Number);if(!getChunk(x>>4,z>>4))continue;const b=getBlock(x,y,z);if(b!==RICE0&&b!==RICE1&&b!==RICE2){delete E.crops[k];continue;}
       const age=E.clk-E.crops[k],want=age<45?RICE0:age<90?RICE1:RICE2;if(want!==b)setBlock(x,y,z,want);}}}
-  if(EVENT==='xmas'&&Math.random()<dt*6)spawnParticles(player.pos.x+(Math.random()-.5)*14,player.pos.y+6,player.pos.z+(Math.random()-.5)*14,new THREE.Color(0xffffff),1,.2,0); // 눈
   if(EVENT==='fools'&&!F.evDone){evPrankT-=dt;if(evPrankT<=0){evPrankT=45+Math.random()*45;evPrank();}}}
 function evPrank(){const r=Math.random()*6|0; // 🤡 만우절 병맛 장난
   if(r===0){renderer.domElement.style.transform='rotate(180deg)';toast('🙃 세상이 <b>뒤집혔어요</b>');setTimeout(()=>renderer.domElement.style.transform='',4000);}
@@ -7579,7 +7583,7 @@ function attack(){
 
 // ---------- 하늘/시간 ----------
 function updateSky(dt){
-  if(!paused){const nt=world.time+dt/DAY_LEN;if(nt>=1)world.stats.days++;world.time=nt%1;}
+  if(!paused&&!world.flags.tfz){const nt=world.time+dt/DAY_LEN;if(nt>=1)world.stats.days++;world.time=nt%1;}
   const overW=world.dim==='over',E=DIM[world.dim];sunMesh.visible=moonMesh.visible=clouds.visible=overW;
   skyDome.position.copy(camera.position);
   if(!overW){light=E.light;dayU.value=E.day;skyColor.setRGB(...E.bg);scene.fog.color.copy(skyColor);skyDome.material.uniforms.top.value.copy(skyColor).multiplyScalar(.7);skyDome.material.uniforms.hor.value.copy(skyColor);amb.intensity=.55;sunL.intensity=.25;
@@ -8416,6 +8420,7 @@ function mpGuestRecv(d){
   else if(d.t==='vb'){const v=VEH.find(q=>q.d.vid===d.v);if(v)v.boost=v.d.boost=!!d.b;}
   else if(d.t==='gno')mpGiDel(d.g);
   else if(d.t==='cfg'){MP.pvp=d.pvp!==false;toast('⚔ PvP: '+(MP.pvp?mpL('켬','ON'):mpL('끔','OFF')));}
+  else if(d.t==='tpto'){player.pos.set(d.x,d.y,d.z);player.vel.set(0,0,0);player.peakY=d.y;toast(mpL('🌐 방장이 나를 불렀어요','🌐 The host teleported you'));} // 💻 /tphere · /tpall
   else if(d.t==='kick')mpEnd(mpL('방장이 방에서 내보냈어요','The host removed you from the room')); // 💻 /kick
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
@@ -8575,9 +8580,13 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
   ['/locate 마을','가장 가까운 마을'],['/explode [크기]','보는 곳에 폭발 (1~8)'],['/firework [개수]','폭죽'],['/repair','든 아이템 내구도 가득'],['/more','든 아이템을 가득'],['/rename 이름','든 아이템 이름 바꾸기'],
   ['/butcher','주변 적 몹 없애기'],['/title 글','화면에 큰 글씨'],['/calc 식','계산기 (예: /calc 12*3+4)'],['/kick 닉네임','친구 내보내기 (방장)'],
   ['/pos1 · /pos2','건축: 영역 꼭짓점 (지금 위치)'],['/copy · /paste','영역 복사 · 내 자리에 붙여넣기'],['/replace 블록A 블록B','영역 안의 A를 B로'],['/sphere 블록 반지름','구 만들기 (/hsphere 속이 빈 구)'],['/undo','건축 명령어 되돌리기 (5번까지)'],
-  ['/effect 속도|점프|재생|야간투시 [초]','효과 (/effect clear 지우기)'],['/jump 배수','점프 높이 (0.5~3)'],['/weather 비|맑음','날씨'],
+  ['/effect 속도|점프|재생|야간투시 [초]','효과 (/effect clear 지우기)'],['/jump 배수','점프 높이 (0.5~3)'],
   ['/sethome · /home','집 정하기 · 집으로'],['/back','순간이동 전 자리로'],['/top','머리 위 땅 꼭대기로'],['/up 칸','위로 올라가 유리 발판'],
-  ['/fov 각도','시야각 (30~120)'],['/fps','디버그 화면 (좌표 · fps)'],['/stats','내 기록'],['/mobs','주변 몹 수'],['/roll [면]','주사위'],['/flip','동전 던지기'],['/clock','지금 시각'],['/say 글','모두에게 알림'],['/ver','게임 버전']];
+  ['/fov 각도','시야각 (30~120)'],['/fps','디버그 화면 (좌표 · fps)'],['/stats','내 기록'],['/mobs','주변 몹 수'],['/roll [면]','주사위'],['/flip','동전 던지기'],['/clock','지금 시각'],['/say 글','모두에게 알림'],['/ver','게임 버전'],
+  ['/tphere 닉네임 · /tpall','친구를 내 자리로 (방장)'],['/near','친구들과의 거리'],['/tpr','멀리 아무 데나 순간이동'],['/time add 숫자','시간 앞으로 (1000 = 1시간)'],['/timefreeze','시간 멈추기 · 다시 흐르기'],
+  ['/freeze','몹 멈추기 · 다시 움직이기'],['/gravity 배수','내 중력 (0.1~3)'],['/killmobs','주변 몹 모두 없애기 (보스 빼고)'],['/lightning','보는 곳에 번개'],['/itemrain 아이템 [개수]','하늘에서 아이템 비'],
+  ['/walls 블록','영역 둘레에 벽'],['/cyl 블록 반지름 높이','원기둥'],['/pyramid 블록 크기','피라미드'],['/house','앞에 작은 집 짓기'],['/drain [반지름]','주변 물 · 용암 없애기'],
+  ['/dance','빙글빙글 춤'],['/confetti','꽃가루'],['/afk','자리 비움 알리기']];
 function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
 function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
 function cmdItems(){const L=[];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
@@ -8588,7 +8597,7 @@ function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||''
     case 'help':case '도움말':evDlg('💻 <b>명령어</b> (T 또는 / 를 눌러 입력)<br><br>'+CMD_HELP.map(([k,d])=>`<b>${k}</b> — ${d}`).join('<br>'),[['닫기']]);break;
     case 'gamemode':case 'gm':case '게임모드':{const v=(a[0]||'').toLowerCase(),m={survival:'survival',s:'survival','0':'survival','서바이벌':'survival',creative:'creative',c:'creative','1':'creative','크리에이티브':'creative',spectator:'spectator',sp:'spectator','3':'spectator','관전':'spectator'}[v];
       if(!m){cmdOut('/gamemode 서바이벌 · 크리에이티브 · 관전',1);break;}setMode(m);cmdOut('게임 모드: <b>'+(m==='survival'?'서바이벌':m==='creative'?'크리에이티브':'관전')+'</b>');break;}
-    case 'time':case '시간':{const v=(a[0]==='set'||a[0]==='설정'?a[1]:a[0]||'').toLowerCase(),T={day:.05,'낮':.05,noon:.25,'정오':.25,night:.55,'밤':.55,midnight:.75,'자정':.75,sunrise:0,'아침':0,sunset:.5,'저녁':.5}[v];
+    case 'time':case '시간':{if(a[0]==='add'||a[0]==='더하기'){const n=+a[1];if(!isFinite(n)){cmdOut('/time add 1000',1);break;}world.time=((world.time+n/24000)%1+1)%1;updateSky(0);cmdOut('⏩ 시간을 앞으로 돌렸어요');break;}const v=(a[0]==='set'||a[0]==='설정'?a[1]:a[0]||'').toLowerCase(),T={day:.05,'낮':.05,noon:.25,'정오':.25,night:.55,'밤':.55,midnight:.75,'자정':.75,sunrise:0,'아침':0,sunset:.5,'저녁':.5}[v];
       const t=T!==undefined?T:isFinite(+v)&&v!==''?((+v%24000)+24000)%24000/24000:null;if(t===null){cmdOut('/time set 낮 · 정오 · 밤 · 자정 · 0~24000',1);break;}world.time=t;updateSky(0);cmdOut('시간을 바꿨어요');break;}
     case 'tp':case 'teleport':case '순간이동':{cmdMark();if(a.length>=3){const x=num(a[0],P.x),y=num(a[1],P.y),z=num(a[2],P.z);if(![x,y,z].every(isFinite)){cmdOut('/tp x y z',1);break;}player.pos.set(x,Math.max(1,Math.min(CH+40,y)),z);player.vel.set(0,0,0);player.peakY=player.pos.y;loadNear(4);cmdOut(`(${Math.round(x)}, ${Math.round(y)}, ${Math.round(z)}) 로 이동했어요`);}
       else if(a[0]){const T=[...MP.peers.values()].find(q=>q.nick.toLowerCase()===a[0].toLowerCase());const g=T&&T.A&&T.A.g;if(!g){cmdOut('그 사람을 찾지 못했어요',1);break;}player.pos.set(g.position.x,g.position.y,g.position.z);player.vel.set(0,0,0);player.peakY=player.pos.y;cmdOut(`<b>${mpEsc(T.nick)}</b> 님에게 갔어요`);}
@@ -8648,7 +8657,6 @@ function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||''
       if(q==='clear'||q==='지우기'){player.eff={};cmdOut('효과를 모두 지웠어요');break;}if(!k){cmdOut('/effect 속도 · 점프 · 재생 · 야간투시 [초] · /effect clear',1);break;}
       E[k]=sec;cmdOut(`✨ <b>${{speed:'속도',jump:'점프',regen:'재생',night:'야간 투시'}[k]}</b> 효과 ${sec}초`);break;}
     case 'jump':case '점프':{const v=+a[0];if(!(v>=.5&&v<=3)){cmdOut('/jump 0.5~3 (1 = 원래대로)',1);break;}player.jumpMul=v===1?0:v;cmdOut(`점프 높이 <b>${v}배</b>`);break;}
-    case 'weather':case '날씨':{const q=(a[0]||'').toLowerCase(),r={rain:1,'비':1,clear:0,'맑음':0,sun:0}[q];if(r===undefined){cmdOut('/weather 비 · 맑음',1);break;}world.rain=!!r;cmdOut(r?'🌧 비가 내려요':'☀ 날씨가 맑아졌어요');break;}
     case 'sethome':case '집정하기':world.flags.home={x:P.x,y:P.y,z:P.z,dim:world.dim};cmdOut('🏠 여기를 <b>집</b>으로 정했어요 (/home)');break;
     case 'home':case '집':{const h=world.flags.home;if(!h){cmdOut('먼저 /sethome 해요',1);break;}cmdMark();if(h.dim!==world.dim){travel(h.dim,{x:h.x,y:h.y,z:h.z});cmdOut('🏠 집으로 가요');break;}player.pos.set(h.x,h.y,h.z);player.vel.set(0,0,0);player.peakY=h.y;loadNear(4);cmdOut('🏠 집에 왔어요');break;}
     case 'back':case '뒤로':{const b=player.backPos;if(!b){cmdOut('돌아갈 자리가 없어요',1);break;}cmdMark();if(b.dim!==world.dim){travel(b.dim,{x:b.x,y:b.y,z:b.z});break;}player.pos.set(b.x,b.y,b.z);player.vel.set(0,0,0);player.peakY=b.y;loadNear(4);cmdOut('↩ 전 자리로 돌아왔어요');break;}
@@ -8663,7 +8671,37 @@ function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||''
     case 'clock':case '시각':cmdOut('🕒 '+new Date().toLocaleString('ko-KR',{month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit'}));break;
     case 'say':case '알림':{const t=a.join(' ').slice(0,70);if(!t){cmdOut('/say 글',1);break;}toast('📢 <b>'+mpEsc(t)+'</b>');if(MP.on)mpSend({t:'c',n:'📢',m:t});break;}
     case 'ver':case '버전':{const v=(document.querySelector('#title .help.upd h4')||{}).textContent||'';cmdOut('CAVEBUILD '+((v.match(/v\d+\.\d+/)||[''])[0]));break;}
+    case 'tphere':case 'tpall':case '부르기':{if(!MP.on||!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const L=[...MP.conns].filter(q=>q.P&&(c==='tpall'||q.P.nick.toLowerCase()===(a[0]||'').toLowerCase()));
+      if(!L.length){cmdOut(c==='tpall'?'방에 친구가 없어요':'그 사람을 찾지 못했어요 · /list',1);break;}for(const q of L)q.send({t:'tpto',x:P.x,y:P.y+.1,z:P.z});cmdOut(`🧲 ${L.map(q=>mpEsc(q.P.nick)).join(' · ')} 님을 불렀어요`);break;}
+    case 'near':case '거리':{if(!MP.on){cmdOut('혼자 하고 있어요',1);break;}const L=[...MP.peers.values()].map(q=>{const g=q.A&&q.A.g;return g?`${mpEsc(q.nick)} ${Math.round(Math.hypot(g.position.x-P.x,g.position.y-P.y,g.position.z-P.z))}m`:mpEsc(q.nick)+' ?';});cmdOut(L.length?'👥 '+L.join(' · '):'방에 친구가 없어요');break;}
+    case 'tpr':case 'rtp':case '랜덤':{if(world.dim!=='over'){cmdOut('프론티어에서만 돼요',1);break;}cmdMark();const an=Math.random()*6.28,d=200+Math.random()*400,x=Math.floor(P.x+Math.cos(an)*d)+.5,z=Math.floor(P.z+Math.sin(an)*d)+.5;
+      player.pos.set(x,CH-2,z);player.vel.set(0,0,0);loadNear(4);setTimeout(()=>{const sf=surfaceAt(Math.floor(x),Math.floor(z));player.pos.y=sf?sf.y:Math.max(SEA+2,player.pos.y);player.vel.set(0,0,0);player.peakY=player.pos.y;},400);cmdOut(`🎯 ${Math.round(d)}m 떨어진 곳으로 갔어요`);break;}
+    case 'timefreeze':case '시간정지':world.flags.tfz=!world.flags.tfz;cmdOut(world.flags.tfz?'⏸ 시간이 <b>멈췄어요</b>':'▶ 시간이 다시 흘러요');break;
+    case 'freeze':case '얼음':MOB_FRZ=!MOB_FRZ;cmdOut(MOB_FRZ?'🧊 몹이 모두 <b>멈췄어요</b>':'몹이 다시 움직여요');break;
+    case 'gravity':case '중력':{const v=+a[0];if(!(v>=.1&&v<=3)){cmdOut('/gravity 0.1~3 (1 = 원래대로)',1);break;}player.gravMul=v===1?0:v;cmdOut(`🪐 중력 <b>${v}배</b>`);break;}
+    case 'killmobs':case '몹청소':{let n=0;for(const m of [...mobs])if(!m.def.boss&&!m.def.persist&&!m.servant&&m.dist()<80){m.remove();n++;}cmdOut(`🧹 몹 ${n}마리를 없앴어요`);break;}
+    case 'lightning':case '번개':{const h=raycast(camera.position,viewDir(),60),T=h?new THREE.Vector3(h.x+.5,h.y+1,h.z+.5):new THREE.Vector3(P.x+viewDir().x*10,P.y,P.z+viewDir().z*10);
+      flashBeam(new THREE.Vector3(T.x,T.y+45,T.z),T,0xe8f0ff,.35,.35);flashBeam(new THREE.Vector3(T.x+1.5,T.y+30,T.z-1),T,0xffffff,.15,.25);spawnParticles(T.x,T.y,T.z,new THREE.Color(0xffd040),24,1.2,6);
+      for(const m of mobs)if(!m.dead&&m.pos.distanceTo(T)<3.5)m.hurt(15,0,0);noise(.15,8000,.4);noise(1.4,180,.35,.05);cmdOut('⚡ 번쩍!');break;}
+    case 'itemrain':case '아이템비':{const n=a.length>1&&isFinite(+a[a.length-1])?Math.max(1,Math.min(64,+a.pop())):16,q=a.join(' '),id=/^\d+$/.test(q)&&(BL[+q]||IT[+q])?+q:q?cmdFind(q,cmdItems()):null;
+      if(id==null){cmdOut('/itemrain 사과 20',1);break;}for(let i=0;i<n;i++)setTimeout(()=>dropItem(id,1,P.x+(Math.random()-.5)*10,P.y+10,P.z+(Math.random()-.5)*10,{spread:.2,up:0}),i*60);cmdOut(`🌧 <b>${info(id).name}</b> ${n}개가 쏟아져요`);break;}
+    case 'walls':case '벽':{const B=cmdSelBox(),id=cmdBlock(a.join(' '));if(!B||id==null){cmdOut('/pos1 · /pos2 로 영역을 정하고 /walls 돌',1);break;}const E=[];
+      for(let x=B.x0;x<=B.x1;x++)for(let y=B.y0;y<=B.y1;y++)for(let z=B.z0;z<=B.z1;z++)if(x===B.x0||x===B.x1||z===B.z0||z===B.z1)E.push([x,y,z,id]);if(E.length>20000){cmdOut('너무 커요',1);break;}cmdEdit(E);cmdOut(`🧱 벽 ${E.length}칸`);break;}
+    case 'cyl':case 'cylinder':case '원기둥':{const h=Math.floor(+a.pop()),r=Math.floor(+a.pop()),id=cmdBlock(a.join(' '));if(!(r>=1&&r<=16)||!(h>=1&&h<=40)||id==null){cmdOut('/cyl 돌 5 10 (반지름 1~16 · 높이 1~40)',1);break;}
+      const o=[Math.floor(P.x),Math.floor(P.y),Math.floor(P.z)],E=[];for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++)if(Math.hypot(x,z)<=r+.5)for(let y=0;y<h;y++)E.push([o[0]+x,o[1]+y,o[2]+z,id]);cmdEdit(E);cmdOut(`🛢 원기둥 ${E.length}칸 (/undo 로 되돌리기)`);break;}
+    case 'pyramid':case '피라미드':{const k=Math.floor(+a.pop()),id=cmdBlock(a.join(' '));if(!(k>=2&&k<=20)||id==null){cmdOut('/pyramid 모래 8 (크기 2~20)',1);break;}
+      const d=viewDir(),l=Math.hypot(d.x,d.z)||1,o=[Math.floor(P.x+d.x/l*(k+3)),Math.floor(P.y),Math.floor(P.z+d.z/l*(k+3))],E=[];for(let y=0;y<k;y++){const w=k-y;for(let x=-w;x<=w;x++)for(let z=-w;z<=w;z++)E.push([o[0]+x,o[1]+y,o[2]+z,id]);}cmdEdit(E);cmdOut(`🔺 피라미드 ${E.length}칸`);break;}
+    case 'house':case '집짓기':{const d=viewDir(),l=Math.hypot(d.x,d.z)||1,cx=Math.floor(P.x+d.x/l*7),cz=Math.floor(P.z+d.z/l*7),by=Math.floor(P.y),fx=Math.abs(d.x)>Math.abs(d.z)?-Math.sign(d.x):0,fz=fx?0:-Math.sign(d.z)||1,E=[]; // 문은 나를 보게
+      for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++)for(let y=-1;y<=5;y++){const X=cx+x,Z=cz+z,Y=by+y,edge=Math.abs(x)===3||Math.abs(z)===3,corner=Math.abs(x)===3&&Math.abs(z)===3,door=(fx?x===3*fx&&z===0:z===3*fz&&x===0)&&(y===0||y===1);
+        let id=AIR;if(y===-1)id=PLANKS;else if(y===4)id=Math.abs(x)<=3&&Math.abs(z)<=3?BRICK:AIR;else if(y===5)id=Math.abs(x)<=1&&Math.abs(z)<=1?BRICK:AIR;else if(corner)id=LOG;else if(edge)id=door?AIR:(y===1&&(Math.abs(x)===1||Math.abs(z)===1)?GLASS:PLANKS);else if(y===3&&x===0&&z===0)id=LAMP;
+        E.push([X,Y,Z,id]);}cmdEdit(E);cmdOut('🏡 작은 집을 지었어요 (/undo 로 되돌리기)');break;}
+    case 'drain':case '물빼기':{const r=Math.max(1,Math.min(12,Math.floor(+a[0]||6))),o=[Math.floor(P.x),Math.floor(P.y),Math.floor(P.z)],E=[];for(let x=-r;x<=r;x++)for(let y=-r;y<=r;y++)for(let z=-r;z<=r;z++){const b=getBlock(o[0]+x,o[1]+y,o[2]+z);if(b>0&&LIQ_KIND[b])E.push([o[0]+x,o[1]+y,o[2]+z,AIR]);}
+      cmdEdit(E);cmdOut(`🚰 물 · 용암 ${E.length}칸을 없앴어요`);break;}
+    case 'dance':case '춤':player.danceT=2.5;cmdOut('💃 빙글빙글~');if(MP.on)mpSend({t:'c',n:'💃',m:MP.me.nick+'님이 춤춰요'});break;
+    case 'confetti':case '꽃가루':{for(const col of [0xff4060,0xffd040,0x40d0ff,0x70ff70,0xc070ff])spawnParticles(P.x,P.y+2,P.z,new THREE.Color(col),14,1.6,6);tone(900,1500,.15,.05,'triangle');cmdOut('🎉 축하해요!');break;}
+    case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
     default:cmdOut(`모르는 명령어예요: /${mpEsc(c)} · <b>/help</b>`,1);}}
+let MOB_FRZ=false;
 let CMDSEL={a:null,b:null},CMDCLIP=null;const CMDUNDO=[];
 function cmdSelBox(){const {a,b}=CMDSEL;if(!a||!b)return null;const B={x0:Math.min(a[0],b[0]),x1:Math.max(a[0],b[0]),y0:Math.max(1,Math.min(a[1],b[1])),y1:Math.min(CH-1,Math.max(a[1],b[1])),z0:Math.min(a[2],b[2]),z1:Math.max(a[2],b[2])};
   B.w=B.x1-B.x0+1;B.h=B.y1-B.y0+1;B.d=B.z1-B.z0+1;B.n=B.w*B.h*B.d;return B;}
@@ -8676,8 +8714,7 @@ function cmdTick(dt){const p=player,E=p.eff; // 💻 효과 시간 · 재생 · 
   if(E){for(const k in E){E[k]-=dt;if(E[k]<=0){delete E[k];toast('✨ 효과가 끝났어요');}}
     if(E.regen>0){cmdT+=dt;if(cmdT>1){cmdT=0;if(!p.dead)p.hp=Math.min(maxHp(),p.hp+1);}}
     if(E.night>0)dayU.value=Math.max(dayU.value,.95);}
-  if(world.rain&&world.dim==='over'){dayU.value*=.72;amb.intensity*=.8;const n=Math.min(12,Math.floor(Math.random()*dt*260));for(let i=0;i<n;i++)spawnParticles(p.pos.x+(Math.random()-.5)*18,p.pos.y+7+Math.random()*3,p.pos.z+(Math.random()-.5)*18,new THREE.Color(0x8ab4e8),1,.02,-6);
-    if(Math.random()<dt*2)noise(.6,2600,.012);}}
+  if(p.danceT>0){p.danceT-=dt;p.yaw+=dt*9;}} // 💃 /dance
 function cmdBlock(q){q=(q||'').trim();if(!q)return null;if(/^(공기|air|0)$/i.test(q))return AIR;if(/^\d+$/.test(q))return isBlk(+q)?+q:null;const L=[];BL.forEach((b,i)=>{if(b&&i)L.push([b.name,i]);});return cmdFind(q,L);}
 function cmdTitle(t){let el=$('cmdTitle');if(!el){el=document.createElement('div');el.id='cmdTitle';el.style.cssText='position:fixed;left:0;right:0;top:28%;text-align:center;z-index:30;pointer-events:none;font:900 min(9vw,72px) sans-serif;color:#fff;text-shadow:4px 4px 0 #000,0 0 18px rgba(0,0,0,.6);transition:opacity .5s';document.body.appendChild(el);}
   el.textContent=t;el.style.opacity=1;clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity=0,3000);}
