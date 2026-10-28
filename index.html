@@ -40,6 +40,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malg
 @keyframes tin{from{transform:translateX(40px);opacity:0}}
 .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(0,0,0,.55);z-index:10}
 .overlay.show{display:flex}
+#evHud~.modhud,.modhud{position:fixed;right:10px;top:60px;z-index:12;background:rgba(10,10,30,.7);color:#fff;border:2px solid #7ab0ff;border-radius:6px;padding:5px 10px;font:13px sans-serif;pointer-events:none;max-width:40vw}
 #mpRooms{max-height:180px;overflow:auto;margin:4px 0}.mpr{display:flex;align-items:center;gap:8px;padding:5px 8px;margin:3px 0;background:rgba(0,0,0,.25);border-radius:6px;font-size:14px}.mpr span{flex:1;text-align:left}.mpr small{display:block;opacity:.7;font-size:12px}.mpr .btn{padding:4px 12px;margin:0}
 .mpPubRow{display:flex;gap:6px;justify-content:center;margin:6px 0}.mpPubRow .btn{margin:0}.mpPubRow .btn.on{outline:3px solid #ffd040}
 #mpChat{position:fixed;left:10px;bottom:96px;width:min(420px,70vw);display:none;z-index:16;font:15px sans-serif;padding:8px 10px;background:rgba(0,0,0,.7);color:#fff;border:2px solid #888;outline:none}
@@ -308,7 +309,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.163 — 💻 명령어 20개 더</h4>
+    <h4>🆕 v26.164 — 🔑 명령어는 OP · 어드민만 · 🧩 .js 로 서버 시스템 · 캐릭터 · 🪲 가시벌레</h4>
+    • 🔑 명령어는 그 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요. 혼자 하는 세계 · 방장은 OP이고, 친구는 방장이 <b>/op 닉네임</b>으로 OP를 줘야 해요 (/deop · /ops).<br>
+    • 🧩 .js 모드로 <b>서버 시스템</b>과 <b>캐릭터</b>를 만들 수 있어요: CB.command(명령어) · CB.mob(캐릭터) · CB.spawn · CB.on('tick' · 'chat' · 'join' · 'break' · 'place' · 'death' · 'kill') · CB.say · CB.title · CB.hud(안내판) · CB.isOp · CB.players · CB.run. 🧩 모드 → 📄 예시 모드 받기에 예시가 있어요.<br>
+    • 🪲 가시벌레는 <b>낮에 햇빛을 받으면 타 죽고</b>, 어비스 · 네크로폴리스에는 나오지 않아요.
+    <h4>v26.163 — 💻 명령어 20개 더</h4>
     • 💣 /bomb · /bombrain(폭탄 비) · /airstrike(공습) · 🐾 /clonemob · /mobsize · /healmob · ⏩ /timespeed · /hp · 🔇 /mute · 📸 /screenshot<br>
     • 🚜 /flatten(평평하게) · /maze(미로) · /forest(숲) · /plant(꽃) · /snow · /circle · 🎮 /rps(가위바위보) · /joke(아재개그). 모두 /un명령어 로 되돌릴 수 있는 건 되돌려요.
     <h4>v26.162 — 💣 폭탄</h4>
@@ -1957,7 +1962,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.163 — 💻 20 more commands</h4>
+    <h4>🆕 v26.164 — 🔑 OP-only commands · 🧩 server systems & characters in .js · 🪲 spike bugs</h4>
+    • Commands need OP or admin (single player and room hosts are OP; hosts give OP with /op). .js mods can add commands, characters (CB.mob), events (CB.on) and HUDs. Spike bugs burn in daylight and no longer spawn in the Abyss or Necropolis.
+    <h4>v26.163 — 💻 20 more commands</h4>
     • /bomb, /bombrain, /airstrike, /clonemob, /mobsize, /healmob, /timespeed, /hp, /mute, /screenshot, /flatten, /maze, /forest, /plant, /snow, /circle, /rps and /joke.
     <h4>v26.162 — 💣 Bombs</h4>
     • Craft 2 Bombs from 2 Coal, 1 Iron Ingot and 1 Silk. Right-click to throw: it bounces and rolls, then explodes after 3 seconds.
@@ -5593,7 +5600,7 @@ const MOBDEF={
     ai(m,c,dt){if(c.dist<24&&(m.victim||!player.dead)){toward(m,c,2.3,dt);melee(m,c,1.3,3,1.1,'좀비에게 당했습니다');}else wander(m,.8,dt);autoJump(m);},
     anim(m,dt,hs){legSwing(m.u.legs,m.walk,.7*Math.min(1,hs));const t=performance.now()/500;m.u.arms.forEach((a,i)=>a.rotation.x=1.45+Math.sin(t+i*2)*.1+(m.swingT>0?.5:0));}},
 
-  spikebug:{name:'가시벌레',w:.9,h:.45,hp:6,hostile:true,color:0x5a2a22,
+  spikebug:{name:'가시벌레',w:.9,h:.45,hp:6,hostile:true,burn:true,color:0x5a2a22, // ☀ 햇빛에 타 죽음
     sound:()=>SFX.click(),drops:()=>[[SPIKE,1+rnd(1)],[SILK,rnd(2)]],
     build(g){const body=lam(0x5a2a22,0,'shell'),head=lam(0x3a1a16,0,'shell'),spike=lam(0xd8c8a0,0,'bone'),leg=lam(0x2a1410,0,'skin'),eye=bas(0xff4a2a);
       part(g,.8,.3,.9,body,0,.28,0);part(g,.45,.25,.3,head,0,.26,-.58);
@@ -5853,7 +5860,7 @@ class Mob{
     if(this.hp<=0)this.die(!silent);
   }
   die(drops){
-    const d=this.def;this.dead=true;if(MP.on&&MP.host&&this.nid)mpSend({t:'md',id:this.nid});spawnParticles(this.pos.x,this.pos.y+this.h/2,this.pos.z,new THREE.Color(d.color),d.boss?40:14,d.boss?1.2:.5,4);
+    const d=this.def;this.dead=true;modEmit('kill',this);if(MP.on&&MP.host&&this.nid)mpSend({t:'md',id:this.nid});spawnParticles(this.pos.x,this.pos.y+this.h/2,this.pos.z,new THREE.Color(d.color),d.boss?40:14,d.boss?1.2:.5,4);
     if(d.onDeath)d.onDeath(this);
     if(drops||d.boss){world.stats.kills++;
       for(const [id,n] of d.drops(this))if(n>0)dropItem(id,n,this.pos.x,this.pos.y+Math.min(1,this.h*.5),this.pos.z,{fireproof:!!d.boss,spread:2});
@@ -5959,7 +5966,7 @@ function spawnMobs(dt){
       const q=Math.random(),kind=desert?(q<.4?'skeleton':q<.75?'zombie':'spikebug'):(q<.33?'zombie':q<.53?'skeleton':q<.72?'gloom':'spikebug');
       new Mob(kind,s.x,s.y,s.z);}}
   // 낮에도 풀숲·숲에 가시벌레가 돌아다님
-  if(!isNight()&&count(m=>m.kind==='spikebug')<4&&Math.random()<.14){const s=pick(20,40);
+  if(isNight()&&count(m=>m.kind==='spikebug')<4&&Math.random()<.14){ // 가시벌레는 햇빛에 타서 밤에만 땅 위에 나옴const s=pick(20,40);
     if(s&&(s.b===GRASS||s.b===DIRT)&&!lampNear(Math.floor(s.x),s.y,Math.floor(s.z)))new Mob('spikebug',s.x,s.y,s.z);}
   // 어두운 동굴 (등불 근처 제외): 깊을수록 위험
   if(hostile<12&&Math.random()<.35){const py=Math.floor(player.pos.y);const s=caveSpot(12,26,py-12,py+6);
@@ -6520,12 +6527,12 @@ function spawnDim(){
   if(world.dim==='end'&&tps<8&&Math.random()<.35){const a=Math.random()*6.28,d=12+Math.random()*20,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d),sf=surfaceAt(x,z);
     if(sf&&sf.b===ENDSTONE)new Mob('teleporter',x+.5,sf.y,z+.5);}
   if(world.dim==='hell'&&hostile<12&&Math.random()<.45){const s=caveSpot(10,26,py-10,py+8);
-    if(s)new Mob(r<.35?'ember':r<.65?'gloom':r<.85?'zombie':'spikebug',s.x,s.y,s.z);}
+    if(s)new Mob(r<.35?'ember':r<.65?'gloom':'zombie',s.x,s.y,s.z);} // 어비스엔 가시벌레가 안 나옴
   if(world.dim==='castle'&&hostile<6&&Math.random()<.2){const x=Math.floor(Math.random()*50-25),z=Math.floor(Math.random()*70-30);
     if(getBlock(x,CASTLE.floor+1,z)===AIR&&getBlock(x,CASTLE.floor+2,z)===AIR&&SOLID[getBlock(x,CASTLE.floor,z)]&&Math.hypot(x-player.pos.x,z-player.pos.z)>10)
       new Mob(r<.5?'gloom':r<.8?'ember':'zombie',x+.5,CASTLE.floor+1,z+.5);}
   if(world.dim==='city'&&hostile<10&&Math.random()<.4){const a=Math.random()*6.28,d=14+Math.random()*16,x=Math.floor(player.pos.x+Math.sin(a)*d),z=Math.floor(player.pos.z+Math.cos(a)*d);
-    if(getBlock(x,10,z)===ASPHALT&&getBlock(x,11,z)===AIR&&getBlock(x,12,z)===AIR){const k=r<.5?'zombie':r<.8?'skeleton':'spikebug';new Mob(k,x+.5,11,z+.5);}}
+    if(getBlock(x,10,z)===ASPHALT&&getBlock(x,11,z)===AIR&&getBlock(x,12,z)===AIR){const k=r<.5?'zombie':'skeleton';new Mob(k,x+.5,11,z+.5);}} // 네크로폴리스엔 가시벌레가 안 나옴
 }
 
 // --- 광선 (레이저) ---
@@ -7297,7 +7304,7 @@ function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){if(MP
   }
   renderStats();
 }
-function die(cause){if(MP.on)try{mpDied(cause);}catch(e){}
+function die(cause){modEmit('death',cause);if(MP.on)try{mpDied(cause);}catch(e){}
   player.dead=true;world.stats.deaths++;invOpen&&closeInv(true);$('deadMsg').textContent=cause;$('dead').classList.add('show');
   if(isHardcore()){$('deadMsg').innerHTML=cause+'<br><b style="color:#ff9a9a">💀 하드코어 세계에서는 다시 살아날 수 없어요 — 이제 관전만 할 수 있어요</b>';$('btnRespawn').textContent='👁 관전하기';}
   else $('btnRespawn').textContent='부활하기';
@@ -7510,7 +7517,7 @@ function toggleDoor(x,y,z){ // 문 여닫기 (위·아래 칸 함께)
 function breakBlock(x,y,z,id){
   const B=BL[id];
   setBlock(x,y,z,AIR);if(id===OBSIDIAN)breakPortalNear(x,y,z);
-  if(EVENT&&!HALLOWEEN)evBreak(x,y,z,id);
+  if(EVENT&&!HALLOWEEN)evBreak(x,y,z,id);modEmit('break',x,y,z,id);
   if(id===OBSIDIAN&&HALLOWEEN&&world.dim==='over'&&!world.flags.bkDone){if(world.flags.hwBox)setTimeout(()=>{if(world.dim==='over')setBlock(x,y,z,OBSIDIAN);},300);hwFallToBack();} // 🎃 할로윈 모드: 흑요석 아래는 백룸 (상자의 흑요석은 다시 막힘)
   if(DOOR_OF[id]){const oy=BL[id].door.t?y-1:y+1;if(DOOR_OF[getBlock(x,oy,z)])setBlock(x,oy,z,AIR);} // 문은 위·아래가 함께 부서짐
   if(id===LOG&&getBlock(x,y,z)!==LOG){ // 나무 원목을 모두 캐면 묘목이 떨어짐
@@ -7661,7 +7668,7 @@ function useItem(){
       const wall=!target.n[1],r=wall?Math.atan2(target.n[0],target.n[2]):Math.round(player.yaw/(Math.PI/4))*Math.PI/4;
       setBlock(x,y,z,SIGN);(world.signs||(world.signs={}))[signKey(x,y,z)]={t:'',r,wall:wall?1:0};if(!isCreative())s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();openSignEd(signKey(x,y,z));return;}
     else if(s.id===CHEST){const d=viewDir();const k=Math.abs(d.x)>Math.abs(d.z)?(d.x>0?0:1):(d.z>0?4:5);pid=CHEST_IDS[DIR_FACES.indexOf(k)];} // 앞면이 나를 보게
-    setBlock(x,y,z,pid);if(s.col)paintBlock(x,y,z,s.col);if(!isCreative())s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();
+    setBlock(x,y,z,pid);modEmit('place',x,y,z,pid);if(s.col)paintBlock(x,y,z,s.col);if(!isCreative())s.count--;if(!s.count)inv[sel]=null;SFX.place();swing=1;invChanged();
     if(pid===PLANKS)tryBuildGuardian(x,y,z);if(pid===OBSIDIAN)tryBuildPortal(x,y,z);
   }
 }
@@ -8304,7 +8311,29 @@ function modIconCanvas(o){const c=makeCanvas(48,48),g=c.getContext('2d');
   if(o.icon&&o.icon.length<=4){g.font='36px serif';g.textAlign='center';g.textBaseline='middle';g.fillText(o.icon,24,27);}
   else{const col=o.color||[200,200,200];g.fillStyle=`rgb(${col})`;g.fillRect(10,10,28,28);g.fillStyle='rgba(255,255,255,.35)';g.fillRect(10,10,28,6);g.strokeStyle='#222';g.lineWidth=3;g.strokeRect(10,10,28,28);}return c;}
 let modCur=null;
-const CB={version:'v26.30',
+const MOD_EV={},MOD_CMDS={};
+function modEmit(ev,...args){const L=MOD_EV[ev];if(!L)return;for(const f of L)try{f(...args);}catch(e){console.warn('모드 이벤트 오류',ev,e);}} // 🧩 모드 이벤트 (tick · chat · join · break · place · death · kill)
+function modMobDef(key,o){const col=o.color??0x6a8a5a,hd=o.head??0xd8a07c,sp=o.speed??2.2,dm=o.damage??3,nm=o.name||key; // 🧩 모드 캐릭터: 사람 모양 기본 몸 · 기본 AI (chase · wander · flee · 직접 함수)
+  return {name:nm,w:o.w??.6,h:o.h??1.9,hp:o.hp??20,hostile:!!o.hostile,burn:!!o.burn,fireproof:!!o.fireproof,fly:!!o.fly,color:col,
+    sound:()=>{if(o.sound)try{o.sound();}catch(e){}},drops:()=>(o.drops||[]).map(([id,n])=>[id,typeof n==='function'?n():n]),
+    build:o.build?(g)=>o.build(g,{part,pivot,lam,bas,THREE}):(g)=>{const body=lam(col,0,'cloth'),head=lam(hd,0,'skin'),eye=bas(o.eyes??0x101010);
+      const legs=[-.15,.15].map(x=>{const q=pivot(g,x,.8,0);part(q,.28,.8,.28,body,0,-.4,0);return q;});part(g,.6,.72,.36,body,0,1.16,0);
+      const h=pivot(g,0,1.52,0);part(h,.5,.5,.5,head,0,.25,0);part(h,.1,.1,.02,eye,-.12,.3,-.26);part(h,.1,.1,.02,eye,.12,.3,-.26);
+      const arms=[-1,1].map(sx=>{const q=pivot(g,sx*.42,1.42,0);part(q,.2,.7,.2,body,0,-.32,0);return q;});return {legs,arms,head:h,mats:[body,head]};},
+    ai:typeof o.ai==='function'?o.ai:(m,c,dt)=>{const ai=o.ai||(o.hostile?'chase':'wander');
+      if(ai==='chase'&&c.dist<(o.range??20)&&!player.dead){m.face=true;toward(m,c,sp,dt);melee(m,c,1.3,dm,1,nm+'에게 당했습니다');}
+      else if(ai==='flee'&&c.dist<8){fleeFrom(m,c,sp*1.3,dt);}else wander(m,sp*.4,dt);if(!o.fly)autoJump(m);},
+    anim:(m,dt,hs)=>{if(m.u.legs)legSwing(m.u.legs,m.walk,.6*Math.min(1,hs));if(o.anim)try{o.anim(m,dt);}catch(e){}},
+    onDeath:o.onDeath?(m)=>{try{o.onDeath(m);}catch(e){}}:undefined};}
+const CB={version:'v26.164',
+  on:(ev,f)=>{(MOD_EV[ev]||(MOD_EV[ev]=[])).push(f);}, // 🧩 이벤트: 'tick'(dt) · 'chat'(닉, 말) · 'join'(닉) · 'break'(x,y,z,블록) · 'place'(x,y,z,블록) · 'death'(이유) · 'kill'(몹)
+  command:(name,desc,fn,opts)=>{MOD_CMDS[String(name).toLowerCase()]={desc,fn,op:!(opts&&opts.everyone)};}, // 🧩 명령어 만들기: fn(인자들, {say, nick}) · {everyone:true} 면 OP 아니어도 씀
+  mob:(key,o)=>{const k='mod_'+String(key);MOBDEF[k]=modMobDef(k,o||{});return k;}, // 🧩 캐릭터(몹) 만들기 → /summon 이름 으로도 소환
+  spawn:(k,x,y,z)=>{const m=new Mob(MOBDEF[k]?k:'mod_'+k,x,y,z);return m;},mobs:()=>mobs,
+  say:t=>{toast('📢 '+mpEsc(String(t)));if(MP.on&&MP.host)mpSend({t:'c',n:'📢',m:String(t).slice(0,80)});},title:t=>cmdTitle(String(t)),
+  tp:(x,y,z)=>{player.pos.set(x,y,z);player.vel.set(0,0,0);player.peakY=y;},isOp:()=>cmdIsOp(),isAdmin:()=>cmdIsAdmin(),isHost:()=>!MP.on||MP.host,
+  players:()=>MP.on?[MP.me.nick,...mpList()]:[nickNow()||'플레이어'],run:line=>runCmd(String(line).startsWith('/')?String(line):'/'+line),
+  hud:(id,html)=>{let el=document.getElementById('modhud_'+id);if(html==null){if(el)el.remove();return;}if(!el){el=document.createElement('div');el.id='modhud_'+id;el.className='modhud';document.body.appendChild(el);}el.innerHTML=html;document.querySelectorAll('.modhud').forEach((e,i)=>e.style.top=(60+i*36)+'px');}, // 🧩 화면 오른쪽 위 안내판
   id:name=>{for(let i=1;i<BL.length;i++)if(BL[i]&&BL[i].name===name)return i;for(let i=100;i<IT.length;i++)if(IT[i]&&IT[i].name===name)return i;return null;}, // 한국어 이름 → 번호
   ids:{STONE,COBBLE,DIRT,GRASS,SAND,LOG,PLANKS,GLASS,BRICK,STICK,COAL,IRON_INGOT,CRYSTAL,OBSIDIAN,LAVA,WATER,STEEL,STEEL_ALLOY,SUPER_ALLOY,NUKE,GOLD_INGOT,COPPER_INGOT,TITANIUM_INGOT,DIAMOND,URANIUM,STELLAR_REMOTE,STAR_CORE},
   block(o){ // {key,name,color:[r,g,b] | paint(u,v,x,y)→[r,g,b], hard,tool,tier,light,glow}
@@ -8384,6 +8413,16 @@ CB.recipe(RUBY,9,[[RUBY_BLOCK,1]]);
 // 우클릭하면 바라보는 블록에 작은 폭발을 일으키는 지팡이
 const WAND=CB.item({key:'wand',name:'루비 지팡이',icon:'🪄',stack:1,use:(slot,t)=>{if(!t){CB.toast('블록을 바라보세요');return;}CB.explode(t.x+.5,t.y+.5,t.z+.5,2.5);}});
 CB.recipe(WAND,1,[[RUBY,2],[CB.ids.STICK,1]],'bench');
+// 🧩 서버 시스템 · 캐릭터 만들기 (v26.164~)
+// 캐릭터: 사람 모양 몸이 기본이고 build(g,{part,pivot,lam,bas,THREE})로 직접 만들 수도 있어요
+const GUARD=CB.mob('rubyguard',{name:'루비 경비병',hp:30,hostile:true,color:0xc0182a,head:0xffd0b0,speed:2.6,damage:4,drops:[[RUBY,1]]});
+// 명령어: 이 서버의 OP만 쓸 수 있어요 ({everyone:true} 면 누구나)
+CB.command('guard','루비 경비병 소환',(args,c)=>{const p=CB.player().pos;CB.spawn(GUARD,p.x+2,p.y,p.z);c.say('루비 경비병이 나타났어요!');});
+CB.command('rich','루비 10개 받기',(args,c)=>{CB.give(RUBY,10);c.say('💎 부자가 됐어요');},{everyone:true});
+// 이벤트: tick · chat · join · break · place · death · kill
+let kills=0;CB.on('kill',m=>{if(m.kind===GUARD){kills++;CB.hud('ruby','💎 루비 경비병 처치: '+kills);}});
+CB.on('join',nick=>CB.say(nick+'님, 루비 서버에 오신 걸 환영해요!'));
+CB.on('chat',(nick,msg)=>{if(msg==='루비')CB.say('💎 반짝!');});
 CB.toast('💎 루비 모드가 켜졌어요!');
 `;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));a.download='ruby-mod.js';a.click();};
 function langPicker(el){ // 언어 검색 + 50개 언어 목록
@@ -8469,7 +8508,7 @@ function mpApply(L){MP.rx=1;try{for(const [d,x,y,z,id] of L){if(y<0||y>=CH)conti
     if(d===world.dim&&chunks.get(k)){if(getBlock(x,y,z)!==id)setBlock(x,y,z,id);}
     else{const mm=modsByDim[d]||(modsByDim[d]=new Map());let m=mm.get(k);if(!m){m=new Map();mm.set(k,m);}m.set((y*16+(z&15))*16+(x&15),id);modDirty.add(d+'|'+k);}}}catch(e){console.error(e);}finally{MP.rx=0;}}
 function mpPos(P,o){P.t=o;if(o.s&&P.sw<=0)P.sw=1;}
-function mpChatShow(n,m){toast(`💬 <b>${mpEsc(n)}</b>: ${mpEsc(m)}`);}
+function mpChatShow(n,m){modEmit('chat',n,m);toast(`💬 <b>${mpEsc(n)}</b>: ${mpEsc(m)}`);}
 // 방장: 방 열기 → 친구가 들어오면 세계를 통째로 보내 줌
 function mpHost(){if(!mpOk()||MP.on||MP.ws)return;MP.me=mpMe();renderMP(mpL('방을 여는 중…','Opening room…'));
   const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];
@@ -8496,7 +8535,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
     sn.golems=[];sn.mobQ={};if(!mpModSame(d.mods)){c.send({t:'mods',mods:MOD_RAN,ids:modIds()});return;}c.P=P;c.send({t:'world',id:P.id,host:MP.me.nick,snap:sn,players:mpPlayersFor(c),pvp:MP.pvp});c.ready=true;
     for(const g of groundItems){if(!g.gid)g.gid='H.'+(++MP.gn);c.send(mpGiMsg(g));} // 지금 바닥에 있는 아이템
     for(const b of boats){if(!b.bid)b.bid='H.b'+(++MP.gn);c.send({t:'bi',b:b.bid,d:world.dim,x:b.pos.x,y:b.pos.y,z:b.pos.z,ya:b.yaw});}
-    mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();return;}
+    mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();if((world.flags.ops||[]).some(n=>n.toLowerCase()===nick.toLowerCase()))c.send({t:'op',on:1});modEmit('join',nick);return;}
   if(!c.P)return;
   if(d.t==='p'){d.id=c.P.id;const P=MP.peers.get(c.P.id);if(P)mpPos(P,d);mpSend(d,c);}
   else if(d.t==='b'&&Array.isArray(d.L)){mpApply(d.L);mpSend(d,c);}
@@ -8526,7 +8565,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
 function mpStop(){mpSend({t:'bye'});const ws=MP.ws;MP.ws=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);MP.conns.clear();
   for(const id of [...MP.peers.keys()])mpDel(id);for(const g of groundItems)delete g.gid;Object.assign(MP,{on:false,host:false,code:'',hc:null,q:[],pend:[]});document.body.classList.remove('mpon');renderMP();}
 // 친구: 방 코드로 참가 → 방장 세계를 받아서 시작 (내 PC에는 저장 안 함 · 방장이 저장)
-function mpJoin(code){code=String(code||'').trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){toast(mpL('🌐 방 코드 6자리를 넣어 주세요','🌐 Enter the 6-letter room code'));return;}
+function mpJoin(code){code=String(code||'').trim().toUpperCase();MP.op=false;if(!/^[A-Z0-9]{6}$/.test(code)){toast(mpL('🌐 방 코드 6자리를 넣어 주세요','🌐 Enter the 6-letter room code'));return;}
   if(!mpOk()||MP.on||running||MP.ws)return;MP.me=mpMe();audio();toast(mpL('🌐 방에 연결하는 중…','🌐 Connecting…'));
   const ws=mpWS(code,'guest'),B={};MP.ws=ws;let got=false;
   const fail=m=>{if(got)return;toast('🌐 '+m);ws.onclose=null;try{ws.close();}catch(e){}MP.ws=null;MP.hc=null;};
@@ -8547,7 +8586,7 @@ function mpGuestRecv(d){
   if(d.t==='p'){const P=MP.peers.get(d.id);if(P)mpPos(P,d);}
   else if(d.t==='b'&&Array.isArray(d.L))mpApply(d.L);
   else if(d.t==='tm'&&typeof d.v==='number')world.time=d.v;
-  else if(d.t==='join'){mpAdd(d);toast(mpL(`🌐 <b>${mpEsc(d.nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(d.nick)}</b> joined`));}
+  else if(d.t==='join'){mpAdd(d);modEmit('join',d.nick);toast(mpL(`🌐 <b>${mpEsc(d.nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(d.nick)}</b> joined`));}
   else if(d.t==='leave'){const P=MP.peers.get(d.id);if(P)toast(mpL(`🌐 <b>${mpEsc(P.nick)}</b> 님이 나갔어요`,`🌐 <b>${mpEsc(P.nick)}</b> left`));mpDel(d.id);}
   else if(d.t==='c')mpChatShow(d.n,d.m);
   else if(d.t==='mobs')mpMobsIn(d.L);
@@ -8574,6 +8613,7 @@ function mpGuestRecv(d){
   else if(d.t==='vb'){const v=VEH.find(q=>q.d.vid===d.v);if(v)v.boost=v.d.boost=!!d.b;}
   else if(d.t==='gno')mpGiDel(d.g);
   else if(d.t==='cfg'){MP.pvp=d.pvp!==false;toast('⚔ PvP: '+(MP.pvp?mpL('켬','ON'):mpL('끔','OFF')));}
+  else if(d.t==='op'){MP.op=!!d.on;toast(d.on?'🔑 방장이 <b>OP</b>를 줬어요 — 이제 명령어를 쓸 수 있어요 (/help)':'🔑 OP가 없어졌어요');} // 💻 /op
   else if(d.t==='tpto'){player.pos.set(d.x,d.y,d.z);player.vel.set(0,0,0);player.peakY=d.y;toast(mpL('🌐 방장이 나를 불렀어요','🌐 The host teleported you'));} // 💻 /tphere · /tpall
   else if(d.t==='kick')mpEnd(mpL('방장이 방에서 내보냈어요','The host removed you from the room')); // 💻 /kick
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
@@ -8750,13 +8790,16 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
   ['/timespeed 배수','하루가 흐르는 빠르기 (0.1~20)'],['/hp 숫자','내 체력 정하기'],['/mute','소리 끄기 (/unmute 켜기)'],['/screenshot','지금 화면 저장'],
   ['/flatten [반지름]','주변 땅 평평하게'],['/maze 블록 [크기]','앞에 미로'],['/forest [그루]','주변에 숲'],['/plant [반지름]','주변에 꽃'],['/snow [반지름]','주변 땅에 눈'],['/circle 블록 반지름','땅에 원 그리기'],
   ['/rps 가위|바위|보','가위바위보'],['/joke','아재개그'],
+  ['/op 닉네임 · /deop 닉네임 · /ops','OP 주기 · 빼기 · 목록 (방장) — OP · 어드민만 명령어를 쓸 수 있어요'],
   ['/un명령어','그 명령어 되돌리기 (예: /unfly · /ungod · /untree · /ungive · /unsummon · /untp · /ungamemode · /unspeed)']];
 function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
 function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
 function cmdItems(){const L=[];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
 let CMD_CUR='',CMD_LAST={},CMD_MOBS={};
+function cmdIsAdmin(){return nickNow()==='운영자';} // 🛡 어드민 = CAVEBUILD 운영자 계정
+function cmdIsOp(){return cmdIsAdmin()||!MP.on||MP.host||!!MP.op;} // 🔑 혼자 하는 세계 · 방장은 OP, 친구는 방장이 /op 를 줘야
 function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a[0]||'').toLowerCase(); // 💻 /un명령어 는 그 명령어를 되돌림 · 그 밖엔 되돌릴 수 있게 상태를 적어 둠
-  if(c.length>2&&c.startsWith('un')&&c!=='undo'){if(MP.on&&!MP.host){cmdOut('이 명령어는 <b>방장</b>만 쓸 수 있어요',1);return;}cmdUn(c.slice(2));return;}
+  if(c.length>2&&c.startsWith('un')&&c!=='undo'){if(!cmdIsOp()){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요',1);return;}cmdUn(c.slice(2));return;}
   const snap={mode:world.mode,time:world.time,spawn:{...world.spawn},diff:world.diff,fov:camera.fov,inv:JSON.stringify(inv),sky:world.flags.sky},mob0=new Set(mobs);CMD_CUR=c;
   runCmd0(line);CMD_CUR='';CMD_LAST[c]=snap;const nm=mobs.filter(m=>!mob0.has(m)&&!m.dead);if(nm.length)CMD_MOBS[c]=nm;}
 function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
@@ -8796,10 +8839,10 @@ function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
     default:cmdOut(`/${mpEsc(x)} 는 되돌릴 수 없어요 (/undo 는 건축 · /back 은 순간이동)`,1);}}
 let CMD_SW=0;
 function runCmd0(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'').toLowerCase(),P=player.pos; // 💻 명령어 (싱글 · 방장은 다 쓰고, 친구는 /help · /list · /me 만)
-  if(MP.on&&!MP.host&&!['help','도움말','list','목록','me'].includes(c)){cmdOut('이 명령어는 <b>방장</b>만 쓸 수 있어요',1);return;}
+  if(!cmdIsOp()&&!['help','도움말','list','목록','me'].includes(c)&&!(MOD_CMDS[c]&&MOD_CMDS[c].op===false)){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요 (방장에게 /op 를 받아요)',1);return;}
   const num=(v,base)=>{if(v===undefined)return NaN;if(v[0]==='~')return base+(v.length>1?+v.slice(1):0);return +v;};
   switch(c){
-    case 'help':case '도움말':evDlg('💻 <b>명령어</b> (T 또는 / 를 눌러 입력) · <b>/un명령어</b> 로 되돌리기<br><br>'+CMD_HELP.map(([k,d])=>`<b>${k}</b> — ${d}`).join('<br>'),[['닫기']]);break;
+    case 'help':case '도움말':evDlg('💻 <b>명령어</b> (T 또는 / 를 눌러 입력) · <b>/un명령어</b> 로 되돌리기'+(cmdIsOp()?' · 🔑 나는 OP':' · 🔒 OP가 없어요 (방장에게 /op 를 받아요)')+'<br><br>'+CMD_HELP.concat(Object.entries(MOD_CMDS).map(([k,v])=>['/'+k,'🧩 '+(v.desc||'모드 명령어')])).map(([k,d])=>`<b>${k}</b> — ${d}`).join('<br>'),[['닫기']]);break;
     case 'gamemode':case 'gm':case '게임모드':{const v=(a[0]||'').toLowerCase(),m={survival:'survival',s:'survival','0':'survival','서바이벌':'survival',creative:'creative',c:'creative','1':'creative','크리에이티브':'creative',spectator:'spectator',sp:'spectator','3':'spectator','관전':'spectator'}[v];
       if(!m){cmdOut('/gamemode 서바이벌 · 크리에이티브 · 관전',1);break;}setMode(m);cmdOut('게임 모드: <b>'+(m==='survival'?'서바이벌':m==='creative'?'크리에이티브':'관전')+'</b>');break;}
     case 'time':case '시간':{if(a[0]==='add'||a[0]==='더하기'){const n=+a[1];if(!isFinite(n)){cmdOut('/time add 1000',1);break;}world.time=((world.time+n/24000)%1+1)%1;updateSky(0);cmdOut('⏩ 시간을 앞으로 돌렸어요');break;}const v=(a[0]==='set'||a[0]==='설정'?a[1]:a[0]||'').toLowerCase(),T={day:.05,'낮':.05,noon:.25,'정오':.25,night:.55,'밤':.55,midnight:.75,'자정':.75,sunrise:0,'아침':0,sunset:.5,'저녁':.5}[v];
@@ -8982,7 +9025,12 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'
     case 'joke':case '개그':{const J=[['왕이 넘어지면?','킹콩'],['세상에서 가장 뜨거운 과일은?','천도복숭아'],['소가 웃으면?','우하하'],['바나나가 웃으면?','바나나킥'],['오리가 얼면?','언덕'],['세상에서 가장 가난한 왕은?','최저임금'],['딸기가 직장을 잃으면?','딸기시럽'],['차가 놀라면?','카놀라유'],['자동차를 톡 치면?','카톡'],['아몬드가 죽으면?','다이아몬드']],q=J[Math.random()*J.length|0];
       cmdOut(`😆 ${q[0]}`);setTimeout(()=>toast(`😆 → <b>${q[1]}</b>!`),2200);break;}
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
-    default:cmdOut(`모르는 명령어예요: /${mpEsc(c)} · <b>/help</b>`,1);}}
+    case 'op':case 'deop':{if(!MP.on||!MP.host){cmdOut('멀티플레이 <b>방장</b>만 OP를 줄 수 있어요',1);break;}const nk=a[0]||'',O=world.flags.ops||(world.flags.ops=[]),on=c==='op';if(!nk){cmdOut('/op 닉네임 · /deop 닉네임',1);break;}
+      const i=O.findIndex(n=>n.toLowerCase()===nk.toLowerCase());if(on&&i<0)O.push(nk);if(!on&&i>=0)O.splice(i,1);const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'op',on:on?1:0});
+      cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;}
+    case 'ops':cmdOut('🔑 OP: '+[MP.on&&MP.host?MP.me.nick+'(방장)':'',...(world.flags.ops||[])].filter(Boolean).map(mpEsc).join(' · ')||'없어요');break;
+    default:{const M=MOD_CMDS[c];if(M){try{M.fn(a,{say:t=>cmdOut(mpEsc(String(t))),nick:MP.on?MP.me.nick:(nickNow()||'플레이어')});}catch(e){cmdOut('모드 명령어 오류: '+mpEsc(e.message||e),1);}break;} // 🧩 모드가 만든 명령어
+      cmdOut(`모르는 명령어예요: /${mpEsc(c)} · <b>/help</b>`,1);}}}
 let MOB_FRZ=false;
 let CMDSEL={a:null,b:null},CMDCLIP=null;const CMDUNDO=[];
 function cmdSelBox(){const {a,b}=CMDSEL;if(!a||!b)return null;const B={x0:Math.min(a[0],b[0]),x1:Math.max(a[0],b[0]),y0:Math.max(1,Math.min(a[1],b[1])),y1:Math.min(CH-1,Math.max(a[1],b[1])),z0:Math.min(a[2],b[2]),z1:Math.max(a[2],b[2])};
@@ -9002,7 +9050,7 @@ function bombTick(dt){for(let i=BOMBS.length-1;i>=0;i--){const b=BOMBS[i],P=b.g.
     for(const ax of ['x','y','z']){const n=P[ax]+b.v[ax]*dt,q=P.clone();q[ax]=n;const bl=getBlock(Math.floor(q.x),Math.floor(q.y-(ax==='y'&&b.v.y<0?.17:0)),Math.floor(q.z));if(bl>0&&SOLID[bl]){b.v[ax]*=-.35;if(ax==='y'){b.v.x*=.75;b.v.z*=.75;}if(Math.abs(b.v[ax])>1.5)tone(220,160,.05,.03,'square');}else P[ax]=n;}
     b.g.rotation.x+=b.v.z*dt*4;b.g.rotation.z-=b.v.x*dt*4;b.sp.material.color.setHex(Math.random()<.5?0xffd040:0xff5010);if(Math.random()<dt*20)spawnParticles(P.x,P.y+.25,P.z,new THREE.Color(0xffb030),1,.05,1);
     if(b.t<=0){scene.remove(b.g);b.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});BOMBS.splice(i,1);explode(P.x,P.y,P.z,3.2,'폭탄에 휘말렸습니다');}}}
-function cmdTick(dt){const p=player,E=p.eff;bombTick(dt); // 💻 효과 시간 · 재생 · 야간 투시 · 비
+function cmdTick(dt){const p=player,E=p.eff;bombTick(dt);if(MOD_EV.tick)modEmit('tick',dt); // 💻 효과 시간 · 재생 · 야간 투시 · 비
   if(E){for(const k in E){E[k]-=dt;if(E[k]<=0){delete E[k];toast('✨ 효과가 끝났어요');}}
     if(E.regen>0){cmdT+=dt;if(cmdT>1){cmdT=0;if(!p.dead)p.hp=Math.min(maxHp(),p.hp+1);}}
     if(E.night>0)dayU.value=Math.max(dayU.value,.95);}
