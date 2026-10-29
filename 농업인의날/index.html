@@ -313,7 +313,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.171 — 🔫 리볼버 소리</h4>
+    <h4>🆕 v26.172 — 🔫 리볼버 진짜 총소리 · ⚡ 고퀄 그래픽 가볍게</h4>
+    • 리볼버 소리를 합성음 대신 <b>진짜 총소리 녹음</b>을 낮고 묵직하게 바꿔서 써요.<br>
+    • <b>고퀄</b> 그래픽이 훨씬 가벼워졌어요: 3/4 해상도로 그려서 늘리기 · 안티앨리어싱 4배 → 2배 · 그림자 1024 · 그림자 · 물 반사는 몇 프레임에 한 번 · 빛 번짐 · 햇살 계산 줄임.
+    <h4>v26.171 — 🔫 리볼버 소리</h4>
     • 권총(리볼버) 발사 소리를 새로 만들었어요: 공이 딸깍 → 날카로운 탕 → 묵직한 쾅 → 실린더 쇳소리 → 멀리 울리는 메아리.
     <h4>v26.170 — 🔫 장전 · 발사 모션 다시 만듦 · 돌격소총 소리</h4>
     • <b>리볼버 장전</b>: 총구를 들어 탄피를 털어내고 → 옆으로 눕혀 왼손이 스피드로더를 실린더에 꽂고 → 손목을 튕겨 닫아요.<br>
@@ -1991,7 +1994,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.171 — 🔫 Revolver sound</h4>
+    <h4>🆕 v26.172 — 🔫 Real revolver sound · ⚡ Lighter HQ graphics</h4>
+    • The revolver now uses a real recorded gunshot, pitched lower. HQ graphics render at 3/4 resolution with lighter anti-aliasing, shadows, reflections, bloom and sun rays.
+    <h4>v26.171 — 🔫 Revolver sound</h4>
     • New revolver shot: hammer click, sharp crack, heavy boom, cylinder ring and a distant echo.
     <h4>v26.170 — 🔫 New reload & recoil animations · Rifle sounds</h4>
     • Revolver: eject shells, speedloader, flick closed. Tek9: drop the empty mag, insert a new one, rack the handle. Recoil instead of a chop when firing. Real rifle shot and reload sounds.
@@ -4838,7 +4843,7 @@ function reloadPose(bob){const R=player.reload,rifle=R.s.id===RIFLE,p=Math.min(1
 // 🔊 소리 파일 (돌격소총 발사 · 장전): 없으면 원래 합성 소리
 const SND={};
 function loadSnd(n,u){try{const C=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,1,44100);fetch(u).then(r=>r.ok?r.arrayBuffer():null).then(b=>b&&C.decodeAudioData(b)).then(x=>{if(x)SND[n]=x;}).catch(()=>{});}catch(e){}}
-function playSnd(n,v=.7){if(window.CMD_MUTE)return false;const a=audio(),b=SND[n];if(!a||!b)return false;const s=a.createBufferSource(),g=a.createGain();s.buffer=b;g.gain.value=v;s.connect(g).connect(a.destination);s.start();return true;}
+function playSnd(n,v=.7,rate=1){if(window.CMD_MUTE)return false;const a=audio(),b=SND[n];if(!a||!b)return false;const s=a.createBufferSource(),g=a.createGain();s.buffer=b;s.playbackRate.value=rate;g.gain.value=v;s.connect(g).connect(a.destination);s.start();return true;}
 loadSnd('rifle','sounds/rifle_shot.mp3');loadSnd('reload','sounds/rifle_reload.mp3');
 function updateHand(dt){
   if(swing>handPrevSwing+.15)swordCombo^=1; // 새로 휘두를 때마다 가로·세로 베기를 번갈아
@@ -6740,7 +6745,7 @@ function gunShot(rifle){const s=held();if(!s||(s.id!==PISTOL&&s.id!==RIFLE)||pla
   else if(hit)spawnParticles(o.x+d.x*L,o.y+d.y*L,o.z+d.z*L,new THREE.Color(0xc8b090),6,.15,3);
   flashBeam(o.clone().add(new THREE.Vector3(0,-.18,0)).addScaledVector(d,.7),o.clone().addScaledVector(d,L),0xffe08a,.04,.07);
   spawnParticles(o.x+d.x*.9,o.y-.15+d.y*.9,o.z+d.z*.9,new THREE.Color(0xffc040),4,.08,2);
-  if(rifle){if(!playSnd('rifle',.6))SFX.gun();}else SFX.revolver();gunKick=1;player.pitch=Math.min(1.5,player.pitch+(rifle?.012:.03));shake(.05,.08);}
+  if(rifle){if(!playSnd('rifle',.6))SFX.gun();}else if(playSnd('rifle',.85,.74+Math.random()*.04))tone(90,40,.25,.25,'sine');else SFX.revolver();gunKick=1;player.pitch=Math.min(1.5,player.pitch+(rifle?.012:.03));shake(.05,.08);}
 
 // --- 보스 ---
 function flyTo(m,x,y,z,sp,dt){const dx=x-m.pos.x,dy=y-m.pos.y,dz=z-m.pos.z,l=Math.hypot(dx,dy,dz)||1,s=Math.min(sp,l*2),k=Math.min(1,2.5*dt);
@@ -9323,7 +9328,7 @@ const HQ=(()=>{
   const mk=(frag,uni)=>new THREE.ShaderMaterial({uniforms:uni,vertexShader:VS,fragmentShader:'precision highp float;varying vec2 vUv;'+frag,depthTest:false,depthWrite:false});
   const mBright=mk('uniform sampler2D t;void main(){vec3 c=texture2D(t,vUv).rgb;float l=max(c.r,max(c.g,c.b));gl_FragColor=vec4(c*smoothstep(.74,1.,l),1.);}',{t:{value:null}});
   const mBlur=mk('uniform sampler2D t;uniform vec2 d;void main(){vec3 c=texture2D(t,vUv).rgb*.227;c+=(texture2D(t,vUv+d*1.385).rgb+texture2D(t,vUv-d*1.385).rgb)*.316;c+=(texture2D(t,vUv+d*3.231).rgb+texture2D(t,vUv-d*3.231).rgb)*.07;gl_FragColor=vec4(c,1.);}',{t:{value:null},d:{value:new THREE.Vector2()}});
-  const mRays=mk('uniform sampler2D t;uniform vec2 sp;void main(){vec2 dl=(vUv-sp)/40.;vec2 uv=vUv;float w=1.;vec3 c=vec3(0.);for(int i=0;i<40;i++){uv-=dl;c+=texture2D(t,uv).rgb*w;w*=.955;}gl_FragColor=vec4(c/18.,1.);}',{t:{value:null},sp:{value:new THREE.Vector2()}});
+  const mRays=mk('uniform sampler2D t;uniform vec2 sp;void main(){vec2 dl=(vUv-sp)/24.;vec2 uv=vUv;float w=1.;vec3 c=vec3(0.);for(int i=0;i<24;i++){uv-=dl;c+=texture2D(t,uv).rgb*w;w*=.93;}gl_FragColor=vec4(c/11.7,1.);}',{t:{value:null},sp:{value:new THREE.Vector2()}});
   const mFinal=mk(`uniform sampler2D tS;uniform sampler2D tB;uniform sampler2D tR;uniform float ray;uniform float time;uniform vec2 res;
 vec3 aces(vec3 x){return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);}
 void main(){vec2 q=vUv-.5;float ca=dot(q,q)*.004; // 가장자리 색 번짐
@@ -9337,13 +9342,13 @@ void main(){vec2 q=vUv-.5;float ca=dot(q,q)*.004; // 가장자리 색 번짐
   const qs=new THREE.Scene(),qc=new THREE.OrthographicCamera(-1,1,1,-1,0,1),quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2),mBright);quad.frustumCulled=false;qs.add(quad);
   const pass=(m,target)=>{quad.material=m;renderer.setRenderTarget(target);renderer.render(qs,qc);};
   const white=new THREE.DataTexture(new Uint8Array([255,255,255,255]),1,1);white.needsUpdate=true;HQU.uSM.value=white;
-  function size(){const v=renderer.getDrawingBufferSize(new THREE.Vector2()),W=v.x|0,H=v.y|0;if(W===st.W&&H===st.H&&st.rt)return;st.W=W;st.H=H;
+  function size(){const v=renderer.getDrawingBufferSize(new THREE.Vector2()),W=(v.x*.75)|0,H=(v.y*.75)|0;if(W===st.W&&H===st.H&&st.rt)return;st.W=W;st.H=H; // ⚡ 3/4 해상도로 그리고 늘림 (렉 줄이기)
     for(const k of ['rt','b1','b2','r1'])if(st[k])st[k].dispose();
     const ms=renderer.capabilities.isWebGL2&&THREE.WebGLMultisampleRenderTarget;
-    st.rt=ms?new THREE.WebGLMultisampleRenderTarget(W,H,{samples:4}):new THREE.WebGLRenderTarget(W,H); // 4배 안티앨리어싱
+    st.rt=ms?new THREE.WebGLMultisampleRenderTarget(W,H,{samples:2}):new THREE.WebGLRenderTarget(W,H); // 2배 안티앨리어싱
     const o={minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:false};
     st.b1=new THREE.WebGLRenderTarget(W>>1,H>>1,o);st.b2=new THREE.WebGLRenderTarget(W>>1,H>>1,o);st.r1=new THREE.WebGLRenderTarget(W>>2,H>>2,o);}
-  function shadowsOn(v){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;sunL.castShadow=v;if(v){const sc=sunL.shadow.camera;sc.left=sc.bottom=-56;sc.right=sc.top=56;sc.near=1;sc.far=320;sc.updateProjectionMatrix();sunL.shadow.mapSize.set(2048,2048);sunL.shadow.bias=-.0004;sunL.shadow.normalBias=.04;}}
+  function shadowsOn(v){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;sunL.castShadow=v;if(v){const sc=sunL.shadow.camera;sc.left=sc.bottom=-56;sc.right=sc.top=56;sc.near=1;sc.far=320;sc.updateProjectionMatrix();sunL.shadow.mapSize.set(1024,1024);sunL.shadow.bias=-.0004;sunL.shadow.normalBias=.04;}}
   function set(v,quiet){st.on=!!v;if(!v)WREF.uRefOn.value=0;try{localStorage.setItem('cavebuild-gfx',v?'hq':'normal');}catch(e){}
     for(const m of [terrainMat,natMat]){m.defines=m.defines||{};if(v)m.defines.HQ=1;else delete m.defines.HQ;m.extensions={derivatives:true};m.needsUpdate=true;}
     shadowsOn(v);if(v)for(const c of chunks.values())if(c.nmesh&&!c.nmesh.geometry.attributes.normal)c.nmesh.geometry.computeVertexNormals();
@@ -9352,9 +9357,9 @@ void main(){vec2 q=vUv-.5;float ca=dot(q,q)*.004; // 가장자리 색 번짐
   const rcam=new THREE.PerspectiveCamera(),_cw=new THREE.Vector3(),_rp=new THREE.Vector3(),_rv=new THREE.Vector3(),_n=new THREE.Vector3(0,1,0),_rot=new THREE.Matrix4(),_la=new THREE.Vector3(),_tg=new THREE.Vector3(),clip=new THREE.Plane(new THREE.Vector3(0,1,0),0);let rf=0;
   function reflectPass(){ // 🌊 해수면에 비친 세상: 카메라를 수면 아래로 뒤집어 그린 그림 (물 셰이더가 읽음)
     WREF.uRefOn.value=0;if(world.dim!=='over')return;const h=SEA+.88;camera.getWorldPosition(_cw);if(_cw.y<h+.15||_cw.y>h+80)return;
-    if(!st.rr){st.rr=new THREE.WebGLRenderTarget(st.W>>1,st.H>>1,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});}
-    else if(st.rr.width!==st.W>>1||st.rr.height!==st.H>>1)st.rr.setSize(st.W>>1,st.H>>1);
-    if((rf^=1)&&st.rrOk){WREF.uRefOn.value=1;return;} // 두 프레임에 한 번만 새로 그림
+    if(!st.rr){st.rr=new THREE.WebGLRenderTarget(st.W>>2,st.H>>2,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});}
+    else if(st.rr.width!==st.W>>2||st.rr.height!==st.H>>2)st.rr.setSize(st.W>>2,st.H>>2);
+    if((rf=(rf+1)%3)&&st.rrOk){WREF.uRefOn.value=1;return;} // 세 프레임에 한 번만 새로 그림
     _rp.set(_cw.x,h,_cw.z);_rv.subVectors(_rp,_cw).reflect(_n).negate().add(_rp);
     _rot.extractRotation(camera.matrixWorld);_la.set(0,0,-1).applyMatrix4(_rot).add(_cw);_tg.subVectors(_rp,_la).reflect(_n).negate().add(_rp);
     rcam.position.copy(_rv);rcam.up.set(0,1,0).applyMatrix4(_rot).reflect(_n);rcam.lookAt(_tg);rcam.near=camera.near;rcam.far=camera.far;rcam.updateMatrixWorld();rcam.projectionMatrix.copy(camera.projectionMatrix);rcam.projectionMatrixInverse.copy(camera.projectionMatrixInverse);
@@ -9362,14 +9367,15 @@ void main(){vec2 q=vUv-.5;float ca=dot(q,q)*.004; // 가장자리 색 번짐
     clip.constant=-h+.02;const au=renderer.shadowMap.autoUpdate;renderer.shadowMap.autoUpdate=false;waterMat.visible=false;renderer.clippingPlanes=[clip];
     renderer.setRenderTarget(st.rr);renderer.clear();renderer.render(scene,rcam);
     renderer.clippingPlanes=[];waterMat.visible=true;renderer.shadowMap.autoUpdate=au;WREF.uRef.value=st.rr.texture;st.rrOk=true;WREF.uRefOn.value=1;}
-  function begin(){if(!st.on)return false;size();try{reflectPass();}catch(e){WREF.uRefOn.value=0;}
+  function begin(){if(!st.on)return false;size();renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=(st.sf=(st.sf|0)^1)===1; // 그림자는 두 프레임에 한 번
+    try{reflectPass();}catch(e){WREF.uRefOn.value=0;}
     HQU.uSMat.value=sunL.shadow.matrix; // 같은 행렬을 그대로 씀 (그림자를 그리는 순간 갱신됨)
     HQU.uSM.value=sunL.shadow.map?sunL.shadow.map.texture:white;HQU.uSunD.value.copy(sunDirU.value).normalize();HQU.uSun.value=world.dim==='over'?Math.min(1,sunL.intensity/.6):0;
     if((st.trav-=1)<=0){st.trav=90;scene.traverse(o=>{if(o.isMesh&&o.material&&!o.userData.ns&&(o.material.isMeshLambertMaterial||o.material.isMeshStandardMaterial||o.material.isMeshPhongMaterial)){o.castShadow=true;o.receiveShadow=true;}});} // 사람 · 몹 · 물건도 그림자
     renderer.setRenderTarget(st.rt);renderer.clear();return true;}
   function end(){
     mBright.uniforms.t.value=st.rt.texture;pass(mBright,st.b1);
-    for(let i=0;i<2;i++){mBlur.uniforms.t.value=st.b1.texture;mBlur.uniforms.d.value.set(1.6/st.b1.width,0);pass(mBlur,st.b2);mBlur.uniforms.t.value=st.b2.texture;mBlur.uniforms.d.value.set(0,1.6/st.b1.height);pass(mBlur,st.b1);}
+    for(let i=0;i<1;i++){mBlur.uniforms.t.value=st.b1.texture;mBlur.uniforms.d.value.set(1.6/st.b1.width,0);pass(mBlur,st.b2);mBlur.uniforms.t.value=st.b2.texture;mBlur.uniforms.d.value.set(0,1.6/st.b1.height);pass(mBlur,st.b1);}
     // 햇살: 해가 화면에 보이면 밝은 곳을 해 쪽으로 끌어당김
     _sp.copy(camera.position).addScaledVector(sunDirU.value,400).project(camera);let ray=0;
     if(world.dim==='over'&&_sp.z<1&&Math.abs(_sp.x)<1.6&&Math.abs(_sp.y)<1.6){ray=HQU.uSun.value*.55*Math.max(0,1-Math.max(Math.abs(_sp.x),Math.abs(_sp.y))/1.6);
