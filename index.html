@@ -311,7 +311,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.172 — 🔫 리볼버 진짜 총소리 · ⚡ 고퀄 그래픽 가볍게</h4>
+    <h4>🆕 v26.173 — 📱💻 기기에 맞춰 그래픽이 저절로 바뀜</h4>
+    • 게임을 켜면 <b>CPU · 메모리 · 그래픽카드 · 모바일인지</b>를 보고 그래픽 등급(낮음 · 보통 · 좋음 · 최고)을 정해요. <b>고퀄 · 보통 둘 다</b> 적용돼요.<br>
+    • 게임 중에도 2초마다 FPS를 봐서 느려지면 한 단계 낮추고, 오래 부드러우면 기기 등급까지 다시 올려요.<br>
+    • 바뀌는 것: 화면 해상도 · 그림자 크기 · 물 반사 · 안티앨리어싱 · 빛 번짐.
+    <h4>v26.172 — 🔫 리볼버 진짜 총소리 · ⚡ 고퀄 그래픽 가볍게</h4>
     • 리볼버 소리를 합성음 대신 <b>진짜 총소리 녹음</b>을 낮고 묵직하게 바꿔서 써요.<br>
     • <b>고퀄</b> 그래픽이 훨씬 가벼워졌어요: 3/4 해상도로 그려서 늘리기 · 안티앨리어싱 4배 → 2배 · 그림자 1024 · 그림자 · 물 반사는 몇 프레임에 한 번 · 빛 번짐 · 햇살 계산 줄임.
     <h4>v26.171 — 🔫 리볼버 소리</h4>
@@ -1992,7 +1996,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.172 — 🔫 Real revolver sound · ⚡ Lighter HQ graphics</h4>
+    <h4>🆕 v26.173 — 📱💻 Graphics adapt to your device</h4>
+    • Both HQ and Normal now pick a quality tier from your CPU, memory, GPU and device type, then step down when FPS drops and back up when it's smooth (resolution, shadows, reflections, anti-aliasing, bloom).
+    <h4>v26.172 — 🔫 Real revolver sound · ⚡ Lighter HQ graphics</h4>
     • The revolver now uses a real recorded gunshot, pitched lower. HQ graphics render at 3/4 resolution with lighter anti-aliasing, shadows, reflections, bloom and sun rays.
     <h4>v26.171 — 🔫 Revolver sound</h4>
     • New revolver shot: hammer click, sharp crack, heavy boom, cylinder ring and a distant echo.
@@ -4598,6 +4604,18 @@ function headshotFx(m){SFX.crit();spawnParticles(m.pos.x,m.pos.y+m.h-.2,m.pos.z,
 const canvas=$('game');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:false});
 renderer.setPixelRatio(Math.min(devicePixelRatio,MOBILE?.8:1.5)); // 모바일 · 태블릿은 해상도를 조금 낮춤
+// 📱💻 기기 성능에 맞춰 그래픽이 저절로 바뀜 (고퀄 · 보통 모두): 시작할 때 CPU · 메모리 · 그래픽카드로 등급을 정하고, 게임 중 FPS를 보며 오르내림
+// 등급 0 낮음 · 1 보통 · 2 좋음 · 3 최고 — pr: 보통 모드 해상도 · res: 고퀄 해상도 · sh: 그림자 크기 · refl: 물 반사 · ms: 안티앨리어싱 · blur: 빛 번짐
+const GQL=[{pr:.6,res:.55,sh:512,refl:0,ms:0,blur:1},{pr:.75,res:.7,sh:1024,refl:1,ms:0,blur:1},{pr:.9,res:.85,sh:1024,refl:1,ms:2,blur:1},{pr:1,res:1,sh:2048,refl:1,ms:4,blur:2}];
+const GQ=(()=>{let sc=0,gpu='';try{const c=navigator.hardwareConcurrency||4,m=navigator.deviceMemory||4;sc+=c>=8?2:c>=4?1:0;sc+=m>=8?2:m>=4?1:0;
+    const gl=renderer.getContext(),e=gl.getExtension('WEBGL_debug_renderer_info');gpu=e?String(gl.getParameter(e.UNMASKED_RENDERER_WEBGL)):'';
+    sc+=/RTX|GTX|Radeon RX|Radeon Pro|Apple M\d|Arc A/i.test(gpu)?3:/Intel|UHD|Iris|Mali|Adreno|PowerVR|Apple GPU|SwiftShader|llvmpipe/i.test(gpu)?0:1;if(MOBILE)sc-=2;}catch(e){}
+  let max=sc>=6?3:sc>=4?2:sc>=2?1:0;if(/Intel|UHD|Iris|Mali|Adreno|PowerVR|SwiftShader|llvmpipe/i.test(gpu))max=Math.min(max,1);return {max, // 내장 그래픽은 '보통' 등급까지lv:max,good:0,t:0,gpu,base:Math.min(devicePixelRatio,MOBILE?.8:1.5)};})();
+function gqApply(){let hq=false;try{hq=HQ.on;}catch(e){}renderer.setPixelRatio(GQ.base*(hq?1:GQL[GQ.lv].pr));if(hq)HQ.tier();}
+function gqTick(dt){if(!fps||paused)return;GQ.t+=dt;if(GQ.t<2)return;GQ.t=0; // 2초마다: 느리면 한 단계 낮추고, 오래 부드러우면 기기 등급까지 다시 올림
+  if(fps<38&&GQ.lv>0){GQ.lv--;GQ.good=0;gqApply();}
+  else if(fps>=57){if((GQ.good+=2)>=10&&GQ.lv<GQ.max){GQ.lv++;GQ.good=0;gqApply();}}else GQ.good=0;}
+gqApply();
 scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(75,1,.05,600);camera.rotation.order='YXZ';scene.add(camera);
 const skyColor=new THREE.Color();scene.background=skyColor;
@@ -9340,21 +9358,23 @@ void main(){vec2 q=vUv-.5;float ca=dot(q,q)*.004; // 가장자리 색 번짐
   const qs=new THREE.Scene(),qc=new THREE.OrthographicCamera(-1,1,1,-1,0,1),quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2),mBright);quad.frustumCulled=false;qs.add(quad);
   const pass=(m,target)=>{quad.material=m;renderer.setRenderTarget(target);renderer.render(qs,qc);};
   const white=new THREE.DataTexture(new Uint8Array([255,255,255,255]),1,1);white.needsUpdate=true;HQU.uSM.value=white;
-  function size(){const v=renderer.getDrawingBufferSize(new THREE.Vector2()),W=(v.x*.75)|0,H=(v.y*.75)|0;if(W===st.W&&H===st.H&&st.rt)return;st.W=W;st.H=H; // ⚡ 3/4 해상도로 그리고 늘림 (렉 줄이기)
+  function size(){const T=GQL[GQ.lv],v=renderer.getDrawingBufferSize(new THREE.Vector2()),W=(v.x*T.res)|0,H=(v.y*T.res)|0;if(W===st.W&&H===st.H&&st.rt&&st.lv===GQ.lv)return;st.W=W;st.H=H;st.lv=GQ.lv; // ⚡ 기기 등급만큼의 해상도로 그리고 늘림
     for(const k of ['rt','b1','b2','r1'])if(st[k])st[k].dispose();
-    const ms=renderer.capabilities.isWebGL2&&THREE.WebGLMultisampleRenderTarget;
-    st.rt=ms?new THREE.WebGLMultisampleRenderTarget(W,H,{samples:2}):new THREE.WebGLRenderTarget(W,H); // 2배 안티앨리어싱
+    const ms=T.ms&&renderer.capabilities.isWebGL2&&THREE.WebGLMultisampleRenderTarget;
+    st.rt=ms?new THREE.WebGLMultisampleRenderTarget(W,H,{samples:T.ms}):new THREE.WebGLRenderTarget(W,H); // 안티앨리어싱도 등급대로
     const o={minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:false};
     st.b1=new THREE.WebGLRenderTarget(W>>1,H>>1,o);st.b2=new THREE.WebGLRenderTarget(W>>1,H>>1,o);st.r1=new THREE.WebGLRenderTarget(W>>2,H>>2,o);}
-  function shadowsOn(v){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;sunL.castShadow=v;if(v){const sc=sunL.shadow.camera;sc.left=sc.bottom=-56;sc.right=sc.top=56;sc.near=1;sc.far=320;sc.updateProjectionMatrix();sunL.shadow.mapSize.set(1024,1024);sunL.shadow.bias=-.0004;sunL.shadow.normalBias=.04;}}
-  function set(v,quiet){st.on=!!v;if(!v)WREF.uRefOn.value=0;try{localStorage.setItem('cavebuild-gfx',v?'hq':'normal');}catch(e){}
+  function shadowsOn(v){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;sunL.castShadow=v;if(v){const sc=sunL.shadow.camera;sc.left=sc.bottom=-56;sc.right=sc.top=56;sc.near=1;sc.far=320;sc.updateProjectionMatrix();shadowSize();sunL.shadow.bias=-.0004;sunL.shadow.normalBias=.04;}}
+  function shadowSize(){const n=GQL[GQ.lv].sh;if(sunL.shadow.mapSize.x===n)return;sunL.shadow.mapSize.set(n,n);if(sunL.shadow.map){sunL.shadow.map.dispose();sunL.shadow.map=null;}}
+  function tier(){shadowSize();st.W=0;} // 등급이 바뀌면 그림자 · 해상도를 다시 맞춤
+  function set(v,quiet){st.on=!!v;if(!v)WREF.uRefOn.value=0;try{localStorage.setItem('cavebuild-gfx',v?'hq':'normal');}catch(e){}setTimeout(gqApply,0);
     for(const m of [terrainMat,natMat]){m.defines=m.defines||{};if(v)m.defines.HQ=1;else delete m.defines.HQ;m.extensions={derivatives:true};m.needsUpdate=true;}
     shadowsOn(v);if(v)for(const c of chunks.values())if(c.nmesh&&!c.nmesh.geometry.attributes.normal)c.nmesh.geometry.computeVertexNormals();
     st.slow=0;if(!quiet)toast(v?'🎬 그래픽: <b>고퀄</b> (그림자 · 빛 번짐 · 햇살 · 영화 색감)':'⚡ 그래픽: <b>보통</b> (빠르게)');try{renderGfx();}catch(e){}}
   const _sp=new THREE.Vector3();
   const rcam=new THREE.PerspectiveCamera(),_cw=new THREE.Vector3(),_rp=new THREE.Vector3(),_rv=new THREE.Vector3(),_n=new THREE.Vector3(0,1,0),_rot=new THREE.Matrix4(),_la=new THREE.Vector3(),_tg=new THREE.Vector3(),clip=new THREE.Plane(new THREE.Vector3(0,1,0),0);let rf=0;
   function reflectPass(){ // 🌊 해수면에 비친 세상: 카메라를 수면 아래로 뒤집어 그린 그림 (물 셰이더가 읽음)
-    WREF.uRefOn.value=0;if(world.dim!=='over')return;const h=SEA+.88;camera.getWorldPosition(_cw);if(_cw.y<h+.15||_cw.y>h+80)return;
+    WREF.uRefOn.value=0;if(world.dim!=='over'||!GQL[GQ.lv].refl)return;const h=SEA+.88;camera.getWorldPosition(_cw);if(_cw.y<h+.15||_cw.y>h+80)return;
     if(!st.rr){st.rr=new THREE.WebGLRenderTarget(st.W>>2,st.H>>2,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});}
     else if(st.rr.width!==st.W>>2||st.rr.height!==st.H>>2)st.rr.setSize(st.W>>2,st.H>>2);
     if((rf=(rf+1)%3)&&st.rrOk){WREF.uRefOn.value=1;return;} // 세 프레임에 한 번만 새로 그림
@@ -9373,7 +9393,7 @@ void main(){vec2 q=vUv-.5;float ca=dot(q,q)*.004; // 가장자리 색 번짐
     renderer.setRenderTarget(st.rt);renderer.clear();return true;}
   function end(){
     mBright.uniforms.t.value=st.rt.texture;pass(mBright,st.b1);
-    for(let i=0;i<1;i++){mBlur.uniforms.t.value=st.b1.texture;mBlur.uniforms.d.value.set(1.6/st.b1.width,0);pass(mBlur,st.b2);mBlur.uniforms.t.value=st.b2.texture;mBlur.uniforms.d.value.set(0,1.6/st.b1.height);pass(mBlur,st.b1);}
+    for(let i=0;i<GQL[GQ.lv].blur;i++){mBlur.uniforms.t.value=st.b1.texture;mBlur.uniforms.d.value.set(1.6/st.b1.width,0);pass(mBlur,st.b2);mBlur.uniforms.t.value=st.b2.texture;mBlur.uniforms.d.value.set(0,1.6/st.b1.height);pass(mBlur,st.b1);}
     // 햇살: 해가 화면에 보이면 밝은 곳을 해 쪽으로 끌어당김
     _sp.copy(camera.position).addScaledVector(sunDirU.value,400).project(camera);let ray=0;
     if(world.dim==='over'&&_sp.z<1&&Math.abs(_sp.x)<1.6&&Math.abs(_sp.y)<1.6){ray=HQU.uSun.value*.55*Math.max(0,1-Math.max(Math.abs(_sp.x),Math.abs(_sp.y))/1.6);
@@ -9381,7 +9401,7 @@ void main(){vec2 q=vUv-.5;float ca=dot(q,q)*.004; // 가장자리 색 번짐
     const u=mFinal.uniforms;u.tS.value=st.rt.texture;u.tB.value=st.b1.texture;u.tR.value=st.r1.texture;u.ray.value=ray;u.time.value=performance.now()%10000;u.res.value.set(st.W,st.H);pass(mFinal,null);
     // 너무 느리면(10초 동안 20fps 아래) 보통으로 바꿈
     if(fps&&fps<20){if((st.slow+=1)>600){set(false,true);toast('⚡ 화면이 느려서 그래픽을 <b>보통</b>으로 바꿨어요 (설정에서 다시 켤 수 있어요)');}}else st.slow=Math.max(0,st.slow-2);}
-  return {get on(){return st.on;},set,begin,end};})();
+  return {get on(){return st.on;},set,begin,end,tier};})();
 function renderGfx(){const el=$('setGfx');if(el)for(const b of el.children)b.classList.toggle('on',(b.dataset.g==='hq')===HQ.on);}
 {let g=null;try{g=localStorage.getItem('cavebuild-gfx');}catch(e){}HQ.set(g?g==='hq':!MOBILE,true);} // PC는 처음부터 고퀄 · 모바일은 보통
 $('setGfx').onclick=e=>{const b=e.target.closest('button');if(!b)return;HQ.set(b.dataset.g==='hq');};
@@ -9391,7 +9411,7 @@ function frame(now){
   requestAnimationFrame(frame);
   const dt=Math.min(.05,(now-last)/1000);last=now;timeU.value=now/1000%3600; // 물·용암 움직임
   if(SPEEDRUN&&running&&world.sr&&!world.sr.done)world.sr.ms+=Math.min(1000,now-(srLast||now));srLast=now; // ⏱ 세계에 있는 동안 계속 흐름 (일시정지 중에도)
-  fpsA+=dt;fpsN++;if(fpsA>.5){fps=Math.round(fpsN/fpsA);fpsA=0;fpsN=0;}
+  fpsA+=dt;fpsN++;if(fpsA>.5){fps=Math.round(fpsN/fpsA);fpsA=0;fpsN=0;}if(running)gqTick(dt);
   if(!running){renderer.render(scene,camera);return;}
   const active=!paused&&!endingOpen&&!player.dead; // 쓰러져 있으면 세계가 멈춤 (hp 0으로 저장되지 않게)
   if(MOBILE)document.body.classList.toggle('playing',active&&!invOpen&&!player.dead&&!stFrozen());
