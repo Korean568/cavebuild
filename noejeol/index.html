@@ -305,7 +305,7 @@ body.mobile #toasts{top:72px}
     • 바닷가 모래사장에는 <b>바다거북</b>이 쉬다가 바다로 헤엄쳐 가요. <b>거북 비늘</b> 5개로 <b>거북 등딱지 투구</b>를 만들면 물속에서 숨이 3배 오래가요.<br>
     • 깊은 바다에는 <b>오징어</b>가 살아요. 잡으면 <b>먹물 주머니</b>가 나오고, 현자 주민이 동전으로 바꿔 줘요. <b>그물</b>(막대기 2 + 끈적실 4)을 들고 오징어에 대고 누르면 <b>산 채로</b> 잡을 수 있고, 물에 대고 누르면 풀어 줘요.<br>
     • 바다에는 <b>물고기</b>가 헤엄쳐요. 잡거나 <b>낚싯대</b>(막대기 3 + 끈적실 2)로 낚아서 가마에 구우면 <b>구운 생선</b>이 돼요. 찌를 던지고, 찌가 쑥 잠기면 다시 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>! 물 밖으로 나온 물고기는 숨이 막혀요.<br>
-    • <b>🔫 총</b>: 권총(강철 3 + 철 주괴 2 + 막대기 1) · 돌격소총(강철합금 3 + 강철 2 + 철 주괴 2) · 총알(철 주괴 1 + 석탄 1 → 16). 머리를 맞히면 2배!<br>
+    • <b>🔫 총</b>: 권총(강철 3 + 철 주괴 2 + 막대기 1) · 돌격소총(강철합금 3 + 강철 2 + 철 주괴 2) · 총알(구리 주괴 1 → 4) · 탄창(철 주괴 1 + 총알 8, R로 장전). 머리를 맞히면 2배!<br>
     • <b>🎮 미사일 리모컨</b>(에너지 스톤 2 + 철 주괴 3 + 수정 1): 들고 우클릭하면 가진 대륙간 핵탄두 미사일을 <b>직접 조종</b>해요 (마우스 방향 · W 가속 · S 감속 · 우클릭/스페이스 폭파). 전용 리모컨: <b>핵폭탄 리모컨</b>(+ 우라늄) · <b>원자폭탄 리모컨</b>(+ 라듐) · <b>차르 봄바 리모컨</b>(+ 폴로늄) — 모두 에너지 스톤 2 + 철 주괴 3 + 표시된 재료.<br>
     • <b>🚀 대륙간 핵탄두 미사일</b>(우라늄 + 플루토늄 + 라듐): 들고 멀리 조준해서 <span class="deskonly">우클릭</span><span class="mobonly">✋</span>하면 9초 뒤 그곳에 떨어져 반경 60칸 폭발! <b>💣 원자폭탄</b>(+ 폴로늄): 놓고 누르면 10초 뒤 반경 70칸. <b>☢ 차르 봄바</b>(+ 폴로늄 + 프로트악티늄): 15초 뒤 반경 120칸!<br>
     • <b>☢ 핵폭탄</b>(핵미사일) = 우라늄 1 + 플루토늄 1 + 강철초고합금 블록 1 (강철초고합금 블록 = 강철 + 강철합금 + 철 주괴, 강철 = 철 주괴 + 돌, 강철합금 = 강철 + 돌). 놓고 누르면 하늘로 솟았다가 그 자리로 떨어져 반경 40칸이 날아가요!<br>
@@ -313,7 +313,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.168 — 👥 @ 를 치면 플레이어 목록</h4>
+    <h4>🆕 v26.169 — 🔫 새 총 모델 · 탄창 · 장전</h4>
+    • 권총은 <b>리볼버</b>, 돌격소총은 <b>Tek9</b> 3D 모델로 바뀌었어요 (리볼버는 쇠 몸통 · 갈색 손잡이).<br>
+    • <b>총알</b>: 구리 주괴 1 → 총알 4 · <b>탄창</b>: 철 주괴 1 + 총알 8 → 탄창 1<br>
+    • <b>R</b>로 장전해요 (권총 6발 · 돌격소총 30발). 총을 옆으로 눕히고 왼손으로 탄창을 밀어 넣는 모션이 나와요. 다 쏘면 자동으로 장전하고, 오른쪽 아래에 남은 탄 · 탄창 수가 보여요.
+    <h4>v26.168 — 👥 @ 를 치면 플레이어 목록</h4>
     • 채팅 · 명령어 창에서 <b>@</b>를 치면 방에 있는 플레이어 목록이 떠요. ↑↓로 고르고 Tab · Enter · 클릭하면 <b>@닉네임</b>이 들어가요.<br>
     • 명령어의 닉네임은 <b>@닉네임</b>으로 써요 (/tp @친구 · /ban @친구 · /op @친구). 채팅에서 누가 <b>@내닉네임</b>으로 부르면 🔔 알림이 와요.
     <h4>v26.167 — 🔓 /unben 닉네임</h4>
@@ -943,6 +947,7 @@ body.mobile #toasts{top:72px}
 <div id="loading">세계를 만드는 중...</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script id="wcore">
 // ===== 공유 코드: 메인 스레드와 백그라운드 워커가 함께 실행 (DOM·three.js 없음) =====
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
@@ -1973,13 +1978,15 @@ const HELP_EN=`
     • <b>Sea Turtles</b> rest on sandy beaches and swim out to sea. Make a <b>Turtle Shell Helmet</b> from 5 <b>Turtle Scutes</b> to hold your breath 3× longer.<br>
     • <b>Squid</b> live in the deep sea and drop <b>Ink Sacs</b>, which the Sage villager buys for coins. Hold a <b>Net</b> (2 Sticks + 4 Sticky Silk) and use it on a squid to catch it <b>alive</b>; use it on water to release it.<br>
     • <b>Fish</b> swim in the sea. Catch them or use a <b>Fishing Rod</b> (3 Sticks + 2 Sticky Silk), then cook them in a kiln for <b>Cooked Fish</b>. Cast the bobber and when it dips, <span class="deskonly">right click</span><span class="mobonly">✋</span> again! Fish out of water suffocate.<br>
-    • <b>🔫 Guns</b>: Pistol (3 Steel + 2 Iron Ingots + 1 Stick) · Assault Rifle (3 Steel Alloy + 2 Steel + 2 Iron Ingots) · Bullets (1 Iron Ingot + 1 Coal → 16). Headshots deal 2×!<br>
+    • <b>🔫 Guns</b>: Pistol (3 Steel + 2 Iron Ingots + 1 Stick) · Assault Rifle (3 Steel Alloy + 2 Steel + 2 Iron Ingots) · Bullets (1 Copper Ingot → 4) · Magazine (1 Iron Ingot + 8 Bullets, R to reload). Headshots deal 2×!<br>
     • <b>☢ Nuke</b> (nuclear missile) = 1 Uranium + 1 Plutonium + 1 Steel Superalloy Block (Superalloy Block = Steel + Steel Alloy + Iron Ingot, Steel = Iron Ingot + Stone, Steel Alloy = Steel + Stone). Place it and use it — it rockets into the sky, falls back on the same spot and wipes out a 40-block radius!<br>
     • Upgrade crystal gear with <b>Blazestone</b> from deep in the Abyss. <b>Energy Stone</b> is this world's electricity, mined from Energy Stone Ore in deep caves. Very deep down (below height 9) you may find rare, red-glowing <b>Star Power Ore</b> (diamond pickaxe or better).
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.168 — 👥 @ player list</h4>
+    <h4>🆕 v26.169 — 🔫 New gun models · Magazines · Reload</h4>
+    • Pistol = Revolver, Assault Rifle = Tek9 3D models. Bullets: 1 Copper Ingot → 4. Magazine: 1 Iron Ingot + 8 Bullets. Press R to reload (6 / 30 rounds) with a reload animation.
+    <h4>v26.168 — 👥 @ player list</h4>
     • Type @ in chat or a command to pick a player; commands take @name, and you get a 🔔 ping when someone mentions you.
     <h4>v26.167 — 🔓 /unben</h4>
     • /unben name lifts a ban (/unban works too).
@@ -2832,6 +2839,7 @@ IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
 const COLA=352,OPEN_COLA=353;IT[COLA]={name:'콜라',stack:16};IT[OPEN_COLA]={name:'딴 콜라',stack:1,food:3,drink:true}; // 🥤 콜라: 우클릭으로 따고 (따개를 들었다 눌러 닫음) 꾹 눌러 마심
+const MAG=373;IT[MAG]={name:'탄창',stack:16}; // 🔫 탄창: R로 장전 (권총 6발 · 돌격소총 30발)
 const BANHAMMER=372;IT[BANHAMMER]={name:'밴 해머',stack:1,secret:1}; // 🔨 /give banhammer 로만 얻음 · 플레이어를 치면 밴, 몹을 치면 없앰
 const BOMB=371;IT[BOMB]={name:'폭탄',stack:16}; // 💣 던지는 폭탄: 우클릭으로 던지면 데굴데굴 굴러가다 3초 뒤 펑
 const GIFT=360,RICE_CAKE=361,TTEOKGUK=362,CROWN=363,SCEPTER=364,GAVEL=365,SONGPYEON=366,YUT=367,HOE=368,RICE_SEED=369,RICE=370; // 🗓 이달의 모드 아이템
@@ -2998,7 +3006,7 @@ RECIPES.push(
   {out:REDDIA_BLOCK,n:1,in:[[RED_DIAMOND,9]],st:'bench'},{out:RED_DIAMOND,n:9,in:[[REDDIA_BLOCK,1]]},
   {out:BLACKDIA_BLOCK,n:1,in:[[BLACK_DIAMOND,9]],st:'bench'},{out:GOLD_BLOCK,n:1,in:[[GOLD_INGOT,9]],st:'bench'},{out:GOLD_INGOT,n:9,in:[[GOLD_BLOCK,1]]},
   {out:STEEL,n:1,in:[[IRON_INGOT,1],[STONE,1]],st:'bench'},{out:STEEL_ALLOY,n:1,in:[[STEEL,1],[STONE,1]],st:'bench'},
-  {out:BULLET,n:16,in:[[IRON_INGOT,1],[COAL,1]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
+  {out:BULLET,n:4,in:[[COPPER_INGOT,1]],st:'bench'},{out:MAG,n:1,in:[[IRON_INGOT,1],[BULLET,8]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
   {out:SUPER_ALLOY,n:1,in:[[STEEL,1],[STEEL_ALLOY,1],[IRON_INGOT,1]],st:'bench'},{out:NUKE,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[SUPER_ALLOY,1]],st:'bench'},
   {out:ICBM,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1]],st:'bench'},{out:MISSILE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[CRYSTAL,1]],st:'bench'},
   {out:NUKE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[URANIUM,1]],st:'bench'},{out:ATOM_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[RADIUM,1]],st:'bench'},{out:TSAR_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[POLONIUM,1]],st:'bench'},{out:ATOM_BOMB,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1],[POLONIUM,1]],st:'bench'},
@@ -3122,6 +3130,7 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-8,Y-8);if(d>6.2)return null;if(d>5.2)return '#8a8a94';const a=X-8,b=Y-8;if(Math.abs(a)<1.1&&b<0&&b>-4.6)return nc;if(Math.abs(a)<.9&&b>=0&&b<4)return '#3a3a44';if(d<1)return '#222';return '#e8e2d0';});}
     case HS_SCRAP:{const r=mulberry32(21);return pixelIcon((X,Y)=>{const d=Math.hypot(X-8,Y-8.5);if(d>5.2+(r()-.5)*1.4)return null;return r()<.18?'#e0603c':r()<.5?'#3a2a2e':'#54404a';});}
     case HELLSTEEL:return pixelIcon((X,Y,x,y)=>{if(y<6||y>11)return null;const inset=(11-y)*.7;if(X<1.5+inset||X>14.5-inset)return null;if((x+y)%7===0)return '#e0603c';return y<8?'#6a5458':y<11?'#4a3a3e':'#2a1e22';});
+    case MAG:return pixelIcon((X,Y,x,y)=>{if(y>=1&&y<=2&&x>=6&&x<=9)return x===6||x===9?'#a07020':'#e0b040';const xo=Math.round((y-3)*.25);if(y>=3&&y<=14&&x>=5+xo&&x<=10+xo)return x===5+xo||y===14?'#22252c':y%4===0?'#5a5e68':'#3a3e48';return null;});
     case BANHAMMER:return pixelIcon((X,Y,x,y)=>{if(x>=3&&x<=12&&y>=1&&y<=6)return y===1||y===6||x===3||x===12?'#ffd040':(x+y)%5===0?'#ff6a6a':'#c01818';if(x>=7&&x<=8&&y>=7&&y<=15)return y%3===0?'#3a2414':'#6a4424';return null;});
     case BOMB:return pixelIcon((X,Y,x,y)=>{if(y<=2&&x>=10&&x<=12)return (x+y)%2?'#ffd040':'#ff6020';if(y>=2&&y<=4&&x>=8&&x<=10&&x-8===4-y)return '#c8a070';const d=Math.hypot(X-7,Y-9.5);if(d<5.4){if(d<1.6&&X<7&&Y<9)return '#7a7a88';return d>4.6?'#101014':'#24242c';}if(y>=3&&y<=4&&x>=6&&x<=8)return '#5a5a64';return null;});
     case GIFT:return pixelIcon((X,Y,x,y)=>{if(x<2||x>13||y<4||y>14)return y===3&&(x===6||x===9)||y===2&&(x===5||x===10)?'#ffd040':null;return x===7||x===8||y===8?'#ffd040':(x+y)%7===0?'#ff8a8a':'#d81e2a';});
@@ -4810,6 +4819,27 @@ function updateHand(dt){
     handArm.position.set(.44-.305*w,-.3-.156*w+gl,-.52+.019*w);handArm.rotation.set(-.02+2.17*w+gl*4,.42-.37*w,.16-.11*w);}
   else   if(player.eating){const e=player.eating,k=Math.min(1,e.t/.22),q=k*k*(3-2*k),ch=Math.sin(e.t*17)*.022*q,lf=e.t>e.dur-.12?(e.dur-e.t)/.12:1; // 먹기: 손을 입으로 가져가 오물오물
     handArm.position.set(.44-.3*q*lf,-.3+.12*q*lf+ch,-.52+.16*q*lf);handArm.rotation.set(-.02+.55*q*lf+ch*3,.42+.55*q*lf,.16+.35*q*lf);}
+  reloadTick(dt);
+  if(player.reload){const R=player.reload,p=Math.min(1,R.t/R.dur),tl=ease(Math.min(1,p/.18))*(p>.85?1-ease((p-.85)/.15):1), // 🔫 장전: 총을 옆으로 눕히고 왼손이 탄창을 밑에서 밀어 넣음 → 철컥 → 손을 빼고 총을 바로 세움
+      up=p<.2?0:p<.62?ease((p-.2)/.42):1,out=p>.68?ease(Math.min(1,(p-.68)/.22)):0,kick=p>.6&&p<.7?Math.sin((p-.6)/.1*Math.PI)*.03:0;
+    handArm.position.set(.44-.14*tl,-.3+.05*tl+bob+kick,-.52+.05*tl);handArm.rotation.set(-.02+.3*tl,.42-.12*tl,.16+.75*tl);
+    if(!leftArm)buildLeftArm();setLeftPlate(0,0);leftArm.userData.reload=1;leftArm.visible=out<.98;
+    if(!magL){magL=buildItemModel(MAG).g;magL.scale.setScalar(1.3);magL.position.set(0,.03,-.29);leftArm.add(magL);}magL.visible=p<.62;
+    leftArm.position.set(lerp(-.1,.2,up)-.25*out,lerp(-.85,-.47,up)-.4*out,-.5);leftArm.rotation.set(.45+.2*up,.15,-.2*up);}
+  else if(leftArm&&leftArm.userData.reload){leftArm.userData.reload=0;if(!player.dine)leftArm.visible=false;if(magL)magL.visible=false;}
+  player.aimK=(player.aimK||0)+((gunAim()?1:0)-(player.aimK||0))*Math.min(1,dt*14);
+  if(player.aimK>.01&&isGun(hs)){const k=player.aimK,A=handArm.position,R=handArm.rotation; // 🎯 조준: 총을 화면 가운데로 올려 눈높이에 맞춤
+    A.set(lerp(A.x,.2,k),lerp(A.y,-.2,k),lerp(A.z,-.42,k));R.set(lerp(R.x,0,k),lerp(R.y,.3,k),lerp(R.z,0,k));}
+  {const g=isGun(hs)&&running&&!invOpen&&!isSpec();let u=$('gunUI'); // 🔫 총 UI: 조준선 (조준하면 빨간 점 · 가장자리 어둡게)
+   if(g&&!u){u=document.createElement('div');u.id='gunUI';u.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:11;transition:background .12s';
+     u.innerHTML='<svg width="64" height="64" viewBox="-32 -32 64 64" style="position:absolute;left:50%;top:50%;margin:-32px 0 0 -32px;overflow:visible"><g id="gunHip" stroke="#fff" stroke-width="2" stroke-linecap="round" style="filter:drop-shadow(0 0 1px #000)"><line x1="0" y1="-16" x2="0" y2="-7"/><line x1="0" y1="16" x2="0" y2="7"/><line x1="-16" y1="0" x2="-7" y2="0"/><line x1="16" y1="0" x2="7" y2="0"/></g><g id="gunAds" style="display:none"><circle r="13" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5"/><circle r="2.2" fill="#ff3030"/></g></svg>';document.body.appendChild(u);}
+   if(u){u.style.display=g?'block':'none';$('crosshair').style.visibility=g?'hidden':'';if(g){const ad=player.aimK>.5,gap=ad?0:Math.min(10,gunCD*22);u.style.background=ad?'radial-gradient(circle at 50% 50%,transparent 38%,rgba(0,0,0,.45) 75%)':'none';
+     u.querySelector('#gunHip').style.display=ad?'none':'';u.querySelector('#gunAds').style.display=ad?'':'none';u.querySelector('#gunHip').setAttribute('transform',`scale(${1+gap/12})`);}}}
+  {const g=isGun(hs)?'1':'',bu=$('bUse'),ba=$('bAttack'); // 📱 총을 들면 ✋ → 🎯 조준 · ⛏ → 총알 (발사)
+   if(bu&&bu.dataset.gun!==g){bu.dataset.gun=g;bu.textContent=g?'🎯':'✋';ba.innerHTML=g?'<svg width="26" height="26" viewBox="0 0 16 16" style="vertical-align:middle"><path d="M6 15V7c0-3 1-5 2-6 1 1 2 3 2 6v8z" fill="#e0b040" stroke="#7a5a10"/><rect x="5.5" y="11" width="5" height="4" fill="#c08a20"/></svg>':'⛏';}}
+  {const g=hs&&GUN_CAP[hs.id];let el=$('ammoHud'); // 🔫 남은 탄 · 탄창 수
+   if(g&&!el){el=document.createElement('div');el.id='ammoHud';el.style.cssText='position:fixed;right:14px;bottom:90px;z-index:12;background:rgba(0,0,0,.55);color:#fff;font:bold 16px monospace;padding:6px 10px;border-radius:6px;pointer-events:none';document.body.appendChild(el);}
+   if(el){el.style.display=g?'block':'none';if(g){const cr=isCreative(),tx=player.reload?'🔫 장전 중…':`🔫 ${cr?'∞':gunAmmo(hs)}/${GUN_CAP[hs.id]} · 탄창 ${cr?'∞':countItem(MAG)}`+(!cr&&gunAmmo(hs)===0?' · R 장전':'');if(el.textContent!==tx)el.textContent=tx;}}}
   if(bowAimNow()&&!player.dine&&!player.eating){if(!leftArm)buildLeftArm();setLeftPlate(0,0);leftArm.visible=true;leftArm.userData.bow=1;const pl=bowPull(),e=pl*pl*(3-2*pl); // 🏹 1인칭: 오른손은 활을 앞으로 들고 왼손이 시위를 뒤로 당김
     handArm.position.set(.16,-.2+bob*.3,-.62);handArm.rotation.set(.05,.08,.05);
     leftArm.position.set(.06-.02*e,-.2+bob*.3,-.56+.26*e);leftArm.rotation.set(.1,-.15-.25*e,.1);}
@@ -5207,7 +5237,8 @@ function buildItemModel0(id){
     case SILK:for(const [y,r] of [[0,.05],[.025,.04]])iMesh(g,IGEO.torus,imat('silk',0xeeeef6,'cloth',.6),0,y,0,Math.PI/2,0,0,r,r,r);break;
     case POTION:iMesh(g,IGEO.sph,imat('glass',0xd8ecff,null,.05,.1,0,0,.35),0,0,0,0,0,0,.07,.07,.07);iMesh(g,IGEO.sph,imat('pliq',0xffc830,null,.2,0,0xffa020,.9),0,-.008,0,0,0,0,.058,.055,.058);
       iMesh(g,IGEO.cyl,imat('glass',0xd8ecff,null,.05,.1,0,0,.35),0,.085,0,0,0,0,.022,.06,.022);iMesh(g,IGEO.cyl,imat('cork',0x9a6a3a,'wood',.9),0,.12,0,0,0,0,.02,.025,.02);break;
-    case PISTOL:case RIFLE:{const r=id===RIFLE,b=imat('gnb',0x3a3e48,'metal',.35,.75),w=imat('gnw',0x5a3e26,'rough',.6,0);iBox(g,.04,.06,r?.5:.22,b,0,.02,r?-.12:-.04);
+    case PISTOL:case RIFLE:{if(GUN_GLB[id].obj){g.add(GUN_GLB[id].obj.clone());break;} // 🔫 리볼버 · Tek9 3D 모델 (불러오기 전엔 아래 기본 모양)
+      const r=id===RIFLE,b=imat('gnb',0x3a3e48,'metal',.35,.75),w=imat('gnw',0x5a3e26,'rough',.6,0);iBox(g,.04,.06,r?.5:.22,b,0,.02,r?-.12:-.04);
       iBox(g,.035,.11,.05,w,0,-.06,r?.02:.04,.3,0,0);if(r){iBox(g,.04,.07,.16,w,0,0,.2);iBox(g,.03,.09,.04,b,0,-.06,-.1);}break;}
     case LASER:{const b=imat('lsb',0x3a3a46,'metal',.35,.7);iBox(g,.05,.07,.24,b,0,.02,-.04);iMesh(g,IGEO.cyl,b,0,.03,-.2,Math.PI/2,0,0,.018,.1,.018);iBox(g,.04,.1,.05,GRIP(),0,-.05,.04,.3,0,0);
       iBox(g,.03,.012,.06,imat('lsr',0xff3050,null,.3,0,0xff2040,1),0,.06,-.06);iMesh(g,IGEO.sph,imat('lsr',0xff3050,null,.3,0,0xff2040,1),0,.03,-.25,0,0,0,.016,.016,.016);break;}
@@ -5260,6 +5291,8 @@ function buildItemModel0(id){
       const bt=new THREE.Mesh(new THREE.CircleGeometry(.07,16),W);bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);}else{const m=plateModel({id,bites:0});m.scale.setScalar(.46);g.add(m);}break;} // 그릇 (수프는 건더기까지)
     case SPATULA:{const M=imat('spatM',0xc8ccd4,'metal',.3,.7),H=imat('spatH',0x5a3a22,'wood',.8);iBox(g,.11,.01,.12,M,0,.27,0);iBox(g,.015,.18,.015,M,0,.15,.02);iBox(g,.03,.09,.03,H,0,.04,.02);break;}
     case 331:case 332:case 333:case 334:case 335:case 336:{const m=plateModel({id,bites:0});m.scale.setScalar(.36);g.add(m);break;} // 접시째 (요리마다 다른 모양)
+    case MAG:{const b=imat('magB',0x34373f,'metal',.4,.7),e=imat('magE',0x22252c,'metal',.4,.6),br=imat('magBr',0xd8a840,'metal',.25,.85); // 🔫 탄창 3D: 살짝 휜 쇠 상자 · 바닥판 · 위로 보이는 총알
+      iBox(g,.035,.15,.07,b,0,.075,0,-.12,0,0);iBox(g,.042,.02,.08,e,0,.002,-.008,-.12,0,0);for(const z of [-.012,.012])iMesh(g,IGEO.cyl,br,0,.16,z+.01,Math.PI/2-.12,0,0,.009,.05,.009);break;}
     case BANHAMMER:{const hd=imat('banH',0xc01818,'metal',.35,.6,0x500000,.5),gd=imat('banG',0xffc830,'metal',.25,.85),wd=imat('banW',0x4a2c16,'wood',.8),gl=imat('banL',0xffe0e0,null,.2,0,0xff3030,1.6); // 🔨 밴 해머 3D: 금테 두른 빨간 망치 머리 · 나무 자루 · 빛나는 줄
       iMesh(g,IGEO.cyl,wd,0,.11,0,0,0,0,.018,.22,.018);iMesh(g,IGEO.cyl,gd,0,.012,0,0,0,0,.024,.02,.024);iBox(g,.2,.09,.09,hd,0,.25,0);iBox(g,.03,.1,.1,gd,-.1,.25,0);iBox(g,.03,.1,.1,gd,.1,.25,0);iBox(g,.15,.015,.095,gl,0,.25,0);break;}
     case BOMB:{const bk=imat('bombB',0x1c1c22,'metal',.35,.6),cap=imat('bombC',0x6a6a74,'metal',.35,.7),fz=imat('bombF',0xc8a070,'cloth',.9),sp=imat('bombS',0xffb030,null,.3,0,0xff6010,1.4); // 💣 폭탄 3D: 둥근 쇠공 · 뚜껑 · 심지 · 불꽃
@@ -5312,6 +5345,20 @@ function buildItemModel0(id){
   return {g,grip};
 }
 const ITEM_PROTO={};
+// 🔫 총 3D 모델: 권총 = 리볼버, 돌격소총 = Tek9 · 리볼버는 원래 권총 색 (쇠 몸통 · 갈색 손잡이)
+const GUN_GLB={[PISTOL]:{url:'models/revolver.glb',len:.27,ry:-Math.PI/2,paint:1},[RIFLE]:{url:'models/tek9.glb',len:.42,ry:Math.PI}};
+function gunGlbLoad(){if(!THREE.GLTFLoader)return;const L=new THREE.GLTFLoader();
+  for(const k in GUN_GLB){const id=+k,G=GUN_GLB[id];L.load(G.url,gl=>{const s=gl.scene,sk=[];s.traverse(o=>{if(o.isSkinnedMesh)sk.push(o);});
+    for(const o of sk){const m=new THREE.Mesh(o.geometry,o.material);m.position.copy(o.position);m.quaternion.copy(o.quaternion);m.scale.copy(o.scale);o.parent.add(m);o.parent.remove(o);} // 뼈대 모델은 복사하면 깨져서 그냥 모델로
+    if(G.paint)s.traverse(o=>{if(!o.isMesh)return;const P=o.geometry.attributes.position,C=new Float32Array(P.count*3),mt=new THREE.Color(0x4a4e58),wd=new THREE.Color(0x5a3e26);
+      for(let i=0;i<P.count;i++){const c=P.getX(i)>51&&P.getZ(i)<19?wd:mt;C[i*3]=c.r;C[i*3+1]=c.g;C[i*3+2]=c.b;}
+      o.geometry.setAttribute('color',new THREE.BufferAttribute(C,3));o.material=new THREE.MeshStandardMaterial({vertexColors:true,metalness:.45,roughness:.45,side:THREE.DoubleSide});});
+    const a=new THREE.Group(),w=new THREE.Group();a.add(s);w.add(a);a.rotation.y=G.ry;w.updateMatrixWorld(true);
+    let b=new THREE.Box3().setFromObject(w);a.scale.setScalar(G.len/Math.max(b.max.z-b.min.z,.001));w.updateMatrixWorld(true);b=new THREE.Box3().setFromObject(w);
+    a.position.set(-(b.min.x+b.max.x)/2,.05-b.max.y,-G.len*.62-b.min.z);G.obj=w;delete ITEM_PROTO[id];
+    try{const had=!!ICON3D;ICON[id]=icon3D(id);if(!had){ICON3D.r.dispose();ICON3D.r.forceContextLoss();ICON3D=null;}renderHotbar();if(invOpen)renderInv();}catch(e){}
+    try{handId=-1;setHand();}catch(e){}},undefined,e=>console.warn('gun glb',G.url,e));}}
+setTimeout(gunGlbLoad,0);
 function itemModel(id){const p=ITEM_PROTO[id]||(ITEM_PROTO[id]=buildItemModel(id));return {g:p.g.clone(),grip:p.grip};}
 function tintModel(g,col){const c=new THREE.Color(col); // 염색: 재질을 복사해서 색을 입힘
   g.traverse(o=>{if(!o.isMesh&&!o.isSprite)return;const f=m=>{const n=m.clone();if(n.color)n.color.lerp(c,.7);return n;};o.material=Array.isArray(o.material)?o.material.map(f):f(o.material);});return g;}
@@ -5325,6 +5372,7 @@ function setHeldModel(id){
   if(heldModel){itemHolder.remove(heldModel);heldModel=null;}
   if(!id)return;const {g,grip}=itemModel(id);heldModel=g;itemHolder.add(g);
   if(grip){itemHolder.position.set(-.045,0,-.4);itemHolder.rotation.set(-.55,-1.1,0);itemHolder.scale.setScalar(1);} // 손잡이를 주먹에 쥠 (넓은 면이 보이게)
+  else if(GUN_CAP[id]){itemHolder.position.set(-.04,.08,-.36);itemHolder.rotation.set(0,-.38,0);itemHolder.scale.setScalar(1.35);} // 🔫 총: 손잡이를 쥐고 총구가 앞을 봄
   else{itemHolder.position.set(-.11,.02,-.41);itemHolder.rotation.set(0,.5,0);itemHolder.scale.setScalar(isBlk(id)?.75:1.35);} // 주먹 위에 올림
 }
 
@@ -6605,12 +6653,25 @@ function fireLaserItem(){
 const LASER_DMG=500;
 // ---------- 총 ----------
 let gunCD=0;
+const GUN_CAP={[PISTOL]:6,[RIFLE]:30}; // 🔫 탄창 한 개로 채우는 탄 수
+function isGun(s){return !!(s&&GUN_CAP[s.id]);}
+function gunAim(){return mouseR&&isGun(held())&&!player.reload&&!invOpen&&!player.dead;} // 🎯 우클릭 (모바일은 🎯 버튼)을 누르는 동안 조준
+function gunAmmo(s){return s.ammo==null?GUN_CAP[s.id]:s.ammo;}
+function startReload(){const s=held();if(!s||!GUN_CAP[s.id]||player.reload||player.dead)return;
+  if(gunAmmo(s)>=GUN_CAP[s.id]){toast('🔫 이미 가득 찼어요');return;}
+  if(!isCreative()&&!inv.some(q=>q&&q.id===MAG)){toast('🔫 탄창이 없어요 (철 주괴 1 + 총알 8 → 탄창 · 총알은 구리 주괴 1 → 4)');SFX.click();return;}
+  player.reload={t:0,dur:s.id===RIFLE?1.6:1.25,s,sel};tone(900,700,.05,.05,'square');}
+function reloadTick(dt){const R=player.reload;if(!R)return;R.t+=dt;
+  if(held()!==R.s||player.dead){player.reload=null;return;} // 다른 칸으로 바꾸면 장전 취소
+  if(!R.clk&&R.t>R.dur*.62){R.clk=1;tone(500,1300,.07,.07,'square');setTimeout(()=>tone(1400,900,.05,.06,'square'),70);} // 철컥
+  if(R.t>=R.dur){player.reload=null;if(!isCreative()){if(!inv.some(q=>q&&q.id===MAG))return;removeItem(MAG,1);}R.s.ammo=GUN_CAP[R.s.id];invChanged();toast(`🔫 장전 완료 (${R.s.ammo}발)`);}}
 function fireGun(s){
-  if(gunCD>0)return;const rifle=s.id===RIFLE;gunCD=rifle?.32:.38;
+  if(gunCD>0||player.reload)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
+  const rifle=s.id===RIFLE;gunCD=rifle?.32:.38;
   const shots=rifle?3:1;for(let i=0;i<shots;i++)setTimeout(()=>gunShot(rifle),i*90);swing=1;}
-function gunShot(rifle){const s=held();if(!s||(s.id!==PISTOL&&s.id!==RIFLE)||player.dead)return;
-  if(!isCreative()){if(!inv.some(q=>q&&q.id===BULLET)){toast('🔫 총알이 없어요 (철 주괴 1 + 석탄 1 → 총알 16)');SFX.click();return;}removeItem(BULLET,1);invChanged();}
-  const sp=rifle?.012:.006,d=viewDir();d.x+=(Math.random()-.5)*sp;d.y+=(Math.random()-.5)*sp;d.z+=(Math.random()-.5)*sp;d.normalize();
+function gunShot(rifle){const s=held();if(!s||(s.id!==PISTOL&&s.id!==RIFLE)||player.dead||player.reload)return;
+  if(!isCreative()){const a=gunAmmo(s);if(a<=0){SFX.click();return;}s.ammo=a-1;invChanged();}
+  const sp=(rifle?.012:.006)*(gunAim()?.25:1),d=viewDir();d.x+=(Math.random()-.5)*sp;d.y+=(Math.random()-.5)*sp;d.z+=(Math.random()-.5)*sp;d.normalize();
   const o=camera.position.clone(),hit=raycast(o,d,100);let L=hit?hit.dist:100,best=null;
   for(const m of mobs){const hw=m.w/2;const t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){L=t;best=m;}}
   if(best){const hy=o.y+d.y*L,head=hy>best.pos.y+best.h*.72,dmg=(rifle?6:9)*(head?2:1);best.byPlayer=performance.now();best.hurt(dmg,d.x*.4,d.z*.4);if(head){SFX.crit();toast('🎯 헤드샷!');}}
@@ -7407,7 +7468,7 @@ function updatePlayer(dt){
   const sprint=(keys.ShiftLeft||keys.ShiftRight||mobileSprint||(joy.active&&Math.hypot(joy.x,joy.y)>.97))&&fz>.3&&p.food>6&&!invOpen&&!p.crouch;p.sprinting=sprint;
   // 방패 막기: 우클릭 기능이 없는 아이템(무기·도구·맨손)을 든 채 우클릭 유지
   const h0=held(),hi=h0&&IT[h0.id],hasUse=h0&&(isBlk(h0.id)||(hi&&(hi.food||hi.bow||hi.armor||hi.bucket||hi.use))||h0.id===LASER||h0.id===POTION);
-  p.shieldCD=Math.max(0,(p.shieldCD||0)-dt);p.blocking=!!(mouseR&&armor[4]&&!invOpen&&!hasUse&&p.shieldCD<=0);
+  p.shieldCD=Math.max(0,(p.shieldCD||0)-dt);p.blocking=!!(mouseR&&armor[4]&&!invOpen&&!hasUse&&p.shieldCD<=0&&!isGun(held()));
   let sp=sprint&&!p.blocking?5.8:4.3;if(p.colaT>0)sp*=1.4;if(p.spdMul)sp*=p.spdMul;if(p.eff&&p.eff.speed>0)sp*=1.5; // 🥤 콜라 효과 · 💻 /speed · /effect 속도
   if(p.inWater)sp*=p.graceT>0?.85:.55;if(p.blocking)sp*=.4;if(p.crouch)sp*=.33;
   const s=Math.sin(p.yaw),c=Math.cos(p.yaw);
@@ -7475,7 +7536,7 @@ function updatePlayer(dt){
     p.gOff=(p.gOff||0)+(go-(p.gOff||0))*Math.min(1,10*dt);}
   camera.position.set(p.pos.x,p.pos.y+(p.gOff||0)+lerp(1.62-.3*p.crouchK,.42,Math.max(p.swimK,p.glideK||0)),p.pos.z);
   camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();
-  const fov=sprint&&hs>4?82:75;if(Math.abs(camera.fov-fov)>.1){camera.fov+=(fov-camera.fov)*Math.min(1,10*dt);camera.updateProjectionMatrix();}
+  const fov=gunAim()?(held().id===RIFLE?50:55):sprint&&hs>4?82:75;if(Math.abs(camera.fov-fov)>.1){camera.fov+=(fov-camera.fov)*Math.min(1,10*dt);camera.updateProjectionMatrix();}
 }
 function updateSurvival(dt){
   const p=player;if(p.dead)return;
@@ -7531,7 +7592,7 @@ function breakTime(id){
 }
 function canHarvest(id){const B=BL[id],t=heldTool();return !B.tier||(t&&t.type===B.tool&&t.tier>=B.tier);}
 function updateMining(dt){
-  if(!mouseL||!target||mobTarget||boatTarget||vehTarget||invOpen||player.dead||isSpec()){mining.active=false;mining.p=0;crack.visible=false;return;}
+  if(!mouseL||!target||mobTarget||boatTarget||vehTarget||invOpen||player.dead||isSpec()||isGun(held())){mining.active=false;mining.p=0;crack.visible=false;return;}
   if(!mining.active||mining.x!==target.x||mining.y!==target.y||mining.z!==target.z){Object.assign(mining,{x:target.x,y:target.y,z:target.z,p:0,active:true,hitT:0});}
   const bt=breakTime(target.id);if(bt===Infinity){crack.visible=false;return;}
   mining.p+=dt/bt;mining.hitT-=dt;swing=Math.max(swing,.6);
@@ -7563,7 +7624,7 @@ function eatColor(id){const c=ICON_CANVAS[id];if(!c)return new THREE.Color(0xc89
 let DINE_P=1.3,DINE_KF=[ // 오른손(젓가락) 키프레임: [단계, x, y, z, 회전x, 회전y, 회전z]
   [0,.38,-.29,-.5,0,.62,.12],[.28,.32,-.26,-.56,-.28,.74,.1],[.36,.32,-.25,-.56,-.24,.74,.1],[.55,.16,-.22,-.46,.3,.2,.1],[.66,.12,-.3,-.34,.4,.08,.1],[.85,.32,-.3,-.48,.05,.62,.12],[1,.38,-.29,-.5,0,.62,.12]]; // 손은 오른쪽에 두고 젓가락 끝만 접시 ↔ 입을 오감
 const PLATED=id=>id>=331&&id<=336||id>=340&&id<=345; // 접시 · 그릇에 담긴 요리
-let leftArm=null,leftPlate=null,leftPlateKey='',colaCanL=null;
+let leftArm=null,leftPlate=null,leftPlateKey='',colaCanL=null,magL=null;
 function buildLeftArm(){leftArm=new THREE.Group(); // 왼손: 소매 · 손 · 손바닥 위 접시
   const cloth=new THREE.MeshStandardMaterial({color:0x34566c,roughness:.95}),skin=new THREE.MeshStandardMaterial({color:0xd8a07c,roughness:.62});
   part(leftArm,.2,.2,.2,cloth,0,0,.12);part(leftArm,.16,.15,.24,skin,0,-.004,-.1);part(leftArm,.18,.075,.16,skin,0,-.01,-.28);
@@ -7663,7 +7724,7 @@ function useItem(){
     player.web={x:h.x+.5,y:h.y+.5,z:h.z+.5,len:Math.max(3,h.dist*.85)};const d=viewDir();player.vel.addScaledVector(d,5);tone(1400,500,.12,.05,'triangle');swing=1;return;}
   if(s&&s.id===WEB_SHOOTER){shootWeb();return;}
   if(s&&s.id===FLY){player.flying=!player.flying;if(player.flying)player.vel.y=Math.max(player.vel.y,5);toast(player.flying?'🦾 플라이 켜짐 (스페이스 위 · C 아래)':'플라이 꺼짐');return;}
-  if(s&&(s.id===PISTOL||s.id===RIFLE)){fireGun(s);return;}
+  if(isGun(s))return; // 🔫 총은 클릭으로 쏘고 우클릭은 조준
   if(s&&IT[s.id]&&IT[s.id].armor){inv[sel]=equipArmor(s);invChanged();return;}
   if(s&&IT[s.id]&&IT[s.id].bucket){useBucket(s);return;}
   if(s&&s.id===POTION){toast('불사의 마법 물약은 가지고만 있으면 쓰러질 때 자동으로 발동합니다');return;}
@@ -7972,6 +8033,7 @@ addEventListener('keydown',e=>{
   if(e.code==='KeyE'){if(invOpen)closeInv();else if(locked)openInv();}
   else if(e.code==='Escape'&&invOpen)closeInv();
   else if(e.code==='KeyQ'){e.preventDefault();if(locked)dropHeld(e.ctrlKey||e.metaKey);}
+  else if(e.code==='KeyR'&&locked&&!e.repeat)startReload(); // 🔫 장전
   else if(/^Digit[1-9]$/.test(e.code)&&!invOpen)selectSlot(+e.code[5]-1);
   else if(e.code==='KeyP')cycleView();
   else if((e.code==='KeyT'||e.code==='Slash')&&running&&!invOpen&&!player.dead){e.preventDefault();mpChatOpen(e.code==='Slash'?'/':'');} // 🌐 채팅 · 💻 명령어 (/)
@@ -7994,6 +8056,8 @@ canvas.addEventListener('mousedown',e=>{
   if(!locked&&!noLock){lockPointer();return;}
   if(paused)return;
   audio();
+  if(e.button===0&&isGun(held())){mouseL=true;fireGun(held());return;} // 🔫 총: 클릭 = 발사 · 우클릭 = 조준
+  if(e.button===2&&isGun(held())){mouseR=true;return;}
   if(e.button===0){mouseL=true;swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);else if(vehTarget)hitVeh(vehTarget);}
   if(e.button===2){mouseR=true;useT=.28;useItem();}
 });
@@ -8033,8 +8097,8 @@ if(MOBILE){
   const btn=(id,down,up)=>{const el=$(id);
     el.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();audio();el.classList.add('on');down();},{passive:false});
     const u=e=>{e.preventDefault();el.classList.remove('on');up&&up();};el.addEventListener('touchend',u);el.addEventListener('touchcancel',u);};
-  btn('bAttack',()=>{if(!running||invOpen||player.dead)return;mouseL=true;swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);else if(vehTarget)hitVeh(vehTarget);},()=>{mouseL=false;});
-  btn('bUse',()=>{if(!running||invOpen||player.dead)return;mouseR=true;useT=.28;useItem();},()=>{mouseR=false;});
+  btn('bAttack',()=>{if(!running||invOpen||player.dead)return;mouseL=true;if(isGun(held())){fireGun(held());return;}swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);else if(vehTarget)hitVeh(vehTarget);},()=>{mouseL=false;});
+  btn('bUse',()=>{if(!running||invOpen||player.dead)return;mouseR=true;if(isGun(held()))return;useT=.28;useItem();},()=>{mouseR=false;});
   btn('bJump',()=>{keys.Space=true;spaceTap();},()=>{keys.Space=false;});
   btn('bSprint',()=>{mobileSprint=!mobileSprint;},()=>{$('bSprint').classList.toggle('on',mobileSprint);});
   btn('bInv',()=>{if(running&&!player.dead)openInv();});
@@ -9269,7 +9333,7 @@ function frame(now){
     if(!stFrozen()&&!gm){ // 스텔라 연출 · 미사일 조종 중에는 플레이어가 멈춤
     updatePlayer(dt);
     updateTarget();updateMining(dt);
-    if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}colaTick(dt);
+    if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}if(mouseL&&!invOpen&&isGun(held()))fireGun(held());updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}colaTick(dt);
     for(const m of [...mobs])mpMobUpdate(m,dt);
     if(!MP.on||MP.host||mpLocalMobs())spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);if(!MP.on||MP.host)updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
