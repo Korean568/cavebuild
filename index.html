@@ -43,6 +43,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malg
 #evHud~.modhud,.modhud{position:fixed;right:10px;top:60px;z-index:12;background:rgba(10,10,30,.7);color:#fff;border:2px solid #7ab0ff;border-radius:6px;padding:5px 10px;font:13px sans-serif;pointer-events:none;max-width:40vw}
 #mpRooms{max-height:180px;overflow:auto;margin:4px 0}.mpr{display:flex;align-items:center;gap:8px;padding:5px 8px;margin:3px 0;background:rgba(0,0,0,.25);border-radius:6px;font-size:14px}.mpr span{flex:1;text-align:left}.mpr small{display:block;opacity:.7;font-size:12px}.mpr .btn{padding:4px 12px;margin:0}
 .mpPubRow{display:flex;gap:6px;justify-content:center;margin:6px 0}.mpPubRow .btn{margin:0}.mpPubRow .btn.on{outline:3px solid #ffd040}
+#atList{position:fixed;left:10px;bottom:136px;min-width:180px;max-height:40vh;overflow:auto;display:none;z-index:17;background:rgba(20,20,28,.92);border:2px solid #888;font:15px sans-serif;color:#fff}
+#atList div{padding:5px 10px;cursor:pointer}#atList div.on,#atList div:hover{background:#3a6ad0}
 #mpChat{position:fixed;left:10px;bottom:96px;width:min(420px,70vw);display:none;z-index:16;font:15px sans-serif;padding:8px 10px;background:rgba(0,0,0,.7);color:#fff;border:2px solid #888;outline:none}
 #mpChatBtn{position:fixed;left:8px;top:64px;z-index:9;display:none;font-size:20px;background:rgba(0,0,0,.45);border:2px solid #666;color:#fff;border-radius:6px;padding:4px 8px}body.mpon #mpChatBtn{display:block}
 #mpBody{font-size:15px;line-height:1.6;margin-bottom:8px}#mpBody .code{font-size:40px;letter-spacing:8px;font-weight:bold;color:#ffe066;margin:6px 0}#mpBody .tip{font-size:13px;color:#aaa}#mpBody ul{list-style:none;padding:0;margin:6px 0}
@@ -309,7 +311,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.167 — 🔓 /unben 닉네임</h4>
+    <h4>🆕 v26.168 — 👥 @ 를 치면 플레이어 목록</h4>
+    • 채팅 · 명령어 창에서 <b>@</b>를 치면 방에 있는 플레이어 목록이 떠요. ↑↓로 고르고 Tab · Enter · 클릭하면 <b>@닉네임</b>이 들어가요.<br>
+    • 명령어의 닉네임은 <b>@닉네임</b>으로 써요 (/tp @친구 · /ban @친구 · /op @친구). 채팅에서 누가 <b>@내닉네임</b>으로 부르면 🔔 알림이 와요.
+    <h4>v26.167 — 🔓 /unben 닉네임</h4>
     • <b>/unben 닉네임</b>으로 밴을 풀어요 (/unban · /밴해제 도 돼요). 방을 열지 않은 세계에서도 밴 명단을 정리할 수 있어요.
     <h4>v26.166 — 🔨 /ban · 밴 해머 · 🔑 서버 설정은 OP만</h4>
     • 멀티플레이에서 <b>Mods · 게임 모드 · 난이도 · 언어</b>는 서버 <b>OP</b>(어드민 포함)만 바꿀 수 있어요. OP가 언어를 바꾸면 방 전체가 그 언어로, OP 친구는 켠 모드를 서버에 적용할 수 있어요.<br>
@@ -863,7 +868,7 @@ body.mobile #toasts{top:72px}
   <button class="btn" id="btnQuit">저장 후 타이틀로</button>
 </div>
 <div id="mpUI" class="overlay"><div class="ppbox"><h2>🌐 멀티플레이</h2><div id="mpBody"></div><button class="btn" id="mpClose">닫기</button></div></div>
-<input id="mpChat" type="text" maxlength="80" placeholder="채팅 · Enter 보내기 · Esc 닫기" autocomplete="off">
+<div id="atList"></div><input id="mpChat" type="text" maxlength="80" placeholder="채팅 · Enter 보내기 · Esc 닫기" autocomplete="off">
 <button id="mpChatBtn">💬</button>
 <div id="settings" class="overlay">
   <h2>⚙ 서버 설정</h2>
@@ -1972,7 +1977,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.167 — 🔓 /unben</h4>
+    <h4>🆕 v26.168 — 👥 @ player list</h4>
+    • Type @ in chat or a command to pick a player; commands take @name, and you get a 🔔 ping when someone mentions you.
+    <h4>v26.167 — 🔓 /unben</h4>
     • /unben name lifts a ban (/unban works too).
     <h4>v26.166 — 🔨 /ban · Ban hammer · 🔑 OP-only server settings</h4>
     • In multiplayer only OPs (and admins) can change Mods, game mode, difficulty and language. /ban, /unban, /banlist. /give banhammer gives a 🔨 Ban hammer (not in creative): hit a player to ban them, hit a mob to remove it.
@@ -8531,7 +8538,7 @@ function mpApply(L){MP.rx=1;try{for(const [d,x,y,z,id] of L){if(y<0||y>=CH)conti
     if(d===world.dim&&chunks.get(k)){if(getBlock(x,y,z)!==id)setBlock(x,y,z,id);}
     else{const mm=modsByDim[d]||(modsByDim[d]=new Map());let m=mm.get(k);if(!m){m=new Map();mm.set(k,m);}m.set((y*16+(z&15))*16+(x&15),id);modDirty.add(d+'|'+k);}}}catch(e){console.error(e);}finally{MP.rx=0;}}
 function mpPos(P,o){P.t=o;if(o.s&&P.sw<=0)P.sw=1;}
-function mpChatShow(n,m){modEmit('chat',n,m);toast(`💬 <b>${mpEsc(n)}</b>: ${mpEsc(m)}`);}
+function mpChatShow(n,m){modEmit('chat',n,m);const me=MP.on&&MP.me.nick&&n!==MP.me.nick&&m.toLowerCase().includes('@'+MP.me.nick.toLowerCase());toast(`💬 <b>${mpEsc(n)}</b>: ${mpEsc(m).replace(/@([^\s@<&]+)/g,'<b style="color:#7ab0ff">@$1</b>')}`);if(me){tone(1320,1760,.12,.08);toast(`🔔 <b>${mpEsc(n)}</b> 님이 나를 불렀어요`);}}
 // 방장: 방 열기 → 친구가 들어오면 세계를 통째로 보내 줌
 function mpHost(){if(!mpOk()||MP.on||MP.ws)return;MP.me=mpMe();renderMP(mpL('방을 여는 중…','Opening room…'));
   const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];
@@ -8885,7 +8892,7 @@ function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
     case 'worldname':case '세계이름':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}cmdOut('세계 이름은 /worldname 으로 다시 바꿔 주세요',1);break;
     default:cmdOut(`/${mpEsc(x)} 는 되돌릴 수 없어요 (/undo 는 건축 · /back 은 순간이동)`,1);}}
 let CMD_SW=0;
-function runCmd0(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'').toLowerCase(),P=player.pos; // 💻 명령어 (싱글 · 방장은 다 쓰고, 친구는 /help · /list · /me 만)
+function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/^@./.test(w)?w.slice(1):w),c=(a.shift()||'').toLowerCase(),P=player.pos; // 👥 @닉네임 → 닉네임 // 💻 명령어 (싱글 · 방장은 다 쓰고, 친구는 /help · /list · /me 만)
   if(!cmdIsOp()&&!['help','도움말','list','목록','me','rules','규칙'].includes(c)&&!(MOD_CMDS[c]&&MOD_CMDS[c].op===false)){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요 (방장에게 /op 를 받아요)',1);return;}
   const num=(v,base)=>{if(v===undefined)return NaN;if(v[0]==='~')return base+(v.length>1?+v.slice(1):0);return +v;};
   switch(c){
@@ -9132,7 +9139,21 @@ function cmdTick(dt){const p=player,E=p.eff;bombTick(dt);if(MOD_EV.tick)modEmit(
 function cmdBlock(q){q=(q||'').trim();if(!q)return null;if(/^(공기|air|0)$/i.test(q))return AIR;if(/^\d+$/.test(q))return isBlk(+q)?+q:null;const L=[];BL.forEach((b,i)=>{if(b&&i)L.push([b.name,i]);});return cmdFind(q,L);}
 function cmdTitle(t){let el=$('cmdTitle');if(!el){el=document.createElement('div');el.id='cmdTitle';el.style.cssText='position:fixed;left:0;right:0;top:28%;text-align:center;z-index:30;pointer-events:none;font:900 min(9vw,72px) sans-serif;color:#fff;text-shadow:4px 4px 0 #000,0 0 18px rgba(0,0,0,.6);transition:opacity .5s';document.body.appendChild(el);}
   el.textContent=t;el.style.opacity=1;clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity=0,3000);}
-function mpChatClose(){if(!MP.chat)return;MP.chat=false;const el=$('mpChat');el.style.display='none';el.blur();if(running&&!paused)lockPointer();}
+function mpChatClose(){atHide();if(!MP.chat)return;MP.chat=false;const el=$('mpChat');el.style.display='none';el.blur();if(running&&!paused)lockPointer();}
+// 👥 @ 를 치면 플레이어 목록 · 고르면 @닉네임 이 들어감
+let AT={on:false,i:0,L:[],st:0};
+function atPlayers(){return MP.on?[MP.me.nick,...mpList()]:[nickNow()||'플레이어'];}
+function atHide(){AT.on=false;$('atList').style.display='none';}
+function atScan(){const el=$('mpChat'),v=el.value,cur=el.selectionStart??v.length,m=/(^|\s)@([^\s@]*)$/.exec(v.slice(0,cur));if(!m){atHide();return;}
+  const q=m[2].toLowerCase();AT.L=atPlayers().filter(n=>n.toLowerCase().includes(q));if(!AT.L.length){atHide();return;}
+  AT.st=cur-m[2].length-1;AT.i=Math.min(AT.i,AT.L.length-1);AT.on=true;const B=$('atList');B.innerHTML=AT.L.map((n,i)=>`<div data-i="${i}" class="${i===AT.i?'on':''}">@${mpEsc(n)}${MP.on&&n===MP.me.nick?' <span style="opacity:.6">(나)</span>':''}</div>`).join('');B.style.display='block';}
+function atPick(i){const el=$('mpChat'),v=el.value,cur=el.selectionStart??v.length,n=AT.L[i];if(n==null)return;const ins='@'+n+' ';el.value=(v.slice(0,AT.st)+ins+v.slice(cur)).slice(0,80);const c=Math.min(el.value.length,AT.st+ins.length);el.setSelectionRange(c,c);atHide();el.focus();}
+$('mpChat').addEventListener('input',()=>{AT.i=0;atScan();});$('mpChat').addEventListener('click',atScan);
+$('atList').addEventListener('mousedown',e=>{const d=e.target.closest('[data-i]');if(d){e.preventDefault();atPick(+d.dataset.i);}});
+$('mpChat').addEventListener('keydown',e=>{if(!AT.on||e.isComposing)return;
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();e.stopImmediatePropagation();AT.i=(AT.i+(e.key==='ArrowDown'?1:-1)+AT.L.length)%AT.L.length;atScan();}
+  else if(e.key==='Tab'||e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();atPick(AT.i);}
+  else if(e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();atHide();}});
 $('mpChat').addEventListener('keydown',e=>{e.stopPropagation();if(e.isComposing)return;
   if(e.code==='Escape'){e.preventDefault();mpChatClose();}
   else if(e.key==='Enter'){e.preventDefault();const m=$('mpChat').value.trim().slice(0,80);mpChatClose();if(m[0]==='/')runCmd(m);else if(m&&MP.on){mpSend({t:'c',n:MP.me.nick,m});mpChatShow(MP.me.nick,m);}else if(m)toast('💻 명령어는 <b>/</b> 로 시작해요 · <b>/help</b>');}});
