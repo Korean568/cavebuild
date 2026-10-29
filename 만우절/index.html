@@ -313,7 +313,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.173 — 📱💻 기기에 맞춰 그래픽이 저절로 바뀜</h4>
+    <h4>🆕 v26.174 — 🛡 어드민 추가</h4>
+    • 운영자 말고도 <b>서버가 어드민으로 정한 계정</b>이 어드민이 돼요 (모든 명령어 · 서버 설정 · 밴 당하지 않음). 로그인하면 서버에서 알려 줘요.
+    <h4>v26.173 — 📱💻 기기에 맞춰 그래픽이 저절로 바뀜</h4>
     • 게임을 켜면 <b>CPU · 메모리 · 그래픽카드 · 모바일인지</b>를 보고 그래픽 등급(낮음 · 보통 · 좋음 · 최고)을 정해요. <b>고퀄 · 보통 둘 다</b> 적용돼요.<br>
     • 게임 중에도 2초마다 FPS를 봐서 느려지면 한 단계 낮추고, 오래 부드러우면 기기 등급까지 다시 올려요.<br>
     • 바뀌는 것: 화면 해상도 · 그림자 크기 · 물 반사 · 안티앨리어싱 · 빛 번짐.
@@ -1998,7 +2000,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.173 — 📱💻 Graphics adapt to your device</h4>
+    <h4>🆕 v26.174 — 🛡 More admins</h4>
+    • Accounts the server marks as admin now get admin powers too (all commands, server settings, can't be banned).
+    <h4>v26.173 — 📱💻 Graphics adapt to your device</h4>
     • Both HQ and Normal now pick a quality tier from your CPU, memory, GPU and device type, then step down when FPS drops and back up when it's smooth (resolution, shadows, reflections, anti-aliasing, bloom).
     <h4>v26.172 — 🔫 Real revolver sound · ⚡ Lighter HQ graphics</h4>
     • The revolver now uses a real recorded gunshot, pitched lower. HQ graphics render at 3/4 resolution with lighter anti-aliasing, shadows, reflections, bloom and sun rays.
@@ -8708,7 +8712,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   if(d.t==='hi'){if(!running)return;const nick=String(d.nick||'?').slice(0,16);
     if((world.flags.bans||[]).some(x=>x.toLowerCase()===nick.toLowerCase())){c.send({t:'no',m:mpL('🔨 이 방에서 밴당했어요','🔨 You are banned from this room')});return;}
     if(nick===MP.me.nick||[...MP.conns].some(x=>x.P&&x.P.nick===nick)){c.send({t:'no',m:mpL('같은 닉네임이 이미 방에 있어요','That nickname is already in the room')});return;}
-    const P={id:'g'+(++MP.gid),nick,skin:typeof d.skin==='string'&&d.skin.length<200000?d.skin:'',cape:CAPES[d.cape]?d.cape:''};
+    const P={id:'g'+(++MP.gid),nick,skin:typeof d.skin==='string'&&d.skin.length<200000?d.skin:'',cape:CAPES[d.cape]?d.cape:'',adm:d.adm?1:0};
     for(const d of world.vehicles||[])if(!d.vid)d.vid='H.v'+(++MP.gn); // 탈것 번호
     let sn;try{sn=toPortable(saveSnapshot());}catch(e){c.send({t:'no',m:'세계를 보내지 못했어요'});return;}
     const st=(world.mpp||{})[nick];
@@ -8759,7 +8763,7 @@ function mpJoin(code){code=String(code||'').trim().toUpperCase();MP.op=false;if(
   MP.hc={get open(){return ws.readyState===1;},send(o){if(ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(x);}};
   const tm=setTimeout(()=>fail(mpL('방에 연결하지 못했어요 (잠시 뒤 다시 해 보세요)','Could not reach the room')),25000);
   ws.onmessage=ev=>{const d=mpUnpack(B,ev.data);if(!d||typeof d!=='object')return;
-    if(d.t==='_ok'){ws.send(JSON.stringify({t:'hi',...MP.me,mods:MOD_RAN}));return;}
+    if(d.t==='_ok'){ws.send(JSON.stringify({t:'hi',...MP.me,adm:cmdIsAdmin()?1:0,mods:MOD_RAN}));return;}
     if(d.t==='mods'){clearTimeout(tm);mpModsAsk(code,d);return;}
     if(d.t==='_err'){clearTimeout(tm);fail(d.m==='none'?mpL('그 코드의 방이 없어요','No room with that code'):d.m==='full'?mpL('방이 꽉 찼어요','The room is full'):mpEsc(d.m));return;}
     if(d.t==='no'){clearTimeout(tm);fail(mpEsc(d.m));return;}
@@ -8884,8 +8888,8 @@ function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x
   if(M.def.boss&&!cmdIsOp()){NOOP_T();return;}M.hurt(1e6,0,0);toast('🔨 쾅! <b>'+(M.def.name||'몹')+'</b>을(를) 없앴어요');}
 function NOOP_T(){toast(mpL('🔑 이 서버에서는 <b>OP</b>(또는 어드민)만 바꿀 수 있어요','🔑 Only server OPs (or admins) can change this'));}
 // 🔨 밴: 방장이 명단에 넣고 내보냄 · 다시 들어오려 해도 막힘
-function mpConnOp(c){const n=c&&c.P?c.P.nick:'';return n==='운영자'||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
-function mpBanNick(nk){nk=String(nk||'').slice(0,16);if(!nk||nk==='운영자'||nk===MP.me.nick)return false;const B=world.flags.bans||(world.flags.bans=[]);if(!B.some(x=>x.toLowerCase()===nk.toLowerCase()))B.push(nk);
+function mpConnOp(c){const n=c&&c.P?c.P.nick:'';return n==='운영자'||!!(c&&c.P&&c.P.adm)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
+function mpBanNick(nk){nk=String(nk||'').slice(0,16);if(!nk||nk==='운영자'||nk===MP.me.nick||[...MP.conns].some(q=>q.P&&q.P.adm&&q.P.nick.toLowerCase()===nk.toLowerCase()))return false;const B=world.flags.bans||(world.flags.bans=[]);if(!B.some(x=>x.toLowerCase()===nk.toLowerCase()))B.push(nk);
   const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'kick',ban:1});mpSend({t:'c',n:'🔨 서버',m:nk+' 님이 밴당했어요'});return true;}
 function mpPvp(P,dmg,kx,kz){if(!MP.pvp){toast(mpL('⚔ 이 방은 PvP가 꺼져 있어요','⚔ PvP is off in this room'));return;}
   const sp=player.sprinting?1.7:1;mpHurtTo(P.id,dmg,kx*sp,kz*sp,'',1);P.red=.35;SFX.mobhit();
@@ -8995,7 +8999,7 @@ function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
 function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
 function cmdItems(){const L=[['banhammer',BANHAMMER],['ban hammer',BANHAMMER]];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
 let CMD_CUR='',CMD_LAST={},CMD_MOBS={};
-function cmdIsAdmin(){return nickNow()==='운영자';} // 🛡 어드민 = CAVEBUILD 운영자 계정
+function cmdIsAdmin(){return nickNow()==='운영자'||!!(ACC&&accToken()&&ACC.admin);} // 🛡 어드민 = 운영자 계정 + 서버가 어드민으로 정한 계정
 function cmdIsOp(){return cmdIsAdmin()||!MP.on||MP.host||!!MP.op;} // 🔑 혼자 하는 세계 · 방장은 OP, 친구는 방장이 /op 를 줘야
 function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a[0]||'').toLowerCase(); // 💻 /un명령어 는 그 명령어를 되돌림 · 그 밖엔 되돌릴 수 있게 상태를 적어 둠
   if(c.length>2&&c.startsWith('un')&&c!=='undo'){if(!cmdIsOp()){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요',1);return;}cmdUn(c.slice(2));return;}
