@@ -311,7 +311,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.176 — 🪖 조직(팀) 모드 · 🧩 모드 API 추가</h4>
+    <h4>🆕 v26.177 — 🚨 지명수배 (조직 모드)</h4>
+    • 범죄를 하면 머리 위에 <b>🚨 지명수배 ★ 등급</b>이 떠요: ★ 1등급 질서위반(부적절한 말 · 벌금 1 케이브코인) · ★★ 2등급 경범죄(폭행 · 도둑질 · 벌금 10 또는 징역 10분) · ★★★ 3등급 중범죄(경찰 폭행 · 징역 15 또는 20분) · ★★★★ 4등급 무단사살(징역 30분) · ★★★★★ 5등급 대학살(5분 안에 3명 · 징역 1시간).<br>
+    • 경찰 쪽 조직(CP · CMP · 사령부)이 <b>/체포 @닉</b> 하면 처벌돼요. 벌금은 내 케이브코인에서 빠지고, 모자라면 징역 10분. 감옥에서는 나갈 수 없어요. 정당방위 · 경찰의 수배자 제압은 범죄가 아니에요.<br>
+    • /수배 · /감옥 · /수배 @닉 등급 사유 · /수배 해제 · /감옥 설정 · /석방. 모드 API: CB.on('pvp') · CB.on('pdeath') · CB.payFine
+    <h4>v26.176 — 🪖 조직(팀) 모드 · 🧩 모드 API 추가</h4>
     • <b>조직 모드</b>(서버모드/조직.js): 무법자 · CP · TMC · CMP · CP 사령부 · TMC 사령부 · CMP 사령부. 계급 · 진급 · 강등, 머리 위 닉네임에 [조직 계급] + 조직 색, 기지 · 집합, 훈련(사격 · 체력) · 임무, 같은 조직끼리도 공격 가능. CMP 사령부는 디스코드 서버 회원만.<br>
     • 모드 API: <b>CB.send · CB.on('msg')</b>(모드끼리 신호) · <b>CB.save · CB.load</b>(세계에 저장, 친구들에게 저절로 맞춰짐) · <b>CB.tag</b>(머리 위 닉네임표) · CB.me · CB.pos · CB.setSpawn · CB.discord · CB.opOf
     <h4>v26.175 — ⛓ 수갑</h4>
@@ -2004,7 +2008,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.176 — 🪖 Organization (team) mod · More mod API</h4>
+    <h4>🆕 v26.177 — 🚨 Wanted levels (organization mod)</h4>
+    • Crimes put a wanted level (★ to ★★★★★) above your head; police organizations can /arrest for a CaveCoin fine or jail time. New mod events: pvp, pdeath; CB.payFine.
+    <h4>v26.176 — 🪖 Organization (team) mod · More mod API</h4>
     • 서버모드/조직.js: 7 organizations with ranks, promotions, colored name tags, bases, assembly, training and missions. New mod API: CB.send / CB.on('msg'), CB.save / CB.load, CB.tag, CB.me, CB.pos, CB.setSpawn, CB.discord, CB.opOf.
     <h4>v26.175 — ⛓ Handcuffs</h4>
     • Handcuffs (3 Iron Ingots): hit a player to cuff them — they can't move, attack, mine or use items until hit again (or 2 minutes pass). Mobs freeze for 30 seconds.
@@ -8537,6 +8543,7 @@ const CB={version:'v26.164',
   save:(k,v)=>{(world.flags.mod||(world.flags.mod={}))[k]=v;},load:k=>world.flags&&world.flags.mod?world.flags.mod[k]:undefined, // 🧩 세계에 저장 (방장이 저장하면 친구들에게 저절로 맞춰짐)
   tag:(nick,pre,color)=>{nick=String(nick);if(pre==null&&color==null)delete MOD_TAGS[nick];else MOD_TAGS[nick]={pre:pre?String(pre).slice(0,30):'',color:color||''};for(const P of MP.peers.values())if(P.nick===nick&&P.tag){P.tag.material.map.dispose();P.tag.material.map=mpTagTex(nick);P.tag.material.needsUpdate=true;}}, // 🧩 머리 위 닉네임표 앞말 · 색
   discord:()=>!!(ACC&&accToken()&&ACC.discord), // 🧩 우리 디스코드 서버에 들어와 있는지 (최근 디스코드 보상 확인 기준)
+  payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
   opOf:nick=>{if(!MP.on||nick===(MP.me&&MP.me.nick))return cmdIsOp();const c=[...MP.conns].find(q=>q.P&&q.P.nick===nick);return !!c&&mpConnOp(c);}, // 🧩 (방장 게임에서) 그 사람이 OP · 어드민인지
   hud:(id,html)=>{let el=document.getElementById('modhud_'+id);if(html==null){if(el)el.remove();return;}if(!el){el=document.createElement('div');el.id='modhud_'+id;el.className='modhud';document.body.appendChild(el);}el.innerHTML=html;document.querySelectorAll('.modhud').forEach((e,i)=>e.style.top=(60+i*36)+'px');}, // 🧩 화면 오른쪽 위 안내판
   id:name=>{for(let i=1;i<BL.length;i++)if(BL[i]&&BL[i].name===name)return i;for(let i=100;i<IT.length;i++)if(IT[i]&&IT[i].name===name)return i;return null;}, // 한국어 이름 → 번호
@@ -8751,7 +8758,9 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='c'){const m=String(d.m||'').slice(0,80);mpChatShow(c.P.nick,m);mpSend({t:'c',n:c.P.nick,m},c);}
   else if(d.t==='mh'){const m=mobs.find(o=>o.nid===d.id&&!o.dead);if(m){m.byPlayer=performance.now();m.byNick=c.P.nick;m.hurt(Math.max(0,Math.min(500,+d.dmg||0)),+d.kx||0,+d.kz||0,!!d.s);}}
   else if(d.t==='ms'){if(MOBDEF[d.kind]&&running)try{new Mob(d.kind,+d.x,+d.y,+d.z);}catch(e){}}
-  else if(d.t==='hurt'){if(d.to==='H')mpHurtIn(d);else for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}}
+  else if(d.t==='hurt'){if(d.pv){const v=d.to==='H'?{P:MP.me}:[...MP.conns].find(x=>x.P&&x.P.id===d.to);if(v&&v.P)modEmit('pvp',c.P.nick,v.P.nick);} // 🧩 누가 누구를 때렸는지 (방장 게임의 모드에게)
+    if(d.to==='H')mpHurtIn(d);else for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}}
+  else if(d.t==='died')modEmit('pdeath',c.P.nick);
   else if(d.t==='ct'){mpCtIn(d);mpSend(d,c);}
   else if(d.t==='gi'){mpGiIn(d);mpSend(d,c);}
   else if(d.t==='gr'){mpGiDel(d.g);mpSend(d,c);}
@@ -8902,7 +8911,7 @@ function mpMobsOut(){const r=v=>Math.round(v*100)/100;
 // ⚔ PvP · 다치기 (몹 · 폭발 · 화살 · 친구 공격) — 맞는 사람 게임에서 체력이 줄어듦
 function mpHurtTo(id,dmg,kx,kz,cause,pv){const d={t:'hurt',to:id,dmg,kx,kz,c:cause,pv:pv?1:0,by:MP.me&&MP.me.nick};
   if(id===MP.myId){if(MP.proxy)MP.defer.push(()=>mpHurtIn(d));else mpHurtIn(d);return;}
-  if(MP.host){for(const c of MP.conns)if(c.P&&c.P.id===id){c.send(d);return;}}else mpSend(d);}
+  if(MP.host){for(const c of MP.conns)if(c.P&&c.P.id===id){if(pv)modEmit('pvp',MP.me.nick,c.P.nick);c.send(d);return;}}else mpSend(d);}
 function mpHurtIn(d){if(d.pv&&!MP.pvp)return;const dm=Math.max(0,Math.min(200,+d.dmg||0));if(!dm)return;
   if(d.pv){MP.pvpBy=d.by;MP.pvpT=performance.now();hurtPlayer(dm/(DIFF_MUL[world.diff||'normal']||1),+d.kx||0,+d.kz||0,mpL(`⚔ ${d.by} 님에게 당했습니다`,`⚔ Slain by ${d.by}`));}
   else hurtPlayer(dm,+d.kx||0,+d.kz||0,String(d.c||'쓰러졌습니다'));}
@@ -8939,7 +8948,7 @@ function mpBlast(x,y,z,reach,cause){if(!MP.on)return; // 폭발은 근처 친구
   for(const P of MP.peers.values()){const t=P.t;if(!t||t.v||t.d!==world.dim||P===MP.proxy)continue;const pd=Math.hypot(t.x-x,t.y+.9-y,t.z-z);if(pd>=reach)continue;
     const f=1-pd/reach,l=Math.hypot(t.x-x,t.z-z)||1;mpHurtTo(P.id,Math.round(f*14),(t.x-x)/l*f*1.6,(t.z-z)/l*f*1.6,cause);}
   if(MP.proxy){const q=MP.sv.p,pd=Math.hypot(q.x-x,q.y+.9-y,q.z-z);if(pd<reach){const f=1-pd/reach,l=Math.hypot(q.x-x,q.z-z)||1,kx=(q.x-x)/l*f*1.6,kz=(q.z-z)/l*f*1.6;MP.defer.push(()=>hurtPlayer(Math.round(f*14),kx,kz,cause));}}}
-function mpDied(cause){const m=MP.me.nick+' — '+cause;mpSend({t:'c',n:'☠',m});mpChatShow('☠',m);
+function mpDied(cause){const m=MP.me.nick+' — '+cause;mpSend({t:'c',n:'☠',m});mpChatShow('☠',m);if(MP.host)modEmit('pdeath',MP.me.nick);else mpSend({t:'died'}); // 🧩 방장 게임의 모드에게 누가 쓰러졌는지
   if(performance.now()-(MP.pvpT||0)<1500){const P=player.pos,out=s=>{if(s)spawnGroundItem({...s},P.x,P.y+1,P.z,(Math.random()-.5)*4,3,(Math.random()-.5)*4,1);}; // PvP로 쓰러지면 마크처럼 가진 것을 모두 떨어뜨림
     for(let i=0;i<inv.length;i++){out(inv[i]);inv[i]=null;}for(let i=0;i<armor.length;i++){out(armor[i]);armor[i]=null;}try{invChanged();}catch(e){}try{renderStats();}catch(e){}}}
 // 📦 상자 · 호퍼 함께 (바뀐 보관함만 보냄) · 🪙 바닥 아이템 함께 (줍기는 방장이 정해 줘서 두 번 주워지지 않음)
