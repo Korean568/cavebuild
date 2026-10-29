@@ -311,7 +311,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.174 — 🛡 어드민 추가</h4>
+    <h4>🆕 v26.175 — ⛓ 수갑</h4>
+    • <b>수갑</b>(작업대: 철 주괴 3): 멀티플레이에서 플레이어를 치면 <b>수갑이 채워져서</b> 움직이거나 공격 · 채굴 · 아이템 사용을 못 해요. 다시 치면 풀리고, 2분이 지나면 저절로 풀려요.<br>
+    • 몹을 치면 30초 동안 꼼짝 못 해요 (다시 치면 풀림).
+    <h4>v26.174 — 🛡 어드민 추가</h4>
     • 운영자 말고도 <b>서버가 어드민으로 정한 계정</b>이 어드민이 돼요 (모든 명령어 · 서버 설정 · 밴 당하지 않음). 로그인하면 서버에서 알려 줘요.
     <h4>v26.173 — 📱💻 기기에 맞춰 그래픽이 저절로 바뀜</h4>
     • 게임을 켜면 <b>CPU · 메모리 · 그래픽카드 · 모바일인지</b>를 보고 그래픽 등급(낮음 · 보통 · 좋음 · 최고)을 정해요. <b>고퀄 · 보통 둘 다</b> 적용돼요.<br>
@@ -1998,7 +2001,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.174 — 🛡 More admins</h4>
+    <h4>🆕 v26.175 — ⛓ Handcuffs</h4>
+    • Handcuffs (3 Iron Ingots): hit a player to cuff them — they can't move, attack, mine or use items until hit again (or 2 minutes pass). Mobs freeze for 30 seconds.
+    <h4>v26.174 — 🛡 More admins</h4>
     • Accounts the server marks as admin now get admin powers too (all commands, server settings, can't be banned).
     <h4>v26.173 — 📱💻 Graphics adapt to your device</h4>
     • Both HQ and Normal now pick a quality tier from your CPU, memory, GPU and device type, then step down when FPS drops and back up when it's smooth (resolution, shadows, reflections, anti-aliasing, bloom).
@@ -2863,6 +2868,7 @@ IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
 const COLA=352,OPEN_COLA=353;IT[COLA]={name:'콜라',stack:16};IT[OPEN_COLA]={name:'딴 콜라',stack:1,food:3,drink:true}; // 🥤 콜라: 우클릭으로 따고 (따개를 들었다 눌러 닫음) 꾹 눌러 마심
+const CUFFS=374;IT[CUFFS]={name:'수갑',stack:1}; // ⛓ 수갑: 플레이어를 치면 묶임 (못 움직이고 못 공격 · 다시 치면 풀림 · 2분 뒤 저절로) · 몹은 30초 멈춤
 const MAG=373;IT[MAG]={name:'탄창',stack:16}; // 🔫 탄창: R로 장전 (권총 6발 · 돌격소총 30발)
 const BANHAMMER=372;IT[BANHAMMER]={name:'밴 해머',stack:1,secret:1}; // 🔨 /give banhammer 로만 얻음 · 플레이어를 치면 밴, 몹을 치면 없앰
 const BOMB=371;IT[BOMB]={name:'폭탄',stack:16}; // 💣 던지는 폭탄: 우클릭으로 던지면 데굴데굴 굴러가다 3초 뒤 펑
@@ -3030,7 +3036,7 @@ RECIPES.push(
   {out:REDDIA_BLOCK,n:1,in:[[RED_DIAMOND,9]],st:'bench'},{out:RED_DIAMOND,n:9,in:[[REDDIA_BLOCK,1]]},
   {out:BLACKDIA_BLOCK,n:1,in:[[BLACK_DIAMOND,9]],st:'bench'},{out:GOLD_BLOCK,n:1,in:[[GOLD_INGOT,9]],st:'bench'},{out:GOLD_INGOT,n:9,in:[[GOLD_BLOCK,1]]},
   {out:STEEL,n:1,in:[[IRON_INGOT,1],[STONE,1]],st:'bench'},{out:STEEL_ALLOY,n:1,in:[[STEEL,1],[STONE,1]],st:'bench'},
-  {out:BULLET,n:4,in:[[COPPER_INGOT,1]],st:'bench'},{out:MAG,n:1,in:[[IRON_INGOT,1],[BULLET,8]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
+  {out:BULLET,n:4,in:[[COPPER_INGOT,1]],st:'bench'},{out:MAG,n:1,in:[[IRON_INGOT,1],[BULLET,8]],st:'bench'},{out:CUFFS,n:1,in:[[IRON_INGOT,3]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
   {out:SUPER_ALLOY,n:1,in:[[STEEL,1],[STEEL_ALLOY,1],[IRON_INGOT,1]],st:'bench'},{out:NUKE,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[SUPER_ALLOY,1]],st:'bench'},
   {out:ICBM,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1]],st:'bench'},{out:MISSILE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[CRYSTAL,1]],st:'bench'},
   {out:NUKE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[URANIUM,1]],st:'bench'},{out:ATOM_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[RADIUM,1]],st:'bench'},{out:TSAR_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[POLONIUM,1]],st:'bench'},{out:ATOM_BOMB,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1],[POLONIUM,1]],st:'bench'},
@@ -3154,6 +3160,7 @@ function itemIcon(id){
       return pixelIcon((X,Y,x,y)=>{const d=Math.hypot(X-8,Y-8);if(d>6.2)return null;if(d>5.2)return '#8a8a94';const a=X-8,b=Y-8;if(Math.abs(a)<1.1&&b<0&&b>-4.6)return nc;if(Math.abs(a)<.9&&b>=0&&b<4)return '#3a3a44';if(d<1)return '#222';return '#e8e2d0';});}
     case HS_SCRAP:{const r=mulberry32(21);return pixelIcon((X,Y)=>{const d=Math.hypot(X-8,Y-8.5);if(d>5.2+(r()-.5)*1.4)return null;return r()<.18?'#e0603c':r()<.5?'#3a2a2e':'#54404a';});}
     case HELLSTEEL:return pixelIcon((X,Y,x,y)=>{if(y<6||y>11)return null;const inset=(11-y)*.7;if(X<1.5+inset||X>14.5-inset)return null;if((x+y)%7===0)return '#e0603c';return y<8?'#6a5458':y<11?'#4a3a3e':'#2a1e22';});
+    case CUFFS:return pixelIcon((X,Y,x,y)=>{for(const [cx,cy] of [[4.5,10.5],[11.5,10.5]]){const d=Math.hypot(X-cx,Y-cy);if(d>2.2&&d<3.6)return Y<cy?'#e0e4ec':'#8a909c';}if(y>=4&&y<=7&&(x===6||x===9))return '#b8bcc8';if(y===4&&x>=6&&x<=9)return '#b8bcc8';return null;});
     case MAG:return pixelIcon((X,Y,x,y)=>{if(y>=1&&y<=2&&x>=6&&x<=9)return x===6||x===9?'#a07020':'#e0b040';const xo=Math.round((y-3)*.25);if(y>=3&&y<=14&&x>=5+xo&&x<=10+xo)return x===5+xo||y===14?'#22252c':y%4===0?'#5a5e68':'#3a3e48';return null;});
     case BANHAMMER:return pixelIcon((X,Y,x,y)=>{if(x>=3&&x<=12&&y>=1&&y<=6)return y===1||y===6||x===3||x===12?'#ffd040':(x+y)%5===0?'#ff6a6a':'#c01818';if(x>=7&&x<=8&&y>=7&&y<=15)return y%3===0?'#3a2414':'#6a4424';return null;});
     case BOMB:return pixelIcon((X,Y,x,y)=>{if(y<=2&&x>=10&&x<=12)return (x+y)%2?'#ffd040':'#ff6020';if(y>=2&&y<=4&&x>=8&&x<=10&&x-8===4-y)return '#c8a070';const d=Math.hypot(X-7,Y-9.5);if(d<5.4){if(d<1.6&&X<7&&Y<9)return '#7a7a88';return d>4.6?'#101014':'#24242c';}if(y>=3&&y<=4&&x>=6&&x<=8)return '#5a5a64';return null;});
@@ -5379,6 +5386,9 @@ function buildItemModel0(id){
       const bt=new THREE.Mesh(new THREE.CircleGeometry(.07,16),W);bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);}else{const m=plateModel({id,bites:0});m.scale.setScalar(.46);g.add(m);}break;} // 그릇 (수프는 건더기까지)
     case SPATULA:{const M=imat('spatM',0xc8ccd4,'metal',.3,.7),H=imat('spatH',0x5a3a22,'wood',.8);iBox(g,.11,.01,.12,M,0,.27,0);iBox(g,.015,.18,.015,M,0,.15,.02);iBox(g,.03,.09,.03,H,0,.04,.02);break;}
     case 331:case 332:case 333:case 334:case 335:case 336:{const m=plateModel({id,bites:0});m.scale.setScalar(.36);g.add(m);break;} // 접시째 (요리마다 다른 모양)
+    case CUFFS:{const st=imat('cuffS',0xc8ccd6,'metal',.25,.9),dk=imat('cuffD',0x5a5e68,'metal',.35,.8); // ⛓ 수갑 3D: 쇠고리 두 개 · 잠금쇠 · 사슬 고리 세 개
+      for(const s of [-1,1]){iMesh(g,IGEO.torus,st,s*.07,.06,0,Math.PI/2,0,0,.05,.05,.05);iBox(g,.03,.03,.022,dk,s*.07,.012,0);}
+      for(let k=0;k<3;k++)iMesh(g,IGEO.torus,dk,(k-1)*.022,.115,0,0,k%2?Math.PI/2:0,0,.012,.012,.012);break;}
     case MAG:{const b=imat('magB',0x34373f,'metal',.4,.7),e=imat('magE',0x22252c,'metal',.4,.6),br=imat('magBr',0xd8a840,'metal',.25,.85); // 🔫 탄창 3D: 살짝 휜 쇠 상자 · 바닥판 · 위로 보이는 총알
       iBox(g,.035,.15,.07,b,0,.075,0,-.12,0,0);iBox(g,.042,.02,.08,e,0,.002,-.008,-.12,0,0);for(const z of [-.012,.012])iMesh(g,IGEO.cyl,br,0,.16,z+.01,Math.PI/2-.12,0,0,.009,.05,.009);break;}
     case BANHAMMER:{const hd=imat('banH',0xc01818,'metal',.35,.6,0x500000,.5),gd=imat('banG',0xffc830,'metal',.25,.85),wd=imat('banW',0x4a2c16,'wood',.8),gl=imat('banL',0xffe0e0,null,.2,0,0xff3030,1.6); // 🔨 밴 해머 3D: 금테 두른 빨간 망치 머리 · 나무 자루 · 빛나는 줄
@@ -5985,7 +5995,8 @@ class Mob{
       if(b.dead)this.boat=null;
       else{this.pos.set(b.pos.x,b.pos.y+.2,b.pos.z);this.vel.set(0,0,0);this.g.position.copy(this.pos);this.g.rotation.y=this.yaw;if(d.anim)d.anim(this,dt,0);
         const e=this.hurtT>0?.6:0;for(const mm of this.u.mats)mm.emissive.setRGB(e,0,0);return;}}
-    if(MOB_FRZ){this.vel.x=this.vel.z=0;}else if(this.servant)evServantAI(this,c,dt);else d.ai(this,c,dt);if(this.dead)return; // 👑 신하는 왕을 따라다님
+    if(this.cuffT>0)this.cuffT-=dt;
+    if(MOB_FRZ||this.cuffT>0){this.vel.x=this.vel.z=0;}else if(this.servant)evServantAI(this,c,dt);else d.ai(this,c,dt);if(this.dead)return; // 👑 신하는 왕을 따라다님
     if(this.inWater&&!d.fly&&!d.aquatic)this.vel.y=Math.max(this.vel.y,this.hitH?6.8:2.5);
     this.soundT-=dt;if(this.soundT<=0){this.soundT=5+Math.random()*9;if(dist<16)d.sound();}
     if(d.burn&&light>.8){let covered=false;for(let y=Math.floor(this.pos.y+this.h);y<CH;y++){const b=getBlock(Math.floor(this.pos.x),y,Math.floor(this.pos.z));if(b>0&&b!==LEAVES&&LIQ_KIND[b]!==1&&b!==GLASS){covered=true;break;}}
@@ -6753,7 +6764,7 @@ function reloadTick(dt){const R=player.reload;if(!R)return;R.t+=dt;
   if(held()!==R.s||player.dead){player.reload=null;return;} // 다른 칸으로 바꾸면 장전 취소
   if(R.t>=R.dur){player.reload=null;if(!isCreative()){if(!inv.some(q=>q&&q.id===MAG))return;removeItem(MAG,1);}R.s.ammo=GUN_CAP[R.s.id];invChanged();toast(`🔫 장전 완료 (${R.s.ammo}발)`);}}
 function fireGun(s){
-  if(gunCD>0||player.reload)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
+  if(gunCD>0||player.reload||player.cuffed)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
   const rifle=s.id===RIFLE;gunCD=rifle?.32:.38;
   const shots=rifle?3:1;for(let i=0;i<shots;i++)setTimeout(()=>gunShot(rifle),i*90);}
 function gunShot(rifle){const s=held();if(!s||(s.id!==PISTOL&&s.id!==RIFLE)||player.dead||player.reload)return;
@@ -7679,7 +7690,7 @@ function breakTime(id){
 }
 function canHarvest(id){const B=BL[id],t=heldTool();return !B.tier||(t&&t.type===B.tool&&t.tier>=B.tier);}
 function updateMining(dt){
-  if(!mouseL||!target||mobTarget||boatTarget||vehTarget||invOpen||player.dead||isSpec()||isGun(held())){mining.active=false;mining.p=0;crack.visible=false;return;}
+  if(!mouseL||!target||mobTarget||boatTarget||vehTarget||invOpen||player.dead||isSpec()||isGun(held())||player.cuffed){mining.active=false;mining.p=0;crack.visible=false;return;}
   if(!mining.active||mining.x!==target.x||mining.y!==target.y||mining.z!==target.z){Object.assign(mining,{x:target.x,y:target.y,z:target.z,p:0,active:true,hitT:0});}
   const bt=breakTime(target.id);if(bt===Infinity){crack.visible=false;return;}
   mining.p+=dt/bt;mining.hitT-=dt;swing=Math.max(swing,.6);
@@ -7743,7 +7754,7 @@ function updateEating(dt){const e=player.eating;if(!e)return;const s=held(); // 
   if(s.id===ICE_CREAM)toast('🍦 카라멜라떼맛! 배고픔이 <b>두 줄</b>이 됐어요');if(!s.count)inv[sel]=null;SFX.eat();if(IT[s.id].bowl)dropAtPlayer(BOWL,addItem(BOWL,1));if(s.id===344){player.hp=maxHp();toast('✨ 불도장! 체력이 가득 찼어요');}if(s.id===OPEN_COLA){player.colaT=30;toast('🥤 캬~ 시원하다! <b>30초 동안 빨라져요</b> ⚡');setTimeout(()=>{tone(140,70,.35,.09,'sawtooth');noise(.3,300,.06);},600);}invChanged();renderStats();
   if(s.id===COOKED_MEAT||s.id===COOKED_FISH)achieve('cook');}
 function useItem(){
-  if(player.dead||isSpec())return;const s=held();
+  if(player.dead||isSpec()||player.cuffed)return;const s=held();
   if(s&&s.id===COOKBOOK){openCookBook();return;} // 요리 가이드북
   if(s&&s.id===HW_KEY){hwUseKey();return;} // 🎃 할로윈 열쇠
   if(EVENT&&!HALLOWEEN&&evUse(s))return; // 🗓 이달의 모드: 선물 · 떡국 · 왕의 홀 · 의사봉 · 윷 · 괭이 · 볍씨 · 선생님
@@ -7888,10 +7899,11 @@ function sleep(t){
   setTimeout(()=>{world.time=.02;for(const m of [...mobs])if(m.def.hostile&&!m.def.boss)m.remove();$('fade').style.opacity=0;paused=!locked&&!invOpen;toast('상쾌한 아침입니다! 스폰 지점이 설정되었습니다.');achieve('bed');},1300);
 }
 function attack(){
-  if(isSpec())return;
+  if(isSpec())return;if(player.cuffed){toast('⛓ 수갑에 묶여서 공격할 수 없어요');return;}
   const mace=heldTool()&&heldTool().type==='mace';
   if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?2.5:.4;
-  if(held()&&held().id===BANHAMMER){banHammerHit(mobTarget);return;} // 철퇴는 무거워서 2.5초마다 휘두름
+  if(held()&&held().id===BANHAMMER){banHammerHit(mobTarget);return;}
+  if(held()&&held().id===CUFFS){cuffHit(mobTarget);return;} // 철퇴는 무거워서 2.5초마다 휘두름
   const t=heldTool();let dmg=t?t.dmg:HAND_DMG;const spp=held()&&held().id===SPIDER_PUNCH&&spiderOn();if(spp){dmg=18;SFX.smash();} // 스파이더맨 펀치
   if(mace){ // 철퇴: 높은 곳에서 떨어지며 칠수록 더 셈 (처음 3칸은 칸당 +4, 다음 5칸은 +2, 그 뒤로 +1) · 달리면서 머리를 치면 1.5배
     const fall=player.onGround||player.inWater?0:Math.max(0,player.peakY-player.pos.y),M=mobTarget;
@@ -8745,6 +8757,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='df'){if(!mpConnOp(c)||!DIFF_INFO[d.d])return;setDiff(d.d);try{renderSettings();}catch(e){}toast(mpL('🌐 OP가 난이도를 바꿨어요: ','🌐 An OP changed difficulty: ')+DIFF_INFO[d.d][0]);}
   else if(d.t==='lang'){if(!mpConnOp(c)||typeof d.l!=='string')return;setLang(d.l,1);mpSend(d,c);}
   else if(d.t==='banreq'){if(mpConnOp(c))mpBanNick(d.n);}
+  else if(d.t==='cuff'){d.by=c.P.nick;mpRoute(d);}
   else if(d.t==='smods'){if(!mpConnOp(c)||!Array.isArray(d.mods))return;const L=d.mods.filter(m=>m&&typeof m.name==='string'&&(typeof m.code==='string'||typeof m.url==='string')).slice(0,40).map(m=>({name:m.name.slice(0,60),code:m.code||'',url:m.url||undefined,on:true}));
     modSave(L);mpSend({t:'c',n:'🧩 서버',m:c.P.nick+' 님(OP)이 서버 모드를 '+L.length+'개로 바꿨어요 · 방을 다시 열면 적용'});toast(mpL(`🧩 OP <b>${mpEsc(c.P.nick)}</b> 님이 서버 모드를 바꿨어요 — 새로고침 후 방을 다시 열면 적용돼요`,'🧩 An OP changed the server mods — reopen the room to apply'));}
   else if(d.t==='vr'){mpVehDel(d.v);mpSend(d,c);}
@@ -8805,7 +8818,8 @@ function mpGuestRecv(d){
   else if(d.t==='op'){MP.op=!!d.on;toast(d.on?'🔑 방장이 <b>OP</b>를 줬어요 — 이제 명령어를 쓸 수 있어요 (/help)':'🔑 OP가 없어졌어요');} // 💻 /op
   else if(d.t==='tpto'){player.pos.set(d.x,d.y,d.z);player.vel.set(0,0,0);player.peakY=d.y;toast(mpL('🌐 방장이 나를 불렀어요','🌐 The host teleported you'));} // 💻 /tphere · /tpall
   else if(d.t==='kick')mpEnd(d.ban?mpL('🔨 이 방에서 밴당했어요','🔨 You were banned from this room'):mpL('방장이 방에서 내보냈어요','The host removed you from the room'));
-  else if(d.t==='lang'){if(typeof d.l==='string')setLang(d.l,1);} // 🔑 OP가 바꾼 방 언어
+  else if(d.t==='lang'){if(typeof d.l==='string')setLang(d.l,1);}
+  else if(d.t==='cuff')cuffIn(d); // ⛓ 수갑
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
 function mpEnd(m){if(!MP.on)return;MP.on=false;toast('🌐 '+m+mpL(' — 타이틀로 돌아가요',' — returning to title'));setTimeout(()=>$('btnQuit').click(),2500);}
@@ -8884,6 +8898,19 @@ function mpWithDummies(L){if(!MP.on)return L;const R=L.slice(); // 친구 캐릭
 function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x,M.pos.y+M.h/2,M.pos.z,new THREE.Color(0xff2020),24,.6,4); // 🔨 밴 해머
   if(M.pvp){if(!cmdIsOp()){NOOP_T();return;}const nk=M.def.name;if(MP.host)mpBanNick(nk);else mpSend({t:'banreq',n:nk});toast(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요`);return;}
   if(M.def.boss&&!cmdIsOp()){NOOP_T();return;}M.hurt(1e6,0,0);toast('🔨 쾅! <b>'+(M.def.name||'몹')+'</b>을(를) 없앴어요');}
+// ⛓ 수갑: 플레이어를 치면 묶고 다시 치면 풀어요 (2분 뒤 저절로 풀림) · 몹은 30초 동안 멈춤
+function cuffHit(M){swing=1;tone(1800,1200,.06,.06,'square');tone(900,700,.08,.05,'square',.06);
+  if(M.pvp){mpRoute({t:'cuff',to:M.id,by:MP.me.nick});toast(`⛓ <b>${mpEsc(M.def.name)}</b> 님에게 수갑을 채우거나 풀었어요`);return;}
+  M.cuffT=M.cuffT>0?0:30;toast(M.cuffT>0?`⛓ <b>${M.def.name||'몹'}</b>을(를) 30초 동안 묶었어요`:'🔓 몹을 풀어 줬어요');}
+function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
+function cuffIn(d){const by=String(d.by||'?').slice(0,16);
+  if(player.cuffed){player.cuffed=null;toast(`🔓 <b>${mpEsc(by)}</b> 님이 수갑을 풀어 줬어요`);}else{player.cuffed={by,t:120};toast(`⛓ <b>${mpEsc(by)}</b> 님이 수갑을 채웠어요 — 2분 동안 못 움직여요 (다시 치면 풀려요)`);}
+  tone(1800,1200,.06,.06,'square');const m=MP.me.nick+(player.cuffed?' 님이 수갑에 묶였어요 ⛓':' 님의 수갑이 풀렸어요 🔓');mpSend({t:'c',n:'⛓',m});mpChatShow('⛓',m);}
+function cuffTick(dt){const C=player.cuffed;let el=document.getElementById('cuffHud');if(!C){if(el)el.remove();return;}
+  C.t-=dt;if(C.t<=0||player.dead){player.cuffed=null;toast('🔓 수갑이 풀렸어요');return;}
+  for(const k of ['KeyW','KeyA','KeyS','KeyD','Space'])keys[k]=false;player.vel.x=player.vel.z=0;mouseL=mouseR=false;
+  if(!el){el=document.createElement('div');el.id='cuffHud';el.style.cssText='position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:13;background:rgba(0,0,0,.6);color:#fff;font:bold 18px sans-serif;padding:8px 16px;border-radius:8px;pointer-events:none';document.body.appendChild(el);}
+  el.textContent=`⛓ 수갑에 묶였어요 · ${Math.ceil(C.t)}초 (${C.by})`;}
 function NOOP_T(){toast(mpL('🔑 이 서버에서는 <b>OP</b>(또는 어드민)만 바꿀 수 있어요','🔑 Only server OPs (or admins) can change this'));}
 // 🔨 밴: 방장이 명단에 넣고 내보냄 · 다시 들어오려 해도 막힘
 function mpConnOp(c){const n=c&&c.P?c.P.nick:'';return n==='운영자'||!!(c&&c.P&&c.P.adm)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
@@ -9421,7 +9448,7 @@ function frame(now){
   if(MOBILE)document.body.classList.toggle('playing',active&&!invOpen&&!player.dead&&!stFrozen());
   if(active){
     if(!stFrozen()&&!gm){ // 스텔라 연출 · 미사일 조종 중에는 플레이어가 멈춤
-    updatePlayer(dt);
+    cuffTick(dt);updatePlayer(dt);if(player.cuffed){player.vel.x=player.vel.z=0;}
     updateTarget();updateMining(dt);
     if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}if(mouseL&&!invOpen&&isGun(held()))fireGun(held());updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}colaTick(dt);
     for(const m of [...mobs])mpMobUpdate(m,dt);
