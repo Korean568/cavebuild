@@ -311,7 +311,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.175 — ⛓ 수갑</h4>
+    <h4>🆕 v26.176 — 🪖 조직(팀) 모드 · 🧩 모드 API 추가</h4>
+    • <b>조직 모드</b>(서버모드/조직.js): 무법자 · CP · TMC · CMP · CP 사령부 · TMC 사령부 · CMP 사령부. 계급 · 진급 · 강등, 머리 위 닉네임에 [조직 계급] + 조직 색, 기지 · 집합, 훈련(사격 · 체력) · 임무, 같은 조직끼리도 공격 가능. CMP 사령부는 디스코드 서버 회원만.<br>
+    • 모드 API: <b>CB.send · CB.on('msg')</b>(모드끼리 신호) · <b>CB.save · CB.load</b>(세계에 저장, 친구들에게 저절로 맞춰짐) · <b>CB.tag</b>(머리 위 닉네임표) · CB.me · CB.pos · CB.setSpawn · CB.discord · CB.opOf
+    <h4>v26.175 — ⛓ 수갑</h4>
     • <b>수갑</b>(작업대: 철 주괴 3): 멀티플레이에서 플레이어를 치면 <b>수갑이 채워져서</b> 움직이거나 공격 · 채굴 · 아이템 사용을 못 해요. 다시 치면 풀리고, 2분이 지나면 저절로 풀려요.<br>
     • 몹을 치면 30초 동안 꼼짝 못 해요 (다시 치면 풀림).
     <h4>v26.174 — 🛡 어드민 추가</h4>
@@ -2001,7 +2004,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.175 — ⛓ Handcuffs</h4>
+    <h4>🆕 v26.176 — 🪖 Organization (team) mod · More mod API</h4>
+    • 서버모드/조직.js: 7 organizations with ranks, promotions, colored name tags, bases, assembly, training and missions. New mod API: CB.send / CB.on('msg'), CB.save / CB.load, CB.tag, CB.me, CB.pos, CB.setSpawn, CB.discord, CB.opOf.
+    <h4>v26.175 — ⛓ Handcuffs</h4>
     • Handcuffs (3 Iron Ingots): hit a player to cuff them — they can't move, attack, mine or use items until hit again (or 2 minutes pass). Mobs freeze for 30 seconds.
     <h4>v26.174 — 🛡 More admins</h4>
     • Accounts the server marks as admin now get admin powers too (all commands, server settings, can't be banned).
@@ -8527,6 +8532,12 @@ const CB={version:'v26.164',
   say:t=>{toast('📢 '+mpEsc(String(t)));if(MP.on&&MP.host)mpSend({t:'c',n:'📢',m:String(t).slice(0,80)});},title:t=>cmdTitle(String(t)),
   tp:(x,y,z)=>{player.pos.set(x,y,z);player.vel.set(0,0,0);player.peakY=y;},isOp:()=>cmdIsOp(),isAdmin:()=>cmdIsAdmin(),isHost:()=>!MP.on||MP.host,
   players:()=>MP.on?[MP.me.nick,...mpList()]:[nickNow()||'플레이어'],run:line=>runCmd(String(line).startsWith('/')?String(line):'/'+line),
+  me:()=>MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어'),pos:()=>({x:player.pos.x,y:player.pos.y,z:player.pos.z}),setSpawn:(x,y,z)=>{world.spawn={x,y,z};}, // 🧩 내 닉네임 · 위치 · 부활 자리
+  send:(k,v)=>{if(MP.on)mpSend({t:'mod',k:String(k).slice(0,40),v,n:MP.me.nick});}, // 🧩 다른 사람들의 모드에게 신호 → 받는 쪽은 CB.on('msg',(k,v,보낸닉)=>…)
+  save:(k,v)=>{(world.flags.mod||(world.flags.mod={}))[k]=v;},load:k=>world.flags&&world.flags.mod?world.flags.mod[k]:undefined, // 🧩 세계에 저장 (방장이 저장하면 친구들에게 저절로 맞춰짐)
+  tag:(nick,pre,color)=>{nick=String(nick);if(pre==null&&color==null)delete MOD_TAGS[nick];else MOD_TAGS[nick]={pre:pre?String(pre).slice(0,30):'',color:color||''};for(const P of MP.peers.values())if(P.nick===nick&&P.tag){P.tag.material.map.dispose();P.tag.material.map=mpTagTex(nick);P.tag.material.needsUpdate=true;}}, // 🧩 머리 위 닉네임표 앞말 · 색
+  discord:()=>!!(ACC&&accToken()&&ACC.discord), // 🧩 우리 디스코드 서버에 들어와 있는지 (최근 디스코드 보상 확인 기준)
+  opOf:nick=>{if(!MP.on||nick===(MP.me&&MP.me.nick))return cmdIsOp();const c=[...MP.conns].find(q=>q.P&&q.P.nick===nick);return !!c&&mpConnOp(c);}, // 🧩 (방장 게임에서) 그 사람이 OP · 어드민인지
   hud:(id,html)=>{let el=document.getElementById('modhud_'+id);if(html==null){if(el)el.remove();return;}if(!el){el=document.createElement('div');el.id='modhud_'+id;el.className='modhud';document.body.appendChild(el);}el.innerHTML=html;document.querySelectorAll('.modhud').forEach((e,i)=>e.style.top=(60+i*36)+'px');}, // 🧩 화면 오른쪽 위 안내판
   id:name=>{for(let i=1;i<BL.length;i++)if(BL[i]&&BL[i].name===name)return i;for(let i=100;i<IT.length;i++)if(IT[i]&&IT[i].name===name)return i;return null;}, // 한국어 이름 → 번호
   ids:{STONE,COBBLE,DIRT,GRASS,SAND,LOG,PLANKS,GLASS,BRICK,STICK,COAL,IRON_INGOT,CRYSTAL,OBSIDIAN,LAVA,WATER,STEEL,STEEL_ALLOY,SUPER_ALLOY,NUKE,GOLD_INGOT,COPPER_INGOT,TITANIUM_INGOT,DIAMOND,URANIUM,STELLAR_REMOTE,STAR_CORE},
@@ -8689,10 +8700,12 @@ function mpSkinTex(u){const C=makeCanvas(64,64),T=new THREE.CanvasTexture(C);T.m
   const im=new Image();im.onload=()=>{const g=C.getContext('2d');g.drawImage(im,0,0);if(im.height===32){g.drawImage(C,0,16,16,16,16,48,16,16);g.drawImage(C,40,16,16,16,32,48,16,16);}
     const id=g.getImageData(0,0,64,64),D=id.data,b0=D[0],b1=D[1],b2=D[2];if(D[3]>0){for(let y=0;y<64;y++)for(let x=0;x<64;x++){if(!((y<16&&x>=32)||(y>=32&&y<48)||(y>=48&&(x<16||x>=48))))continue;const i=(y*64+x)*4;if(Math.abs(D[i]-b0)<8&&Math.abs(D[i+1]-b1)<8&&Math.abs(D[i+2]-b2)<8)D[i+3]=0;}g.putImageData(id,0,0);}
     T.needsUpdate=true;};im.onerror=()=>{if(u!==DEFAULT_SKIN)im.src=DEFAULT_SKIN;};im.src=u||DEFAULT_SKIN;return T;}
+const MOD_TAGS={}; // 🧩 모드가 정한 닉네임표 (앞말 · 색) — CB.tag
+function mpTagTex(nk){const T=MOD_TAGS[nk]||{},txt=(T.pre?T.pre+' ':'')+nk,c=makeCanvas(512,64),g=c.getContext('2d');g.font="bold 34px 'Malgun Gothic',sans-serif";const w=Math.min(500,g.measureText(txt).width+26);
+  g.fillStyle='rgba(0,0,0,.45)';g.fillRect((512-w)/2,8,w,48);g.fillStyle=T.color||'#fff';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,256,33,490);return new THREE.CanvasTexture(c);}
 function mpAdd(o){mpDel(o.id);const A=mkAvatar(mpSkinTex(o.skin));A.shadow.visible=false; // 친구 캐릭터 몸 · 머리 위 닉네임 · 망토
-  const c=makeCanvas(256,64),g=c.getContext('2d'),nk=String(o.nick||'?').slice(0,16);g.font="bold 34px 'Malgun Gothic',sans-serif";const w=Math.min(250,g.measureText(nk).width+26);
-  g.fillStyle='rgba(0,0,0,.45)';g.fillRect((256-w)/2,8,w,48);g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.fillText(nk,128,33);
-  const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));tag.scale.set(1.2,.3,1);tag.position.y=2.3;A.g.add(tag);
+  const nk=String(o.nick||'?').slice(0,16);
+  const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:mpTagTex(nk),depthTest:false,transparent:true}));tag.scale.set(2.4,.3,1);tag.position.y=2.3;A.g.add(tag);
   A.capeK=CAPES[o.cape]?o.cape:''; // 망토 · 갑옷은 받은 정보로 dressAvatar가 입힘
   MP.peers.set(o.id,{id:o.id,nick:nk,A,t:null,sw:0,tag});}
 function mpDel(id){const P=MP.peers.get(id);if(!P)return;scene.remove(P.A.g,P.A.shadow);MP.peers.delete(id);}
@@ -8736,7 +8749,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   if(d.t==='p'){d.id=c.P.id;const P=MP.peers.get(c.P.id);if(P)mpPos(P,d);mpSend(d,c);}
   else if(d.t==='b'&&Array.isArray(d.L)){mpApply(d.L);mpSend(d,c);}
   else if(d.t==='c'){const m=String(d.m||'').slice(0,80);mpChatShow(c.P.nick,m);mpSend({t:'c',n:c.P.nick,m},c);}
-  else if(d.t==='mh'){const m=mobs.find(o=>o.nid===d.id&&!o.dead);if(m){m.byPlayer=performance.now();m.hurt(Math.max(0,Math.min(500,+d.dmg||0)),+d.kx||0,+d.kz||0,!!d.s);}}
+  else if(d.t==='mh'){const m=mobs.find(o=>o.nid===d.id&&!o.dead);if(m){m.byPlayer=performance.now();m.byNick=c.P.nick;m.hurt(Math.max(0,Math.min(500,+d.dmg||0)),+d.kx||0,+d.kz||0,!!d.s);}}
   else if(d.t==='ms'){if(MOBDEF[d.kind]&&running)try{new Mob(d.kind,+d.x,+d.y,+d.z);}catch(e){}}
   else if(d.t==='hurt'){if(d.to==='H')mpHurtIn(d);else for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}}
   else if(d.t==='ct'){mpCtIn(d);mpSend(d,c);}
@@ -8758,6 +8771,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='lang'){if(!mpConnOp(c)||typeof d.l!=='string')return;setLang(d.l,1);mpSend(d,c);}
   else if(d.t==='banreq'){if(mpConnOp(c))mpBanNick(d.n);}
   else if(d.t==='cuff'){d.by=c.P.nick;mpRoute(d);}
+  else if(d.t==='mod'){d.n=c.P.nick;mpSend(d,c);modEmit('msg',d.k,d.v,d.n);}
   else if(d.t==='smods'){if(!mpConnOp(c)||!Array.isArray(d.mods))return;const L=d.mods.filter(m=>m&&typeof m.name==='string'&&(typeof m.code==='string'||typeof m.url==='string')).slice(0,40).map(m=>({name:m.name.slice(0,60),code:m.code||'',url:m.url||undefined,on:true}));
     modSave(L);mpSend({t:'c',n:'🧩 서버',m:c.P.nick+' 님(OP)이 서버 모드를 '+L.length+'개로 바꿨어요 · 방을 다시 열면 적용'});toast(mpL(`🧩 OP <b>${mpEsc(c.P.nick)}</b> 님이 서버 모드를 바꿨어요 — 새로고침 후 방을 다시 열면 적용돼요`,'🧩 An OP changed the server mods — reopen the room to apply'));}
   else if(d.t==='vr'){mpVehDel(d.v);mpSend(d,c);}
@@ -8820,6 +8834,7 @@ function mpGuestRecv(d){
   else if(d.t==='kick')mpEnd(d.ban?mpL('🔨 이 방에서 밴당했어요','🔨 You were banned from this room'):mpL('방장이 방에서 내보냈어요','The host removed you from the room'));
   else if(d.t==='lang'){if(typeof d.l==='string')setLang(d.l,1);}
   else if(d.t==='cuff')cuffIn(d); // ⛓ 수갑
+  else if(d.t==='mod')modEmit('msg',d.k,d.v,d.n); // 🧩 모드 신호
   else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
 function mpEnd(m){if(!MP.on)return;MP.on=false;toast('🌐 '+m+mpL(' — 타이틀로 돌아가요',' — returning to title'));setTimeout(()=>$('btnQuit').click(),2500);}
