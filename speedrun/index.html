@@ -311,7 +311,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.166 — 🔨 /ban · 밴 해머 · 🔑 서버 설정은 OP만</h4>
+    <h4>🆕 v26.167 — 🔓 /unben 닉네임</h4>
+    • <b>/unben 닉네임</b>으로 밴을 풀어요 (/unban · /밴해제 도 돼요). 방을 열지 않은 세계에서도 밴 명단을 정리할 수 있어요.
+    <h4>v26.166 — 🔨 /ban · 밴 해머 · 🔑 서버 설정은 OP만</h4>
     • 멀티플레이에서 <b>Mods · 게임 모드 · 난이도 · 언어</b>는 서버 <b>OP</b>(어드민 포함)만 바꿀 수 있어요. OP가 언어를 바꾸면 방 전체가 그 언어로, OP 친구는 켠 모드를 서버에 적용할 수 있어요.<br>
     • <b>/ban 닉네임</b>: 내보내고 다시 못 들어오게 · <b>/unban</b> · <b>/banlist</b><br>
     • <b>/give banhammer</b>: 🔨 <b>밴 해머</b> (크리에이티브 목록에는 없고 명령어로만). 플레이어를 치면 밴, 몹을 치면 한 방에 없애요.
@@ -1972,7 +1974,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.166 — 🔨 /ban · Ban hammer · 🔑 OP-only server settings</h4>
+    <h4>🆕 v26.167 — 🔓 /unben</h4>
+    • /unben name lifts a ban (/unban works too).
+    <h4>v26.166 — 🔨 /ban · Ban hammer · 🔑 OP-only server settings</h4>
     • In multiplayer only OPs (and admins) can change Mods, game mode, difficulty and language. /ban, /unban, /banlist. /give banhammer gives a 🔨 Ban hammer (not in creative): hit a player to ban them, hit a mob to remove it.
     <h4>v26.165 — 💻 15 more commands</h4>
     • /rules, /setrules, /setmotd, /pvp, /mobspawn, /kit, /armor, /fireball, /arrowrain, /laser, /shockwave, /magnet and /clearitems.
@@ -8828,7 +8832,7 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
   ['/rps 가위|바위|보','가위바위보'],['/joke','아재개그'],
   ['/rules','서버 규칙 보기 (누구나)'],['/setrules 글','서버 규칙 정하기 (줄바꿈은 |)'],['/setmotd 글','들어오는 사람 환영 인사'],['/pvp on|off','PvP 켜고 끄기 (방장)'],['/mobspawn on|off','몹이 저절로 생기기 켜고 끄기'],
   ['/kit [도구|음식|건축]','시작 꾸러미 받기'],['/armor','철 갑옷 한 벌 입기'],['/fireball','화염구 쏘기'],['/arrowrain','주변에 화살 비'],['/laser','앞으로 레이저 (몹 관통)'],['/shockwave','주변 몹 날려 보내기'],['/magnet','주변 바닥 아이템 끌어오기'],['/clearitems','주변 바닥 아이템 지우기'],
-['/ban 닉네임','방에서 밴 (다시 못 들어옴)'],['/unban 닉네임 · /banlist','밴 풀기 · 밴 명단'],['/give banhammer','🔨 밴 해머 (플레이어를 치면 밴 · 몹을 치면 없앰)'],
+['/ban 닉네임','방에서 밴 (다시 못 들어옴)'],['/unben 닉네임 · /banlist','밴 풀기 (/unban 도 돼요) · 밴 명단'],['/give banhammer','🔨 밴 해머 (플레이어를 치면 밴 · 몹을 치면 없앰)'],
   ['/op 닉네임 · /deop 닉네임 · /ops','OP 주기 · 빼기 · 목록 (방장) — OP · 어드민만 명령어를 쓸 수 있어요'],
   ['/un명령어','그 명령어 되돌리기 (예: /unfly · /ungod · /untree · /ungive · /unsummon · /untp · /ungamemode · /unspeed)']];
 function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
@@ -9089,7 +9093,7 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/),c=(a.shift()||'
     case 'clearitems':case '아이템청소':{let n=0;for(let i=groundItems.length-1;i>=0;i--){const g=groundItems[i];if(Math.hypot(g.pos.x-P.x,g.pos.z-P.z)<48){removeGroundItem(i);n++;}}cmdOut(`🧹 바닥 아이템 ${n}개를 지웠어요`);break;}
     case 'ban':case '밴':{if(!MP.on){cmdOut('멀티플레이 방에서만 쓸 수 있어요',1);break;}const nk=a[0]||'';if(!nk){cmdOut('/ban 닉네임',1);break;}if(nk==='운영자'||nk===MP.me.nick){cmdOut('그 사람은 밴할 수 없어요',1);break;}
       if(MP.host)mpBanNick(nk);else mpSend({t:'banreq',n:nk});MP.lastBan=nk;cmdOut(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요 (/unban 으로 풀기)`);break;}
-    case 'unban':case '밴해제':{if(!MP.on||!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const nk=(a[0]||'').toLowerCase(),B=world.flags.bans||[],i=B.findIndex(x=>x.toLowerCase()===nk);if(i<0){cmdOut('밴 명단에 없어요 · /banlist',1);break;}cmdOut(`🔓 <b>${mpEsc(B[i])}</b> 님의 밴을 풀었어요`);B.splice(i,1);break;}
+    case 'unban':case 'unben':case '밴해제':{if(MP.on&&!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const nk=(a[0]||'').toLowerCase(),B=world.flags.bans||[],i=B.findIndex(x=>x.toLowerCase()===nk);if(i<0){cmdOut('밴 명단에 없어요 · /banlist',1);break;}cmdOut(`🔓 <b>${mpEsc(B[i])}</b> 님의 밴을 풀었어요`);B.splice(i,1);break;}
     case 'banlist':case '밴목록':cmdOut('🔨 밴 명단: '+((world.flags.bans||[]).map(mpEsc).join(' · ')||'없어요'));break;
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
     case 'op':case 'deop':{if(!MP.on||!MP.host){cmdOut('멀티플레이 <b>방장</b>만 OP를 줄 수 있어요',1);break;}const nk=a[0]||'',O=world.flags.ops||(world.flags.ops=[]),on=c==='op';if(!nk){cmdOut('/op 닉네임 · /deop 닉네임',1);break;}
