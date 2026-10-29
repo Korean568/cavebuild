@@ -4610,7 +4610,7 @@ const GQL=[{pr:.6,res:.55,sh:512,refl:0,ms:0,blur:1},{pr:.75,res:.7,sh:1024,refl
 const GQ=(()=>{let sc=0,gpu='';try{const c=navigator.hardwareConcurrency||4,m=navigator.deviceMemory||4;sc+=c>=8?2:c>=4?1:0;sc+=m>=8?2:m>=4?1:0;
     const gl=renderer.getContext(),e=gl.getExtension('WEBGL_debug_renderer_info');gpu=e?String(gl.getParameter(e.UNMASKED_RENDERER_WEBGL)):'';
     sc+=/RTX|GTX|Radeon RX|Radeon Pro|Apple M\d|Arc A/i.test(gpu)?3:/Intel|UHD|Iris|Mali|Adreno|PowerVR|Apple GPU|SwiftShader|llvmpipe/i.test(gpu)?0:1;if(MOBILE)sc-=2;}catch(e){}
-  let max=sc>=6?3:sc>=4?2:sc>=2?1:0;if(/Intel|UHD|Iris|Mali|Adreno|PowerVR|SwiftShader|llvmpipe/i.test(gpu))max=Math.min(max,1);return {max, // 내장 그래픽은 '보통' 등급까지lv:max,good:0,t:0,gpu,base:Math.min(devicePixelRatio,MOBILE?.8:1.5)};})();
+  let max=sc>=6?3:sc>=4?2:sc>=2?1:0;if(/Intel|UHD|Iris|Mali|Adreno|PowerVR|SwiftShader|llvmpipe/i.test(gpu))max=Math.min(max,1);return {max,lv:max,good:0,t:0,gpu,base:Math.min(devicePixelRatio,MOBILE?.8:1.5)};})();
 function gqApply(){let hq=false;try{hq=HQ.on;}catch(e){}renderer.setPixelRatio(GQ.base*(hq?1:GQL[GQ.lv].pr));if(hq)HQ.tier();}
 function gqTick(dt){if(!fps||paused)return;GQ.t+=dt;if(GQ.t<2)return;GQ.t=0; // 2초마다: 느리면 한 단계 낮추고, 오래 부드러우면 기기 등급까지 다시 올림
   if(fps<38&&GQ.lv>0){GQ.lv--;GQ.good=0;gqApply();}
