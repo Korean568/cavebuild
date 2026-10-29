@@ -313,7 +313,12 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.169 — 🔫 새 총 모델 · 탄창 · 장전</h4>
+    <h4>🆕 v26.170 — 🔫 장전 · 발사 모션 다시 만듦 · 돌격소총 소리</h4>
+    • <b>리볼버 장전</b>: 총구를 들어 탄피를 털어내고 → 옆으로 눕혀 왼손이 스피드로더를 실린더에 꽂고 → 손목을 튕겨 닫아요.<br>
+    • <b>Tek9 장전</b>: 빈 탄창이 아래로 떨어지고 → 왼손이 새 탄창을 밑에서 끼우고 → 장전 손잡이를 당겼다 놓아요. 왼손이 총의 정확한 자리에 닿아요.<br>
+    • <b>발사</b>: 내려찍던 동작 대신 뒤로 튀고 총구가 들리는 반동. 총을 손잡이로 쥐고 앞을 향해 들어요.<br>
+    • 돌격소총 <b>발사 · 장전 소리</b>를 진짜 소리로 바꿨어요.
+    <h4>v26.169 — 🔫 새 총 모델 · 탄창 · 장전</h4>
     • 권총은 <b>리볼버</b>, 돌격소총은 <b>Tek9</b> 3D 모델로 바뀌었어요 (리볼버는 쇠 몸통 · 갈색 손잡이).<br>
     • <b>총알</b>: 구리 주괴 1 → 총알 4 · <b>탄창</b>: 철 주괴 1 + 총알 8 → 탄창 1<br>
     • <b>R</b>로 장전해요 (권총 6발 · 돌격소총 30발). 총을 옆으로 눕히고 왼손으로 탄창을 밀어 넣는 모션이 나와요. 다 쏘면 자동으로 장전하고, 오른쪽 아래에 남은 탄 · 탄창 수가 보여요.
@@ -1984,7 +1989,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.169 — 🔫 New gun models · Magazines · Reload</h4>
+    <h4>🆕 v26.170 — 🔫 New reload & recoil animations · Rifle sounds</h4>
+    • Revolver: eject shells, speedloader, flick closed. Tek9: drop the empty mag, insert a new one, rack the handle. Recoil instead of a chop when firing. Real rifle shot and reload sounds.
+    <h4>v26.169 — 🔫 New gun models · Magazines · Reload</h4>
     • Pistol = Revolver, Assault Rifle = Tek9 3D models. Bullets: 1 Copper Ingot → 4. Magazine: 1 Iron Ingot + 8 Bullets. Press R to reload (6 / 30 rounds) with a reload animation.
     <h4>v26.168 — 👥 @ player list</h4>
     • Type @ in chat or a command to pick a player; commands take @name, and you get a 🔔 ping when someone mentions you.
@@ -4774,6 +4781,57 @@ function updateSlashTrail(on){
     trailPos.set([a.x,a.y,a.z,b.x,b.y,b.z],i*6);trailCol.set([.85*f,.92*f,f,0,0,0],i*6);}
   slashTrail.geometry.attributes.position.needsUpdate=slashTrail.geometry.attributes.color.needsUpdate=true;
 }
+// 🔫 장전 모션 — 리볼버: 총구를 들어 탄피를 털고 → 옆으로 눕혀 왼손이 스피드로더를 실린더에 꽂음 → 손목을 튕겨 닫음
+//   Tek9: 빈 탄창이 아래로 떨어짐 → 왼손이 새 탄창을 밑에서 끼움 → 장전 손잡이를 당겼다 놓음
+//   왼손은 총 모델 위의 점(탄창 자리 · 손잡이)을 손 화면 좌표로 바꿔서 맞춤 → 총에 정확히 닿음
+const GUN_PTS={[PISTOL]:{well:[-.03,.004,-.063]},[RIFLE]:{well:[0,-.03,-.24],top:[-.02,.19,-.08]}};
+const _rlV=new THREE.Vector3(),_rlA=new THREE.Vector3(),_rlB=new THREE.Vector3(),_rlT=new THREE.Vector3(),_rlM=new THREE.Vector3(),_rlH=new THREE.Vector3();let magDrop=null,shellsL=null;
+function gunPt(p,out){out.set(p[0],p[1],p[2]);heldModel.localToWorld(out);return handGroup.worldToLocal(out);}
+function reloadPose(bob){const R=player.reload,rifle=R.s.id===RIFLE,p=Math.min(1,R.t/R.dur),seg=(a,b)=>ease(clamp((p-a)/(b-a),0,1)),ev=(n,at,f)=>{if(p>=at&&!R['e'+n]){R['e'+n]=1;f();}};
+  let rx=0,rz=0,px=0,py=0;
+  if(rifle){const tl=seg(0,.12)*(1-seg(.84,1));rx=.2*tl;rz=.45*tl;px=-.07*tl;py=.04*tl;
+    if(p>.55&&p<.64)py+=.018*Math.sin(seg(.55,.64)*Math.PI);
+    if(p>.78&&p<.86)rx-=.1*Math.sin(seg(.78,.86)*Math.PI);}
+  else{const up=seg(.03,.16)*(1-seg(.32,.44)),tl=seg(.32,.44)*(1-seg(.66,.76)),fl=p>.66&&p<.9?Math.sin(seg(.66,.9)*Math.PI):0;
+    rx=1.0*up+.1*tl;rz=-.3*up+.55*tl-.3*fl;px=-.05*up-.15*tl;py=.07*up+.14*tl;}
+  handArm.position.set(.44+px,-.3+bob+py,-.52);handArm.rotation.set(-.02+rx,.42,.16+rz);
+  handGroup.updateMatrixWorld(true);
+  if(!leftArm)buildLeftArm();setLeftPlate(0,0);leftArm.userData.reload=1;leftArm.rotation.set(.9,.3,0); // 팔이 아래에서 올라옴 (소매가 화면을 가리지 않게)
+  if(!magL){magL=buildItemModel(MAG).g;magL.position.set(0,.03,-.29);leftArm.add(magL);}
+  const s=rifle?1.3:.7;magL.scale.setScalar(s);magL.rotation.set(-.9,0,0); // 탄창은 똑바로 세움
+  const P=GUN_PTS[R.s.id],W=gunPt(P.well,_rlV),away=_rlB.set(-.22,-.55,.12),L=leftArm.position;
+  const magTop=new THREE.Vector3(0,.17*s,0).applyEuler(magL.rotation).add(magL.position).applyQuaternion(leftArm.quaternion),palm=new THREE.Vector3(0,.03,-.3).applyQuaternion(leftArm.quaternion);
+  const magAt=(T,o)=>o.copy(T).sub(magTop),handAt=(T,o)=>o.copy(T).sub(palm);
+  let vis=true,showMag=false;
+  if(rifle){
+    if(p<.22)vis=false;
+    else if(p<.52){const k=seg(.22,.52);magAt(W,L).addScaledVector(away,1-k);L.y-=.07*k;showMag=true;}
+    else if(p<.6){const k=seg(.52,.6);magAt(W,L);L.y-=.07*(1-k);showMag=true;}
+    else{const A=magAt(W,_rlM),B=handAt(gunPt(P.top,_rlT),_rlH);
+      if(p<.68)L.copy(A).lerp(B,seg(.6,.68));
+      else if(p<.78){L.copy(B);L.z+=.07*seg(.68,.77);}
+      else if(p<.82){L.copy(B);L.z+=.07*(1-seg(.78,.82));}
+      else{L.copy(B).addScaledVector(away,seg(.82,.97));vis=p<.97;}}
+    if(!magDrop){magDrop=buildItemModel(MAG).g;magDrop.scale.setScalar(1.3);handGroup.add(magDrop);} // 빈 탄창이 빠져서 떨어짐
+    if(p>.1&&p<.5){const t=(p-.1)*R.dur;magDrop.visible=true;magDrop.position.copy(W);magDrop.position.y-=.22+2.6*t*t;magDrop.position.x-=.08*t;magDrop.rotation.set(0,0,-1.8*t);}else magDrop.visible=false;
+    if(!R.snd){ev(1,.58,()=>tone(500,1300,.07,.07,'square'));ev(2,.78,()=>{tone(900,400,.06,.07,'square');tone(1500,900,.05,.06,'square',.06);});}}
+  else{
+    if(p<.28)vis=false;
+    else if(p<.56){const k=seg(.28,.56);magAt(W,L).addScaledVector(away,1-k);L.y-=.05*k;showMag=true;}
+    else if(p<.64){const k=seg(.56,.64);magAt(W,L);L.y-=.05*(1-k);showMag=true;}
+    else{magAt(W,L).addScaledVector(away,seg(.64,.82));vis=p<.82;}
+    ev(1,.08,()=>tone(700,500,.05,.05,'square'));
+    if(magDrop)magDrop.visible=false;
+    if(!shellsL){const m=imat('shellB',0xd8a840,'metal',.25,.85);shellsL=[];for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.CylinderGeometry(.006,.006,.022,8),m);c.visible=false;handGroup.add(c);shellsL.push(c);}} // 탄피 6개가 쏟아짐
+    ev(2,.18,()=>{gunPt(P.well,R.sh0=new THREE.Vector3());tone(2400,1800,.04,.03,'triangle');tone(2600,2000,.04,.025,'triangle',.07);});
+    shellsL.forEach((c,i)=>{const t=(p-.18)*R.dur-i*.03;c.visible=!!R.sh0&&t>0&&t<.7;if(!c.visible)return;c.position.copy(R.sh0);c.position.x+=(i%3-1)*.012-.04*t;c.position.y-=.05+2.2*t*t;c.position.z+=(i>2?.01:-.01);c.rotation.set(t*9+i,0,t*6);});
+    ev(3,.62,()=>tone(500,1300,.07,.07,'square'));ev(4,.72,()=>tone(1400,900,.05,.06,'square'));}
+  leftArm.visible=vis;magL.visible=vis&&showMag;}
+// 🔊 소리 파일 (돌격소총 발사 · 장전): 없으면 원래 합성 소리
+const SND={};
+function loadSnd(n,u){try{const C=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,1,44100);fetch(u).then(r=>r.ok?r.arrayBuffer():null).then(b=>b&&C.decodeAudioData(b)).then(x=>{if(x)SND[n]=x;}).catch(()=>{});}catch(e){}}
+function playSnd(n,v=.7){if(window.CMD_MUTE)return false;const a=audio(),b=SND[n];if(!a||!b)return false;const s=a.createBufferSource(),g=a.createGain();s.buffer=b;g.gain.value=v;s.connect(g).connect(a.destination);s.start();return true;}
+loadSnd('rifle','sounds/rifle_shot.mp3');loadSnd('reload','sounds/rifle_reload.mp3');
 function updateHand(dt){
   if(swing>handPrevSwing+.15)swordCombo^=1; // 새로 휘두를 때마다 가로·세로 베기를 번갈아
   swing=Math.max(0,swing-dt*3.2);handPrevSwing=swing;
@@ -4782,6 +4840,8 @@ function updateHand(dt){
   const t=performance.now()/1000,br=Math.sin(t*1.7)*.006; // 숨 쉬듯 살짝 흔들림
   const bare=!held();
   if(bare){handArm.position.set(.44-sw*.05,-.3+bob+br+sw*.04,-.52-sw*.26);handArm.rotation.set(-.02+br*.6-sw*.08,.42-sw*.1,.16);} // 맨손: 앞으로 주먹을 내지름
+  else if(isGun(held())){gunKick=Math.max(0,gunKick-dt*7);const k=gunKick*gunKick*(held().id===RIFLE?.6:1); // 🔫 반동: 쏘는 순간 뒤로 튀고 총구가 들렸다가 부드럽게 돌아옴
+    handArm.position.set(.44,-.3+bob+br+.018*k,-.52+.07*k);handArm.rotation.set(-.02+br*.6+.32*k,.42,.16-.05*k);}
   else{handArm.position.set(.44,-.3+bob+br-sw*.1,-.52-sw*.12);handArm.rotation.set(-.02+br*.6-sw*.9,.42,.16);} // 도구: 내려찍기
   const hs=held(),sword=hs&&IT[hs.id]&&IT[hs.id].tool&&IT[hs.id].tool.type==='sword';
   // 곡괭이·도끼·삽으로 블록을 캐는 동안: 천천히 위로 들어 올렸다가 → 빠르게 내려찍기를 반복
@@ -4820,13 +4880,8 @@ function updateHand(dt){
   else   if(player.eating){const e=player.eating,k=Math.min(1,e.t/.22),q=k*k*(3-2*k),ch=Math.sin(e.t*17)*.022*q,lf=e.t>e.dur-.12?(e.dur-e.t)/.12:1; // 먹기: 손을 입으로 가져가 오물오물
     handArm.position.set(.44-.3*q*lf,-.3+.12*q*lf+ch,-.52+.16*q*lf);handArm.rotation.set(-.02+.55*q*lf+ch*3,.42+.55*q*lf,.16+.35*q*lf);}
   reloadTick(dt);
-  if(player.reload){const R=player.reload,p=Math.min(1,R.t/R.dur),tl=ease(Math.min(1,p/.18))*(p>.85?1-ease((p-.85)/.15):1), // 🔫 장전: 총을 옆으로 눕히고 왼손이 탄창을 밑에서 밀어 넣음 → 철컥 → 손을 빼고 총을 바로 세움
-      up=p<.2?0:p<.62?ease((p-.2)/.42):1,out=p>.68?ease(Math.min(1,(p-.68)/.22)):0,kick=p>.6&&p<.7?Math.sin((p-.6)/.1*Math.PI)*.03:0;
-    handArm.position.set(.44-.14*tl,-.3+.05*tl+bob+kick,-.52+.05*tl);handArm.rotation.set(-.02+.3*tl,.42-.12*tl,.16+.75*tl);
-    if(!leftArm)buildLeftArm();setLeftPlate(0,0);leftArm.userData.reload=1;leftArm.visible=out<.98;
-    if(!magL){magL=buildItemModel(MAG).g;magL.scale.setScalar(1.3);magL.position.set(0,.03,-.29);leftArm.add(magL);}magL.visible=p<.62;
-    leftArm.position.set(lerp(-.1,.2,up)-.25*out,lerp(-.85,-.47,up)-.4*out,-.5);leftArm.rotation.set(.45+.2*up,.15,-.2*up);}
-  else if(leftArm&&leftArm.userData.reload){leftArm.userData.reload=0;if(!player.dine)leftArm.visible=false;if(magL)magL.visible=false;}
+  if(player.reload&&heldModel)reloadPose(bob);
+  else{if(leftArm&&leftArm.userData.reload){leftArm.userData.reload=0;if(!player.dine)leftArm.visible=false;if(magL)magL.visible=false;}if(magDrop)magDrop.visible=false;if(shellsL)shellsL.forEach(c=>c.visible=false);}
   player.aimK=(player.aimK||0)+((gunAim()?1:0)-(player.aimK||0))*Math.min(1,dt*14);
   if(player.aimK>.01&&isGun(hs)){const k=player.aimK,A=handArm.position,R=handArm.rotation; // 🎯 조준: 총을 화면 가운데로 올려 눈높이에 맞춤
     A.set(lerp(A.x,.2,k),lerp(A.y,-.2,k),lerp(A.z,-.42,k));R.set(lerp(R.x,0,k),lerp(R.y,.3,k),lerp(R.z,0,k));}
@@ -5346,7 +5401,7 @@ function buildItemModel0(id){
 }
 const ITEM_PROTO={};
 // 🔫 총 3D 모델: 권총 = 리볼버, 돌격소총 = Tek9 · 리볼버는 원래 권총 색 (쇠 몸통 · 갈색 손잡이)
-const GUN_GLB={[PISTOL]:{url:'models/revolver.glb',len:.27,ry:-Math.PI/2,paint:1},[RIFLE]:{url:'models/tek9.glb',len:.42,ry:Math.PI}};
+const GUN_GLB={[PISTOL]:{url:'models/revolver.glb',len:.31,ry:-Math.PI/2,paint:1,sh:[0,0,-.041]},[RIFLE]:{url:'models/tek9.glb',len:.42,ry:Math.PI,sh:[0,.106,-.05]}}; // sh: 손잡이가 주먹 자리에 오게 옮김
 function gunGlbLoad(){if(!THREE.GLTFLoader)return;const L=new THREE.GLTFLoader();
   for(const k in GUN_GLB){const id=+k,G=GUN_GLB[id];L.load(G.url,gl=>{const s=gl.scene,sk=[];s.traverse(o=>{if(o.isSkinnedMesh)sk.push(o);});
     for(const o of sk){const m=new THREE.Mesh(o.geometry,o.material);m.position.copy(o.position);m.quaternion.copy(o.quaternion);m.scale.copy(o.scale);o.parent.add(m);o.parent.remove(o);} // 뼈대 모델은 복사하면 깨져서 그냥 모델로
@@ -5355,7 +5410,7 @@ function gunGlbLoad(){if(!THREE.GLTFLoader)return;const L=new THREE.GLTFLoader()
       o.geometry.setAttribute('color',new THREE.BufferAttribute(C,3));o.material=new THREE.MeshStandardMaterial({vertexColors:true,metalness:.45,roughness:.45,side:THREE.DoubleSide});});
     const a=new THREE.Group(),w=new THREE.Group();a.add(s);w.add(a);a.rotation.y=G.ry;w.updateMatrixWorld(true);
     let b=new THREE.Box3().setFromObject(w);a.scale.setScalar(G.len/Math.max(b.max.z-b.min.z,.001));w.updateMatrixWorld(true);b=new THREE.Box3().setFromObject(w);
-    a.position.set(-(b.min.x+b.max.x)/2,.05-b.max.y,-G.len*.62-b.min.z);G.obj=w;delete ITEM_PROTO[id];
+    a.position.set(-(b.min.x+b.max.x)/2+G.sh[0],.05-b.max.y+G.sh[1],-G.len*.62-b.min.z+G.sh[2]);G.obj=w;delete ITEM_PROTO[id];
     try{const had=!!ICON3D;ICON[id]=icon3D(id);if(!had){ICON3D.r.dispose();ICON3D.r.forceContextLoss();ICON3D=null;}renderHotbar();if(invOpen)renderInv();}catch(e){}
     try{handId=-1;setHand();}catch(e){}},undefined,e=>console.warn('gun glb',G.url,e));}}
 setTimeout(gunGlbLoad,0);
@@ -5372,7 +5427,7 @@ function setHeldModel(id){
   if(heldModel){itemHolder.remove(heldModel);heldModel=null;}
   if(!id)return;const {g,grip}=itemModel(id);heldModel=g;itemHolder.add(g);
   if(grip){itemHolder.position.set(-.045,0,-.4);itemHolder.rotation.set(-.55,-1.1,0);itemHolder.scale.setScalar(1);} // 손잡이를 주먹에 쥠 (넓은 면이 보이게)
-  else if(GUN_CAP[id]){itemHolder.position.set(-.04,.08,-.36);itemHolder.rotation.set(0,-.38,0);itemHolder.scale.setScalar(1.35);} // 🔫 총: 손잡이를 쥐고 총구가 앞을 봄
+  else if(GUN_CAP[id]){itemHolder.position.set(-.045,.06,-.42);itemHolder.rotation.set(0,-.12,0);itemHolder.scale.setScalar(1.1);} // 🔫 총: 손잡이를 쥐고 총구가 앞을 봄
   else{itemHolder.position.set(-.11,.02,-.41);itemHolder.rotation.set(0,.5,0);itemHolder.scale.setScalar(isBlk(id)?.75:1.35);} // 주먹 위에 올림
 }
 
@@ -6652,7 +6707,7 @@ function fireLaserItem(){
 }
 const LASER_DMG=500;
 // ---------- 총 ----------
-let gunCD=0;
+let gunCD=0,gunKick=0;
 const GUN_CAP={[PISTOL]:6,[RIFLE]:30}; // 🔫 탄창 한 개로 채우는 탄 수
 function isGun(s){return !!(s&&GUN_CAP[s.id]);}
 function gunAim(){return mouseR&&isGun(held())&&!player.reload&&!invOpen&&!player.dead;} // 🎯 우클릭 (모바일은 🎯 버튼)을 누르는 동안 조준
@@ -6660,15 +6715,14 @@ function gunAmmo(s){return s.ammo==null?GUN_CAP[s.id]:s.ammo;}
 function startReload(){const s=held();if(!s||!GUN_CAP[s.id]||player.reload||player.dead)return;
   if(gunAmmo(s)>=GUN_CAP[s.id]){toast('🔫 이미 가득 찼어요');return;}
   if(!isCreative()&&!inv.some(q=>q&&q.id===MAG)){toast('🔫 탄창이 없어요 (철 주괴 1 + 총알 8 → 탄창 · 총알은 구리 주괴 1 → 4)');SFX.click();return;}
-  player.reload={t:0,dur:s.id===RIFLE?1.6:1.25,s,sel};tone(900,700,.05,.05,'square');}
+  const rifle=s.id===RIFLE;player.reload={t:0,dur:rifle?1.8:1.5,s,sel,snd:rifle&&playSnd('reload',.8)};}
 function reloadTick(dt){const R=player.reload;if(!R)return;R.t+=dt;
   if(held()!==R.s||player.dead){player.reload=null;return;} // 다른 칸으로 바꾸면 장전 취소
-  if(!R.clk&&R.t>R.dur*.62){R.clk=1;tone(500,1300,.07,.07,'square');setTimeout(()=>tone(1400,900,.05,.06,'square'),70);} // 철컥
   if(R.t>=R.dur){player.reload=null;if(!isCreative()){if(!inv.some(q=>q&&q.id===MAG))return;removeItem(MAG,1);}R.s.ammo=GUN_CAP[R.s.id];invChanged();toast(`🔫 장전 완료 (${R.s.ammo}발)`);}}
 function fireGun(s){
   if(gunCD>0||player.reload)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
   const rifle=s.id===RIFLE;gunCD=rifle?.32:.38;
-  const shots=rifle?3:1;for(let i=0;i<shots;i++)setTimeout(()=>gunShot(rifle),i*90);swing=1;}
+  const shots=rifle?3:1;for(let i=0;i<shots;i++)setTimeout(()=>gunShot(rifle),i*90);}
 function gunShot(rifle){const s=held();if(!s||(s.id!==PISTOL&&s.id!==RIFLE)||player.dead||player.reload)return;
   if(!isCreative()){const a=gunAmmo(s);if(a<=0){SFX.click();return;}s.ammo=a-1;invChanged();}
   const sp=(rifle?.012:.006)*(gunAim()?.25:1),d=viewDir();d.x+=(Math.random()-.5)*sp;d.y+=(Math.random()-.5)*sp;d.z+=(Math.random()-.5)*sp;d.normalize();
@@ -6678,7 +6732,7 @@ function gunShot(rifle){const s=held();if(!s||(s.id!==PISTOL&&s.id!==RIFLE)||pla
   else if(hit)spawnParticles(o.x+d.x*L,o.y+d.y*L,o.z+d.z*L,new THREE.Color(0xc8b090),6,.15,3);
   flashBeam(o.clone().add(new THREE.Vector3(0,-.18,0)).addScaledVector(d,.7),o.clone().addScaledVector(d,L),0xffe08a,.04,.07);
   spawnParticles(o.x+d.x*.9,o.y-.15+d.y*.9,o.z+d.z*.9,new THREE.Color(0xffc040),4,.08,2);
-  SFX.gun();player.pitch=Math.min(1.5,player.pitch+(rifle?.012:.03));shake(.05,.08);}
+  if(!(rifle&&playSnd('rifle',.6)))SFX.gun();gunKick=1;player.pitch=Math.min(1.5,player.pitch+(rifle?.012:.03));shake(.05,.08);}
 
 // --- 보스 ---
 function flyTo(m,x,y,z,sp,dt){const dx=x-m.pos.x,dy=y-m.pos.y,dz=z-m.pos.z,l=Math.hypot(dx,dy,dz)||1,s=Math.min(sp,l*2),k=Math.min(1,2.5*dt);
