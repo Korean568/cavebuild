@@ -45,6 +45,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malg
 #evHud~.modhud,.modhud{position:fixed;right:10px;top:60px;z-index:12;background:rgba(10,10,30,.7);color:#fff;border:2px solid #7ab0ff;border-radius:6px;padding:5px 10px;font:13px sans-serif;pointer-events:none;max-width:40vw}
 #mpRooms{max-height:180px;overflow:auto;margin:4px 0}.mpr{display:flex;align-items:center;gap:8px;padding:5px 8px;margin:3px 0;background:rgba(0,0,0,.25);border-radius:6px;font-size:14px}.mpr span{flex:1;text-align:left}.mpr small{display:block;opacity:.7;font-size:12px}.mpr .btn{padding:4px 12px;margin:0}
 .mpPubRow{display:flex;gap:6px;justify-content:center;margin:6px 0}.mpPubRow .btn{margin:0}.mpPubRow .btn.on{outline:3px solid #ffd040}
+#playPanel[data-m=solo] .ppMulti,#playPanel[data-m=multi] .ppSolo{display:none!important}
 #atList{position:fixed;left:10px;bottom:136px;min-width:180px;max-height:40vh;overflow:auto;display:none;z-index:17;background:rgba(20,20,28,.92);border:2px solid #888;font:15px sans-serif;color:#fff}
 #atList div{padding:5px 10px;cursor:pointer}#atList div.on,#atList div:hover{background:#3a6ad0}
 #mpChat{position:fixed;left:10px;bottom:96px;width:min(420px,70vw);display:none;z-index:16;font:15px sans-serif;padding:8px 10px;background:rgba(0,0,0,.7);color:#fff;border:2px solid #888;outline:none}
@@ -255,7 +256,8 @@ body.mobile #toasts{top:72px}
   <h1>CAVEBUILD</h1>
   <div class="en">케 이 브 빌 드</div>
   <div class="sub">캐고, 짓고, 살아남으세요</div>
-  <button class="btn" id="btnPlay">▶ 플레이</button>
+  <button class="btn" id="btnPlay">▶ 솔로</button>
+  <button class="btn" id="btnMulti">🌐 멀티</button>
   <button class="btn" id="btnTSet">⚙ 설정</button>
   <div id="hwBanner" style="display:none;margin:4px 0 8px;padding:6px 12px;background:rgba(30,10,40,.6);border:2px solid #ff8a1a;border-radius:6px;color:#ffb44a;font-weight:bold">🎃 할로윈 모드 — 흑요석을 캐면 <b>백룸</b>으로 떨어져요 · 이상현상 속에서 7일 버티기 · 할로윈 차원의 <b>잭오랜턴</b>을 쓰러뜨리면 엔딩</div>
   <div id="srBanner" style="display:none;margin:4px 0 8px;padding:6px 12px;background:rgba(0,0,0,.45);border:2px solid #ffd040;border-radius:6px;color:#ffe066;font-weight:bold">⏱ 스피드런 모드 — 로그인 필요 · 서바이벌만 (크리에이티브 X) · 엔딩까지 걸린 시간으로 랭킹</div>
@@ -313,7 +315,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.181 — 🧩 서버 모드 자동 공유</h4>
+    <h4>🆕 v26.182 — ▶ 솔로 · 🌐 멀티 나누기 · ⚙ 공개 서버 설정</h4>
+    • 타이틀의 플레이가 <b>▶ 솔로</b>(새 세계 · 내 세계)와 <b>🌐 멀티</b>(공개 서버 만들기 · 공개 서버 목록 · 방 코드 참가)로 나뉘었어요.<br>
+    • 공개 서버의 🌐 멀티플레이 창에 <b>⚙ 공개 서버 설정</b>: 서버 이름 바꾸기 · <b>서버 모드 고르기</b>(내가 넣어 둔 모드 중에서 체크 → 모두 잠깐 다시 들어오면서 새 모드가 켜짐). 만든 사람 · OP · 어드민만 보여요.
+    <h4>v26.181 — 🧩 서버 모드 자동 공유</h4>
     • 멀티플레이에서는 <b>서버가 정한 모드</b>가 들어온 사람에게 <b>묻지 않고 자동으로</b> 켜져요. 내 개인 모드 목록은 그대로고, 그 서버 안에서만 서버 모드로 돌아가요.<br>
     • 🖥 공개 서버는 모드도 세계와 같이 저장돼서, 방장이 바뀌어도 새 방장 게임이 <b>그 서버의 모드</b>로 이어서 켜요.<br>
     • 내 게임에 없는 블록(모드 블록)은 돌로 보여서 게임이 멈추지 않아요.
@@ -962,18 +967,19 @@ body.mobile #toasts{top:72px}
   <div class="mrow"><button class="btn" id="btnModReload">🔄 새로고침해서 적용</button><button class="btn" id="btnModClose">닫기</button></div>
   <input type="file" id="modFile" accept=".js,.html,.htm,text/javascript,text/html" multiple hidden>
 </div>
-<div id="playPanel" class="overlay"><div class="ppbox">
-  <h2>▶ 플레이</h2>
-  <div class="ppsec"><h3>🌍 새 세계 만들기</h3>
+<div id="playPanel" class="overlay" data-m="solo"><div class="ppbox">
+  <h2 id="ppTitle">▶ 솔로</h2>
+  <div class="ppsec"><h3 id="ppNewH">🌍 새 세계 만들기</h3>
     <input id="worldName" type="text" maxlength="24" placeholder="세계 이름 (비우면 자동)" autocomplete="off">
     <input id="seedIn" type="text" placeholder="🌱 세계 코드 (비우면 무작위)" autocomplete="off" maxlength="40">
   <h3 class="sub">🎮 모드</h3><div id="tMode" class="modeRow"><button data-m="creative">🛠 크리에이티브</button><button data-m="survival">⚔ 서바이벌</button><button data-m="spectator">👁 관전</button></div><div class="modeDesc" id="tModeDesc"></div>
   <h3 class="sub">🔥 난이도</h3><div id="tDiff" class="modeRow"><button data-d="safe">🕊 세이프</button><button data-d="easy">🙂 쉬움</button><button data-d="normal">⚖ 보통</button><button data-d="hard">😈 어려움</button><button data-d="hardcore">💀 하드코어</button></div><div class="modeDesc" id="tDiffDesc"></div>
-    <button class="btn" id="btnNew">새 세계 만들기</button></div>
-  <div class="ppsec"><h3>🌍 공개 방 <button class="btn" id="mpRoomsRe" style="padding:2px 10px;font-size:13px;width:auto;display:inline-block;margin:0 0 0 6px">🔄</button></h3><div id="mpRooms" class="mpRooms"></div>
-    <button class="btn" id="mpNewSrv">➕ 공개 서버 만들기 <small style="opacity:.75">(내가 나가도 계속 열려 있어요)</small></button></div>
-  <div class="ppsec"><h3>🌐 친구 세계 참가 (방 코드)</h3><input id="mpCode" type="text" maxlength="6" placeholder="방 코드 6자리" autocomplete="off" style="text-transform:uppercase"><button class="btn" id="mpJoinBtn">참가하기</button></div>
-  <div class="ppsec"><h3>🗂 전에 하던 서버</h3><div id="worldList"></div></div>
+    <button class="btn ppSolo" id="btnNew">새 세계 만들기</button>
+    <button class="btn ppMulti" id="mpNewSrv">➕ 공개 서버 만들기 <small style="opacity:.75">(내가 나가도 계속 열려 있어요)</small></button></div>
+  <div class="ppsec ppMulti"><h3>🌍 공개 서버 · 방 <button class="btn" id="mpRoomsRe" style="padding:2px 10px;font-size:13px;width:auto;display:inline-block;margin:0 0 0 6px">🔄</button></h3><div id="mpRooms" class="mpRooms"></div></div>
+  <div class="ppsec ppMulti"><h3>🌐 친구 방 참가 (방 코드)</h3><input id="mpCode" type="text" maxlength="6" placeholder="방 코드 6자리" autocomplete="off" style="text-transform:uppercase"><button class="btn" id="mpJoinBtn">참가하기</button>
+    <div class="tip" style="font-size:12px;opacity:.75;margin-top:6px">내 세계에 친구를 부르려면: ▶ 솔로로 세계에 들어가서 일시정지 → 🌐 멀티플레이 → 방 열기</div></div>
+  <div class="ppsec ppSolo"><h3>🗂 내 세계</h3><div id="worldList"></div></div>
   <button class="btn" id="btnPlayClose">닫기</button></div></div>
 <div id="tSettings" class="overlay"><div class="ppbox">
   <h2>⚙ 설정</h2>
@@ -2025,7 +2031,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.181 — 🧩 Server mods are shared automatically</h4>
+    <h4>🆕 v26.182 — ▶ Solo · 🌐 Multiplayer split · ⚙ Public server settings</h4>
+    • The title's Play is now Solo (new / my worlds) and Multiplayer (create public server, server list, join by code). Public servers get a settings box to rename and pick server mods.
+    <h4>v26.181 — 🧩 Server mods are shared automatically</h4>
     • In multiplayer the server's mods turn on for everyone who joins, without asking, only inside that server (your own mod list stays). Public servers save their mods with the world, so a new host keeps running them.
     <h4>v26.180 — 🔁 Private rooms reconnect too</h4>
     • If the host drops, the room waits 15 seconds for the same host to reconnect while friends stay in. Friends who drop rejoin with their inventory and position.
@@ -8433,7 +8441,11 @@ function renderTSettings(){if(SPEEDRUN){if(wantMode!=='survival')wantMode='survi
   for(const b of $('tMode').children)b.classList.toggle('on',b.dataset.m===wantMode);$('tModeDesc').textContent=MODE_INFO[wantMode][1];
   for(const b of $('tDiff').children)b.classList.toggle('on',b.dataset.d===wantDiff);$('tDiffDesc').textContent=DIFF_INFO[wantDiff][1];}
 function saveWant(){try{localStorage.setItem('cavebuild-newworld',JSON.stringify({m:wantMode,d:wantDiff}));}catch(e){}}
-$('btnPlay').onclick=()=>{audio();SFX.click();renderWorlds();renderNewInfo();$('playPanel').classList.add('show');mpRoomsLoad();};
+function openPlay(m){audio();SFX.click();const P=$('playPanel');P.dataset.m=m; // ▶ 솔로: 새 세계 · 내 세계 / 🌐 멀티: 공개 서버 만들기 · 공개 서버 목록 · 방 코드
+  $('ppTitle').textContent=m==='multi'?mpL('🌐 멀티','🌐 Multiplayer'):mpL('▶ 솔로','▶ Solo');$('ppNewH').textContent=m==='multi'?mpL('🖥 공개 서버 만들기','🖥 Create a public server'):mpL('🌍 새 세계 만들기','🌍 Create New World');
+  $('worldName').placeholder=m==='multi'?mpL('서버 이름 (비우면 「닉네임의 서버」)','Server name'):mpL('세계 이름 (비우면 자동)','World name (auto if empty)');
+  renderWorlds();renderNewInfo();P.classList.add('show');if(m==='multi')mpRoomsLoad();}
+$('btnPlay').onclick=()=>openPlay('solo');$('btnMulti').onclick=()=>openPlay('multi');
 $('btnPlayClose').onclick=()=>$('playPanel').classList.remove('show');
 $('btnTSet').onclick=()=>{SFX.click();renderTSettings();$('tSettings').classList.add('show');};
 $('btnTSetClose').onclick=()=>$('tSettings').classList.remove('show');
@@ -8508,7 +8520,7 @@ async function openRank(){const el=$('wdIn');el.innerHTML='<h2>🏆 스피드런
   el.innerHTML=`<h2>🏆 스피드런 랭킹</h2><p style="text-align:center;font-size:13px;color:#aaa">엔딩까지 걸린 시간 · 사람마다 가장 빠른 기록</p><table style="margin:0 auto;border-collapse:collapse;font-size:15px">${rows}</table>${mine?`<p style="text-align:center;background:rgba(255,208,64,.15);border-radius:6px;padding:6px;margin:10px auto;max-width:360px">${mine}</p>`:''}<div style="text-align:center"><button class="wb gray" id="rkClose">닫기</button></div>`;$('rkClose').onclick=closeWard;}
 $('btnRank').onclick=openRank;
 if(EVENT){const E=EV_INFO[EVENT];$('hwBanner').style.display='block';document.title=E.ico+' '+document.title;if(!HALLOWEEN)$('hwBanner').innerHTML=`${E.ico} ${E.name} 모드 — ${E.goal}`;
-  if(!E.m.includes(new Date().getMonth()+1)&&GM_ON!==GM_HERE){$('hwBanner').innerHTML=`${E.ico} ${E.name} 모드는 <b>${E.m.join('·')}월</b>에만 열려요 — 허브의 <b>이달의 모드</b>에서 이번 달 모드를 해 보세요`;$('btnPlay').disabled=true;$('btnPlay').style.opacity=.5;}} // 🗓 달마다 바뀌는 모드
+  if(!E.m.includes(new Date().getMonth()+1)&&GM_ON!==GM_HERE){$('hwBanner').innerHTML=`${E.ico} ${E.name} 모드는 <b>${E.m.join('·')}월</b>에만 열려요 — 허브의 <b>이달의 모드</b>에서 이번 달 모드를 해 보세요`;$('btnPlay').disabled=true;$('btnPlay').style.opacity=.5;$('btnMulti').disabled=true;$('btnMulti').style.opacity=.5;}} // 🗓 달마다 바뀌는 모드
 if(SPEEDRUN){$('srBanner').style.display='block';$('btnRank').style.display='';
   try{const m=JSON.parse(localStorage.getItem('cb-sr-msg')||'null');if(m){localStorage.removeItem('cb-sr-msg');setTimeout(()=>{toast(`⏱ 서버 기록 <b>${fmtT(m.ms)}</b> 올림! 내 최고 ${fmtT(m.best)} · <b>${m.rank}등</b>`);openRank();},900);}}catch(e){}}
 $('btnQuit').onclick=()=>{mpBye();saveGame().then(async()=>{if(SPEEDRUN&&world.sr&&world.sr.done&&!world.sr.sent){try{const d=await cbApi({action:'sr_submit',token:accToken(),run:world.sr.run||''});world.sr.sent=true;await saveGame();try{localStorage.setItem('cb-sr-msg',JSON.stringify({ms:d.ms,rank:d.rank,best:d.best}));}catch(e){}}catch(e){alert('⏱ 기록을 올리지 못했어요: '+e.message.replace(/<[^>]+>/g,''));}} // 스피드런: 완주 기록을 랭킹에
@@ -8770,9 +8782,10 @@ function mpHost(opt){opt=opt||{};if(!mpOk()||(!opt.re&&(MP.on||MP.ws)))return;if
           if(Array.isArray(d.guests))for(const [gid,c] of [...byId])if(!d.guests.includes(gid)){byId.delete(gid);c.open=false;MP.conns.delete(c);if(c.P){mpDel(c.P.id);mpSend({t:'leave',id:c.P.id});}} // 끊긴 동안 나간 친구
           renderMP();return;}
         if(opt.resume&&!opt.local){renderMP(mpL('🌍 서버를 켜는 중… 세계를 받고 있어요','🌍 Starting the server…'));return;} // 저장된 세계가 _w 로 옴
-        MP.on=MP.host=true;MP.myId='H';mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();if(MP.persist)mpSaveLoop();
+        MP.on=MP.host=true;MP.myId='H';mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');if(key)world.flags.owner=MP.me.nick;renderMP();if(MP.persist)mpSaveLoop();
         toast(MP.persist?mpL(`🌍 <b>공개 서버</b>를 열었어요! 내가 나가도 서버는 계속 열려 있어요 · 코드: <b>${code}</b>`,`🌍 Public server open! It stays up after you leave · Code: <b>${code}</b>`):mpL(`🌐 ${MP.pub?'🌍 <b>공개</b>':'🔒 <b>비공개</b>'} 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 ${MP.pub?'Public':'Private'} room open! Code: <b>${code}</b>`));}
       else if(d.t==='_w'){wb[d.i]=d.d||'';if(!d.n||wb.filter(x=>x!=null).length===d.n)mpResumeStart(d.n?wb.join(''):'',code);}
+      else if(d.t==='_saved'){if(MP.onSaved){const f=MP.onSaved;MP.onSaved=null;f();}}
       else if(d.t==='_deleted'){MP.leaving=true;mpOwnSet(code,null);toast(mpL('🗑 공개 서버가 지워졌어요','🗑 The server was deleted'));mpStop();}
       else if(d.t==='_err'){ws.onclose=null;MP.ws=null;if(opt.re&&MP.on){toast(mpL('🌐 방에 다시 붙지 못했어요 — 방이 닫혔어요','🌐 Could not get the room back — closed'));MP.leaving=true;mpStop();return;}if(d.m==='taken'&&!opt.code)mpHost(opt);else if(d.m==='taken'&&opt.resume&&(MP.reN=(MP.reN||0)+1)<6){setTimeout(()=>{MP.carry2=1;mpJoin(code);},2000);}else{toast('🌐 '+mpEsc(d.m));renderMP();}}return;}
     const i=s.indexOf('|'),gid=s.slice(0,i),raw=s.slice(i+1);
@@ -8786,9 +8799,9 @@ function mpHost(opt){opt=opt||{};if(!mpOk()||(!opt.re&&(MP.on||MP.ws)))return;if
     if(was){toast(mpL('🌐 중계 서버와 연결이 끊겨서 방이 닫혔어요','🌐 Lost the relay server — room closed'));mpStop();}else{toast(mpL('🌐 중계 서버에 연결하지 못했어요','🌐 Could not reach the relay server'));renderMP();}};}
 // 저장된 공개 서버 세계로 시작 (새 방장): 세계 안의 「전 방장」 상태는 그 사람 몫으로 옮기고, 나는 내 상태로
 function mpResumeStart(text,code){let sn=null;try{sn=text?JSON.parse(text):null;}catch(e){}if(sn&&!validSave(sn))sn=null;
-  if(sn&&Array.isArray(sn.mods)&&!mpModSame(sn.mods)&&!(MP_SMODS&&MP_SMODS.resume)){ // 🧩 이 서버의 모드로 켜야 함 → 서버 모드를 켜고 새로 열어서 이어서
+  if(sn&&Array.isArray(sn.mods)&&!mpModSame(sn.mods)&&!(MP_SMODS&&MP_SMODS.resume===2)){ // 🧩 이 서버의 모드로 켜야 함 → 서버 모드를 켜고 새로 열어서 이어서 (한 번만)
     try{MP.ws&&(MP.ws.onclose=null,MP.ws.close());}catch(e){}MP.ws=null;
-    if(mpServerMods(sn.mods,sn.modIds,code,{resume:1})){try{sessionStorage.setItem('cb-handoff',JSON.stringify({code,promote:1,st:MP.carry||null}));}catch(e){}
+    if(mpServerMods(sn.mods,sn.modIds,code,{resume:2})){try{sessionStorage.setItem('cb-handoff',JSON.stringify({code,promote:1,st:MP.carry||null}));}catch(e){}
       toast(mpL(`🧩 이 서버의 모드 ${sn.mods.length}개로 서버를 켜는 중…`,`🧩 Starting with the server's mods…`));setTimeout(()=>{location.href=location.origin+location.pathname+'?play=1';},900);}
     return;}
   const me=MP.me.nick,carry=MP.carry;MP.carry=null;
@@ -8800,9 +8813,25 @@ function mpResumeStart(text,code){let sn=null;try{sn=text?JSON.parse(text):null;
     toast(mpL(`🌍 공개 서버를 이어서 켰어요 — 지금은 내가 방장이에요 · 코드 <b>${code}</b>`,`🌍 You're now hosting this public server · Code <b>${code}</b>`));});}
 function mpSaveLoop(){clearInterval(MP.svT);MP.svT=setInterval(mpSaveUp,30000);setTimeout(mpSaveUp,3000);}
 function mpSaveUp(){const w=MP.ws;if(!MP.on||!MP.host||!MP.persist||!w||w.readyState!==1)return;let sn;
-  try{sn=toPortable(saveSnapshot());}catch(e){return;}sn.mpHost=MP.me.nick;sn.sr=null;sn.mods=MOD_RAN.map(m=>({name:m.name,code:m.code}));sn.modIds=modIds(); // 🧩 서버 모드도 세계와 같이 저장
+  try{sn=toPortable(saveSnapshot());}catch(e){return;}sn.mpHost=MP.me.nick;sn.sr=null;sn.mods=(MP.modOverride||MOD_RAN).map(m=>({name:m.name,code:m.code}));sn.modIds=modIds(); // 🧩 서버 모드도 세계와 같이 저장 (설정에서 바꾸는 중이면 새 모드)
   const t=JSON.stringify(sn),n=Math.ceil(t.length/250000),s=Date.now()%1e9;if(n>400)return;
   for(let i=0;i<n;i++)w.send('!sv'+JSON.stringify({s,i,n})+'\n'+t.slice(i*250000,(i+1)*250000));}
+// ⚙ 공개 서버 설정 (만든 사람 · OP · 어드민): 이름 · 서버 모드
+function mpSetHtml(){const C=mpModChoices();
+  return `<div style="margin:8px 0;padding:8px;border:1px solid rgba(255,255,255,.25);border-radius:6px;text-align:left"><b>⚙ ${mpL('공개 서버 설정','Server settings')}</b>
+    <div style="display:flex;gap:6px;margin:6px 0"><input id="srvName" maxlength="30" value="${mpEsc(world.name||'')}" style="flex:1;min-width:0;padding:4px"><button class="btn" id="srvNameOk" style="width:auto;margin:0">${mpL('이름 바꾸기','Rename')}</button></div>
+    <div style="font-size:13px;margin:6px 0 2px">🧩 ${mpL('서버 모드 — 들어오는 사람에게 자동으로 켜져요','Server mods — auto-enabled for everyone')}</div>
+    ${C.length?C.map((m,i)=>`<label style="display:block;font-size:13px;cursor:pointer"><input type="checkbox" data-sm="${i}"${m.on?' checked':''}> ${mpEsc(m.name)}</label>`).join(''):`<div style="font-size:12px;opacity:.7">${mpL('넣어 둔 모드가 없어요 — 🧩 Mods 에서 먼저 넣어요','No mods yet — add them in 🧩 Mods')}</div>`}
+    <button class="btn" id="srvModsOk" style="margin-top:6px">🧩 ${mpL('이 모드로 서버 모드 바꾸기 (모두 잠깐 다시 들어와요)','Apply server mods (everyone rejoins)')}</button></div>`;}
+function mpCanManage(){const n=MP.me?MP.me.nick:'';return cmdIsAdmin()||!!mpOwn()[MP.code]||(world.flags&&world.flags.owner===n)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
+function mpModChoices(){const L=[],seen=new Set(); // 지금 서버 모드 + 내가 넣어 둔 모드
+  for(const m of MOD_RAN)if(!seen.has(m.name)){seen.add(m.name);L.push({name:m.name,code:m.code,on:true});}
+  for(const m of modLoad())if(m&&!seen.has(m.name)){seen.add(m.name);L.push({name:m.name,code:m.url?'CB.loadUrl('+JSON.stringify(m.url)+');':m.code,on:false});}return L;}
+function mpSetServerMods(L){MP.modOverride=L; // 새 서버 모드로 세계를 저장 → 모두 잠깐 다시 들어오면서 새 모드가 켜짐
+  MP.onSaved=()=>{MP.modOverride=null;mpSend({t:'c',n:'🧩 서버',m:mpL('서버 모드가 바뀌어서 모두 잠깐 다시 들어와요','Server mods changed — everyone rejoins')});
+    const code=MP.code,st=mpState();try{sessionStorage.setItem('cb-handoff',JSON.stringify({code,promote:0,st:{inv:st.inv,armor:st.armor,p:st.p,dim:st.dim}}));sessionStorage.removeItem('cb-mpmods');sessionStorage.setItem('cb-play','1');}catch(e){}
+    setTimeout(()=>{MP.leaving=true;clearInterval(MP.svT);const w=MP.ws;MP.ws=null;MP.on=false;try{w&&w.close();}catch(e){}setTimeout(()=>{location.href=location.origin+location.pathname+'?play=1';},600);},400);};
+  toast(mpL('🧩 서버 모드를 바꾸는 중… (세계 저장)','🧩 Changing server mods…'));mpSaveUp();}
 function mpDelServer(code){const key=mpOwn()[code];if(!key)return;if(!confirm(mpL('이 공개 서버를 지울까요? 세계가 영원히 사라져요','Delete this public server? The world will be gone forever')))return;
   fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/del',{method:'POST',body:JSON.stringify({key})}).then(r=>r.json()).then(d=>{if(d.error){toast('🌐 '+mpEsc(d.error));return;}mpOwnSet(code,null);toast(mpL('🗑 공개 서버를 지웠어요','🗑 Server deleted'));if(MP.on&&MP.code===code){MP.leaving=true;mpStop();}mpRoomsLoad();}).catch(()=>toast(mpL('🌐 지우지 못했어요','🌐 Could not delete')));}
 function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
@@ -9456,10 +9485,14 @@ function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   else h=`<div>🌐 <b>${mpEsc(MP.hostNick)}</b> ${mpL('님의 세계','\'s world')} · ${mpL('방 코드','Code')} <b>${MP.code}</b></div>`;
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPubT">${MP.pub?'🌍 '+mpL('공개 방 (누구나)','Public room'):'🔒 '+mpL('비공개 방 (코드만)','Private room')} · ${mpL('바꾸기','switch')}</button>`;
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
-  if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?(MP.persist?`<div class="tip">🖥 ${mpL('공개 서버예요 — 내가 나가도 다른 사람이 방장을 이어받고, 아무도 없으면 세계가 저장돼요','Public server — stays up after you leave')}</div><button class="btn" id="mpStopBtn">🚪 ${mpL('나가기 (서버는 계속 열려 있어요)','Leave (server stays up)')}</button>`+(mpOwn()[MP.code]?`<button class="btn" id="mpDelSrv">🗑 ${mpL('이 공개 서버 지우기','Delete this server')}</button>`:''):`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`):'');
+  if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?(MP.persist?`<div class="tip">🖥 ${mpL('공개 서버예요 — 내가 나가도 다른 사람이 방장을 이어받고, 아무도 없으면 세계가 저장돼요','Public server — stays up after you leave')}</div><button class="btn" id="mpStopBtn">🚪 ${mpL('나가기 (서버는 계속 열려 있어요)','Leave (server stays up)')}</button>`+(mpCanManage()?mpSetHtml():'')+(mpOwn()[MP.code]?`<button class="btn" id="mpDelSrv">🗑 ${mpL('이 공개 서버 지우기','Delete this server')}</button>`:''):`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`):'');
   h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌍 공개 방 목록이나 🌐 방 코드로 들어와요 · T: 채팅 · /: 명령어<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. 서버 모드는 들어오면 저절로 켜져요 (내 모드 목록은 그대로). PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
   if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;if($('mpDelSrv'))$('mpDelSrv').onclick=()=>mpDelServer(MP.code);
+  if($('srvNameOk'))$('srvNameOk').onclick=()=>{const n=$('srvName').value.trim().slice(0,30);if(!n)return;world.name=n;try{MP.ws&&MP.ws.send('!pub'+JSON.stringify({on:1,...mpPubInfo()}));}catch(e){}toast(mpL(`🖥 서버 이름을 <b>${mpEsc(n)}</b>(으)로 바꿨어요`,'🖥 Server renamed'));};
+  if($('srvModsOk'))$('srvModsOk').onclick=()=>{const C=mpModChoices(),sel=C.filter((m,i)=>{const b=el.querySelector(`[data-sm="${i}"]`);return b&&b.checked;}).map(m=>({name:m.name,code:m.code}));
+    if(mpModSame(sel)){toast(mpL('🧩 지금 서버 모드와 같아요','🧩 Same as now'));return;}
+    if(!confirm(mpL(`서버 모드를 ${sel.length}개(${sel.map(m=>m.name).join(', ')||'없음'})로 바꿀까요?\n세계를 저장하고, 접속한 사람 모두 잠깐 다시 들어와요.`,`Switch server mods to ${sel.length}? Everyone will rejoin briefly.`)))return;mpSetServerMods(sel);};
   el.querySelectorAll('[data-pub]').forEach(b=>b.onclick=()=>{MP.pubSel=b.dataset.pub==='1';renderMP();});
   if($('mpPubT'))$('mpPubT').onclick=()=>{MP.pub=!MP.pub;try{MP.ws&&MP.ws.send('!pub'+JSON.stringify({on:MP.pub?1:0,...mpPubInfo()}));}catch(e){}toast(MP.pub?mpL('🌍 이제 <b>공개</b> 방이에요','🌍 Room is now public'):mpL('🔒 이제 <b>비공개</b> 방이에요 (코드를 아는 사람만)','🔒 Room is now private'));renderMP();};
   if($('mpCopy'))$('mpCopy').onclick=()=>{try{navigator.clipboard.writeText(MP.code).then(()=>toast(mpL('📋 방 코드를 복사했어요','📋 Copied')));}catch(e){}};}
@@ -9474,7 +9507,7 @@ async function mpRoomsLoad(){const el=$('mpRooms');if(!el)return;if(SPEEDRUN){el
   catch(e){el.innerHTML=`<div class="mpr">${mpL('공개 방 목록을 불러오지 못했어요 · 이 화면(미리보기 등)에서 막혀 있으면 <a href="https://korean568.github.io/cavebuild/" target="_blank" style="color:#8cf">korean568.github.io/cavebuild</a> 에서 열어 주세요','Could not load public rooms — try korean568.github.io/cavebuild')}</div>`;}}
 // ➕ 공개 서버 만들기: 새 세계를 만들고 바로 공개 서버로 엶 (위 「새 세계 만들기」의 이름 · 모드 · 난이도를 씀)
 $('mpNewSrv').onclick=()=>{if(SPEEDRUN){toast('⏱ 스피드런에서는 멀티플레이를 할 수 없어요');return;}if(!nickNow()){toast(mpL('🌍 공개 서버는 <b>로그인</b>해야 만들 수 있어요','🌍 Log in to create a public server'));return;}
-  const n=prompt(mpL('공개 서버 이름','Server name'),$('worldName').value.trim()||(nickNow()+mpL('의 서버',"'s server")));if(n==null)return;$('worldName').value=String(n).slice(0,24);MP.autoPub=true;$('btnNew').click();};
+  $('worldName').value=($('worldName').value.trim()||(nickNow()+mpL('의 서버',"'s server"))).slice(0,24);MP.autoPub=true;$('btnNew').click();};
 $('mpRoomsRe').onclick=mpRoomsLoad;
 $('mpCode').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.isComposing)mpJoin($('mpCode').value);});
 
