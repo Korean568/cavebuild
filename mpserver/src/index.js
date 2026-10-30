@@ -27,7 +27,8 @@ export class Room {
     this.lobbyT = 0;
     this.meta = null; // 공개 서버 정보 { persist, key, pub, wn, t }
     this.up = null;   // 올라오는 중인 세계 조각
-    this.grace = null;
+    this.grace = null; // 방장이 끊긴 뒤 기다리는 중 (그동안 같은 방장만 tok 으로 다시 붙을 수 있음)
+    this.hostTok = '';
     this.ready = state.blockConcurrencyWhile(async () => { this.meta = (await state.storage.get('meta')) || null; if (this.meta) this.pub = this.meta.pub; });
   }
   lobby(del) { // 로비에 이 방을 올리거나 내림
@@ -95,18 +96,22 @@ export class Room {
     const q = (k) => url.searchParams.get(k) || '';
     if (role === 'host') {
       if (this.host) err('taken');
+      else if (this.grace && (!this.hostTok || q('tok') !== this.hostTok)) err('wait'); // 끊긴 방장이 다시 붙는 중
       else {
         const persist = !!(this.meta && this.meta.persist);
         if (q('resume') === '1' && !persist) { err('none'); return new Response(null, { status: 101, webSocket: client }); }
+        const back = !!this.grace; // 🔁 끊겼던 방장이 다시 붙음 → 친구들은 그대로
         this.host = ws;
         if (this.grace) { clearTimeout(this.grace); this.grace = null; }
-        if (!persist) {
+        if (!back) this.hostTok = crypto.randomUUID();
+        if (back) { /* 공개 · 이름은 그대로 */ }
+        else if (!persist) {
           this.pub = null;
           if (q('pub') === '1') this.pub = { name: q('name').slice(0, 30), nick: q('nick').slice(0, 16), mode: q('mode').slice(0, 20) };
           if (q('persist') === '1' && this.pub && q('key').length >= 16) { this.meta = { persist: true, key: q('key').slice(0, 64), pub: this.pub, wn: 0, t: Date.now() }; await this.saveMeta(); }
         } else if (q('nick')) { this.pub = { ...this.meta.pub, nick: q('nick').slice(0, 16) }; } // 지금 방장 이름으로 목록에 보임
         const P = !!(this.meta && this.meta.persist);
-        ws.send(JSON.stringify({ t: '_ok', persist: P ? 1 : 0, pub: this.pub, saved: P ? (this.meta.wn || 0) : 0 }));
+        ws.send(JSON.stringify({ t: '_ok', persist: P ? 1 : 0, pub: this.pub, saved: P ? (this.meta.wn || 0) : 0, tok: this.hostTok, back: back ? 1 : 0, guests: [...this.guests.keys()] }));
         if (q('resume') === '1' && q('local') !== '1') await this.sendWorld(ws);
         this.lobby();
         ws.addEventListener('message', async (ev) => {
@@ -140,9 +145,15 @@ export class Room {
             this.grace = setTimeout(() => { this.grace = null; this.promote(); }, 6000);
             return;
           }
-          this.lobby(true);
-          for (const g of this.guests.values()) try { g.send('{"t":"bye"}'); g.close(1000, 'bye'); } catch (e) {}
-          this.guests.clear();
+          // 🔁 비공개 · 보통 방: 15초 동안 같은 방장이 다시 붙기를 기다렸다가 닫음
+          if (this.grace) clearTimeout(this.grace);
+          this.grace = setTimeout(() => {
+            this.grace = null;
+            if (this.host) return;
+            this.lobby(true);
+            for (const g of this.guests.values()) try { g.send('{"t":"bye"}'); g.close(1000, 'bye'); } catch (e) {}
+            this.guests.clear();
+          }, 15000);
         };
         ws.addEventListener('close', bye);
         ws.addEventListener('error', bye);
@@ -150,7 +161,7 @@ export class Room {
     } else {
       const persist = !!(this.meta && this.meta.persist);
       if (!this.host && persist && !this.grace) { try { ws.send('{"t":"_promote"}'); ws.close(4001, 'promote'); } catch (e) {} } // 빈 공개 서버: 들어온 사람이 서버를 켬
-      else if (!this.host) err(persist ? 'wait' : 'none');
+      else if (!this.host) err(persist || this.grace ? 'wait' : 'none');
       else if (this.guests.size >= MAX_GUESTS) err('full');
       else {
         const id = 'g' + this.next++;
