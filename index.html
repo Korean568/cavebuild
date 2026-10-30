@@ -313,7 +313,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.183 — 🔫 돌격소총 양손 · 총 크기 키움</h4>
+    <h4>🆕 v26.184 — ⛓ 감옥 차원 (조직 모드) · 🧩 모드로 차원 만들기</h4>
+    • 조직 모드(조직.js)를 깔면 <b>「감옥」 차원</b>이 생겨요: 가운데 복도 양쪽으로 쇠창살 감방이 늘어선 어두운 감옥 (벽 · 철창은 부술 수 없음 · 몹 없음).<br>
+    • 징역을 받으면 <b>감옥 차원의 감방</b>으로 끌려가고, 형기가 끝나면 <b>원래 있던 자리</b>로 돌아와요. <b>/감옥 설정</b>으로 다른 자리를 감옥으로 정할 수도 있어요 (/감옥 설정 초기화 = 감옥 차원으로). 경찰 쪽 · OP는 <b>/감옥 가기 · /감옥 나가기</b>.<br>
+    • 모드 API: <b>CB.dim</b>(차원 만들기 · 지형 함수) · CB.goDim · CB.dimNow
+    <h4>v26.183 — 🔫 돌격소총 양손 · 총 크기 키움</h4>
     • 돌격소총(Tek9)은 이제 <b>양손</b>으로 들어요 — 왼손이 앞쪽 탄창 부분을 받쳐요 (조준할 때도 같이 따라와요).<br>
     • 리볼버 · 돌격소총을 손에 들었을 때 <b>더 크게</b> 보여요.
     <h4>v26.182 — ▶ 솔로 · 🌐 멀티 나누기 · ⚙ 공개 서버 설정</h4>
@@ -2032,7 +2036,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.183 — 🔫 Two-handed rifle · Bigger guns</h4>
+    <h4>🆕 v26.184 — ⛓ Jail dimension (organization mod) · 🧩 Mods can add dimensions</h4>
+    • Installing 조직.js adds a 「감옥」 (jail) dimension; jail sentences send you to a cell there and bring you back afterwards. New mod API: CB.dim, CB.goDim, CB.dimNow.
+    <h4>v26.183 — 🔫 Two-handed rifle · Bigger guns</h4>
     • The assault rifle is held with both hands (left hand on the magazine), and both guns look bigger in hand.
     <h4>v26.182 — ▶ Solo · 🌐 Multiplayer split · ⚙ Public server settings</h4>
     • The title's Play is now Solo (new / my worlds) and Multiplayer (create public server, server list, join by code). Public servers get a settings box to rename and pick server mods.
@@ -6162,7 +6168,7 @@ function caveSpot(minD,maxD,yMin,yMax,tall=2){
   return null;
 }
 function spawnMobs(dt){
-  spawnT-=dt;if(spawnT>0)return;spawnT=1;if(world.flags.nospawn)return; // 💻 /mobspawn off
+  spawnT-=dt;if(spawnT>0)return;spawnT=1;if(world.flags.nospawn||(DIM[world.dim]&&DIM[world.dim].noMobs))return; // 💻 /mobspawn off
   for(const m of mobs)if(m.def.boss&&!m.dead&&!m.net)(world.flags.bossHp||(world.flags.bossHp={}))[m.kind]=m.hp; // 💗 보스 체력 기억 (멀리 가서 사라져도)
   for(const m of [...mobs])if(!m.def.persist&&m.dist()>(m.def.boss?140:90))m.remove();
   if(world.dim!=='over'){spawnDim();return;}
@@ -6237,6 +6243,7 @@ function arrivalOf(dim){
   if(dim==='end')return {x:.5,y:endTop(0,36).top+1,z:36.5,yaw:0};
   if(dim==='back')return {x:.5,y:11,z:.5,yaw:0};
   if(dim==='hallo')return {x:.5,y:21,z:20.5,yaw:0};
+  if(DIM[dim]&&DIM[dim].mod)return {...DIM[dim].spawn,yaw:0}; // 🧩 모드 차원
   return null;
 }
 let portalLock=false,portalT=0,traveling=false,portalLockT=0;
@@ -6273,6 +6280,7 @@ function restoreMobs(){const L=world.mobSave&&world.mobSave[world.dim];if(!L||(M
   for(const o of L){if(!MOBDEF[o.k])continue;if(o.p!=null){VPROF=o.p;ZV_PROF=o.p;}let m=null;try{m=new Mob(o.k,o.x,o.y+.05,o.z);}catch(e){}VPROF=ZV_PROF=null;
     if(m&&!m.dead){m.hp=Math.max(1,Math.min(o.hp,m.def.hp));m.ptT=3;if(o.sv)m.servant=true;}}}
 function enterDim(dim,pos,fromLoad){
+  if(!DIM[dim]||!GEN[dim]){dim='over';pos=(world.lastPos&&world.lastPos.over)||world.spawn||pos;} // 🧩 모드를 빼서 없어진 차원이면 프론티어로
   if(!fromLoad){const L=mobList();if(L)(world.mobSave||(world.mobSave={}))[world.dim]=L;} // 떠나는 차원의 몹을 체력 그대로 기억
   if(gm){scene.remove(gm.m);player.pos.copy(gm.home);gm=null;$('gmHud').style.display='none';}
   if(!fromLoad)world.lastPos[world.dim]={x:player.pos.x,y:player.pos.y,z:player.pos.z};
@@ -8589,6 +8597,11 @@ const CB={version:'v26.164',
   tag:(nick,pre,color)=>{nick=String(nick);if(pre==null&&color==null)delete MOD_TAGS[nick];else MOD_TAGS[nick]={pre:pre?String(pre).slice(0,30):'',color:color||''};for(const P of MP.peers.values())if(P.nick===nick&&P.tag){P.tag.material.map.dispose();P.tag.material.map=mpTagTex(nick);P.tag.material.needsUpdate=true;}}, // 🧩 머리 위 닉네임표 앞말 · 색
   discord:()=>!!(ACC&&accToken()&&ACC.discord), // 🧩 우리 디스코드 서버에 들어와 있는지 (최근 디스코드 보상 확인 기준)
   payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
+  dim:(key,o)=>{key=String(key);o=o||{};if(DIM[key]&&!DIM[key].mod)return false; // 🧩 차원 만들기: {name, bg:[r,g,b], fog:[가까이,멀리], light, day, caveB, stars, spawn:{x,y,z}, noMobs, gen(data,cx,cz)} — gen 은 백그라운드에서도 돌아서 블록 번호(숫자)만 써야 해요
+    DIM[key]={name:o.name||key,bg:o.bg||[.05,.05,.07],fog:o.fog||[10,60],light:o.light??.6,day:o.day??.5,caveB:o.caveB??.4,stars:o.stars??0,spawn:o.spawn||{x:.5,y:12,z:.5},noMobs:!!o.noMobs,mod:1};
+    if(typeof o.gen==='function'){GEN[key]=o.gen;let s=o.gen.toString();if(!/^(function|async|\(|[\w$]+\s*=>)/.test(s))s='function '+s;MOD_WSRC+=`\nGEN[${JSON.stringify(key)}]=${s};`;}return true;},
+  goDim:(key,x,y,z)=>{if(!DIM[key]||traveling)return false;const p=x!=null?{x,y,z}:(arrivalOf(key)||(world.lastPos&&world.lastPos[key])||(key==='over'?world.spawn:null)||{...DIM[key].spawn});travel(key,{x:p.x,y:p.y,z:p.z,yaw:p.yaw});return true;}, // 🧩 그 차원으로 이동 (자리를 안 주면 도착 자리)
+  dimNow:()=>world.dim, // 🧩 지금 있는 차원
   opOf:nick=>{if(!MP.on||nick===(MP.me&&MP.me.nick))return cmdIsOp();const c=[...MP.conns].find(q=>q.P&&q.P.nick===nick);return !!c&&mpConnOp(c);}, // 🧩 (방장 게임에서) 그 사람이 OP · 어드민인지
   hud:(id,html)=>{let el=document.getElementById('modhud_'+id);if(html==null){if(el)el.remove();return;}if(!el){el=document.createElement('div');el.id='modhud_'+id;el.className='modhud';document.body.appendChild(el);}el.innerHTML=html;document.querySelectorAll('.modhud').forEach((e,i)=>e.style.top=(60+i*36)+'px');}, // 🧩 화면 오른쪽 위 안내판
   id:name=>{for(let i=1;i<BL.length;i++)if(BL[i]&&BL[i].name===name)return i;for(let i=100;i<IT.length;i++)if(IT[i]&&IT[i].name===name)return i;return null;}, // 한국어 이름 → 번호

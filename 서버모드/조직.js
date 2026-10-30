@@ -43,6 +43,30 @@ const BADWORDS = ['시발', '씨발', 'ㅅㅂ', 'ㅆㅂ', '병신', 'ㅂㅅ', '�
 const stars = (n) => '★'.repeat(n);
 const CHEST = 48; // 상자 블록
 
+// ── ⛓ 감옥 차원: 이 모드를 깔면 「감옥」 차원이 생겨요 ──
+// 가운데 복도 양쪽으로 감방이 늘어선 어두운 감옥 · 벽 · 철창은 부술 수 없어요 · 몹이 안 생겨요
+// 징역을 받으면 감옥 차원의 감방으로 끌려가고, 형기가 끝나면 원래 있던 곳으로 돌아와요
+// /감옥 설정 으로 다른 자리(감옥 차원 안이든 프론티어든)를 감옥으로 정할 수도 있어요 · /감옥 가기 · /감옥 나가기 (경찰 쪽 · OP)
+const JAIL_WALL = CB.block({ key: 'jail_wall', name: '감옥 벽', hard: -1, paint: (u, v, x, y) => { const m = (y % 8 === 0) || ((x + (Math.floor(y / 8) % 2) * 8) % 16 === 0), k = 0.85 + 0.15 * Math.sin(x * 7.1 + y * 3.3); return m ? [52, 52, 58] : [96 * k, 96 * k, 104 * k]; } });
+const JAIL_BARS = CB.block({ key: 'jail_bars', name: '감옥 철창', hard: -1, paint: (u, v, x, y) => (x % 5 < 2 || y < 2 || y > 13) ? [58, 60, 68] : [22, 22, 26] });
+const LAMP = CB.id('등불') || 0;
+const CELLS_Z = 6, HALF = 42; // 감방 폭 · 감옥 길이(반)
+CB.dim('감옥', {
+  name: '감옥', bg: [0.05, 0.05, 0.07], fog: [6, 34], light: 0.5, day: 0.4, caveB: 0.25, stars: 0, noMobs: true, spawn: { x: 0.5, y: 11, z: 0.5 },
+  gen: new Function('data', 'cx', 'cz', `const W=${JAIL_WALL},B=${JAIL_BARS},L=${LAMP},I=(x,y,z)=>(y*16+z)*16+x;
+    for(let z=0;z<16;z++)for(let x=0;x<16;x++){const wx=cx*16+x,wz=cz*16+z,ax=Math.abs(wx),az=Math.abs(wz);
+      for(let y=0;y<=10;y++)data[I(x,y,z)]=W;
+      if(ax>12||az>${HALF}){for(let y=11;y<=20;y++)data[I(x,y,z)]=W;continue;}
+      data[I(x,15,z)]=(ax===0&&((wz%6)+6)%6===0&&L)?L:W;for(let y=16;y<=20;y++)data[I(x,y,z)]=W;
+      if(ax===12||az===${HALF}){for(let y=11;y<=14;y++)data[I(x,y,z)]=W;continue;}
+      if(ax>=3){const edge=((wz%${CELLS_Z})+${CELLS_Z})%${CELLS_Z}===0;
+        if(edge){for(let y=11;y<=14;y++)data[I(x,y,z)]=W;}
+        else if(ax===3){for(let y=11;y<=13;y++)data[I(x,y,z)]=B;data[I(x,14,z)]=W;}
+        else{data[I(x,14,z)]=(ax===8&&((wz%${CELLS_Z})+${CELLS_Z})%${CELLS_Z}===3&&L)?L:W;}}}`),
+});
+// 감방 자리: 수감자마다 다른 칸 (오른쪽 · 왼쪽 번갈아)
+function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
+
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [] }; };
 let S = load();
@@ -95,7 +119,7 @@ function clearSuits(nick) { S.suit = S.suit.filter((c) => c.who !== nick); delet
 function toJail(nick, min, why) {
   S.jail[nick] = min * 60; clearSuits(nick); delete S.fine[nick]; save();
   CB.send('org-jail', { to: nick });
-  CB.say(`⛓ ${nick} 님 징역 ${min}분 (${why})${S.jailPos ? '' : ' · 감옥이 없어서 지금 자리에 갇혀요 (경찰 장교가 /감옥 설정)'}`);
+  CB.say(`⛓ ${nick} 님 징역 ${min}분 (${why}) · ${S.jailPos ? '감옥으로' : '감옥 차원의 감방으로'} 끌려가요`);
 }
 function askFine(nick, n, why) {
   S.fine[nick] = { n, why }; save();
@@ -167,8 +191,9 @@ function apply(op, a, from, fromOp, fromDiscord) {
     }
     case 'jailpos': {
       if (!(fromOp || (isLaw(from) && isOfficer(F)))) return tell(from, '감옥은 경찰 쪽 장교나 OP만 정할 수 있어요');
-      S.jailPos = { x: +a.x, y: +a.y, z: +a.z }; save();
-      return CB.say('⛓ 감옥 자리를 정했어요');
+      if (a.reset) { S.jailPos = null; save(); return CB.say('⛓ 감옥 자리를 「감옥 차원의 감방」으로 되돌렸어요'); }
+      S.jailPos = { x: +a.x, y: +a.y, z: +a.z, dim: String(a.dim || 'over') }; save();
+      return CB.say(`⛓ 감옥 자리를 정했어요 (${a.dim === '감옥' ? '감옥 차원' : '이 자리'})`);
     }
     case 'release': {
       if (!(fromOp || (isLaw(from) && isOfficer(F)))) return tell(from, '석방은 경찰 쪽 장교나 OP만 할 수 있어요');
@@ -372,8 +397,15 @@ CB.command('고소', '/고소 — 내 고소 목록 · /고소 취소 [@닉] · 
   for (const x of onMe) c.say(`⚠ 나를 고소: ${x.by} · ${stars(x.lv)} ${GRADE[x.lv]} · ${x.why}`);
 }, { everyone: true });
 CB.command('체포','/체포 @닉 [벌금|징역|15|20] — 지명수배자 처벌 (경찰 쪽 조직 · OP)', (a) => req('arrest', { who: a[0], how: a[1] }), { everyone: true });
-CB.command('감옥', '/감옥 설정 — 감옥 자리 정하기 (경찰 장교 · OP) · /감옥 — 수감자 목록', (a, c) => {
-  if (a[0] === '설정') return req('jailpos', pos());
+CB.command('감옥', '/감옥 — 수감자 목록 · /감옥 설정 (지금 자리를 감옥으로) · /감옥 설정 초기화 · /감옥 가기 · /감옥 나가기', (a, c) => {
+  if (a[0] === '설정') return req('jailpos', a[1] === '초기화' ? { reset: 1 } : { ...pos(), dim: CB.dimNow() });
+  if (a[0] === '가기' || a[0] === '나가기') {
+    if (!(CB.isOp() || isLaw(me()))) return c.say('감옥 차원은 경찰 쪽 조직(CP · CMP · 사령부)이나 OP만 드나들 수 있어요');
+    if (S.jail[me()]) return c.say('수감 중에는 나갈 수 없어요');
+    if (a[0] === '가기') { CB.goDim('감옥'); return c.say('⛓ 감옥 차원으로 가요'); }
+    if (CB.dimNow() !== '감옥') return c.say('지금 감옥 차원에 있지 않아요');
+    CB.goDim('over'); return c.say('프론티어로 돌아가요');
+  }
   const L = Object.entries(S.jail);
   if (!L.length) return c.say('지금 수감 중인 사람이 없어요');
   for (const [n, s] of L) c.say(`⛓ ${n} · 남은 시간 ${Math.ceil(s / 60)}분`);
@@ -381,7 +413,7 @@ CB.command('감옥', '/감옥 설정 — 감옥 자리 정하기 (경찰 장교 
 CB.command('석방', '/석방 @닉 (경찰 장교 · OP)', (a) => req('release', { who: a[0] }), { everyone: true });
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
-let saveJailT = 0, jailHere = null;
+let saveJailT = 0, jailFrom = null, jailGoT = 0;
 let acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
@@ -417,9 +449,15 @@ CB.onTick((dt) => {
   // 내가 수감 중이면 감옥 밖으로 못 나감
   const J = S.jail[me()];
   if (J > 0) {
-    const jp = S.jailPos || jailHere || (jailHere = pos()), p = pos(); // 감옥 자리가 없으면 잡힌 자리에 갇힘
-    if (Math.hypot(p.x - jp.x, p.z - jp.z) > 5) CB.tp(jp.x, jp.y + 0.2, jp.z);
-  } else jailHere = null;
+    if (!jailFrom) { const p0 = pos(); jailFrom = { dim: CB.dimNow(), x: p0.x, y: p0.y, z: p0.z }; } // 끌려가기 전 자리 (풀려나면 돌아감)
+    const jp = S.jailPos || cellOf(me()), jd = jp.dim || 'over', p = pos();
+    if (CB.dimNow() !== jd) { if ((jailGoT -= 1) <= 0) { jailGoT = 4; CB.goDim(jd, jp.x, jp.y + 0.2, jp.z); } } // 감옥 차원으로 끌려감
+    else if (Math.hypot(p.x - jp.x, p.z - jp.z) > 4 || Math.abs(p.y - jp.y) > 4) CB.tp(jp.x, jp.y + 0.2, jp.z);
+  } else if (jailFrom) { // 형기가 끝남 → 원래 자리로
+    const f = jailFrom; jailFrom = null; jailGoT = 0;
+    if (CB.dimNow() !== f.dim) CB.goDim(f.dim, f.x, f.y + 0.2, f.z); else CB.tp(f.x, f.y + 0.2, f.z);
+    note('🔓 풀려났어요 — 원래 있던 곳으로 돌아가요');
+  } else if (CB.dimNow() === '감옥' && !(CB.isOp() || isLaw(me())) && (jailGoT -= 1) <= 0) { jailGoT = 4; CB.goDim('over'); } // 수감자가 아닌데 감옥 차원에 있으면 (새로고침 등) 프론티어로
   const y = mine(), W = S.w[me()];
   let h = '';
   if (y) {
