@@ -311,7 +311,14 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.177 — 🚨 지명수배 (조직 모드)</h4>
+    <h4>🆕 v26.179 — 🖥 방장 없이도 돌아가는 공개 서버</h4>
+    • 플레이 → 🌍 공개 방 칸의 <b>➕ 공개 서버 만들기</b>: 새 세계를 만들어 바로 공개 서버로 열어요. 세계는 30초마다 서버에 저장돼요.<br>
+    • 방장이 나가거나 끊기면 남은 사람 중 한 명이 <b>저절로 새 방장</b>이 되고 다른 사람은 다시 들어와요. 아무도 없으면 목록에 💤 로 남고, 누가 들어가면 그 사람이 서버를 다시 켜요.<br>
+    • 끊기면 저절로 다시 연결해요. 만든 사람만 🗑 로 지울 수 있어요 (지우기 전까지 계속 남아요).
+    <h4>v26.178 — 📝 고소 (조직 모드)</h4>
+    • 범죄를 당하면 <b>피해자 이름으로 자동 고소</b>가 들어가고, 고소 중 가장 높은 등급이 지명수배 등급이 돼요. 피해자가 <b>/고소 취소 @닉</b> 하면 고소가 빠지고, 남은 고소가 없으면 지명수배가 풀려요.<br>
+    • /고소 (내가 한 · 당한 고소) · /고소 @닉 [1|2] 사유 (부적절한 행동 직접 고소). 욕설에 @닉이 있으면 그 사람이 고소해요.
+    <h4>v26.177 — 🚨 지명수배 (조직 모드)</h4>
     • 범죄를 하면 머리 위에 <b>🚨 지명수배 ★ 등급</b>이 떠요: ★ 1등급 질서위반(부적절한 말 · 벌금 1 케이브코인) · ★★ 2등급 경범죄(폭행 · 도둑질 · 벌금 10 또는 징역 10분) · ★★★ 3등급 중범죄(경찰 폭행 · 징역 15 또는 20분) · ★★★★ 4등급 무단사살(징역 30분) · ★★★★★ 5등급 대학살(5분 안에 3명 · 징역 1시간).<br>
     • 경찰 쪽 조직(CP · CMP · 사령부)이 <b>/체포 @닉</b> 하면 처벌돼요. 벌금은 내 케이브코인에서 빠지고, 모자라면 징역 10분. 감옥에서는 나갈 수 없어요. 정당방위 · 경찰의 수배자 제압은 범죄가 아니에요.<br>
     • /수배 · /감옥 · /수배 @닉 등급 사유 · /수배 해제 · /감옥 설정 · /석방. 모드 API: CB.on('pvp') · CB.on('pdeath') · CB.payFine
@@ -954,7 +961,8 @@ body.mobile #toasts{top:72px}
   <h3 class="sub">🎮 모드</h3><div id="tMode" class="modeRow"><button data-m="creative">🛠 크리에이티브</button><button data-m="survival">⚔ 서바이벌</button><button data-m="spectator">👁 관전</button></div><div class="modeDesc" id="tModeDesc"></div>
   <h3 class="sub">🔥 난이도</h3><div id="tDiff" class="modeRow"><button data-d="safe">🕊 세이프</button><button data-d="easy">🙂 쉬움</button><button data-d="normal">⚖ 보통</button><button data-d="hard">😈 어려움</button><button data-d="hardcore">💀 하드코어</button></div><div class="modeDesc" id="tDiffDesc"></div>
     <button class="btn" id="btnNew">새 세계 만들기</button></div>
-  <div class="ppsec"><h3>🌍 공개 방 <button class="btn" id="mpRoomsRe" style="padding:2px 10px;font-size:13px">🔄</button></h3><div id="mpRooms" class="mpRooms"></div></div>
+  <div class="ppsec"><h3>🌍 공개 방 <button class="btn" id="mpRoomsRe" style="padding:2px 10px;font-size:13px;width:auto;display:inline-block;margin:0 0 0 6px">🔄</button></h3><div id="mpRooms" class="mpRooms"></div>
+    <button class="btn" id="mpNewSrv">➕ 공개 서버 만들기 <small style="opacity:.75">(내가 나가도 계속 열려 있어요)</small></button></div>
   <div class="ppsec"><h3>🌐 친구 세계 참가 (방 코드)</h3><input id="mpCode" type="text" maxlength="6" placeholder="방 코드 6자리" autocomplete="off" style="text-transform:uppercase"><button class="btn" id="mpJoinBtn">참가하기</button></div>
   <div class="ppsec"><h3>🗂 전에 하던 서버</h3><div id="worldList"></div></div>
   <button class="btn" id="btnPlayClose">닫기</button></div></div>
@@ -2008,7 +2016,11 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.177 — 🚨 Wanted levels (organization mod)</h4>
+    <h4>🆕 v26.179 — 🖥 Public servers that run without the host</h4>
+    • Play → Public rooms → ➕ Create public server. The world is saved to the relay every 30s; if the host leaves, another player takes over automatically, and empty servers wake up when someone joins. Only the creator can delete it.
+    <h4>v26.178 — 📝 Complaints (organization mod)</h4>
+    • Victims automatically file a complaint; the highest complaint sets the wanted level. /고소 취소 @name withdraws it.
+    <h4>v26.177 — 🚨 Wanted levels (organization mod)</h4>
     • Crimes put a wanted level (★ to ★★★★★) above your head; police organizations can /arrest for a CaveCoin fine or jail time. New mod events: pvp, pdeath; CB.payFine.
     <h4>v26.176 — 🪖 Organization (team) mod · More mod API</h4>
     • 서버모드/조직.js: 7 organizations with ranks, promotions, colored name tags, bases, assembly, training and missions. New mod API: CB.send / CB.on('msg'), CB.save / CB.load, CB.tag, CB.me, CB.pos, CB.setSpawn, CB.discord, CB.opOf.
@@ -8415,7 +8427,7 @@ $('tMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;wantMode=
 $('tDiff').onclick=e=>{const b=e.target.closest('button');if(!b)return;wantDiff=b.dataset.d;saveWant();renderTSettings();};
 $('btnNew').onclick=()=>{audio();if(!saveChecked){toast('저장된 세계를 확인하는 중이에요. 잠시 뒤에 다시 눌러 주세요');return;}
   wantSeed=parseSeed($('seedIn').value);wantName=$('worldName').value.trim()||(LANG==='en'?'World ':'세계 ')+(WORLDS.length+1);const id=newWorldId();
-  $('playPanel').classList.remove('show');goFull();startWorld(null,()=>{CUR=id;saveGame();});
+  $('playPanel').classList.remove('show');goFull();startWorld(null,()=>{CUR=id;saveGame();if(MP.autoPub){MP.autoPub=false;setTimeout(()=>mpHost({persist:true}),800);}}); // ➕ 공개 서버 만들기에서 왔으면 바로 공개 서버로
   if(wantSeed!==null)setTimeout(()=>toast(`🌱 세계 코드 <b>${seed}</b> 로 세계를 만들었습니다`),900);};
 $('worldList').onclick=e=>{const b=e.target.closest('button');if(!b)return;
   if(b.dataset.play){const id=b.dataset.play,ent=WORLDS.find(q=>q.id===id);audio();loadWorld(id).then(sv=>{if(!sv||!validSave(sv)){toast('이 세계를 불러오지 못했어요');return;}if(ent)sv.name=ent.name;$('playPanel').classList.remove('show');goFull();startWorld(sv,()=>{CUR=id;});});}
@@ -8725,19 +8737,53 @@ function mpApply(L){MP.rx=1;try{for(const [d,x,y,z,id] of L){if(y<0||y>=CH)conti
 function mpPos(P,o){P.t=o;if(o.s&&P.sw<=0)P.sw=1;}
 function mpChatShow(n,m){modEmit('chat',n,m);const me=MP.on&&MP.me.nick&&n!==MP.me.nick&&m.toLowerCase().includes('@'+MP.me.nick.toLowerCase());toast(`💬 <b>${mpEsc(n)}</b>: ${mpEsc(m).replace(/@([^\s@<&]+)/g,'<b style="color:#7ab0ff">@$1</b>')}`);if(me){tone(1320,1760,.12,.08);toast(`🔔 <b>${mpEsc(n)}</b> 님이 나를 불렀어요`);}}
 // 방장: 방 열기 → 친구가 들어오면 세계를 통째로 보내 줌
-function mpHost(){if(!mpOk()||MP.on||MP.ws)return;MP.me=mpMe();renderMP(mpL('방을 여는 중…','Opening room…'));
-  const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];
-  const pi=mpPubInfo(),ws=mpWS(code,'host',MP.pubSel?`&pub=1&name=${encodeURIComponent(pi.name)}&nick=${encodeURIComponent(pi.nick)}&mode=${encodeURIComponent(pi.mode)}`:''),byId=new Map();MP.ws=ws;MP.pub=!!MP.pubSel; // 🌍 공개 방이면 로비에 올림
+// 🌍 공개 서버(persist): 방장이 나가도 꺼지지 않음 — 30초마다 세계를 중계 서버에 저장, 방장이 바뀌면 다른 사람이 이어서 켬
+//   opt: persist(공개 서버) · code · key(만든 사람 열쇠) · resume(저장된 세계로 켜기) · local(내 세계 그대로 다시 연결) · re(끊긴 연결 다시)
+const MP_OWN_K='cb-own-servers';
+function mpOwn(){try{return JSON.parse(localStorage.getItem(MP_OWN_K)||'{}');}catch(e){return {};}} // 내가 만든 공개 서버 (코드 → 지우는 열쇠)
+function mpOwnSet(code,key){const o=mpOwn();if(key)o[code]=key;else delete o[code];try{localStorage.setItem(MP_OWN_K,JSON.stringify(o));}catch(e){}}
+function mpHost(opt){opt=opt||{};if(!mpOk()||(!opt.re&&(MP.on||MP.ws)))return;if(!opt.re||!MP.me)MP.me=mpMe();if(!opt.re)renderMP(mpL('방을 여는 중…','Opening room…'));
+  let code=opt.code;if(!code){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';code='';for(let i=0;i<6;i++)code+=A[Math.random()*A.length|0];}
+  const persist=!!opt.persist,key=persist&&!opt.resume?(opt.key||Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('')):'';
+  if(key)mpOwnSet(code,key);
+  const pi=mpPubInfo(),pub=MP.pubSel||persist,E=encodeURIComponent;
+  const extra=(pub?`&pub=1&name=${E(pi.name)}&mode=${E(pi.mode)}`:'')+`&nick=${E(MP.me.nick)}`+(key?`&persist=1&key=${key}`:'')+(opt.resume?'&resume=1':'')+(opt.local?'&local=1':'');
+  const ws=mpWS(code,'host',extra);MP.ws=ws;MP.pub=!!pub;if(!opt.re)MP.byId=new Map();const byId=MP.byId,wb=[];MP.leaving=false;
   ws.onmessage=ev=>{const s=ev.data;if(typeof s!=='string')return;
-    if(s[0]==='{'){const d=JSON.parse(s);if(d.t==='_ok'){MP.on=MP.host=true;MP.myId='H';mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();toast(mpL(`🌐 ${MP.pub?'🌍 <b>공개</b>':'🔒 <b>비공개</b>'} 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 ${MP.pub?'Public':'Private'} room open! Code: <b>${code}</b>`));}
-      else if(d.t==='_err'){ws.onclose=null;MP.ws=null;if(d.m==='taken')mpHost();else{toast('🌐 '+mpEsc(d.m));renderMP();}}return;}
+    if(s[0]==='{'){const d=JSON.parse(s);
+      if(d.t==='_ok'){MP.persist=!!d.persist;MP.reN=0;
+        if(opt.re){toast(mpL('🌐 서버에 다시 연결했어요','🌐 Reconnected'));if(MP.persist)mpSaveLoop();return;}
+        if(opt.resume&&!opt.local){renderMP(mpL('🌍 서버를 켜는 중… 세계를 받고 있어요','🌍 Starting the server…'));return;} // 저장된 세계가 _w 로 옴
+        MP.on=MP.host=true;MP.myId='H';mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();if(MP.persist)mpSaveLoop();
+        toast(MP.persist?mpL(`🌍 <b>공개 서버</b>를 열었어요! 내가 나가도 서버는 계속 열려 있어요 · 코드: <b>${code}</b>`,`🌍 Public server open! It stays up after you leave · Code: <b>${code}</b>`):mpL(`🌐 ${MP.pub?'🌍 <b>공개</b>':'🔒 <b>비공개</b>'} 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 ${MP.pub?'Public':'Private'} room open! Code: <b>${code}</b>`));}
+      else if(d.t==='_w'){wb[d.i]=d.d||'';if(!d.n||wb.filter(x=>x!=null).length===d.n)mpResumeStart(d.n?wb.join(''):'',code);}
+      else if(d.t==='_deleted'){MP.leaving=true;mpOwnSet(code,null);toast(mpL('🗑 공개 서버가 지워졌어요','🗑 The server was deleted'));mpStop();}
+      else if(d.t==='_err'){ws.onclose=null;MP.ws=null;if(d.m==='taken'&&!opt.code)mpHost(opt);else if(d.m==='taken'&&opt.resume&&(MP.reN=(MP.reN||0)+1)<6){setTimeout(()=>{MP.carry2=1;mpJoin(code);},2000);}else{toast('🌐 '+mpEsc(d.m));renderMP();}}return;}
     const i=s.indexOf('|'),gid=s.slice(0,i),raw=s.slice(i+1);
-    if(raw==='{"t":"_join"}'){const c={id:gid,open:true,B:{},send(o){if(!this.open||ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(gid+'|'+x);},close(){this.open=false;}}; // 친구 한 명 = 가짜 연결
+    if(raw==='{"t":"_join"}'){const c={id:gid,open:true,B:{},send(o){const w=MP.ws;if(!this.open||!w||w.readyState!==1)return;if(w.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))w.send(gid+'|'+x);},close(){this.open=false;}}; // 친구 한 명 = 가짜 연결 (다시 연결해도 같은 친구)
       byId.set(gid,c);MP.conns.add(c);return;}
     const c=byId.get(gid);if(!c)return;
     if(raw==='{"t":"_leave"}'){byId.delete(gid);c.open=false;MP.conns.delete(c);if(c.P){mpDel(c.P.id);mpSend({t:'leave',id:c.P.id});toast(mpL(`🌐 <b>${mpEsc(c.P.nick)}</b> 님이 나갔어요`,`🌐 <b>${mpEsc(c.P.nick)}</b> left`));renderMP();}return;}
     const d=mpUnpack(c.B,raw);if(d)mpHostRecv(c,d);};
-  ws.onclose=()=>{if(MP.ws!==ws)return;const was=MP.on;MP.ws=null;if(was){toast(mpL('🌐 중계 서버와 연결이 끊겨서 방이 닫혔어요','🌐 Lost the relay server — room closed'));mpStop();}else{toast(mpL('🌐 중계 서버에 연결하지 못했어요','🌐 Could not reach the relay server'));renderMP();}};}
+  ws.onclose=()=>{if(MP.ws!==ws)return;const was=MP.on;MP.ws=null;
+    if(was&&MP.persist&&!MP.leaving&&(MP.reN=(MP.reN||0)+1)<=8){toast(mpL('🌐 연결이 끊겨서 다시 연결하는 중…','🌐 Reconnecting…'));setTimeout(()=>{if(MP.on&&!MP.ws)mpHost({re:1,code,persist:true,resume:1,local:1});},1500*MP.reN);return;} // 🌍 공개 서버: 끊기면 내 세계 그대로 다시 연결
+    if(was){toast(mpL('🌐 중계 서버와 연결이 끊겨서 방이 닫혔어요','🌐 Lost the relay server — room closed'));mpStop();}else{toast(mpL('🌐 중계 서버에 연결하지 못했어요','🌐 Could not reach the relay server'));renderMP();}};}
+// 저장된 공개 서버 세계로 시작 (새 방장): 세계 안의 「전 방장」 상태는 그 사람 몫으로 옮기고, 나는 내 상태로
+function mpResumeStart(text,code){let sn=null;try{sn=text?JSON.parse(text):null;}catch(e){}if(sn&&!validSave(sn))sn=null;
+  const me=MP.me.nick,carry=MP.carry;MP.carry=null;
+  if(sn){const M=sn.mpp||(sn.mpp={});if(sn.mpHost&&sn.mpHost!==me)M[sn.mpHost]={inv:sn.inv,armor:sn.armor,p:sn.p,dim:sn.dim};
+    if(sn.mpHost!==me||carry){const st=carry||M[me],sp=sn.spawn||{x:0,y:80,z:0};sn.inv=st&&st.inv||new Array(36).fill(null);sn.armor=st&&st.armor||[];sn.dim=st&&st.dim||'over';sn.p=st&&st.p||{x:sp.x,y:sp.y,z:sp.z,yaw:0,pitch:0,hp:20,food:20};}
+    delete M[me];sn.items=[];sn.sr=null;}
+  $('playPanel').classList.remove('show');goFull();
+  startWorld(sn,()=>{CUR=null;MP.on=MP.host=true;MP.myId='H';mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();mpSaveLoop();
+    toast(mpL(`🌍 공개 서버를 이어서 켰어요 — 지금은 내가 방장이에요 · 코드 <b>${code}</b>`,`🌍 You're now hosting this public server · Code <b>${code}</b>`));});}
+function mpSaveLoop(){clearInterval(MP.svT);MP.svT=setInterval(mpSaveUp,30000);setTimeout(mpSaveUp,3000);}
+function mpSaveUp(){const w=MP.ws;if(!MP.on||!MP.host||!MP.persist||!w||w.readyState!==1)return;let sn;
+  try{sn=toPortable(saveSnapshot());}catch(e){return;}sn.mpHost=MP.me.nick;sn.sr=null;
+  const t=JSON.stringify(sn),n=Math.ceil(t.length/250000),s=Date.now()%1e9;if(n>400)return;
+  for(let i=0;i<n;i++)w.send('!sv'+JSON.stringify({s,i,n})+'\n'+t.slice(i*250000,(i+1)*250000));}
+function mpDelServer(code){const key=mpOwn()[code];if(!key)return;if(!confirm(mpL('이 공개 서버를 지울까요? 세계가 영원히 사라져요','Delete this public server? The world will be gone forever')))return;
+  fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/del',{method:'POST',body:JSON.stringify({key})}).then(r=>r.json()).then(d=>{if(d.error){toast('🌐 '+mpEsc(d.error));return;}mpOwnSet(code,null);toast(mpL('🗑 공개 서버를 지웠어요','🗑 Server deleted'));if(MP.on&&MP.code===code){MP.leaving=true;mpStop();}mpRoomsLoad();}).catch(()=>toast(mpL('🌐 지우지 못했어요','🌐 Could not delete')));}
 function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   if(d.t==='hi'){if(!running)return;const nick=String(d.nick||'?').slice(0,16);
     if((world.flags.bans||[]).some(x=>x.toLowerCase()===nick.toLowerCase())){c.send({t:'no',m:mpL('🔨 이 방에서 밴당했어요','🔨 You are banned from this room')});return;}
@@ -8787,26 +8833,38 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='vp'){mpVehPos(d);mpSend(d,c);}
   else if(d.t==='vb'){const v=VEH.find(q=>q.d.vid===d.v);if(v)v.boost=v.d.boost=!!d.b;mpSend(d,c);}
   else if(d.t==='st'){(world.mpp||(world.mpp={}))[c.P.nick]={inv:d.inv,armor:d.armor,p:d.p,dim:d.dim};}}
-function mpStop(){mpSend({t:'bye'});const ws=MP.ws;MP.ws=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);MP.conns.clear();
+function mpStop(){MP.leaving=true;clearInterval(MP.svT);if(MP.persist&&MP.host){try{mpSaveUp();}catch(e){}}else mpSend({t:'bye'}); // 🌍 공개 서버: 친구들을 내보내지 않음 (중계 서버가 새 방장을 정함)
+  MP.persist=false;const ws=MP.ws;MP.ws=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);MP.conns.clear();
   for(const id of [...MP.peers.keys()])mpDel(id);for(const g of groundItems)delete g.gid;Object.assign(MP,{on:false,host:false,code:'',hc:null,q:[],pend:[]});document.body.classList.remove('mpon');renderMP();}
 // 친구: 방 코드로 참가 → 방장 세계를 받아서 시작 (내 PC에는 저장 안 함 · 방장이 저장)
-function mpJoin(code){code=String(code||'').trim().toUpperCase();MP.op=false;if(!/^[A-Z0-9]{6}$/.test(code)){toast(mpL('🌐 방 코드 6자리를 넣어 주세요','🌐 Enter the 6-letter room code'));return;}
+function mpJoin(code){code=String(code||'').trim().toUpperCase();MP.op=false;MP.byeGot=false;if(!/^[A-Z0-9]{6}$/.test(code)){toast(mpL('🌐 방 코드 6자리를 넣어 주세요','🌐 Enter the 6-letter room code'));return;}
   if(!mpOk()||MP.on||running||MP.ws)return;MP.me=mpMe();audio();toast(mpL('🌐 방에 연결하는 중…','🌐 Connecting…'));
   const ws=mpWS(code,'guest'),B={};MP.ws=ws;let got=false;
   const fail=m=>{if(got)return;toast('🌐 '+m);ws.onclose=null;try{ws.close();}catch(e){}MP.ws=null;MP.hc=null;};
   MP.hc={get open(){return ws.readyState===1;},send(o){if(ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(x);}};
   const tm=setTimeout(()=>fail(mpL('방에 연결하지 못했어요 (잠시 뒤 다시 해 보세요)','Could not reach the room')),25000);
   ws.onmessage=ev=>{const d=mpUnpack(B,ev.data);if(!d||typeof d!=='object')return;
-    if(d.t==='_ok'){ws.send(JSON.stringify({t:'hi',...MP.me,adm:cmdIsAdmin()?1:0,mods:MOD_RAN}));return;}
+    if(d.t==='_ok'){MP.gPersist=!!d.persist;MP.reN=0;ws.send(JSON.stringify({t:'hi',...MP.me,adm:cmdIsAdmin()?1:0,mods:MOD_RAN}));return;}
+    if(d.t==='_promote'||d.t==='_rehost'){clearTimeout(tm);ws.onclose=null;MP.ws=null;MP.hc=null;mpHandoff(code,d.t==='_promote');return;} // 🌍 공개 서버의 방장이 바뀜
     if(d.t==='mods'){clearTimeout(tm);mpModsAsk(code,d);return;}
-    if(d.t==='_err'){clearTimeout(tm);fail(d.m==='none'?mpL('그 코드의 방이 없어요','No room with that code'):d.m==='full'?mpL('방이 꽉 찼어요','The room is full'):mpEsc(d.m));return;}
+    if(d.t==='_err'){clearTimeout(tm);if(d.m==='wait'&&(MP.reN=(MP.reN||0)+1)<=12){ws.onclose=null;MP.ws=null;MP.hc=null;toast(mpL('🌍 서버의 방장이 바뀌는 중… 잠시 뒤 다시 들어가요','🌍 The server is switching hosts…'));setTimeout(()=>mpJoin(code),2500);return;}
+      fail(d.m==='none'?mpL('그 코드의 방이 없어요','No room with that code'):d.m==='full'?mpL('방이 꽉 찼어요','The room is full'):mpEsc(d.m));return;}
     if(d.t==='no'){clearTimeout(tm);fail(mpEsc(d.m));return;}
     if(d.t==='world'){clearTimeout(tm);got=true;MP.code=code;MP.hostNick=d.host;const sv=d.snap;if(!validSave(sv)){toast('🌐 세계를 받지 못했어요');return;}
       sv.name=mpL(`🌐 ${d.host} 님의 세계`,`🌐 ${d.host}'s world`);$('playPanel').classList.remove('show');goFull();
       startWorld(sv,()=>{CUR=null;MP.on=true;MP.host=false;MP.myId=d.id;MP.pvp=d.pvp!==false;mpCtInit();mpWsInit();for(const m of [...mobs])m.remove();document.body.classList.add('mpon');for(const o of d.players||[])mpAdd(o);
         const Q=MP.pend;MP.pend=[];for(const o of Q)mpGuestRecv(o);toast(mpL(`🌐 <b>${mpEsc(d.host)}</b> 님의 세계에 들어왔어요! T: 채팅`,`🌐 Joined <b>${mpEsc(d.host)}</b>'s world! T: chat`));});return;}
     if(!MP.on){MP.pend.push(d);return;}mpGuestRecv(d);};
-  ws.onclose=()=>{clearTimeout(tm);MP.ws=null;if(MP.on)mpEnd(mpL('방과 연결이 끊겼어요','Disconnected from the room'));else fail(mpL('연결이 끊겼어요','Disconnected'));};}
+  ws.onclose=()=>{clearTimeout(tm);MP.ws=null;if(MP.on&&MP.gPersist&&!MP.byeGot){mpHandoff(code,false);return;} // 🌍 공개 서버: 끊기면 다시 들어감
+    if(MP.on)mpEnd(mpL('방과 연결이 끊겼어요','Disconnected from the room'));else fail(mpL('연결이 끊겼어요','Disconnected'));};}
+// 🌍 공개 서버 방장 바뀜 · 끊김: 게임을 새로 열어서 그 서버로 다시 들어감 (내 가방 · 위치는 가지고 감)
+function mpHandoff(code,promote){
+  if(!running){if(promote){MP.me=MP.me||mpMe();mpHost({code,persist:true,resume:1});}else setTimeout(()=>mpJoin(code),2500);return;}
+  const st=mpState();try{sessionStorage.setItem('cb-handoff',JSON.stringify({code,promote:promote?1:0,st:{inv:st.inv,armor:st.armor,p:st.p,dim:st.dim}}));sessionStorage.setItem('cb-play','1');}catch(e){}
+  toast(promote?mpL('🌍 방장이 나가서 <b>내가 새 방장</b>이 돼요… 다시 여는 중','🌍 The host left — you are the new host…'):mpL('🌍 서버의 방장이 바뀌어서 다시 들어가는 중…','🌍 Rejoining the server…'));
+  MP.on=false;setTimeout(()=>{location.href=location.origin+location.pathname+'?play=1';},1200);}
+{let h=null;try{h=JSON.parse(sessionStorage.getItem('cb-handoff')||'null');sessionStorage.removeItem('cb-handoff');}catch(e){} // 새로 연 뒤: 이어서 서버로
+  if(h&&/^[A-Z0-9]{6}$/.test(h.code))setTimeout(()=>{if(h.promote){MP.carry=h.st;MP.me=mpMe();mpHost({code:h.code,persist:true,resume:1});}else mpJoin(h.code);},2000);}
 function mpGuestRecv(d){
   if(d.t==='p'){const P=MP.peers.get(d.id);if(P)mpPos(P,d);}
   else if(d.t==='b'&&Array.isArray(d.L))mpApply(d.L);
@@ -8844,13 +8902,14 @@ function mpGuestRecv(d){
   else if(d.t==='lang'){if(typeof d.l==='string')setLang(d.l,1);}
   else if(d.t==='cuff')cuffIn(d); // ⛓ 수갑
   else if(d.t==='mod')modEmit('msg',d.k,d.v,d.n); // 🧩 모드 신호
-  else if(d.t==='bye')mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}
+  else if(d.t==='bye'){MP.byeGot=true;mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
 function mpEnd(m){if(!MP.on)return;MP.on=false;toast('🌐 '+m+mpL(' — 타이틀로 돌아가요',' — returning to title'));setTimeout(()=>$('btnQuit').click(),2500);}
 function mpBye(){if(!MP.on&&!MP.ws)return;if(MP.host){mpStop();return;}try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}const ws=MP.ws;MP.on=false;MP.ws=null;if(ws)ws.onclose=null;setTimeout(()=>{try{ws&&ws.close();}catch(e){}},300);}
 addEventListener('pagehide',()=>{if(MP.on)mpBye();});
 const _mpV=new THREE.Vector3();
 function mpTick(dt){if(!MP.on)return;
+  if(!MP.host&&(MP.stT=(MP.stT||0)+dt)>20){MP.stT=0;try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}} // 🌍 20초마다 내 가방 · 위치를 방장에게 (방장이 바뀌어도 이어서)
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
     const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0)};
@@ -9372,10 +9431,10 @@ function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   else h=`<div>🌐 <b>${mpEsc(MP.hostNick)}</b> ${mpL('님의 세계','\'s world')} · ${mpL('방 코드','Code')} <b>${MP.code}</b></div>`;
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPubT">${MP.pub?'🌍 '+mpL('공개 방 (누구나)','Public room'):'🔒 '+mpL('비공개 방 (코드만)','Private room')} · ${mpL('바꾸기','switch')}</button>`;
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
-  if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`:'');
+  if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?(MP.persist?`<div class="tip">🖥 ${mpL('공개 서버예요 — 내가 나가도 다른 사람이 방장을 이어받고, 아무도 없으면 세계가 저장돼요','Public server — stays up after you leave')}</div><button class="btn" id="mpStopBtn">🚪 ${mpL('나가기 (서버는 계속 열려 있어요)','Leave (server stays up)')}</button>`+(mpOwn()[MP.code]?`<button class="btn" id="mpDelSrv">🗑 ${mpL('이 공개 서버 지우기','Delete this server')}</button>`:''):`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`):'');
   h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌍 공개 방 목록이나 🌐 방 코드로 들어와요 · T: 채팅 · /: 명령어<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
-  if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;
+  if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;if($('mpDelSrv'))$('mpDelSrv').onclick=()=>mpDelServer(MP.code);
   el.querySelectorAll('[data-pub]').forEach(b=>b.onclick=()=>{MP.pubSel=b.dataset.pub==='1';renderMP();});
   if($('mpPubT'))$('mpPubT').onclick=()=>{MP.pub=!MP.pub;try{MP.ws&&MP.ws.send('!pub'+JSON.stringify({on:MP.pub?1:0,...mpPubInfo()}));}catch(e){}toast(MP.pub?mpL('🌍 이제 <b>공개</b> 방이에요','🌍 Room is now public'):mpL('🔒 이제 <b>비공개</b> 방이에요 (코드를 아는 사람만)','🔒 Room is now private'));renderMP();};
   if($('mpCopy'))$('mpCopy').onclick=()=>{try{navigator.clipboard.writeText(MP.code).then(()=>toast(mpL('📋 방 코드를 복사했어요','📋 Copied')));}catch(e){}};}
@@ -9384,9 +9443,13 @@ $('mpClose').onclick=()=>{$('mpUI').classList.remove('show');if(running)$('pause
 $('mpJoinBtn').onclick=()=>mpJoin($('mpCode').value);
 async function mpRoomsLoad(){const el=$('mpRooms');if(!el)return;if(SPEEDRUN){el.innerHTML='<div class="mpr">⏱ 스피드런에서는 멀티플레이를 할 수 없어요</div>';return;}el.innerHTML=`<div class="mpr">${mpL('불러오는 중…','Loading…')}</div>`; // 🌍 공개 방 목록
   try{const L=await (await fetch(MP_RELAY.replace(/^wss/,'https')+'/rooms',{cache:'no-store'})).json();
-    el.innerHTML=L.length?L.map(r=>`<div class="mpr"><span>🌍 <b>${mpEsc(r.name||'World')}</b> · ${mpEsc(r.nick||'?')} · 👥 ${r.n}/${r.max}<small>${mpEsc(r.mode||'')}${r.mode&&r.mode!==mpModeName()?' · '+mpL('다른 모드','other mode'):''}</small></span><button class="btn" data-join="${mpEsc(r.code)}">${mpL('참가','Join')}</button></div>`).join(''):`<div class="mpr">${mpL('지금 열린 공개 방이 없어요 · 방 코드를 받았다면 아래에 넣어요','No public rooms right now')}</div>`;
-    el.querySelectorAll('[data-join]').forEach(b=>b.onclick=()=>mpJoin(b.dataset.join));}
-  catch(e){el.innerHTML=`<div class="mpr">${mpL('공개 방 목록을 불러오지 못했어요','Could not load public rooms')}</div>`;}}
+    const own=mpOwn();
+    el.innerHTML=L.length?L.map(r=>`<div class="mpr"><span>${r.persist?'🖥':'🌍'} <b>${mpEsc(r.name||'World')}</b> · ${r.persist&&!r.n?'💤 '+mpL('비어 있음 · 들어가면 서버가 켜져요','empty — joining starts it'):mpEsc(r.nick||'?')+' · 👥 '+r.n+'/'+r.max}<small>${r.persist?mpL('공개 서버 · ','Public server · '):''}${mpEsc(r.mode||'')}${r.mode&&r.mode!==mpModeName()?' · '+mpL('다른 모드','other mode'):''}</small></span><button class="btn" data-join="${mpEsc(r.code)}">${mpL('참가','Join')}</button>${own[r.code]?`<button class="btn" data-del="${mpEsc(r.code)}" title="${mpL('내가 만든 서버 지우기','Delete my server')}">🗑</button>`:''}</div>`).join(''):`<div class="mpr">${mpL('지금 열린 공개 방이 없어요 · 아래에서 공개 서버를 만들거나, 방 코드를 받았다면 아래에 넣어요','No public rooms right now')}</div>`;
+    el.querySelectorAll('[data-join]').forEach(b=>b.onclick=()=>mpJoin(b.dataset.join));el.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>mpDelServer(b.dataset.del));}
+  catch(e){el.innerHTML=`<div class="mpr">${mpL('공개 방 목록을 불러오지 못했어요 · 이 화면(미리보기 등)에서 막혀 있으면 <a href="https://korean568.github.io/cavebuild/" target="_blank" style="color:#8cf">korean568.github.io/cavebuild</a> 에서 열어 주세요','Could not load public rooms — try korean568.github.io/cavebuild')}</div>`;}}
+// ➕ 공개 서버 만들기: 새 세계를 만들고 바로 공개 서버로 엶 (위 「새 세계 만들기」의 이름 · 모드 · 난이도를 씀)
+$('mpNewSrv').onclick=()=>{if(SPEEDRUN){toast('⏱ 스피드런에서는 멀티플레이를 할 수 없어요');return;}if(!nickNow()){toast(mpL('🌍 공개 서버는 <b>로그인</b>해야 만들 수 있어요','🌍 Log in to create a public server'));return;}
+  const n=prompt(mpL('공개 서버 이름','Server name'),$('worldName').value.trim()||(nickNow()+mpL('의 서버',"'s server")));if(n==null)return;$('worldName').value=String(n).slice(0,24);MP.autoPub=true;$('btnNew').click();};
 $('mpRoomsRe').onclick=mpRoomsLoad;
 $('mpCode').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.isComposing)mpJoin($('mpCode').value);});
 

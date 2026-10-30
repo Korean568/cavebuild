@@ -6,6 +6,7 @@
 // 명령어 (누구나):  /조직 · /조직 목록 · /조직 가입 이름 · /조직 탈퇴 · /기지
 // 명령어 (장교 · OP): /조직 배정 @닉 이름 · /조직 추방 @닉 · /진급 @닉 · /강등 @닉
 //                    /기지 설정 · /집합 · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
+// 📝 고소:           범죄를 당하면 피해자 이름으로 자동 고소 → 지명수배 · /고소 (목록) · /고소 취소 [@닉] · /고소 @닉 [1|2] 사유
 // 🚨 지명수배:       /수배 (목록) · /감옥 (수감자) — 누구나
 //   경찰 쪽 조직:     /체포 @닉 [벌금|징역|15|20]
 //   경찰 쪽 장교·OP:  /수배 @닉 등급 사유 · /수배 해제 @닉 · /감옥 설정 · /석방 @닉
@@ -43,7 +44,7 @@ const stars = (n) => '★'.repeat(n);
 const CHEST = 48; // 상자 블록
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [] }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -72,15 +73,27 @@ function addPts(nick, n) {
   while (x.r < cap && x.p >= (x.r + 1) * PTS_PER_RANK) { x.r++; CB.say(`🎉 ${nick} 님이 ${rankName(x)}(으)로 진급했어요! (${ORGS[x.o].ico} ${x.o})`); }
 }
 const isLaw = (nick) => !!S.m[nick] && LAW.includes(S.m[nick].o);
-function crime(nick, lv, why) {
-  if (!nick) return;
-  const W = S.w[nick];
-  if (W && W.lv >= lv) return;
-  S.w[nick] = { lv, why, t: Date.now() }; save();
-  CB.say(`🚨 ${nick} 님 지명수배 ${stars(lv)} ${lv}등급 · ${GRADE[lv]} (${why})`);
+// 📝 고소: 범죄를 당한 사람 이름으로 고소가 자동으로 들어가요 → 고소 중 가장 높은 등급이 지명수배 등급
+//    피해자는 /고소 취소 (@닉) 로 취소할 수 있고, 남은 고소가 없으면 지명수배가 풀려요. 피해자가 따로 없는 범죄(욕설)는 「서버」 고소
+function rewanted(nick) {
+  const L = S.suit.filter((c) => c.who === nick);
+  if (!L.length) { delete S.w[nick]; return; }
+  const top = L.reduce((a, b) => (b.lv > a.lv ? b : a));
+  S.w[nick] = { lv: top.lv, why: `${top.why} · 고소: ${[...new Set(L.map((c) => c.by))].join(', ')}`, t: top.t };
 }
+function crime(nick, lv, why, victim) {
+  if (!nick) return;
+  const by = victim || '서버', before = (S.w[nick] || {}).lv || 0;
+  const old = S.suit.find((c) => c.who === nick && c.by === by);
+  if (old && old.lv >= lv) return;
+  if (old) Object.assign(old, { lv, why, t: Date.now() }); else S.suit.push({ who: nick, by, lv, why, t: Date.now() });
+  rewanted(nick); save();
+  if (by !== '서버') tell(by, `📝 ${nick} 님을 자동으로 고소했어요 (${why}) · 취소하려면 /고소 취소 @${nick}`);
+  if (S.w[nick].lv > before) CB.say(`🚨 ${by === '서버' ? '' : by + ' 님이 '}${nick} 님을 고소 · 지명수배 ${stars(S.w[nick].lv)} ${S.w[nick].lv}등급 ${GRADE[S.w[nick].lv]} (${why})`);
+}
+function clearSuits(nick) { S.suit = S.suit.filter((c) => c.who !== nick); delete S.w[nick]; }
 function toJail(nick, min, why) {
-  S.jail[nick] = min * 60; delete S.w[nick]; delete S.fine[nick]; save();
+  S.jail[nick] = min * 60; clearSuits(nick); delete S.fine[nick]; save();
   CB.send('org-jail', { to: nick });
   CB.say(`⛓ ${nick} 님 징역 ${min}분 (${why})${S.jailPos ? '' : ' · 감옥이 없어서 지금 자리에 갇혀요 (경찰 장교가 /감옥 설정)'}`);
 }
@@ -101,7 +114,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const o = S.owner[a.key];
       if (!o || o === from) return;
       delete S.owner[a.key]; save();
-      return crime(from, 2, `${o} 님의 상자를 부숨 · 도둑질`);
+      return crime(from, 2, `${o} 님의 상자를 부숨 · 도둑질`, o);
     }
     case 'wanted': {
       if (!(fromOp || (isLaw(from) && isOfficer(F)))) return tell(from, '수배는 경찰 쪽 장교나 OP만 내릴 수 있어요');
@@ -109,12 +122,27 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!who) return tell(from, '/수배 @닉 등급(1~5) 사유');
       const W = S.w[who];
       if (W && W.lv >= lv) return tell(from, '이미 그보다 높은 등급으로 수배 중이에요');
-      return crime(who, lv, String(a.why || '부적절한 행동').slice(0, 40) + ` · ${from}`);
+      return crime(who, lv, String(a.why || '부적절한 행동').slice(0, 40), from);
     }
     case 'unwanted': {
       if (!(fromOp || (isLaw(from) && isOfficer(F)))) return tell(from, '수배 해제는 경찰 쪽 장교나 OP만 할 수 있어요');
       if (!S.w[who]) return tell(from, '그 사람은 수배 중이 아니에요');
-      delete S.w[who]; save(); return CB.say(`${who} 님의 지명수배가 풀렸어요 (${from})`);
+      clearSuits(who); save(); return CB.say(`${who} 님의 지명수배 · 고소가 모두 풀렸어요 (${from})`);
+    }
+    case 'sue': {
+      // 📝 직접 고소: 부적절한 행동 등 (1 · 2등급까지)
+      if (!who || who === from) return tell(from, '/고소 @닉 [1|2] 사유');
+      const lv = Math.max(1, Math.min(2, Math.floor(+a.lv) || 1));
+      return crime(who, lv, String(a.why || '부적절한 행동').slice(0, 40), from);
+    }
+    case 'unsue': {
+      // 📝 고소 취소: 내가 한 고소 (@닉을 쓰면 그 사람 것만) · OP는 「서버」 고소도
+      const L = S.suit.filter((c) => (c.by === from || (fromOp && c.by === '서버')) && (!who || c.who === who));
+      if (!L.length) return tell(from, who ? `${who} 님에게 한 고소가 없어요` : '내가 한 고소가 없어요');
+      S.suit = S.suit.filter((c) => !L.includes(c));
+      for (const n of new Set(L.map((c) => c.who))) rewanted(n);
+      save();
+      return CB.say(`📝 ${from} 님이 ${[...new Set(L.map((c) => c.who))].join(', ')} 님에 대한 고소를 취소했어요`);
     }
     case 'arrest': {
       if (!(fromOp || isLaw(from))) return tell(from, '체포는 경찰 쪽 조직(CP · CMP · 사령부)이나 OP만 할 수 있어요');
@@ -130,7 +158,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
     }
     case 'paid': {
       if (!S.fine[from]) return;
-      delete S.fine[from]; delete S.w[from]; save();
+      delete S.fine[from]; clearSuits(from); save();
       return CB.say(`✅ ${from} 님이 벌금을 냈어요 · 지명수배 해제`);
     }
     case 'unpaid': {
@@ -247,7 +275,9 @@ const hitBy = {}, lastHit = {}, kills = {};
 CB.on('chat', (n, m) => {
   if (!CB.isHost() || !CB.players().includes(n)) return;
   const t = String(m).toLowerCase().replace(/\s/g, '');
-  if (BADWORDS.some((w) => t.includes(w))) crime(n, 1, '부적절한 말');
+  if (!BADWORDS.some((w) => t.includes(w))) return;
+  const vs = (String(m).match(/@([^\s@]+)/g) || []).map((x) => x.slice(1)).filter((x) => x !== n && CB.players().includes(x)); // @닉으로 부른 사람이 피해자
+  if (vs.length) for (const v of vs) crime(n, 1, '부적절한 말', v); else crime(n, 1, '부적절한 말');
 });
 CB.on('pvp', (a, v) => {
   if (!CB.isHost() || a === v) return;
@@ -257,8 +287,8 @@ CB.on('pvp', (a, v) => {
   const selfDef = hitBy[a] && hitBy[a][v] && now - hitBy[a][v] < 30000; // 먼저 맞았으면 정당방위
   if (isLaw(a) && S.w[v]) return;                                       // 경찰이 수배자를 제압
   if (selfDef) return;
-  if (isLaw(v)) crime(a, 3, `경찰 쪽 조직원 ${v} 님 폭행`);
-  else crime(a, 2, `${v} 님 폭행`);
+  if (isLaw(v)) crime(a, 3, `경찰 쪽 조직원 ${v} 님 폭행`, v);
+  else crime(a, 2, `${v} 님 폭행`, v);
 });
 CB.on('pdeath', (v) => {
   if (!CB.isHost()) return;
@@ -270,8 +300,8 @@ CB.on('pdeath', (v) => {
   if (hitBy[k] && hitBy[k][v] && now - hitBy[k][v] < 30000) return;      // 쓰러진 사람이 먼저 때렸으면 정당방위
   const K = (kills[k] = (kills[k] || []).filter((t) => now - t < 300000));
   K.push(now);
-  if (K.length >= 3) crime(k, 5, `5분 안에 ${K.length}명을 쓰러뜨림`);
-  else crime(k, 4, `${v} 님을 쓰러뜨림`);
+  if (K.length >= 3) crime(k, 5, `5분 안에 ${K.length}명을 쓰러뜨림`, v);
+  else crime(k, 4, `${v} 님을 쓰러뜨림`, v);
 });
 // 상자 주인 · 도둑질 (부순 사람의 게임이 방장에게 알림)
 const bkey = (x, y, z) => `${x},${y},${z}`;
@@ -333,7 +363,15 @@ CB.command('수배', '지명수배 목록 · /수배 @닉 등급 사유 · /수�
   if (!L.length) return c.say('지금 지명수배된 사람이 없어요');
   for (const [n, W] of L) c.say(`🚨 ${n} · ${stars(W.lv)} ${W.lv}등급 ${GRADE[W.lv]} · ${W.why}`);
 }, { everyone: true });
-CB.command('체포', '/체포 @닉 [벌금|징역|15|20] — 지명수배자 처벌 (경찰 쪽 조직 · OP)', (a) => req('arrest', { who: a[0], how: a[1] }), { everyone: true });
+CB.command('고소', '/고소 — 내 고소 목록 · /고소 취소 [@닉] · /고소 @닉 [1|2] 사유 (부적절한 행동)', (a, c) => {
+  if (a[0] === '취소') return req('unsue', { who: a[1] });
+  if (a[0]) return req('sue', { who: a[0], lv: /^[12]$/.test(a[1] || '') ? a[1] : 1, why: a.slice(/^[12]$/.test(a[1] || '') ? 2 : 1).join(' ') });
+  const mineL = S.suit.filter((x) => x.by === me()), onMe = S.suit.filter((x) => x.who === me());
+  if (!mineL.length && !onMe.length) return c.say('고소한 것도, 고소당한 것도 없어요');
+  for (const x of mineL) c.say(`📝 내가 고소: ${x.who} · ${stars(x.lv)} ${GRADE[x.lv]} · ${x.why}  (/고소 취소 @${x.who})`);
+  for (const x of onMe) c.say(`⚠ 나를 고소: ${x.by} · ${stars(x.lv)} ${GRADE[x.lv]} · ${x.why}`);
+}, { everyone: true });
+CB.command('체포','/체포 @닉 [벌금|징역|15|20] — 지명수배자 처벌 (경찰 쪽 조직 · OP)', (a) => req('arrest', { who: a[0], how: a[1] }), { everyone: true });
 CB.command('감옥', '/감옥 설정 — 감옥 자리 정하기 (경찰 장교 · OP) · /감옥 — 수감자 목록', (a, c) => {
   if (a[0] === '설정') return req('jailpos', pos());
   const L = Object.entries(S.jail);
