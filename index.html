@@ -311,7 +311,11 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.180 — 🔁 비공개 방도 끊기면 다시 연결</h4>
+    <h4>🆕 v26.181 — 🧩 서버 모드 자동 공유</h4>
+    • 멀티플레이에서는 <b>서버가 정한 모드</b>가 들어온 사람에게 <b>묻지 않고 자동으로</b> 켜져요. 내 개인 모드 목록은 그대로고, 그 서버 안에서만 서버 모드로 돌아가요.<br>
+    • 🖥 공개 서버는 모드도 세계와 같이 저장돼서, 방장이 바뀌어도 새 방장 게임이 <b>그 서버의 모드</b>로 이어서 켜요.<br>
+    • 내 게임에 없는 블록(모드 블록)은 돌로 보여서 게임이 멈추지 않아요.
+    <h4>v26.180 — 🔁 비공개 방도 끊기면 다시 연결</h4>
     • 방장이 잠깐 끊기면 방을 바로 닫지 않고 <b>15초 동안 기다려요</b>. 그동안 방장 게임이 내 세계 그대로 같은 방에 다시 붙고, 친구들은 그대로 기다려요 (다른 사람은 그 방을 가로챌 수 없어요).<br>
     • 친구가 끊기면 <b>끊기기 직전 가방 · 위치를 가지고</b> 같은 방에 다시 들어가요. 친구들은 20초마다 상태를 방장에게 저장해 둬요.
     <h4>v26.179 — 🖥 방장 없이도 돌아가는 공개 서버</h4>
@@ -2019,7 +2023,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.180 — 🔁 Private rooms reconnect too</h4>
+    <h4>🆕 v26.181 — 🧩 Server mods are shared automatically</h4>
+    • In multiplayer the server's mods turn on for everyone who joins, without asking, only inside that server (your own mod list stays). Public servers save their mods with the world, so a new host keeps running them.
+    <h4>v26.180 — 🔁 Private rooms reconnect too</h4>
     • If the host drops, the room waits 15 seconds for the same host to reconnect while friends stay in. Friends who drop rejoin with their inventory and position.
     <h4>v26.179 — 🖥 Public servers that run without the host</h4>
     • Play → Public rooms → ➕ Create public server. The world is saved to the relay every 30s; if the host leaves, another player takes over automatically, and empty servers wake up when someone joins. Only the creator can delete it.
@@ -8357,6 +8363,7 @@ function startWorld(save,onOk){refreshWard(); // 탈의실에서 고른 캐릭�
     if(save){if((save.v||0)<3)migrateIds(save);
       seed=save.seed;initNoise();world.time=save.time;world.spawn=save.spawn;inv=save.inv;sel=save.sel||0;achDone=new Set(save.ach||[]);
       save=fromPortable(save);modsByDim={};
+      for(const d in save.md||{})for(const k in save.md[d]){const a=save.md[d][k];for(let i=1;i<a.length;i+=2)if(a[i]&&!BL[a[i]])a[i]=STONE;} // 🧩 모드는 사람마다 따로: 내가 모르는 (남의 모드) 블록은 돌로
       for(const d in save.md){const mm=new Map();for(const k in save.md[d]){const a=save.md[d][k],m=new Map();for(let i=0;i+1<a.length;i+=2)m.set(a[i],a[i+1]);mm.set(k,m);}modsByDim[d]=mm;}
       for(const k in modCache)delete modCache[k];Object.assign(modCache,save.md);modDirty.clear();
       armor=(save.armor||[]).concat([null,null,null,null,null]).slice(0,5).map(a=>a||null);world.dim=save.dim||'over';world.flags=save.flags||{};world.sr=save.sr||null;world.mpp=save.mpp||{};world.lastPos=save.lastPos||{};world.golems=save.golems||[];world.homeVillage=save.homeVillage||null;world.carves=save.carves||{};world.containers=save.containers||{};world.saplings=save.saplings||[];world.signs=save.signs||{};world.mobQ=save.mobQ||{};world.mobSave=save.mobSave||{};world.anvils=save.anvils||{};world.paint=save.paint||{};world.stoves=save.stoves||{};world.pots=save.pots||{};world.plates=save.plates||{};world.mode=save.mode||'survival';world.name=save.name||world.name||'World';
@@ -8736,7 +8743,7 @@ function mpDel(id){const P=MP.peers.get(id);if(!P)return;scene.remove(P.A.g,P.A.
 function mpList(){return [...MP.peers.values()].map(P=>P.nick);}
 function mpPlayersFor(skip){const L=[{id:'H',nick:MP.me.nick,skin:MP.me.skin,cape:MP.me.cape}];for(const c of MP.conns)if(c.P&&c!==skip)L.push({id:c.P.id,nick:c.P.nick,skin:c.P.skin,cape:c.P.cape});return L;}
 function mpSend(o,skip){try{if(MP.host){for(const c of MP.conns)if(c.ready&&c!==skip&&c.open)c.send(o);}else if(MP.hc&&MP.hc.open)MP.hc.send(o);}catch(e){}}
-function mpApply(L){MP.rx=1;try{for(const [d,x,y,z,id] of L){if(y<0||y>=CH)continue;const k=ckey(x>>4,z>>4); // 친구가 바꾼 블록: 보이는 청크는 바로 고치고, 아니면 기록만 (나중에 그 청크를 만들 때 반영)
+function mpApply(L){MP.rx=1;try{for(let [d,x,y,z,id] of L){if(id&&!BL[id])id=STONE;if(y<0||y>=CH)continue;const k=ckey(x>>4,z>>4); // 친구가 바꾼 블록: 보이는 청크는 바로 고치고, 아니면 기록만 (나중에 그 청크를 만들 때 반영)
     if(d===world.dim&&chunks.get(k)){if(getBlock(x,y,z)!==id)setBlock(x,y,z,id);}
     else{const mm=modsByDim[d]||(modsByDim[d]=new Map());let m=mm.get(k);if(!m){m=new Map();mm.set(k,m);}m.set((y*16+(z&15))*16+(x&15),id);modDirty.add(d+'|'+k);}}}catch(e){console.error(e);}finally{MP.rx=0;}}
 function mpPos(P,o){P.t=o;if(o.s&&P.sw<=0)P.sw=1;}
@@ -8777,6 +8784,11 @@ function mpHost(opt){opt=opt||{};if(!mpOk()||(!opt.re&&(MP.on||MP.ws)))return;if
     if(was){toast(mpL('🌐 중계 서버와 연결이 끊겨서 방이 닫혔어요','🌐 Lost the relay server — room closed'));mpStop();}else{toast(mpL('🌐 중계 서버에 연결하지 못했어요','🌐 Could not reach the relay server'));renderMP();}};}
 // 저장된 공개 서버 세계로 시작 (새 방장): 세계 안의 「전 방장」 상태는 그 사람 몫으로 옮기고, 나는 내 상태로
 function mpResumeStart(text,code){let sn=null;try{sn=text?JSON.parse(text):null;}catch(e){}if(sn&&!validSave(sn))sn=null;
+  if(sn&&Array.isArray(sn.mods)&&!mpModSame(sn.mods)&&!(MP_SMODS&&MP_SMODS.resume)){ // 🧩 이 서버의 모드로 켜야 함 → 서버 모드를 켜고 새로 열어서 이어서
+    try{MP.ws&&(MP.ws.onclose=null,MP.ws.close());}catch(e){}MP.ws=null;
+    if(mpServerMods(sn.mods,sn.modIds,code,{resume:1})){try{sessionStorage.setItem('cb-handoff',JSON.stringify({code,promote:1,st:MP.carry||null}));}catch(e){}
+      toast(mpL(`🧩 이 서버의 모드 ${sn.mods.length}개로 서버를 켜는 중…`,`🧩 Starting with the server's mods…`));setTimeout(()=>{location.href=location.origin+location.pathname+'?play=1';},900);}
+    return;}
   const me=MP.me.nick,carry=MP.carry;MP.carry=null;
   if(sn){const M=sn.mpp||(sn.mpp={});if(sn.mpHost&&sn.mpHost!==me)M[sn.mpHost]={inv:sn.inv,armor:sn.armor,p:sn.p,dim:sn.dim};
     if(sn.mpHost!==me||carry){const st=carry||M[me],sp=sn.spawn||{x:0,y:80,z:0};sn.inv=st&&st.inv||new Array(36).fill(null);sn.armor=st&&st.armor||[];sn.dim=st&&st.dim||'over';sn.p=st&&st.p||{x:sp.x,y:sp.y,z:sp.z,yaw:0,pitch:0,hp:20,food:20};}
@@ -8786,7 +8798,7 @@ function mpResumeStart(text,code){let sn=null;try{sn=text?JSON.parse(text):null;
     toast(mpL(`🌍 공개 서버를 이어서 켰어요 — 지금은 내가 방장이에요 · 코드 <b>${code}</b>`,`🌍 You're now hosting this public server · Code <b>${code}</b>`));});}
 function mpSaveLoop(){clearInterval(MP.svT);MP.svT=setInterval(mpSaveUp,30000);setTimeout(mpSaveUp,3000);}
 function mpSaveUp(){const w=MP.ws;if(!MP.on||!MP.host||!MP.persist||!w||w.readyState!==1)return;let sn;
-  try{sn=toPortable(saveSnapshot());}catch(e){return;}sn.mpHost=MP.me.nick;sn.sr=null;
+  try{sn=toPortable(saveSnapshot());}catch(e){return;}sn.mpHost=MP.me.nick;sn.sr=null;sn.mods=MOD_RAN.map(m=>({name:m.name,code:m.code}));sn.modIds=modIds(); // 🧩 서버 모드도 세계와 같이 저장
   const t=JSON.stringify(sn),n=Math.ceil(t.length/250000),s=Date.now()%1e9;if(n>400)return;
   for(let i=0;i<n;i++)w.send('!sv'+JSON.stringify({s,i,n})+'\n'+t.slice(i*250000,(i+1)*250000));}
 function mpDelServer(code){const key=mpOwn()[code];if(!key)return;if(!confirm(mpL('이 공개 서버를 지울까요? 세계가 영원히 사라져요','Delete this public server? The world will be gone forever')))return;
@@ -8869,6 +8881,7 @@ function mpJoin(code){code=String(code||'').trim().toUpperCase();MP.op=false;MP.
 function mpHandoff(code,promote){
   if(!running){if(promote){MP.me=MP.me||mpMe();mpHost({code,persist:true,resume:1});}else setTimeout(()=>mpJoin(code),2500);return;}
   const st=mpState();try{sessionStorage.setItem('cb-handoff',JSON.stringify({code,promote:promote?1:0,st:{inv:st.inv,armor:st.armor,p:st.p,dim:st.dim}}));sessionStorage.setItem('cb-play','1');}catch(e){}
+  if(MP_SMODS)mpServerMods(MP_SMODS.mods,MP_SMODS.ids,code,{resume:1}); // 🧩 새로 열어도 서버 모드는 그대로
   toast(promote?mpL('🌍 방장이 나가서 <b>내가 새 방장</b>이 돼요… 다시 여는 중','🌍 The host left — you are the new host…'):mpL('🌍 서버의 방장이 바뀌어서 다시 들어가는 중…','🌍 Rejoining the server…'));
   MP.on=false;setTimeout(()=>{location.href=location.origin+location.pathname+'?play=1';},1200);}
 {let h=null;try{h=JSON.parse(sessionStorage.getItem('cb-handoff')||'null');sessionStorage.removeItem('cb-handoff');}catch(e){} // 새로 연 뒤: 이어서 서버로
@@ -9069,14 +9082,16 @@ function mpVehTick(){const r=v=>Math.round(v*1000)/1000;
 function mpVehFollow(v){const k=.35,da=(a,b)=>{let d=b-a;return Math.atan2(Math.sin(d),Math.cos(d));};v.pos.lerp(v.rtp,k);v.yaw+=da(v.yaw,v.rya)*k;v.pitch+=da(v.pitch,v.rpi)*k;v.roll+=da(v.roll,v.rro)*k;v.speed=0;v.vy=0;vehPose(v);}
 // 🧩 모드 맞추기: 방장과 켠 모드가 다르면 친구에게 물어보고, 방장 모드로 새로고침해서 다시 들어감
 function mpModSame(L){if(!Array.isArray(L)||L.length!==MOD_RAN.length)return false;return L.every((m,i)=>m&&m.name===MOD_RAN[i].name&&m.code===MOD_RAN[i].code);}
-function mpModsAsk(code,d){const L=Array.isArray(d.mods)?d.mods.filter(m=>m&&typeof m.code==='string'):[],names=L.map(m=>m.name).join(', ');
-  const ok=confirm(L.length?mpL(`🧩 방장이 모드 ${L.length}개를 켜고 있어요: ${names}\n\n방장의 모드 코드가 내 게임에서 실행돼요. 믿을 수 있는 친구일 때만 켜세요.\n이 방에서만 켜고, 게임을 새로고침한 뒤 다시 들어갈까요?`,`🧩 The host uses ${L.length} mod(s): ${names}\n\nThe host's mod code will run in your game. Only accept from people you trust.\nEnable them for this room only and rejoin?`)
-    :mpL('🧩 방장은 모드를 안 켜고 있어요. 이 방에서는 내 모드를 끄고, 새로고침한 뒤 다시 들어갈까요?','🧩 The host has no mods. Turn off your mods for this room and rejoin?'));
+// 🧩 서버 모드: 서버(방)가 정한 모드를 들어온 사람에게 자동으로 공유 — 묻지 않고, 내 개인 모드 목록은 그대로 둔 채 이 서버에서만 켬
+function mpServerMods(L,ids,code,extra){L=(Array.isArray(L)?L:[]).filter(m=>m&&typeof m.code==='string');
+  try{sessionStorage.setItem('cb-mpmods',JSON.stringify({pending:true,code,mods:L.map(m=>({name:String(m.name),code:m.code,on:true})),ids:ids&&typeof ids==='object'?ids:{},...(extra||{})}));sessionStorage.setItem('cb-play','1');}catch(e){toast('저장 공간이 부족해요');return false;}
+  return true;}
+function mpModsAsk(code,d){const L=Array.isArray(d.mods)?d.mods.filter(m=>m&&typeof m.code==='string'):[];
   try{MP.ws&&(MP.ws.onclose=null,MP.ws.close());}catch(e){}MP.ws=null;MP.hc=null;
-  if(!ok){toast(mpL('🧩 모드가 달라서 들어가지 않았어요','🧩 Mods differ — not joined'));return;}
-  try{sessionStorage.setItem('cb-mpmods',JSON.stringify({pending:true,code,mods:L.map(m=>({name:String(m.name),code:m.code,on:true})),ids:d.ids&&typeof d.ids==='object'?d.ids:{}}));sessionStorage.setItem('cb-play','1');}catch(e){toast('저장 공간이 부족해요');return;}
-  location.href=location.origin+location.pathname+'?play=1';}
-if(MP_SMODS&&MP_SMODS.code)setTimeout(()=>{toast(mpL(`🧩 방장 모드 ${MP_SMODS.mods.length}개로 다시 들어가는 중…`,`🧩 Rejoining with the host's mods…`));mpJoin(MP_SMODS.code);},1500);
+  if(!mpServerMods(L,d.ids,code))return;
+  toast(L.length?mpL(`🧩 이 서버의 모드 ${L.length}개(${L.map(m=>mpEsc(m.name)).join(', ')})를 켜고 다시 들어가요`,`🧩 Loading this server's ${L.length} mod(s)…`):mpL('🧩 이 서버는 모드가 없어요 — 내 모드를 끄고 다시 들어가요','🧩 This server has no mods — rejoining without mine'));
+  setTimeout(()=>{location.href=location.origin+location.pathname+'?play=1';},900);}
+if(MP_SMODS&&MP_SMODS.code&&!MP_SMODS.resume)setTimeout(()=>{toast(mpL(`🧩 서버 모드 ${MP_SMODS.mods.length}개로 들어가는 중…`,`🧩 Joining with the server's mods…`));mpJoin(MP_SMODS.code);},1500);
 // 🎮 게임 모드도 함께 (누가 바꾸든 모두에게)
 function mpModeIn(d){if(!MODE_INFO[d.m]||world.mode===d.m||world.flags&&world.flags.hcDead)return;MP.rx=1;try{setMode(d.m);}finally{MP.rx=0;}try{renderSettings();}catch(e){}toast(mpL('🌐 게임 모드가 바뀌었어요: ','🌐 Game mode changed: ')+MODE_INFO[world.mode][0]);}
 // 채팅 (T · 모바일 💬)
@@ -9440,7 +9455,7 @@ function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPubT">${MP.pub?'🌍 '+mpL('공개 방 (누구나)','Public room'):'🔒 '+mpL('비공개 방 (코드만)','Private room')} · ${mpL('바꾸기','switch')}</button>`;
   if(MP.on&&MP.host)h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
   if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?(MP.persist?`<div class="tip">🖥 ${mpL('공개 서버예요 — 내가 나가도 다른 사람이 방장을 이어받고, 아무도 없으면 세계가 저장돼요','Public server — stays up after you leave')}</div><button class="btn" id="mpStopBtn">🚪 ${mpL('나가기 (서버는 계속 열려 있어요)','Leave (server stays up)')}</button>`+(mpOwn()[MP.code]?`<button class="btn" id="mpDelSrv">🗑 ${mpL('이 공개 서버 지우기','Delete this server')}</button>`:''):`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`):'');
-  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌍 공개 방 목록이나 🌐 방 코드로 들어와요 · T: 채팅 · /: 명령어<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
+  h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌍 공개 방 목록이나 🌐 방 코드로 들어와요 · T: 채팅 · /: 명령어<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. 서버 모드는 들어오면 저절로 켜져요 (내 모드 목록은 그대로). PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
   if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;if($('mpDelSrv'))$('mpDelSrv').onclick=()=>mpDelServer(MP.code);
   el.querySelectorAll('[data-pub]').forEach(b=>b.onclick=()=>{MP.pubSel=b.dataset.pub==='1';renderMP();});
