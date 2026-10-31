@@ -11,6 +11,13 @@
    - 만든 사람(key)만 POST /room/코드/del 로 지울 수 있음 · 지우기 전까지 로비 목록에 남음
    공개 방은 로비(Durable Object 하나)에 이름 · 방장 · 인원을 올림 → GET /rooms 로 목록 */
 const MAX_GUESTS = 20;
+const KINDS = ['survival', 'pvp', 'build', 'rp']; // 🌐 CAVEBUILD ONLINE 서버 종류: 서바이벌 · PvP 아레나 · 빌드 · 조직 RP
+// ⭐ 공식 서버: POST /room/코드/official {name,kind,token} — 어드민 계정으로 로그인한 사람만 (계정 서버에 물어서 확인) · 목록 맨 위에 항상 남음
+const ACCOUNT_API = 'https://geulbeot-rho.vercel.app/api/cavebuild';
+async function isAdminToken(token) {
+  if (typeof token !== 'string' || token.length < 32) return false;
+  try { const r = await fetch(ACCOUNT_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'me', token }) }); const d = await r.json(); return !!(d && d.user && d.user.admin); } catch (e) { return false; }
+}
 const CHUNK = 32000;      // 저장소 한 칸에 넣는 글자 수
 const SEND_CHUNK = 250000; // 저장된 세계를 보낼 때 한 번에 보내는 글자 수
 const cors = { 'access-control-allow-origin': '*', 'content-type': 'application/json; charset=utf-8' };
@@ -82,6 +89,15 @@ export class Room {
     await this.ready;
     const url = new URL(req.url), role = url.searchParams.get('role');
     this.code = (url.pathname.match(/\/room\/([A-Z0-9]{6})/) || [])[1] || this.code;
+    if (url.pathname.endsWith('/official')) { // ⭐ 공식 서버 만들기 · 바꾸기 (어드민 계정만)
+      const b = await req.json().catch(() => ({}));
+      if (!(await isAdminToken(b.token))) return new Response(JSON.stringify({ error: '공식 서버는 어드민 계정만 만들 수 있어요' }), { status: 403, headers: cors });
+      if (b.del) { await this.wipe(); return new Response(JSON.stringify({ ok: true }), { headers: cors }); }
+      if (!this.meta) this.meta = { persist: true, key: String(b.key || crypto.randomUUID()), wn: 0, t: Date.now() };
+      this.meta.pub = { name: String(b.name || '공식 서버').slice(0, 30), nick: 'CAVEBUILD', mode: 'CAVEBUILD ONLINE', kind: KINDS.includes(b.kind) ? b.kind : 'survival', off: 1 };
+      this.meta.persist = true; this.pub = this.meta.pub; await this.saveMeta(); await this.lobby();
+      return new Response(JSON.stringify({ ok: true, key: this.meta.key }), { headers: cors });
+    }
     if (url.pathname.endsWith('/del')) { // 🗑 만든 사람만 지움
       const b = await req.json().catch(() => ({}));
       if (!this.meta || !this.meta.persist) return new Response(JSON.stringify({ ok: true }), { headers: cors });
@@ -107,7 +123,7 @@ export class Room {
         if (back) { /* 공개 · 이름은 그대로 */ }
         else if (!persist) {
           this.pub = null;
-          if (q('pub') === '1') this.pub = { name: q('name').slice(0, 30), nick: q('nick').slice(0, 16), mode: q('mode').slice(0, 20) };
+          if (q('pub') === '1') this.pub = { name: q('name').slice(0, 30), nick: q('nick').slice(0, 16), mode: q('mode').slice(0, 20), kind: KINDS.includes(q('kind')) ? q('kind') : 'survival' };
           if (q('persist') === '1' && this.pub && q('key').length >= 16) { this.meta = { persist: true, key: q('key').slice(0, 64), pub: this.pub, wn: 0, t: Date.now() }; await this.saveMeta(); }
         } else if (q('nick')) { this.pub = { ...this.meta.pub, nick: q('nick').slice(0, 16) }; } // 지금 방장 이름으로 목록에 보임
         const P = !!(this.meta && this.meta.persist);
@@ -126,7 +142,7 @@ export class Room {
             return;
           }
           if (ev.data.startsWith('!pub')) { // 공개 · 비공개 바꾸기
-            try { const o = JSON.parse(ev.data.slice(4)); this.pub = o && o.on ? { name: String(o.name || '').slice(0, 30), nick: String(o.nick || '').slice(0, 16), mode: String(o.mode || '').slice(0, 20) } : null; } catch (e) {}
+            try { const o = JSON.parse(ev.data.slice(4)), keep = this.pub || (this.meta && this.meta.pub) || {}; this.pub = o && o.on ? { name: String(o.name || '').slice(0, 30), nick: String(o.nick || '').slice(0, 16), mode: String(o.mode || '').slice(0, 20), kind: keep.kind || 'survival', ...(keep.off ? { off: 1 } : {}) } : null; } catch (e) {}
             if (this.meta && this.meta.persist && this.pub) { this.meta.pub = this.pub; await this.saveMeta(); }
             this.lobby();
             return;
@@ -208,9 +224,9 @@ export class Lobby { // 공개 방 목록 (보통 방은 3분 동안 소식이 �
     const now = Date.now(), L = [];
     for (const [k, r] of this.rooms) {
       if (!r.persist && now - r.t > 180000) { this.rooms.delete(k); continue; }
-      L.push({ code: r.code, name: r.name, nick: r.nick, mode: r.mode, n: r.persist && now - r.t > 180000 ? 0 : r.n, max: r.max, persist: r.persist ? 1 : 0 });
+      L.push({ code: r.code, name: r.name, nick: r.nick, mode: r.mode, n: r.persist && now - r.t > 180000 ? 0 : r.n, max: r.max, persist: r.persist ? 1 : 0, kind: r.kind || 'survival', off: r.off ? 1 : 0 });
     }
-    L.sort((a, b) => b.n - a.n || b.persist - a.persist);
+    L.sort((a, b) => b.off - a.off || b.n - a.n || b.persist - a.persist); // ⭐ 공식 서버가 맨 위
     return new Response(JSON.stringify(L.slice(0, 50)), { headers: cors });
   }
 }
@@ -220,7 +236,7 @@ export default {
     const path = new URL(req.url).pathname;
     if (req.method === 'OPTIONS') return new Response(null, { headers: { ...cors, 'access-control-allow-methods': 'GET, POST', 'access-control-allow-headers': 'content-type' } });
     if (path === '/rooms') return env.LOBBY.get(env.LOBBY.idFromName('lobby')).fetch('https://lobby/list');
-    const m = path.match(/^\/room\/([A-Z0-9]{6})(\/del)?$/);
+    const m = path.match(/^\/room\/([A-Z0-9]{6})(\/del|\/official)?$/);
     if (!m) return new Response('CAVEBUILD multiplayer relay', { headers: { 'access-control-allow-origin': '*' } });
     return env.ROOM.get(env.ROOM.idFromName(m[1])).fetch(req);
   },
