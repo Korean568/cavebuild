@@ -315,7 +315,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.186 — 🚨 수배 음악 「추격」 (조직 모드)</h4>
+    <h4>🆕 v26.187 — 🚨 수배 음악 더 긴장감 있게</h4>
+    • 심장 박동 같은 팀파니 「쿵-쿵」 · 16분음표로 몰아치는 피치카토 · 작게 시작해 부풀었다 뚝 끊기는 현악 · <b>마디마다 반음씩 올라가며 조여 오는 바이올린</b> · 엇박 금관 찌르기 · 8마디 끝의 반 마디 정적 뒤 팀파니 롤.<br>
+    • 템포 96 (★★★★ 이상 112). ★★★★★ 는 금관 불협화음이 부풀어 올라요.
+    <h4>v26.186 — 🚨 수배 음악 「추격」 (조직 모드)</h4>
     • <b>지명수배된 사람 게임에서만</b> 새로 작곡한 긴장감 있는 곡이 나와요 (D단조). 평소 배경음악과 1.5초 동안 부드럽게 바뀌어요.<br>
     • 진짜 오케스트라 녹음 소리: 현악 트레몰로 · 피치카토 (★) → 팀파니 (★★) → 높은 바이올린 (★★★) → 더 빨라지고 금관 (★★★★) → 더 높고 세게 (★★★★★). 수감되거나 수배가 풀리면 평소 곡으로 돌아가요.<br>
     • 모드 API: CB.bgm('wanted', 등급) · CB.bgm('calm')
@@ -2049,7 +2052,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.186 — 🚨 Wanted music (organization mod)</h4>
+    <h4>🆕 v26.187 — 🚨 Tenser wanted music</h4>
+    • Heartbeat timpani, driving 16th-note pizzicato, swelling strings that cut off, a violin line that climbs a semitone every bar, offbeat brass and a sudden silence before each loop.
+    <h4>v26.186 — 🚨 Wanted music (organization mod)</h4>
     • Only wanted players hear a new tense orchestral cue (real recorded strings, timpani, violin, brass) that grows with the wanted level. New mod API: CB.bgm.
     <h4>v26.185 — 🎵 Background music</h4>
     • A new original, cozy background track in every mode, played with real recorded instruments (electric piano, vibraphone, upright bass, LinnDrum). On/off and volume in ⚙ Settings.
@@ -4991,27 +4996,33 @@ function bgmBar(i,t0){const B=BGM_SONG[i%BGM_SONG.length],q=60/96,sw=b=>(b%1===.
   if(B.s===2)for(const b of [1,3])bgmPlay(D.tambourine,T(b+.5),.16); // B 부분: 탬버린
   if(last)bgmPlay(D.hhopen,T(3.5),.18);}
 function bgmTick(){const a=audio();if(!a||!BGM.ready||!bgmBus())return;if(!BGM.on||window.CMD_MUTE){BGM.t=0;BGM.wt=0;return;}
-  if(BGM.mode==='wanted'){BGM.t=0;if(!wtReady(BGM.lv))return;const bar=4*60/(BGM.lv>=4?100:80);if(!BGM.wt||BGM.wt<a.currentTime-1){BGM.wt=a.currentTime+.3;BGM.wbar=0;}
-    while(BGM.wt<a.currentTime+1.6){wtBar(BGM.wbar,BGM.wt,BGM.lv,60/(BGM.lv>=4?100:80));BGM.wbar=(BGM.wbar+1)%8;BGM.wt+=bar;}return;}
+  if(BGM.mode==='wanted'){BGM.t=0;if(!wtReady(BGM.lv))return;const bpm=BGM.lv>=4?112:96,bar=4*60/bpm;if(!BGM.wt||BGM.wt<a.currentTime-1){BGM.wt=a.currentTime+.3;BGM.wbar=0;}
+    while(BGM.wt<a.currentTime+1.6){wtBar(BGM.wbar,BGM.wt,BGM.lv,60/bpm);BGM.wbar=(BGM.wbar+1)%8;BGM.wt+=bar;}return;}
   BGM.wt=0;const bar=4*60/96;if(!BGM.t||BGM.t<a.currentTime-1)BGM.t=a.currentTime+.3;
   while(BGM.t<a.currentTime+1.6){bgmBar(BGM.bar,BGM.t);BGM.bar=(BGM.bar+1)%BGM_SONG.length;BGM.t+=bar;}} // 1.6초 앞까지 미리 연주 예약 (탭이 뒤로 가도 끊기지 않게)
-// 🚨 수배 음악 「추격」 — 새로 작곡한 긴장감 있는 곡 (D단조 · 8마디 반복) · 진짜 오케스트라 녹음: 현악 트레몰로 · 피치카토 · 팀파니 (+ ★★★ 바이올린 · ★★★★ 금관, 더 빠르게)
-//   지명수배된 사람 게임에서만 나와요 (모드가 CB.bgm('wanted', 등급) 으로 켬)
-const WT_CH=[[[50,53,57,63],38],[[53,58,62,64],34],[[55,58,62,64],31],[[52,55,57,58,61],33]]; // Dm(♭2) · B♭(#11) · Gm6 · A7(♭9) — 두 마디씩
-const WT_OST=[0,0,12,0,1,0,8,7]; // 피치카토 8분 반복: 뿌리 · 뿌리 · 옥타브 · 뿌리 · 반음 위 · 뿌리 · 단6 · 5도
-const WT_NEED={tremolo_strings:[],pizzicato_strings:[],timpani:[],violin:[81,82,84,85,87],brass_section:[]};
-for(const [v,r] of WT_CH){WT_NEED.tremolo_strings.push(...v);for(const o of WT_OST)WT_NEED.pizzicato_strings.push(r+o+12);WT_NEED.timpani.push(r+12,r+19);WT_NEED.brass_section.push(r,r+12,r+19);}
+// 🚨 수배 음악 「추격」 — 새로 작곡한 긴장감 있는 곡 (D 페달 · 8마디 반복) · 진짜 오케스트라 녹음
+//   심장 박동 팀파니 「쿵-쿵」 · 16분음표로 몰아치는 피치카토 · 부풀었다 끊기는 현악 트레몰로 · 반음씩 올라가 조여 오는 바이올린 · 낮은 금관 찌르기
+//   8마디 끝엔 반 마디 정적 → 팀파니 롤로 다시 · ★ 등급이 높을수록 악기가 늘고 빨라짐 · 지명수배된 사람 게임에서만 (모드가 CB.bgm('wanted', 등급))
+const WT_CH=[[50,53,57,63],[50,53,58,64],[50,55,58,61],[51,55,58,61]]; // 낮은 D 위에서 반음씩 부딪히는 화음 (두 마디씩)
+const WT_OST=[0,0,0,1, 0,0,3,0, 0,0,0,1, 0,5,3,1]; // 피치카토 16분: D2 위에서 반음 · 단3 · 4도로 꿈틀
+const WT_NEED={tremolo_strings:[38,...WT_CH.flat()],pizzicato_strings:[],timpani:[38,45],violin:[69,70,71,72,73,74,75,76,81,82,83,84,85,86,87,88],brass_section:[38,50,51,57,58]};
+for(const o of new Set(WT_OST))WT_NEED.pizzicato_strings.push(38+o,50+o);
 function wtLoad(name){if(BGM.wLoad[name])return;BGM.wLoad[name]=1;bgmLoadInst(name,new Set(WT_NEED[name])).then(o=>{BGM.wInst[name]=o;}).catch(()=>{BGM.wLoad[name]=0;});}
-function wtReady(lv){for(const n of ['tremolo_strings','pizzicato_strings','timpani'])if(!BGM.wInst[n]){wtLoad(n);return false;}if(lv>=3)wtLoad('violin');if(lv>=4)wtLoad('brass_section');return true;}
+function wtReady(lv){for(const n of ['tremolo_strings','pizzicato_strings','timpani'])if(!BGM.wInst[n]){wtLoad(n);return false;}if(lv>=3){wtLoad('violin');wtLoad('brass_section');}return true;}
 function wtN(ins,m,t,vol,len,rel){bgmPlay(BGM.wInst[ins]&&BGM.wInst[ins][BGM_NOTE(m)],t,vol,len,rel,BGM.busW);}
-function wtBar(i,t0,lv,q){const [v,r]=WT_CH[Math.floor(i/2)%4],T=b=>t0+b*q;
-  if(i%2===0)for(const n of v)wtN('tremolo_strings',n,T(0),.28+.03*lv,q*8-.1,.6); // 현악 트레몰로: 두 마디 길게 (불안한 화음)
-  for(let e=0;e<8;e++)wtN('pizzicato_strings',r+12+WT_OST[e],T(e/2),e%4===0?.5:.34,q*.45,.08); // 피치카토 8분 쿵쿵
-  if(lv>=2)wtN('timpani',r+12,T(0),.55,q*1.5,.4); // ★★ 팀파니: 마디 첫 박
-  if(lv>=4){wtN('timpani',r+12,T(2),.45,q,.3);wtN('timpani',r+19,T(3.5),.35,q*.4,.2);}
-  if(lv>=3&&i===7)for(let s=0;s<8;s++)wtN('timpani',r+12,T(2+s*.25),.18+s*.04,q*.3,.1); // 마지막 마디: 팀파니 롤로 다시 처음으로
-  if(lv>=3&&i%2===0)wtN('violin',[81,82,84,82][Math.floor(i/2)%4]+(lv>=5?3:0),T(0),.22,q*7.5,.8); // ★★★ 높은 바이올린: 반음 부딪힘
-  if(lv>=4)for(const b of [0,1.5,3])wtN('brass_section',r+(b?12:0)+(b===3?7:0),T(b),.3+.04*(lv-4),q*(b===0?1:.4),.15);} // ★★★★ 금관 찌르기 (★★★★★ 더 세게)
+function wtSwell(ins,m,t,len,v0,v1){const a=audio(),buf=BGM.wInst[ins]&&BGM.wInst[ins][BGM_NOTE(m)];if(!a||!buf||!BGM.busW)return; // 작게 시작해서 크게 부풀었다가 뚝 끊김
+  const s=a.createBufferSource(),g=a.createGain();s.buffer=buf;s.loop=true;s.loopStart=.3;s.loopEnd=Math.max(.6,buf.duration-.2);g.gain.setValueAtTime(v0,t);g.gain.linearRampToValueAtTime(v1,t+len);g.gain.linearRampToValueAtTime(0,t+len+.06);s.connect(g).connect(BGM.busW);s.start(t);s.stop(t+len+.1);}
+function wtBar(i,t0,lv,q){const T=b=>t0+b*q,end=i===7,k=.75+.08*lv; // k: 등급이 높을수록 크게
+  wtSwell('tremolo_strings',38,T(0),q*(end?2:4),.18*k,.3*k); // 낮은 D 페달 (계속 깔림)
+  if(i%2===0)for(const n of WT_CH[(i>>1)%4])wtSwell('tremolo_strings',n+(lv>=5?12:0),T(0),q*(end?2:8)-.05,.03,.32*k); // 현악 트레몰로: 두 마디 동안 부풀었다가 뚝
+  for(let e=0;e<16;e++){if(end&&e>=8)break;const b=e/4,acc=e%4===0; // 피치카토 16분 몰아치기 (마지막 마디 뒤 반은 정적)
+    wtN('pizzicato_strings',38+WT_OST[e],T(b),(acc?.55:.3)*k,q*.22,.05);if(lv>=4)wtN('pizzicato_strings',50+WT_OST[e],T(b),(acc?.35:.18)*k,q*.22,.05);}
+  if(lv>=2&&!end)for(const b of [0,.5,2,2.5])wtN('timpani',38,T(b),(b%2?.32:.5)*k,q*.8,.3); // ★★ 심장 박동 「쿵-쿵」
+  if(end){wtN('timpani',38,T(0),.55*k,q,.3);if(lv>=2)for(let s=0;s<12;s++)wtN('timpani',s<8?38:45,T(2.5+s*.125),(.08+s*.04)*k,q*.2,.08);} // 정적 뒤 팀파니 롤로 다시 처음
+  if(lv>=3&&!end)wtSwell('violin',69+i+(lv>=4?12:0),T(0),q*4-.05,.05,.3*k); // ★★★ 바이올린: 마디마다 반음씩 올라가며 조여 옴
+  if(lv>=3&&!end)for(const b of [0,1.75,3])wtN('brass_section',b===0?38:50,T(b),(b===0?.45:.3)*k,q*(b===0?.9:.35),.12); // ★★★ 낮은 금관 찌르기 (엇박)
+  if(lv>=5&&i===6)for(const n of [50,51,57,58])wtSwell('brass_section',n,T(0),q*4,.02,.5); // ★★★★★ 금관 불협화음이 부풀어 오름
+}
 function bgmStart(){if(BGM.timer)return;bgmLoad();BGM.timer=setInterval(bgmTick,250);}
 addEventListener('pointerdown',()=>{if(BGM.on)bgmStart();},{once:false,passive:true}); // 소리는 처음 누른 뒤부터 낼 수 있어요 (브라우저 규칙)
 function renderBgm(){for(const el of document.querySelectorAll('.bgmCtl')){ // ⚙ 설정의 🎵 배경음악: 켬 · 끔 · 음량
