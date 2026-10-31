@@ -328,7 +328,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.195 — 🎯 저격소총 손 위치 고침</h4>
+    <h4>🆕 v26.196 — 🫡 경례 · ⚡ 테이저건</h4>
+    <ul><li>🫡 <b>경례</b>: <b>G</b> 키나 /경례 · 오른손을 이마 옆에 붙여요 (2.5초) · 멀티에서는 친구들 화면에서도 보이고 채팅에 알려요</li><li>⚡ <b>테이저건</b> (작업대: 철 주괴 2 + 구리 주괴 2 + 에너지 스톤 1): 클릭하면 전극 두 가닥이 날아가요 (12칸) · 맞은 플레이어는 5초 동안 감전돼 못 움직이고 공격도 못 해요 · 몹은 5초 멈춤 · 3초마다 쏠 수 있어요</li><li>🪖 조직 모드: 경찰 · 군사경찰 · MP사령부 장비에 테이저건 추가</li></ul>
+    <h4>v26.195 — 🎯 저격소총 손 위치 고침</h4>
     <ul><li>저격소총을 오른손이 손잡이를 쥐고 왼손이 앞쪽 총몸을 받치게 고쳤어요 · 총도 조금 더 커졌어요</li></ul>
     <h4>v26.194 — 🎯 저격소총 · 🎒 팀 장비 · 🕶 불법 거래 상인</h4>
     <ul><li>🎯 <b>저격소총</b> (AWM): 한 발씩 · 아주 셈 (헤드샷 2배) · 탄창 5발 · 우클릭하면 조준경 (멀리 확대) · 조준 안 하면 잘 안 맞아요</li><li>🎒 조직 모드: 팀이 되면 기본 장비를 받아요 — 경찰: 권총 · 군사: 권총 · 돌격소총 · 군사경찰 · 교육부: 권총 · 돌격소총 · 수갑 · 장교: 권총 · 블랙 다이아몬드 검 · 수갑 · MP사령부 · 교육사령부: 저격소총 · 돌격소총 · 권총 · 수갑 · 블랙 다이아몬드 검 (/장비 로 잃어버린 것 다시 받기)</li><li>장교(CMO)부터 /team · /진급 · /강등 · /석방 · 총사령부(Owner)는 OP · 고소 · 수배 안 됨</li><li>🕶 <b>불법 거래 상인</b> (NPC): 시민한테만 동전으로 무기를 팔아요 · /상인 으로 위치 · OP는 /상인 설정</li><li>저격소총 3D 모델: 「AWP Sniper」 by Kyler Swanson (CC BY 3.0, Poly Pizza)</li></ul>
@@ -2098,7 +2100,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.195 — 🎯 Sniper rifle grip fixed</h4>
+    <h4>🆕 v26.196 — 🫡 Salute · ⚡ Taser</h4>
+    <ul><li>🫡 <b>Salute</b>: press <b>G</b> or type /경례 · right hand to the brow for 2.5 s · other players see it too</li><li>⚡ <b>Taser</b> (bench: 2 iron ingots + 2 copper ingots + 1 energy stone): click to fire two probes (12 blocks) · a hit player can't move or attack for 5 s · mobs freeze for 5 s · 3 s cooldown</li><li>🪖 Org mod: Police, Military Police and MP Command kits now include a taser</li></ul>
+    <h4>v26.195 — 🎯 Sniper rifle grip fixed</h4>
     <ul><li>The right hand now holds the sniper's grip and the left hand supports the front · the rifle is a bit bigger</li></ul>
     <h4>v26.194 — 🎯 Sniper rifle · 🎒 team kits · 🕶 black-market dealer</h4>
     <ul><li>🎯 <b>Sniper rifle</b> (AWM): single shot · very strong (2× headshot) · 5-round magazine · right-click for a scope · inaccurate without aiming</li><li>🎒 Org mod: each team gets a starter kit (Police: pistol · Military: pistol, rifle · MP / Education: + handcuffs · Officer: pistol, black diamond sword, handcuffs · Commands: sniper, rifle, pistol, handcuffs, black diamond sword) · /장비 to get lost items back</li><li>Officer (CMO)+ can use /team · /진급 · /강등 · /석방 · High Command (Owner) is OP and can't be sued or wanted</li><li>🕶 <b>Black-market dealer</b> (NPC) sells weapons for coins, to citizens only · /상인 shows where · OPs use /상인 설정</li><li>Sniper 3D model: "AWP Sniper" by Kyler Swanson (CC BY 3.0, Poly Pizza)</li></ul>
@@ -3005,6 +3009,7 @@ IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
 const COLA=352,OPEN_COLA=353;IT[COLA]={name:'콜라',stack:16};IT[OPEN_COLA]={name:'딴 콜라',stack:1,food:3,drink:true}; // 🥤 콜라: 우클릭으로 따고 (따개를 들었다 눌러 닫음) 꾹 눌러 마심
+const TASER=376;IT[TASER]={name:'테이저건',stack:1}; // ⚡ 테이저건: 클릭하면 전극 발사 (12칸) · 맞은 플레이어 · 몹은 5초 동안 감전돼 못 움직임 · 3초마다
 const SNIPER=375;IT[SNIPER]={name:'저격소총',stack:1,use:true}; // 🎯 저격소총 (AWM): 한 발씩 · 아주 셈 · 우클릭 조준경
 const CUFFS=374;IT[CUFFS]={name:'수갑',stack:1}; // ⛓ 수갑: 플레이어를 치면 묶임 (못 움직이고 못 공격 · 다시 치면 풀림 · 2분 뒤 저절로) · 몹은 30초 멈춤
 const MAG=373;IT[MAG]={name:'탄창',stack:16}; // 🔫 탄창: R로 장전 (권총 6발 · 돌격소총 30발)
@@ -3174,7 +3179,7 @@ RECIPES.push(
   {out:REDDIA_BLOCK,n:1,in:[[RED_DIAMOND,9]],st:'bench'},{out:RED_DIAMOND,n:9,in:[[REDDIA_BLOCK,1]]},
   {out:BLACKDIA_BLOCK,n:1,in:[[BLACK_DIAMOND,9]],st:'bench'},{out:GOLD_BLOCK,n:1,in:[[GOLD_INGOT,9]],st:'bench'},{out:GOLD_INGOT,n:9,in:[[GOLD_BLOCK,1]]},
   {out:STEEL,n:1,in:[[IRON_INGOT,1],[STONE,1]],st:'bench'},{out:STEEL_ALLOY,n:1,in:[[STEEL,1],[STONE,1]],st:'bench'},
-  {out:BULLET,n:4,in:[[COPPER_INGOT,1]],st:'bench'},{out:MAG,n:1,in:[[IRON_INGOT,1],[BULLET,8]],st:'bench'},{out:CUFFS,n:1,in:[[IRON_INGOT,3]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
+  {out:BULLET,n:4,in:[[COPPER_INGOT,1]],st:'bench'},{out:MAG,n:1,in:[[IRON_INGOT,1],[BULLET,8]],st:'bench'},{out:CUFFS,n:1,in:[[IRON_INGOT,3]],st:'bench'},{out:TASER,n:1,in:[[IRON_INGOT,2],[COPPER_INGOT,2],[ESTONE,1]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
   {out:SUPER_ALLOY,n:1,in:[[STEEL,1],[STEEL_ALLOY,1],[IRON_INGOT,1]],st:'bench'},{out:NUKE,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[SUPER_ALLOY,1]],st:'bench'},
   {out:ICBM,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1]],st:'bench'},{out:MISSILE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[CRYSTAL,1]],st:'bench'},
   {out:NUKE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[URANIUM,1]],st:'bench'},{out:ATOM_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[RADIUM,1]],st:'bench'},{out:TSAR_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[POLONIUM,1]],st:'bench'},{out:ATOM_BOMB,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1],[POLONIUM,1]],st:'bench'},
@@ -3293,6 +3298,7 @@ function itemIcon(id){
     case SNIPER:return pixelIcon((X,Y,x0,y)=>{const x=15-x0;if(y===6&&x>=0&&x<=15)return x<4?'#2a2a30':'#1a1a20';if(y===7&&x>=5&&x<=15)return '#1a1a20';if(y===4&&x>=6&&x<=10)return x===6||x===10?'#b0b4bc':'#202024';if(y===5&&(x===7||x===9))return '#202024';if(y>=8&&y<=10&&x>=11&&x<=12)return '#1a1a20';if(y>=7&&y<=10&&x>=13&&x<=15)return '#b0b4bc';return null;});
     case RIFLE:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=7&&x>=1&&x<=15)return y===5?'#8a909c':x<5?'#5a3e26':'#3a3e48';if(y>=8&&y<=11&&x>=7&&x<=8)return '#2a2e36';if(y>=8&&y<=10&&x>=1&&x<=3)return '#5a3e26';if(y===4&&x>=8&&x<=11)return '#22252c';return null;});
     case BULLET:return pixelIcon((X,Y,x,y)=>{const c=[[5,'#d8a040'],[8,'#e8c060'],[11,'#d8a040']];for(const [bx,col] of c){if(x>=bx&&x<=bx+1&&y>=7&&y<=12)return col;if(x>=bx&&x<=bx+1&&y>=4&&y<=6)return y===4?'#9a6a3a':'#b88050';}return null;});
+    case TASER:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=8&&x>=3&&x<=10)return y===5?'#ffe060':'#f2c418';if(y>=5&&y<=8&&x>=11&&x<=13)return '#1a1a1e';if(y===6&&x===14)return '#40a0ff';if(y===8&&x===14)return '#40a0ff';if(y>=9&&y<=13&&x>=3&&x<=5)return '#1a1a1e';return null;});
     case LASER:return pixelIcon((X,Y,x,y)=>{if(x>=13&&x<=14&&y>=6&&y<=9)return '#ff3050';if(y===7&&x>=6&&x<=9)return '#ff6080';if(y>=6&&y<=9&&x>=2&&x<=12)return y===6?'#8a8a9a':'#4a4a58';if(y>=10&&y<=13&&x>=3&&x<=5)return '#3a3a44';return null;});
     case ESTONE:return pixelIcon((X,Y,x,y)=>{const d=Math.abs(X-8)*.9+Math.abs(Y-8);if(d>6.5)return null;if((x===7&&y>=3&&y<=7)||(x===8&&y>=7&&y<=8)||(x===9&&y>=8&&y<=12))return '#fffbd0';return d<3?'#ffe44a':d<5?'#f2c21a':'#5ab8ff';});
     case HELL_COMPASS:case END_COMPASS:case CITY_COMPASS:{const nc=id===HELL_COMPASS?'#ff4a2a':id===END_COMPASS?'#1fe0cc':'#b060ff';
@@ -5149,7 +5155,11 @@ function updateHand(dt){
   player.aimK=(player.aimK||0)+((gunAim()?1:0)-(player.aimK||0))*Math.min(1,dt*14);
   if(player.aimK>.01&&isGun(hs)){const k=player.aimK,A=handArm.position,R=handArm.rotation; // 🎯 조준: 총을 화면 가운데로 올려 눈높이에 맞춤
     A.set(lerp(A.x,.2,k),lerp(A.y,-.2,k),lerp(A.z,-.42,k));R.set(lerp(R.x,0,k),lerp(R.y,.3,k),lerp(R.z,0,k));}
-  const two=hs&&longGun(hs.id)&&heldModel&&!player.reload&&!player.dine&&!player.eating&&!player.colaOpen&&!bowAimNow(); // 🔫 돌격소총은 양손: 왼손이 앞쪽(탄창 부분)을 받침
+  if(player.saluteT>0)player.saluteT-=dt;player.saluteK=(player.saluteK||0)+((player.saluteT>0?1:0)-(player.saluteK||0))*Math.min(1,dt*10);
+  if(player.saluteK>.01){const k=ease(player.saluteK),A=handArm.position,R=handArm.rotation; // 🫡 경례: 오른손을 이마 옆으로 (손바닥이 아래 · 들고 있던 건 잠깐 숨김)
+    const P=SALUTE_P,Q=SALUTE_R;A.set(lerp(A.x,P[0],k),lerp(A.y,P[1],k),lerp(A.z,P[2],k));R.set(lerp(R.x,Q[0],k),lerp(R.y,Q[1],k),lerp(R.z,Q[2],k));if(heldModel)heldModel.visible=k<.4;}
+  else if(heldModel&&!heldModel.visible)heldModel.visible=true;
+  const two=hs&&longGun(hs.id)&&heldModel&&!(player.saluteK>.01)&&!player.reload&&!player.dine&&!player.eating&&!player.colaOpen&&!bowAimNow(); // 🔫 돌격소총은 양손: 왼손이 앞쪽(탄창 부분)을 받침
   if(two){if(!leftArm)buildLeftArm();setLeftPlate(0,0);leftArm.userData.two=1;leftArm.visible=true;if(magL)magL.visible=false;leftArm.rotation.set(.9,.3,0);
     handGroup.updateMatrixWorld(true);const T=gunPt(GUN_PTS[hs.id].hold,_rlT),palm=_rlA.set(0,.03,-.3).applyQuaternion(leftArm.quaternion);leftArm.position.copy(T).sub(palm);}
   else if(leftArm&&leftArm.userData.two){leftArm.userData.two=0;if(!player.reload&&!player.dine&&!player.colaOpen&&!bowAimNow())leftArm.visible=false;}
@@ -5187,6 +5197,7 @@ function updateHand(dt){
   for(const f of handFingers){f.a.rotation.x=lerp(-.2,-1.12,fist);f.b.rotation.x=lerp(-.2,-1.3,fist);f.c.rotation.x=lerp(-.15,-.95,fist);} // 마디마다 차례로 굽혀 주먹을 쥠
   if(handThumbA){handThumbA.rotation.y=lerp(.75,.3,fist);handThumbB.rotation.x=lerp(-.2,-.55,fist);handThumbC.rotation.x=lerp(-.2,-.75,fist);}
   if(player.colaOpen)handFingers.forEach((f,i)=>{f.a.rotation.x=i?-1.12:-.08;f.b.rotation.x=i?-1.3:-.08;f.c.rotation.x=i?-.95:-.05;}); // 🥤 검지만 펴서 따개를 들어 올림
+  if(player.saluteK>.01){const k=player.saluteK;for(const f of handFingers){f.a.rotation.x=lerp(f.a.rotation.x,0,k);f.b.rotation.x=lerp(f.b.rotation.x,0,k);f.c.rotation.x=lerp(f.c.rotation.x,0,k);}if(handThumbA){handThumbA.rotation.y=lerp(handThumbA.rotation.y,.15,k);handThumbB.rotation.x=lerp(handThumbB.rotation.x,0,k);handThumbC.rotation.x=lerp(handThumbC.rotation.x,0,k);}} // 🫡 경례: 손가락을 곧게 폄
   const L=Math.max(.3,light);handAmb.intensity=.8*L;handDir.intensity=1.1*L;handItem.material.color.setScalar(L);
   const bt=player.blockT=lerp(player.blockT||0,player.blocking?1:0,Math.min(1,dt*14));
   shieldMesh.visible=!!armor[4];
@@ -5565,6 +5576,9 @@ function buildItemModel0(id){
         iMesh(g,IGEO.cyl,b,0,.085,-.02,Math.PI/2,0,0,.022,.11,.022);iBox(g,.04,.12,.06,b,0,-.08,.06,.3,0,0);iBox(g,.05,.12,.04,sv,0,-.01,.21);break;}
       const r=id===RIFLE,b=imat('gnb',0x3a3e48,'metal',.35,.75),w=imat('gnw',0x5a3e26,'rough',.6,0);iBox(g,.04,.06,r?.5:.22,b,0,.02,r?-.12:-.04);
       iBox(g,.035,.11,.05,w,0,-.06,r?.02:.04,.3,0,0);if(r){iBox(g,.04,.07,.16,w,0,0,.2);iBox(g,.03,.09,.04,b,0,-.06,-.1);}break;}
+    case TASER:{const y=imat('tzY',0xf2c418,'rough',.45,.1),k=imat('tzK',0x1a1a1e,'rough',.6),bl=imat('tzB',0x40a0ff,null,.3,0,0x2080ff,.9); // ⚡ 테이저건 3D: 노란 몸통 · 검은 카트리지 · 손잡이 · 파란 전극
+      iBox(g,.05,.065,.17,y,0,.02,-.03);iBox(g,.056,.072,.05,k,0,.02,-.14);iBox(g,.04,.1,.05,k,0,-.05,.04,.3,0,0);iBox(g,.02,.02,.04,k,0,-.01,-.02);
+      iBox(g,.012,.012,.012,bl,-.014,.03,-.168);iBox(g,.012,.012,.012,bl,.014,.03,-.168);iBox(g,.03,.008,.03,bl,0,.056,-.02);break;}
     case LASER:{const b=imat('lsb',0x3a3a46,'metal',.35,.7);iBox(g,.05,.07,.24,b,0,.02,-.04);iMesh(g,IGEO.cyl,b,0,.03,-.2,Math.PI/2,0,0,.018,.1,.018);iBox(g,.04,.1,.05,GRIP(),0,-.05,.04,.3,0,0);
       iBox(g,.03,.012,.06,imat('lsr',0xff3050,null,.3,0,0xff2040,1),0,.06,-.06);iMesh(g,IGEO.sph,imat('lsr',0xff3050,null,.3,0,0xff2040,1),0,.03,-.25,0,0,0,.016,.016,.016);break;}
     case HELL_COMPASS:case END_COMPASS:case CITY_COMPASS:{const nc=id===HELL_COMPASS?0xff4a2a:id===END_COMPASS?0x1fe0cc:0xb060ff;
@@ -5700,7 +5714,7 @@ function setHeldModel(id){
   if(heldModel){itemHolder.remove(heldModel);heldModel=null;}
   if(!id)return;const {g,grip}=itemModel(id);heldModel=g;itemHolder.add(g);
   if(grip){itemHolder.position.set(-.045,0,-.4);itemHolder.rotation.set(-.55,-1.1,0);itemHolder.scale.setScalar(1);} // 손잡이를 주먹에 쥠 (넓은 면이 보이게)
-  else if(GUN_CAP[id]){itemHolder.position.set(-.045,.07,-.42);itemHolder.rotation.set(0,-.12,0);itemHolder.scale.setScalar(longGun(id)?1.65:1.55);} // 🔫 총: 손잡이를 쥐고 총구가 앞을 봄
+  else if(GUN_CAP[id]||id===TASER){itemHolder.position.set(-.045,.07,-.42);itemHolder.rotation.set(0,-.12,0);itemHolder.scale.setScalar(longGun(id)?1.65:1.55);} // 🔫 총: 손잡이를 쥐고 총구가 앞을 봄
   else{itemHolder.position.set(-.11,.02,-.41);itemHolder.rotation.set(0,.5,0);itemHolder.scale.setScalar(isBlk(id)?.75:1.35);} // 주먹 위에 올림
 }
 
@@ -5714,7 +5728,7 @@ function iconPose(id,g){ // 아이콘에서 보이는 각도
   switch(id){
     case BOW:g.rotation.y=Math.PI/2;w.rotation.z=-Math.PI/4;break;
     case CROSSBOW:w.rotation.set(.45,.75,0);break;
-    case LASER:case PISTOL:case RIFLE:case SNIPER:g.rotation.set(.25,-Math.PI/2+.35,0);break;
+    case LASER:case PISTOL:case RIFLE:case SNIPER:case TASER:g.rotation.set(.25,-Math.PI/2+.35,0);break;
     case BUCKET:case WATER_BUCKET:case LAVA_BUCKET:w.rotation.set(.5,.3,0);break;
     case BOAT:w.rotation.set(.55,.7,0);break;
     case SHIELD:case BZ_SHIELD:case COIN:case HELL_COMPASS:case END_COMPASS:case CITY_COMPASS:case PORTAL_KEY:w.rotation.set(.12,-.38,0);break;
@@ -5872,6 +5886,7 @@ function updateAvatar(dt){
     A.arms.forEach((a,i)=>{a.rotation.order='XYZ';a.rotation.set(lerp(a.rotation.x,2.6+Math.sin(t*4.5+i*Math.PI)*.75,sk),0,lerp(a.rotation.z,(i?-1:1)*.25,sk));});
     A.legs.forEach((l,i)=>{l.rotation.x=lerp(l.rotation.x,Math.sin(t*9+i*Math.PI)*.35,sk);});}
   if(bowAimNow()&&gk<.05&&sk<.05)bowPose(A,p.pitch,d,bowPull()); // 🏹 두 손으로 활 당기기
+  if((p.saluteK||0)>.01&&gk<.05&&sk<.05)salutePose(A,p.saluteK); // 🫡 경례
   if(A.tagN!==NICK){A.tagN=NICK;if(A.tag){A.g.remove(A.tag);A.tag.material.map.dispose();A.tag=null;}if(NICK){const c=makeCanvas(256,64),g=c.getContext('2d');g.font="bold 34px 'Malgun Gothic',sans-serif";const w=Math.min(250,g.measureText(NICK).width+26); // 머리 위 닉네임
     g.fillStyle='rgba(0,0,0,.45)';g.fillRect((256-w)/2,8,w,48);g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.fillText(NICK,128,33);A.tag=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));A.tag.scale.set(1.2,.3,1);A.tag.position.y=2.3;A.g.add(A.tag);}}
   if(A.cape)A.cape.rotation.x=-(.08+Math.min(.85,hs*.13)+Math.sin(performance.now()/320)*.025); // 망토: 걸을수록 뒤로 펄럭
@@ -6998,7 +7013,7 @@ function reloadTick(dt){const R=player.reload;if(!R)return;R.t+=dt;
   if(held()!==R.s||player.dead){player.reload=null;return;} // 다른 칸으로 바꾸면 장전 취소
   if(R.t>=R.dur){player.reload=null;if(!isCreative()){if(!inv.some(q=>q&&q.id===MAG))return;removeItem(MAG,1);}R.s.ammo=GUN_CAP[R.s.id];invChanged();toast(`🔫 장전 완료 (${R.s.ammo}발)`);}}
 function fireGun(s){
-  if(gunCD>0||player.reload||player.cuffed)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
+  if(gunCD>0||player.reload||player.cuffed||player.tased)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
   const rifle=s.id===RIFLE,snip=s.id===SNIPER;gunCD=snip?1.4:rifle?.32:.38;
   if(snip){gunShot(false,true);return;}
   const shots=rifle?3:1;for(let i=0;i<shots;i++)setTimeout(()=>gunShot(rifle),i*90);}
@@ -7012,6 +7027,30 @@ function gunShot(rifle,snip){const s=held();if(!s||!isGun(s)||player.dead||playe
   flashBeam(o.clone().add(new THREE.Vector3(0,-.18,0)).addScaledVector(d,.7),o.clone().addScaledVector(d,L),0xffe08a,.04,.07);
   spawnParticles(o.x+d.x*.9,o.y-.15+d.y*.9,o.z+d.z*.9,new THREE.Color(0xffc040),4,.08,2);
   if(snip){if(playSnd('rifle',1,.55))tone(60,30,.5,.3,'sine');else SFX.gun();}else if(rifle){if(!playSnd('rifle',.6))SFX.gun();}else if(playSnd('rifle',.85,.74+Math.random()*.04))tone(90,40,.25,.25,'sine');else SFX.revolver();gunKick=1;player.pitch=Math.min(1.5,player.pitch+(snip?.06:rifle?.012:.03));shake(snip?.12:.05,snip?.15:.08);}
+// 🫡 경례: G 키 · /경례 · 2.5초 동안 오른손을 이마에 (친구들 화면에서도 보임)
+const SALUTE_P=[.66,.26,-.5],SALUTE_R=[.15,1.45,1.2]; // 1인칭: 오른쪽 위에서 손이 이마 쪽으로 들어옴
+function doSalute(){if(player.dead||isSpec()||player.cuffed||player.tased)return;if(player.saluteT>0){player.saluteT=0;return;}player.saluteT=2.5;mouseL=false;
+  if(MP.on){const m=MP.me.nick+' 님이 경례! 🫡';mpSend({t:'c',n:'🫡',m});mpChatShow('🫡',m);}else toast('🫡 경례!');}
+// ⚡ 테이저건: 전극 두 개가 날아가 맞으면 5초 동안 감전 (플레이어는 못 움직이고 못 공격 · 몹은 멈춤) · 3초마다 · 12칸
+let taserCD=0;
+function fireTaser(){
+  if(player.dead||player.cuffed||player.tased||isSpec())return;if(taserCD>0){SFX.click();return;}taserCD=3;
+  const d=viewDir(),o=camera.position.clone(),hit=raycast(o,d,12);let L=hit?hit.dist:12,best=null;
+  for(const m of mpWithDummies(mobs)){if(m.dead)continue;const hw=m.w/2;const t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){L=t;best=m;}}
+  const s=o.clone().add(new THREE.Vector3(0,-.18,0)).addScaledVector(d,.6),e=o.clone().addScaledVector(d,L),side=new THREE.Vector3(-d.z,0,d.x).normalize().multiplyScalar(.05);
+  flashBeam(s.clone().add(side),e.clone().add(side),0xffe060,.012,.25);flashBeam(s.clone().sub(side),e.clone().sub(side),0xffe060,.012,.25); // 전선 두 가닥
+  spawnParticles(e.x,e.y,e.z,new THREE.Color(0x60b0ff),14,.25,3);noise(.35,6000,.12);tone(2400,1800,.3,.05,'square');swing=1;gunKick=.6;
+  if(!best)return;
+  if(best.pvp){if(MP.on&&MP.pvp===false){toast('⚔ PvP가 꺼져 있어요');return;}mpRoute({t:'tase',to:best.id,by:MP.me.nick});toast(`⚡ <b>${mpEsc(best.def.name)}</b> 님을 감전시켰어요 (5초)`);return;}
+  best.byPlayer=performance.now();best.hurt(1,d.x*.2,d.z*.2);best.cuffT=Math.max(best.cuffT||0,5);toast(`⚡ <b>${best.def.name||'몹'}</b>을(를) 5초 동안 감전시켰어요`);}
+function taseIn(d){const by=String(d.by||'?').slice(0,16);if(player.dead)return;
+  player.tased={by,t:5};shake(.08,.5);noise(.6,6000,.1);toast(`⚡ <b>${mpEsc(by)}</b> 님의 테이저건에 맞았어요 — 5초 동안 못 움직여요`);
+  if(MP.on&&MP.me){const m=MP.me.nick+' 님이 테이저건에 맞았어요 ⚡';mpSend({t:'c',n:'⚡',m});mpChatShow('⚡',m);}}
+function taseTick(dt){const T=player.tased;let el=document.getElementById('taseHud');if(!T){if(el)el.remove();return;}
+  T.t-=dt;if(T.t<=0||player.dead){player.tased=null;return;}
+  for(const k of ['KeyW','KeyA','KeyS','KeyD','Space'])keys[k]=false;player.vel.x=player.vel.z=0;mouseL=mouseR=false;if(Math.random()<dt*8)shake(.03,.1);
+  if(!el){el=document.createElement('div');el.id='taseHud';el.style.cssText='position:fixed;inset:0;z-index:13;pointer-events:none;box-shadow:inset 0 0 120px rgba(80,160,255,.55);display:flex;justify-content:center;align-items:flex-start;padding-top:22vh;color:#fff;font:bold 18px sans-serif;text-shadow:0 0 6px #4af';document.body.appendChild(el);}
+  el.textContent=`⚡ 감전! ${Math.ceil(T.t)}초 (${T.by})`;}
 
 // --- 보스 ---
 function flyTo(m,x,y,z,sp,dt){const dx=x-m.pos.x,dy=y-m.pos.y,dz=z-m.pos.z,l=Math.hypot(dx,dy,dz)||1,s=Math.min(sp,l*2),k=Math.min(1,2.5*dt);
@@ -8102,6 +8141,7 @@ function useItem(){
 }
 const bowAimNow=()=>{if(!running||invOpen||player.dead||isSpec())return false;const s=held();return !!s&&(s.id===BOW&&mouseR||s.id===CROSSBOW&&(player.cbLoad>0||!!s.loaded));}; // 🏹 활: 우클릭 누르는 동안 · 석궁: 장전하는 동안과 장전된 채로
 const bowPull=()=>{const s=held();if(s&&s.id===CROSSBOW)return s.loaded?1:Math.min(1,(player.cbLoad||0)/1.25);return player.bowCD>0?Math.max(0,1-player.bowCD/.8):1;}; // 쏘고 나면 다시 0부터 당김
+function salutePose(A,k){k=ease(Math.min(1,k));const R=A.arms[1].rotation;R.order='YXZ';R.set(lerp(R.x,2.47,k),lerp(R.y,.69,k),lerp(R.z,0,k));} // 🫡 3인칭 경례: 오른팔을 들어 손끝이 이마 옆에 오게
 function bowPose(A,pi,d,pull){A.arms[1].rotation.order='YXZ';A.arms[1].rotation.set(Math.PI/2+pi,d+.12,0); // 3인칭: 활 든 팔은 앞으로 쭉 · 다른 팔은 시위를 얼굴 쪽으로 당김
   A.arms[0].rotation.order='YXZ';A.arms[0].rotation.set(Math.PI/2+pi-.12*pull,d-.5-.3*pull,0);}
 function cbowTick(dt){const s=held(); // 🏹 석궁 장전: 우클릭을 누르고 있으면 1.25초 동안 두 손으로 시위를 당겨 화살을 걸어 둠
@@ -8138,7 +8178,7 @@ function sleep(t){
   setTimeout(()=>{world.time=.02;for(const m of [...mobs])if(m.def.hostile&&!m.def.boss)m.remove();$('fade').style.opacity=0;paused=!locked&&!invOpen;toast('상쾌한 아침입니다! 스폰 지점이 설정되었습니다.');achieve('bed');},1300);
 }
 function attack(){
-  if(isSpec())return;if(player.cuffed){toast('⛓ 수갑에 묶여서 공격할 수 없어요');return;}
+  if(isSpec())return;if(player.cuffed){toast('⛓ 수갑에 묶여서 공격할 수 없어요');return;}if(player.tased)return;
   const mace=heldTool()&&heldTool().type==='mace';
   if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?2.5:.4;
   if(held()&&held().id===BANHAMMER){banHammerHit(mobTarget);return;}
@@ -8372,6 +8412,7 @@ addEventListener('keydown',e=>{
   else if(e.code==='Escape'&&invOpen)closeInv();
   else if(e.code==='KeyQ'){e.preventDefault();if(locked)dropHeld(e.ctrlKey||e.metaKey);}
   else if(e.code==='KeyR'&&locked&&!e.repeat)startReload(); // 🔫 장전
+  else if(e.code==='KeyG'&&locked&&!e.repeat&&running)doSalute(); // 🫡 경례
   else if(/^Digit[1-9]$/.test(e.code)&&!invOpen)selectSlot(+e.code[5]-1);
   else if(e.code==='KeyP')cycleView();
   else if((e.code==='KeyT'||e.code==='Slash')&&running&&!invOpen&&!player.dead){e.preventDefault();mpChatOpen(e.code==='Slash'?'/':'');} // 🌐 채팅 · 💻 명령어 (/)
@@ -8394,7 +8435,8 @@ canvas.addEventListener('mousedown',e=>{
   if(!locked&&!noLock){lockPointer();return;}
   if(paused)return;
   audio();
-  if(e.button===0&&isGun(held())){mouseL=true;fireGun(held());return;} // 🔫 총: 클릭 = 발사 · 우클릭 = 조준
+  if(e.button===0&&isGun(held())){mouseL=true;fireGun(held());return;}
+  if(e.button===0&&held()&&held().id===TASER){fireTaser();return;} // ⚡ 테이저건: 클릭 = 발사 // 🔫 총: 클릭 = 발사 · 우클릭 = 조준
   if(e.button===2&&isGun(held())){mouseR=true;return;}
   if(e.button===0){mouseL=true;swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);else if(vehTarget)hitVeh(vehTarget);}
   if(e.button===2){mouseR=true;useT=.28;useItem();}
@@ -8435,7 +8477,7 @@ if(MOBILE){
   const btn=(id,down,up)=>{const el=$(id);
     el.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();audio();el.classList.add('on');down();},{passive:false});
     const u=e=>{e.preventDefault();el.classList.remove('on');up&&up();};el.addEventListener('touchend',u);el.addEventListener('touchcancel',u);};
-  btn('bAttack',()=>{if(!running||invOpen||player.dead)return;mouseL=true;if(isGun(held())){fireGun(held());return;}swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);else if(vehTarget)hitVeh(vehTarget);},()=>{mouseL=false;});
+  btn('bAttack',()=>{if(!running||invOpen||player.dead)return;mouseL=true;if(isGun(held())){fireGun(held());return;}if(held()&&held().id===TASER){fireTaser();return;}swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);else if(vehTarget)hitVeh(vehTarget);},()=>{mouseL=false;});
   btn('bUse',()=>{if(!running||invOpen||player.dead)return;mouseR=true;if(isGun(held()))return;useT=.28;useItem();},()=>{mouseR=false;});
   btn('bJump',()=>{keys.Space=true;spaceTap();},()=>{keys.Space=false;});
   btn('bSprint',()=>{mobileSprint=!mobileSprint;},()=>{$('bSprint').classList.toggle('on',mobileSprint);});
@@ -9114,7 +9156,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='lang'){if(!mpConnOp(c)||typeof d.l!=='string')return;setLang(d.l,1);mpSend(d,c);}
   else if(d.t==='banreq'){if(mpConnOp(c))mpBanNick(d.n);}
   else if(d.t==='opreq'){if(c.P.nick==='운영자'||c.P.adm||mpConnBoss(c))mpSetOp(String(d.n||'').slice(0,16),!!d.on);} // 🔑 OP 주기 · 빼기는 방장(만든 사람) · 어드민만 (서버가 확인)
-  else if(d.t==='cuff'){d.by=c.P.nick;mpRoute(d);}
+  else if(d.t==='cuff'||d.t==='tase'){d.by=c.P.nick;mpRoute(d);}
   else if(d.t==='mod'){d.n=c.P.nick;mpSend(d,c);modEmit('msg',d.k,d.v,d.n);}
   else if(d.t==='smods'){if(!mpConnOp(c)||!Array.isArray(d.mods))return;const L=d.mods.filter(m=>m&&typeof m.name==='string'&&(typeof m.code==='string'||typeof m.url==='string')).slice(0,40).map(m=>({name:m.name.slice(0,60),code:m.code||'',url:m.url||undefined,on:true}));
     modSave(L);mpSend({t:'c',n:'🧩 서버',m:c.P.nick+' 님(OP)이 서버 모드를 '+L.length+'개로 바꿨어요 · 방을 다시 열면 적용'});toast(mpL(`🧩 OP <b>${mpEsc(c.P.nick)}</b> 님이 서버 모드를 바꿨어요 — 새로고침 후 방을 다시 열면 적용돼요`,'🧩 An OP changed the server mods — reopen the room to apply'));}
@@ -9191,6 +9233,7 @@ function mpGuestRecv(d){
   else if(d.t==='kick')mpEnd(d.ban?mpL('🔨 이 방에서 밴당했어요','🔨 You were banned from this room'):mpL('방장이 방에서 내보냈어요','The host removed you from the room'));
   else if(d.t==='lang'){if(typeof d.l==='string')setLang(d.l,1);}
   else if(d.t==='cuff')cuffIn(d); // ⛓ 수갑
+  else if(d.t==='tase')taseIn(d); // ⚡ 테이저건
   else if(d.t==='mod')modEmit('msg',d.k,d.v,d.n); // 🧩 모드 신호
   else if(d.t==='bye'){MP.byeGot=true;mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
@@ -9218,7 +9261,7 @@ function mpTick(dt){if(!MP.on)return;kindTick(dt);
   if(!MP.host&&(MP.stT=(MP.stT||0)+dt)>20){MP.stT=0;try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}} // 🌍 20초마다 내 가방 · 위치를 방장에게 (방장이 바뀌어도 이어서)
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
-    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0)};
+    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0),sl:r(p.saluteK||0)};
     if(MP.host)o.id='H';mpSend(o);}
   if(player.hp<MP.lhp)MP.redT=.35;MP.lhp=player.hp;MP.redT-=dt; // 다치면 친구 화면에서 빨갛게
   MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();mpWsScan();}
@@ -9240,6 +9283,7 @@ function mpTick(dt){if(!MP.on)return;kindTick(dt);
     else if(sk>.05){const tt=performance.now()/1000;A.arms.forEach((a,i)=>{a.rotation.order='XYZ';a.rotation.set(lerp(a.rotation.x,2.6+Math.sin(tt*4.5+i*Math.PI)*.75,sk),0,lerp(a.rotation.z,(i?-1:1)*.25,sk));});A.legs.forEach((l,i)=>{l.rotation.x=lerp(l.rotation.x,Math.sin(tt*9+i*Math.PI)*.35,sk);});} // 수영
     if(A.wings)A.wings.forEach((w,i)=>{const sd=i?1:-1;w.rotation.set(-.2-.25*gk,0,sd*(.12+1.15*gk));}); // 겉날개: 활공하면 활짝 펼침
     if(t.aw&&sk<.05)bowPose(A,t.pi,d,Math.min(1,t.aw)); // 친구가 활을 당기는 자세
+    if(t.sl>.01&&sk<.05)salutePose(A,t.sl); // 🫡 친구가 경례
     {const sid=t.sh||0;if(sid!==A.shieldId){A.shieldId=sid;A.shieldP.clear();if(sid)try{const c=(sid===BZ_SHIELD?SHIELD_MODEL.bz:SHIELD_MODEL.normal).clone();c.visible=true;c.scale.setScalar(1.05);A.shieldP.add(c);}catch(e){}} // 친구 방패 (막으면 몸 앞으로)
       const sh=A.shieldP.children[0];if(sh){A.arms[0].updateMatrix();_shRest.setFromEuler(_shE.set(0,-Math.PI/2,0));_shBlock.copy(A.arms[0].quaternion).invert().multiply(_shFwd);sh.quaternion.copy(_shRest).slerp(_shBlock,bk);A.shieldP.position.set(lerp(-.12,-.02,bk),lerp(-.42,-.76,bk),lerp(0,-.04,bk));}}
     if(A.cape)A.cape.rotation.x=-(.08+Math.min(.85,hs*.13));
@@ -9291,7 +9335,7 @@ function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x
 function cuffHit(M){swing=1;tone(1800,1200,.06,.06,'square');tone(900,700,.08,.05,'square',.06);
   if(M.pvp){mpRoute({t:'cuff',to:M.id,by:MP.me.nick});toast(`⛓ <b>${mpEsc(M.def.name)}</b> 님에게 수갑을 채우거나 풀었어요`);return;}
   M.cuffT=M.cuffT>0?0:30;toast(M.cuffT>0?`⛓ <b>${M.def.name||'몹'}</b>을(를) 30초 동안 묶었어요`:'🔓 몹을 풀어 줬어요');}
-function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
+function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);else if(d.t==='tase')taseIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
 function cuffIn(d){const by=String(d.by||'?').slice(0,16);
   if(player.cuffed){player.cuffed=null;toast(`🔓 <b>${mpEsc(by)}</b> 님이 수갑을 풀어 줬어요`);}else{player.cuffed={by,t:120};toast(`⛓ <b>${mpEsc(by)}</b> 님이 수갑을 채웠어요 — 2분 동안 못 움직여요 (다시 치면 풀려요)`);}
   tone(1800,1200,.06,.06,'square');const m=MP.me.nick+(player.cuffed?' 님이 수갑에 묶였어요 ⛓':' 님의 수갑이 풀렸어요 🔓');mpSend({t:'c',n:'⛓',m});mpChatShow('⛓',m);}
@@ -9397,7 +9441,7 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
   ['/tphere 닉네임 · /tpall','친구를 내 자리로 (방장)'],['/near','친구들과의 거리'],['/tpr','멀리 아무 데나 순간이동'],['/time add 숫자','시간 앞으로 (1000 = 1시간)'],['/timefreeze','시간 멈추기 · 다시 흐르기'],
   ['/freeze','몹 멈추기 · 다시 움직이기'],['/gravity 배수','내 중력 (0.1~3)'],['/killmobs','주변 몹 모두 없애기 (보스 빼고)'],['/lightning','보는 곳에 번개'],['/itemrain 아이템 [개수]','하늘에서 아이템 비'],
   ['/walls 블록','영역 둘레에 벽'],['/cyl 블록 반지름 높이','원기둥'],['/pyramid 블록 크기','피라미드'],['/house','앞에 작은 집 짓기'],['/drain [반지름]','주변 물 · 용암 없애기'],
-  ['/dance','빙글빙글 춤'],['/confetti','꽃가루'],['/afk','자리 비움 알리기'],
+  ['/dance','빙글빙글 춤'],['/경례','🫡 경례 (G 키)'],['/confetti','꽃가루'],['/afk','자리 비움 알리기'],
   ['/tree','보는 곳에 나무'],['/snowman','보는 곳에 눈사람'],['/bridge 블록 [길이]','앞으로 다리 (64칸까지)'],['/tunnel [길이]','앞으로 3×3 터널'],['/platform 블록 [반지름]','발밑에 둥근 발판'],['/dome 블록 반지름','반구 돔'],['/tower 블록 높이','앞에 속이 빈 탑'],
   ['/ores [반지름]','주변 광석 찾기'],['/wp set|go|list|del 이름','웨이포인트 (여러 곳 저장)'],['/share','친구에게 내 좌표 알려 주기'],['/pet 몹이름','따라다니는 펫 소환'],['/tame','보고 있는 몹 길들이기'],['/msg 닉네임 말','귓속말 (방장)'],
   ['/countdown [초]','큰 글씨 카운트다운'],['/timer 초 [말]','알림 타이머'],['/8ball 질문','운세 공'],['/trail','발자국 꼬리 효과'],['/bounce','높이 튀어 오르기'],['/meteor [개수]','운석 비'],
@@ -9420,7 +9464,7 @@ function cmdIsAdmin(){return nickNow()==='운영자'||!!(ACC&&accToken()&&ACC.ad
 // 🔑 OP: 혼자 하는 세계 · 내 세계로 연 방의 방장 · 공개 서버를 만든 사람 · 어드민 · OP 를 받은 사람
 //   공개 서버에서는 세계를 돌리는 사람(방장 자리)이 바뀌어도, 만든 사람이나 어드민이 아니면 방장으로 치지 않아요 (세계에 저장된 「만든 사람」으로 판단)
 // 🌐 멀티 모드(공개 서버)에서 쓸 수 있는 명령어: 정보 · 대화 · 서버 운영만 (아이템 · 이동 · 시간 같은 치트는 어드민만)
-const MULTI_CMDS=['help','도움말','list','목록','me','rules','규칙','msg','w','tell','귓속말','r','op','deop','ops','kick','내보내기','ban','밴','unban','unben','밴해제','banlist','밴목록','pvp','setrules','규칙정하기','setmotd','환영인사','mobspawn','몹생성','afk','자리비움','coords','좌표','stopwatch','스톱워치','screenshot','스크린샷','mute','음소거','dance','춤','difficulty','난이도'];
+const MULTI_CMDS=['help','도움말','list','목록','me','rules','규칙','msg','w','tell','귓속말','r','op','deop','ops','kick','내보내기','ban','밴','unban','unben','밴해제','banlist','밴목록','pvp','setrules','규칙정하기','setmotd','환영인사','mobspawn','몹생성','afk','자리비움','coords','좌표','stopwatch','스톱워치','screenshot','스크린샷','mute','음소거','dance','춤','salute','경례','difficulty','난이도'];
 function mpPersistNow(){return MP.host?!!MP.persist:!!MP.gPersist;}
 function mpBossMe(){const me=MP.me?MP.me.nick:'';return mpPersistNow()?!!(world.flags&&world.flags.owner&&world.flags.owner===me):!!MP.host;} // 방장 = 내 세계 방의 방장 · 공개 서버를 만든 사람
 function cmdIsOp(){if(cmdIsAdmin()||!MP.on||mpBossMe())return true;const me=MP.me?MP.me.nick.toLowerCase():'';if(MP.host&&(world.flags.ops||[]).some(x=>x.toLowerCase()===me))return true;return !!MP.op;}
@@ -9580,6 +9624,7 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
         E.push([X,Y,Z,id]);}cmdEdit(E);cmdOut('🏡 작은 집을 지었어요 (/undo 로 되돌리기)');break;}
     case 'drain':case '물빼기':{const r=Math.max(1,Math.min(12,Math.floor(+a[0]||6))),o=[Math.floor(P.x),Math.floor(P.y),Math.floor(P.z)],E=[];for(let x=-r;x<=r;x++)for(let y=-r;y<=r;y++)for(let z=-r;z<=r;z++){const b=getBlock(o[0]+x,o[1]+y,o[2]+z);if(b>0&&LIQ_KIND[b])E.push([o[0]+x,o[1]+y,o[2]+z,AIR]);}
       cmdEdit(E);cmdOut(`🚰 물 · 용암 ${E.length}칸을 없앴어요`);break;}
+    case 'salute':case '경례':doSalute();break;
     case 'dance':case '춤':player.danceT=2.5;cmdOut('💃 빙글빙글~');if(MP.on)mpSend({t:'c',n:'💃',m:MP.me.nick+'님이 춤춰요'});break;
     case 'confetti':case '꽃가루':{for(const col of [0xff4060,0xffd040,0x40d0ff,0x70ff70,0xc070ff])spawnParticles(P.x,P.y+2,P.z,new THREE.Color(col),14,1.6,6);tone(900,1500,.15,.05,'triangle');cmdOut('🎉 축하해요!');break;}
     case 'tree':case '나무':{const h=raycast(camera.position,viewDir(),30);if(!h){cmdOut('땅을 보고 써요',1);break;}const x=h.x,y=h.y+1,z=h.z,t=4+Math.floor(Math.random()*3),E=[];for(let i=0;i<t;i++)E.push([x,y+i,z,LOG]);
@@ -9863,7 +9908,7 @@ function frame(now){
   if(MOBILE)document.body.classList.toggle('playing',active&&!invOpen&&!player.dead&&!stFrozen());
   if(active){
     if(!stFrozen()&&!gm){ // 스텔라 연출 · 미사일 조종 중에는 플레이어가 멈춤
-    cuffTick(dt);updatePlayer(dt);if(player.cuffed){player.vel.x=player.vel.z=0;}
+    cuffTick(dt);taseTick(dt);if(taserCD>0)taserCD-=dt;updatePlayer(dt);if(player.cuffed||player.tased){player.vel.x=player.vel.z=0;}
     updateTarget();updateMining(dt);
     if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}if(mouseL&&!invOpen&&isGun(held()))fireGun(held());updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}colaTick(dt);
     for(const m of [...mobs])mpMobUpdate(m,dt);
