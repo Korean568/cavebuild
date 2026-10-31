@@ -24,6 +24,10 @@ print('noejeol ok')
 os.makedirs(os.path.join(ROOT,'speedrun'),exist_ok=True)
 open(os.path.join(ROOT,'speedrun','index.html'),'w',encoding='utf-8',newline='\n').write(MODE('speedrun'))
 print('speedrun ok')
+# 🌐 멀티 모드: 공개 서버 전용 (cavebuild/멀티/ · 저장 · 가방 · 모드 따로 · 서바이벌 · 치트 명령어 X)
+os.makedirs(os.path.join(ROOT,'멀티'),exist_ok=True)
+open(os.path.join(ROOT,'멀티','index.html'),'w',encoding='utf-8',newline='\n').write(MODE('멀티'))
+print('multi ok')
 # 할로윈 모드는 이제 cavebuild/할로윈/ — 예전 주소(halloween/)는 새 주소로 넘김
 os.makedirs(os.path.join(ROOT,'halloween'),exist_ok=True)
 open(os.path.join(ROOT,'halloween','index.html'),'w',encoding='utf-8',newline='\n').write("""<!doctype html><html><head><meta charset="utf-8"><title>CAVEBUILD</title>

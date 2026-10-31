@@ -315,7 +315,12 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.188 — 👥 /team · @닉네임 Enter 고침</h4>
+    <h4>🆕 v26.189 — 🌐 CAVEBUILD 멀티 (공개 서버 전용 모드) · 🔑 방장 · OP 규칙 · 🔫 총 PvP</h4>
+    • 공개 서버가 <b>따로 된 모드</b>가 됐어요: 주소 cavebuild/멀티/ · 허브의 <b>🌐 CAVEBUILD 멀티</b>. <b>가방 · 진행 · 모드(Mods) 목록이 솔로와 따로</b>예요.<br>
+    • 멀티 규칙: <b>서바이벌만</b> · 아이템 · 이동 · 시간 같은 <b>치트 명령어는 어드민만</b> (정보 · 대화 · 서버 운영 명령어와 서버 모드의 명령어는 OK). 솔로의 🌐 멀티 화면엔 방 코드 참가와 멀티 모드로 가는 버튼이 있어요.<br>
+    • 🔑 공개 서버의 <b>방장은 서버를 만든 사람</b>이에요 (세계에 저장된 정보로 판단). 혼자 남아 세계를 돌리고 있어도 만든 사람 · 어드민이 아니면 방장 권한이 없어요. <b>OP 주기 · 빼기는 방장(만든 사람)과 어드민만</b> — 손님으로 들어와 있어도 돼요.<br>
+    • 🔫 공개 서버에서 <b>총으로 다른 플레이어를 못 맞히던 문제</b>를 고쳤어요 (활은 원래 됐어요).
+    <h4>v26.188 — 👥 /team · @닉네임 Enter 고침</h4>
     • 조직 모드: <b>/team 조직 @닉네임</b> (또는 /team @닉네임 조직) 으로 그 사람을 그 조직에 넣어요 (OP · 그 조직 · 사령부 장교). /조직 배정 도 순서 상관없이 돼요.<br>
     • 명령어 끝에 <b>@닉네임을 다 쳐 놓고 Enter</b>를 누르면 이름 고르기만 되고 실행이 안 되던 문제를 고쳤어요. 이름을 다 쳤으면 바로 실행돼요 (덜 쳤을 땐 예전처럼 목록에서 골라요).
     <h4>v26.187 — 🚨 수배 음악 더 긴장감 있게</h4>
@@ -992,14 +997,15 @@ body.mobile #toasts{top:72px}
 </div>
 <div id="playPanel" class="overlay" data-m="solo"><div class="ppbox">
   <h2 id="ppTitle">▶ 솔로</h2>
-  <div class="ppsec"><h3 id="ppNewH">🌍 새 세계 만들기</h3>
+  <div class="ppsec ppMulti" id="ppGoMP"><h3>🌍 공개 서버</h3><div style="font-size:13px;margin-bottom:6px">공개 서버는 <b>CAVEBUILD 멀티</b>에서 해요 — 가방 · 진행 · 모드(Mods) · 규칙이 솔로와 따로예요 (서바이벌 · 치트 명령어 없음)</div><button class="btn" id="btnGoMP">🌐 CAVEBUILD 멀티로 가기</button></div>
+  <div class="ppsec" id="ppNewSec"><h3 id="ppNewH">🌍 새 세계 만들기</h3>
     <input id="worldName" type="text" maxlength="24" placeholder="세계 이름 (비우면 자동)" autocomplete="off">
     <input id="seedIn" type="text" placeholder="🌱 세계 코드 (비우면 무작위)" autocomplete="off" maxlength="40">
   <h3 class="sub">🎮 모드</h3><div id="tMode" class="modeRow"><button data-m="creative">🛠 크리에이티브</button><button data-m="survival">⚔ 서바이벌</button><button data-m="spectator">👁 관전</button></div><div class="modeDesc" id="tModeDesc"></div>
   <h3 class="sub">🔥 난이도</h3><div id="tDiff" class="modeRow"><button data-d="safe">🕊 세이프</button><button data-d="easy">🙂 쉬움</button><button data-d="normal">⚖ 보통</button><button data-d="hard">😈 어려움</button><button data-d="hardcore">💀 하드코어</button></div><div class="modeDesc" id="tDiffDesc"></div>
     <button class="btn ppSolo" id="btnNew">새 세계 만들기</button>
     <button class="btn ppMulti" id="mpNewSrv">➕ 공개 서버 만들기 <small style="opacity:.75">(내가 나가도 계속 열려 있어요)</small></button></div>
-  <div class="ppsec ppMulti"><h3>🌍 공개 서버 · 방 <button class="btn" id="mpRoomsRe" style="padding:2px 10px;font-size:13px;width:auto;display:inline-block;margin:0 0 0 6px">🔄</button></h3><div id="mpRooms" class="mpRooms"></div></div>
+  <div class="ppsec ppMulti" id="ppPubSec"><h3>🌍 공개 서버 · 방 <button class="btn" id="mpRoomsRe" style="padding:2px 10px;font-size:13px;width:auto;display:inline-block;margin:0 0 0 6px">🔄</button></h3><div id="mpRooms" class="mpRooms"></div></div>
   <div class="ppsec ppMulti"><h3>🌐 친구 방 참가 (방 코드)</h3><input id="mpCode" type="text" maxlength="6" placeholder="방 코드 6자리" autocomplete="off" style="text-transform:uppercase"><button class="btn" id="mpJoinBtn">참가하기</button>
     <div class="tip" style="font-size:12px;opacity:.75;margin-top:6px">내 세계에 친구를 부르려면: ▶ 솔로로 세계에 들어가서 일시정지 → 🌐 멀티플레이 → 방 열기</div></div>
   <div class="ppsec ppSolo"><h3>🗂 내 세계</h3><div id="worldList"></div></div>
@@ -2055,7 +2061,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.188 — 👥 /team · @name Enter fix</h4>
+    <h4>🆕 v26.189 — 🌐 CAVEBUILD Multiplayer mode · 🔑 Owner & OP rules · 🔫 Gun PvP</h4>
+    • Public servers are now their own mode (cavebuild/멀티/) with separate saves, inventory and mods, survival only, and no cheat commands except for admins. The server creator is the owner; only the owner and admins can grant or remove OP. Guns can now hit other players.
+    <h4>v26.188 — 👥 /team · @name Enter fix</h4>
     • /team org @name (either order) puts a player in an organization. Pressing Enter after a fully typed @name now runs the command instead of only completing the name.
     <h4>v26.187 — 🚨 Tenser wanted music</h4>
     • Heartbeat timpani, driving 16th-note pizzicato, swelling strings that cut off, a violin line that climbs a semitone every bar, offbeat brass and a sudden silence before each loop.
@@ -6941,7 +6949,7 @@ function gunShot(rifle){const s=held();if(!s||(s.id!==PISTOL&&s.id!==RIFLE)||pla
   if(!isCreative()){const a=gunAmmo(s);if(a<=0){SFX.click();return;}s.ammo=a-1;invChanged();}
   const sp=(rifle?.012:.006)*(gunAim()?.25:1),d=viewDir();d.x+=(Math.random()-.5)*sp;d.y+=(Math.random()-.5)*sp;d.z+=(Math.random()-.5)*sp;d.normalize();
   const o=camera.position.clone(),hit=raycast(o,d,100);let L=hit?hit.dist:100,best=null;
-  for(const m of mobs){const hw=m.w/2;const t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){L=t;best=m;}}
+  for(const m of mpWithDummies(mobs)){if(m.dead)continue;const hw=m.w/2;const t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){L=t;best=m;}} // 🔫 멀티에선 다른 플레이어도 맞힘
   if(best){const hy=o.y+d.y*L,head=hy>best.pos.y+best.h*.72,dmg=(rifle?6:9)*(head?2:1);best.byPlayer=performance.now();best.hurt(dmg,d.x*.4,d.z*.4);if(head){SFX.crit();toast('🎯 헤드샷!');}}
   else if(hit)spawnParticles(o.x+d.x*L,o.y+d.y*L,o.z+d.z*L,new THREE.Color(0xc8b090),6,.15,3);
   flashBeam(o.clone().add(new THREE.Vector3(0,-.18,0)).addScaledVector(d,.7),o.clone().addScaledVector(d,L),0xffe08a,.04,.07);
@@ -7596,7 +7604,7 @@ Object.assign(MOBDEF,{
 });
 
 // ---------- 플레이어 로직 ----------
-const GM_KEY='cavebuild-gamemode',GMODES=[['','🎮 기본 (원래 게임)'],['noejeol','🤯 뇌절모드'],['speedrun','⏱ 스피드런'],['할로윈','🎃 할로윈'],['한글날','📜 한글날'],['크리스마스','🎄 크리스마스'],['설날','🧧 설날'],['개학','🏫 개학'],['만우절','🤡 만우절'],['어린이날','👑 어린이날'],['현충일','🎗 현충일'],['제헌절','⚖ 제헌절'],['광복절','🇰🇷 광복절'],['추석','🌕 추석'],['농업인의날','🌾 농업인의날']];
+const GM_KEY='cavebuild-gamemode',GMODES=[['','🎮 기본 (원래 게임)'],['멀티','🌐 멀티 (공개 서버)'],['noejeol','🤯 뇌절모드'],['speedrun','⏱ 스피드런'],['할로윈','🎃 할로윈'],['한글날','📜 한글날'],['크리스마스','🎄 크리스마스'],['설날','🧧 설날'],['개학','🏫 개학'],['만우절','🤡 만우절'],['어린이날','👑 어린이날'],['현충일','🎗 현충일'],['제헌절','⚖ 제헌절'],['광복절','🇰🇷 광복절'],['추석','🌕 추석'],['농업인의날','🌾 농업인의날']];
 const GM_HERE=(()=>{if(window.CB_MODE&&GMODES.some(g=>g[0]===window.CB_MODE))return window.CB_MODE;let p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}const m=p.match(/\/([^\/]+)\/(?:index\.html)?$/);return m&&GMODES.some(g=>g[0]&&g[0]===m[1])?m[1]:'';})(); // 지금 열린 게임 모드 폴더
 const GM_ON=(()=>{try{return localStorage.getItem(GM_KEY)||'';}catch(e){return '';}})();
 function gmOpenFile(raw){ // 🎮 케이브빌드 모드 파일(index.html)을 모드로 넣으면 그 모드를 바로 엶 (최신 버전으로)
@@ -7609,6 +7617,7 @@ const NOEJEOL=/\/noejeol\//.test(location.pathname)||window.CB_MODE==='noejeol';
 const EV_DIR={'할로윈':'halloween','크리스마스':'xmas','설날':'seollal','개학':'school','만우절':'fools','한글날':'hangul','개학만우절':'fools','어린이날':'kids','현충일':'memorial','제헌절':'law','광복절':'liberation','추석':'chuseok','농업인의날':'farm'}; // 🗓 이달의 모드 폴더 (한국어 이름)
 const EVENT=(()=>{if(EV_DIR[window.CB_MODE])return EV_DIR[window.CB_MODE];let p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}for(const k in EV_DIR)if(p.includes('/'+k+'/'))return EV_DIR[k];const m=p.match(/\/(halloween|xmas|seollal|school|fools|hangul|kids|memorial|law|liberation|chuseok|farm)\//);return m?m[1]:'';})();
 const HALLOWEEN=EVENT==='halloween';if(HALLOWEEN)SPOOKY=true; // 🎃 잔디 위 호박if(EVENT==='xmas')WINTER=true; // 🎄 눈 덮인 세계 // 🎃 할로윈 모드 (cavebuild/halloween/): 흑요석 → 백룸 7일 → 할로윈 열쇠 → 잭오랜턴 · 세계는 따로 저장
+const MULTI=(()=>{try{return window.CB_MODE==='멀티'||/\/(멀티|multi)\//.test(decodeURIComponent(location.pathname));}catch(e){return false;}})(); // 🌐 멀티 모드 (cavebuild/멀티/): 공개 서버 전용 · 저장 · 가방 · 모드 따로 · 공정한 규칙 (서바이벌 · 치트 명령어 X)
 const SPEEDRUN=/\/speedrun\//.test(location.pathname)||window.CB_MODE==='speedrun'; // 스피드런 모드 (cavebuild/speedrun/): 디버그 화면 · 스톱워치 · 랭킹 · 로그인 전용
 const HURT_DUR=.22; // 원래 아픔 소리 길이 (SFX.hurt의 tone 길이와 같음)
 const NJ_SND={},NJ_SPLASH_DUR=.8; // 뇌절모드 녹음 소리: 파일 · 쓸 구간(초) · 원래 소리와 같은 길이로 맞춰 재생
@@ -8387,7 +8396,7 @@ if(MOBILE){
 }
 
 // ---------- 저장 ----------
-const SAVE_KEY=SPEEDRUN?'cubewild_save_v1_sr':HALLOWEEN?'cubewild_save_v1_hw':EVENT?'cubewild_save_v1_'+EVENT:'cubewild_save_v1',DB_NAME=SPEEDRUN?'cavebuild_speedrun':HALLOWEEN?'cavebuild_halloween':EVENT?'cavebuild_'+EVENT:'cavebuild',DB_STORE='saves'; // 스피드런 세계는 따로 저장
+const SAVE_KEY=MULTI?'cubewild_save_v1_mp':SPEEDRUN?'cubewild_save_v1_sr':HALLOWEEN?'cubewild_save_v1_hw':EVENT?'cubewild_save_v1_'+EVENT:'cubewild_save_v1',DB_NAME=MULTI?'cavebuild_multi':SPEEDRUN?'cavebuild_speedrun':HALLOWEEN?'cavebuild_halloween':EVENT?'cavebuild_'+EVENT:'cavebuild',DB_STORE='saves'; // 스피드런 세계는 따로 저장
 // 저장소: IndexedDB (용량이 크고 비동기). 못 쓰는 환경이면 localStorage로 대신함
 let dbP=null,SAVED=null;
 function openDB(){if(!dbP)dbP=new Promise((res,rej)=>{try{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(DB_STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}});return dbP;}
@@ -8563,15 +8572,20 @@ function fmtDate(t){try{const loc=LANG==='ko'?'ko-KR':(Intl.DateTimeFormat.suppo
 function renderWorlds(){const L=[...WORLDS].sort((a,b)=>(b.t||0)-(a.t||0));
   $('worldList').innerHTML=L.length?L.map(w=>`<div class="wi"><div><b>${(w.name||'World').replace(/</g,'&lt;')}</b><small>${w.hcDead?'💀 ':''}${(MODE_INFO[w.mode]||MODE_INFO.survival)[0]} · ${(DIFF_INFO[w.diff]||DIFF_INFO.normal)[0]} · ${fmtDate(w.t)} · 🌱${w.seed}</small></div><button data-play="${w.id}">▶ 접속</button><button class="del" data-del="${w.id}">🗑</button></div>`).join(''):'<div class="empty">아직 만든 세계가 없어요</div>';}
 function renderNewInfo(){renderTSettings();}
-function renderTSettings(){if(SPEEDRUN){if(wantMode!=='survival')wantMode='survival';for(const b of $('tMode').children)if(b.dataset.m!=='survival')b.style.display='none';} // 스피드런: 서바이벌만
+function renderTSettings(){if(SPEEDRUN||MULTI){if(wantMode!=='survival')wantMode='survival';for(const b of $('tMode').children)if(b.dataset.m!=='survival')b.style.display='none';} // 스피드런: 서바이벌만
   for(const b of $('tMode').children)b.classList.toggle('on',b.dataset.m===wantMode);$('tModeDesc').textContent=MODE_INFO[wantMode][1];
   for(const b of $('tDiff').children)b.classList.toggle('on',b.dataset.d===wantDiff);$('tDiffDesc').textContent=DIFF_INFO[wantDiff][1];}
 function saveWant(){try{localStorage.setItem('cavebuild-newworld',JSON.stringify({m:wantMode,d:wantDiff}));}catch(e){}}
 function openPlay(m){audio();SFX.click();const P=$('playPanel');P.dataset.m=m; // ▶ 솔로: 새 세계 · 내 세계 / 🌐 멀티: 공개 서버 만들기 · 공개 서버 목록 · 방 코드
   $('ppTitle').textContent=m==='multi'?mpL('🌐 멀티','🌐 Multiplayer'):mpL('▶ 솔로','▶ Solo');$('ppNewH').textContent=m==='multi'?mpL('🖥 공개 서버 만들기','🖥 Create a public server'):mpL('🌍 새 세계 만들기','🌍 Create New World');
   $('worldName').placeholder=m==='multi'?mpL('서버 이름 (비우면 「닉네임의 서버」)','Server name'):mpL('세계 이름 (비우면 자동)','World name (auto if empty)');
-  renderWorlds();renderNewInfo();P.classList.add('show');if(m==='multi')mpRoomsLoad();}
+  const pubHere=m==='multi'&&MULTI; // 🌐 공개 서버는 멀티 모드에서만 (솔로 쪽 멀티 화면엔 방 코드 참가 + 멀티 모드로 가는 버튼)
+  $('ppNewSec').style.display=m==='multi'&&!MULTI?'none':'';$('ppPubSec').style.display=m==='multi'&&!MULTI?'none':'';$('ppGoMP').style.display=pubHere?'none':'';
+  if(MULTI&&m==='multi'){wantMode='survival';try{renderNewInfo();}catch(e){}}
+  renderWorlds();renderNewInfo();P.classList.add('show');if(pubHere)mpRoomsLoad();}
 $('btnPlay').onclick=()=>openPlay('solo');$('btnMulti').onclick=()=>openPlay('multi');
+$('btnGoMP').onclick=()=>{try{sessionStorage.setItem('cb-play','1');}catch(e){}location.href=new URL('멀티/?play=1',document.baseURI).href;};
+if(MULTI){$('btnPlay').style.display='none';$('btnMulti').textContent='🌐 공개 서버';const s=document.querySelector('#title .sub');if(s)s.textContent='🌐 멀티 — 공개 서버에서 함께 (서바이벌 · 공정한 규칙)';document.title='CAVEBUILD 멀티';} // 🌐 멀티 모드 타이틀
 $('btnPlayClose').onclick=()=>$('playPanel').classList.remove('show');
 $('btnTSet').onclick=()=>{SFX.click();renderTSettings();$('tSettings').classList.add('show');};
 $('btnTSetClose').onclick=()=>$('tSettings').classList.remove('show');
@@ -8600,7 +8614,8 @@ const DIFF_INFO={safe:['🕊 세이프','적대 몹이 나오지 않고, 배고�
 const isCreative=()=>world.mode==='creative',isHardcore=()=>world.diff==='hardcore',isSafe=()=>world.diff==='safe',isSpec=()=>world.mode==='spectator';
 const DIFF_MUL={safe:.5,easy:.5,normal:1,hard:1.5,hardcore:1.5}; // 몹에게 맞는 피해 배율
 function setDiff(d){world.diff=d;if(d==='safe'){player.hp=20;player.food=20;for(const o of [...mobs])if(o.def.hostile&&!o.def.boss)o.remove();}lastStats='';renderStats();updModeBtn();} // 난이도 바꾸기
-function setMode(m){if(SPEEDRUN&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('⏱ 스피드런에서는 크리에이티브 · 관전 모드를 쓸 수 없어요');return;} // 하드코어로 쓰러진 뒤 관전은 그대로
+function setMode(m){if(SPEEDRUN&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('⏱ 스피드런에서는 크리에이티브 · 관전 모드를 쓸 수 없어요');return;}
+  if(MULTI&&!cmdIsAdmin()&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('🌐 공개 서버(멀티)는 <b>서바이벌</b>만 돼요 (공정한 규칙)');return;} // 하드코어로 쓰러진 뒤 관전은 그대로
   const was=world.mode;world.mode=m;player.flying=false;player.gliding=false;
   if(m==='creative'||m==='spectator'){player.hp=20;player.food=20;player.air=10;}
   if(m==='spectator'){if(player.boat){player.boat.passenger=null;player.boat=null;}if(invOpen)closeInv(true);}
@@ -8663,7 +8678,7 @@ addEventListener('error',e=>{if(!window.__errShown){window.__errShown=true;try{t
 addEventListener('unhandledrejection',()=>{});
 // ---------- 🧩 모드 시스템 ----------
 // .js 모드 파일을 넣으면 게임이 켜질 때 CB(케이브빌드) API로 블록 · 아이템 · 조합법 · 행동을 더함. 모드 목록은 이 브라우저에 저장
-const MOD_KEY='cavebuild-mods',MOD_ID_KEY='cavebuild-modids',MOD_TICK=[],MOD_USE={};let MOD_WSRC='',modTile=116;
+const MOD_KEY=MULTI?'cavebuild-mods-multi':'cavebuild-mods',MOD_ID_KEY=MULTI?'cavebuild-modids-multi':'cavebuild-modids',MOD_TICK=[],MOD_USE={};let MOD_WSRC='',modTile=116;
 const MOD_FREE_BLOCKS=[189,219,248,249,255];
 let MP_SMODS=null;try{const q=JSON.parse(sessionStorage.getItem('cb-mpmods')||'null');if(q&&q.pending){q.pending=false;sessionStorage.setItem('cb-mpmods',JSON.stringify(q));MP_SMODS=q;}else sessionStorage.removeItem('cb-mpmods');}catch(e){} // 🌐 방장 모드로 들어가는 중 (이 탭 · 이 방에서만)
 const MOD_RAN=[]; // 이번에 실제로 켠 모드 (방장과 비교)
@@ -8980,7 +8995,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
     sn.golems=[];sn.mobQ={};if(!mpModSame(d.mods)){c.send({t:'mods',mods:MOD_RAN,ids:modIds()});return;}c.P=P;c.send({t:'world',id:P.id,host:MP.me.nick,snap:sn,players:mpPlayersFor(c),pvp:MP.pvp});c.ready=true;
     for(const g of groundItems){if(!g.gid)g.gid='H.'+(++MP.gn);c.send(mpGiMsg(g));} // 지금 바닥에 있는 아이템
     for(const b of boats){if(!b.bid)b.bid='H.b'+(++MP.gn);c.send({t:'bi',b:b.bid,d:world.dim,x:b.pos.x,y:b.pos.y,z:b.pos.z,ya:b.yaw});}
-    mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();if((world.flags.ops||[]).some(n=>n.toLowerCase()===nick.toLowerCase()))c.send({t:'op',on:1});if(world.flags.motd)setTimeout(()=>c.send({t:'c',n:'📢 서버',m:world.flags.motd}),1500);modEmit('join',nick);return;}
+    mpAdd(P);mpSend({t:'join',...P},c);toast(mpL(`🌐 <b>${mpEsc(nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(nick)}</b> joined`));renderMP();if(mpConnOp(c))c.send({t:'op',on:1});if(world.flags.motd)setTimeout(()=>c.send({t:'c',n:'📢 서버',m:world.flags.motd}),1500);modEmit('join',nick);return;}
   if(!c.P)return;
   if(d.t==='p'){d.id=c.P.id;const P=MP.peers.get(c.P.id);if(P)mpPos(P,d);mpSend(d,c);}
   else if(d.t==='b'&&Array.isArray(d.L)){mpApply(d.L);mpSend(d,c);}
@@ -9008,6 +9023,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='df'){if(!mpConnOp(c)||!DIFF_INFO[d.d])return;setDiff(d.d);try{renderSettings();}catch(e){}toast(mpL('🌐 OP가 난이도를 바꿨어요: ','🌐 An OP changed difficulty: ')+DIFF_INFO[d.d][0]);}
   else if(d.t==='lang'){if(!mpConnOp(c)||typeof d.l!=='string')return;setLang(d.l,1);mpSend(d,c);}
   else if(d.t==='banreq'){if(mpConnOp(c))mpBanNick(d.n);}
+  else if(d.t==='opreq'){if(c.P.nick==='운영자'||c.P.adm||mpConnBoss(c))mpSetOp(String(d.n||'').slice(0,16),!!d.on);} // 🔑 OP 주기 · 빼기는 방장(만든 사람) · 어드민만 (서버가 확인)
   else if(d.t==='cuff'){d.by=c.P.nick;mpRoute(d);}
   else if(d.t==='mod'){d.n=c.P.nick;mpSend(d,c);modEmit('msg',d.k,d.v,d.n);}
   else if(d.t==='smods'){if(!mpConnOp(c)||!Array.isArray(d.mods))return;const L=d.mods.filter(m=>m&&typeof m.name==='string'&&(typeof m.code==='string'||typeof m.url==='string')).slice(0,40).map(m=>({name:m.name.slice(0,60),code:m.code||'',url:m.url||undefined,on:true}));
@@ -9180,7 +9196,8 @@ function cuffTick(dt){const C=player.cuffed;let el=document.getElementById('cuff
   el.textContent=`⛓ 수갑에 묶였어요 · ${Math.ceil(C.t)}초 (${C.by})`;}
 function NOOP_T(){toast(mpL('🔑 이 서버에서는 <b>OP</b>(또는 어드민)만 바꿀 수 있어요','🔑 Only server OPs (or admins) can change this'));}
 // 🔨 밴: 방장이 명단에 넣고 내보냄 · 다시 들어오려 해도 막힘
-function mpConnOp(c){const n=c&&c.P?c.P.nick:'';return n==='운영자'||!!(c&&c.P&&c.P.adm)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
+function mpConnOp(c){const n=c&&c.P?c.P.nick:'';return n==='운영자'||!!(c&&c.P&&c.P.adm)||mpConnBoss(c)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
+function mpConnBoss(c){const n=c&&c.P?c.P.nick:'';return !!(MP.persist&&world.flags&&world.flags.owner&&n===world.flags.owner);} // 공개 서버를 만든 사람이 손님으로 들어와 있어도 방장
 function mpBanNick(nk){nk=String(nk||'').slice(0,16);if(!nk||nk==='운영자'||nk===MP.me.nick||[...MP.conns].some(q=>q.P&&q.P.adm&&q.P.nick.toLowerCase()===nk.toLowerCase()))return false;const B=world.flags.bans||(world.flags.bans=[]);if(!B.some(x=>x.toLowerCase()===nk.toLowerCase()))B.push(nk);
   const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'kick',ban:1});mpSend({t:'c',n:'🔨 서버',m:nk+' 님이 밴당했어요'});return true;}
 function mpPvp(P,dmg,kx,kz){if(!MP.pvp){toast(mpL('⚔ 이 방은 PvP가 꺼져 있어요','⚔ PvP is off in this room'));return;}
@@ -9294,9 +9311,17 @@ function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCas
 function cmdItems(){const L=[['banhammer',BANHAMMER],['ban hammer',BANHAMMER]];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
 let CMD_CUR='',CMD_LAST={},CMD_MOBS={};
 function cmdIsAdmin(){return nickNow()==='운영자'||!!(ACC&&accToken()&&ACC.admin);} // 🛡 어드민 = 운영자 계정 + 서버가 어드민으로 정한 계정
-function cmdIsOp(){return cmdIsAdmin()||!MP.on||MP.host||!!MP.op;} // 🔑 혼자 하는 세계 · 방장은 OP, 친구는 방장이 /op 를 줘야
+// 🔑 OP: 혼자 하는 세계 · 내 세계로 연 방의 방장 · 공개 서버를 만든 사람 · 어드민 · OP 를 받은 사람
+//   공개 서버에서는 세계를 돌리는 사람(방장 자리)이 바뀌어도, 만든 사람이나 어드민이 아니면 방장으로 치지 않아요 (세계에 저장된 「만든 사람」으로 판단)
+// 🌐 멀티 모드(공개 서버)에서 쓸 수 있는 명령어: 정보 · 대화 · 서버 운영만 (아이템 · 이동 · 시간 같은 치트는 어드민만)
+const MULTI_CMDS=['help','도움말','list','목록','me','rules','규칙','msg','w','tell','귓속말','r','op','deop','ops','kick','내보내기','ban','밴','unban','unben','밴해제','banlist','밴목록','pvp','setrules','규칙정하기','setmotd','환영인사','mobspawn','몹생성','afk','자리비움','coords','좌표','stopwatch','스톱워치','screenshot','스크린샷','mute','음소거','dance','춤','difficulty','난이도'];
+function mpPersistNow(){return MP.host?!!MP.persist:!!MP.gPersist;}
+function mpBossMe(){const me=MP.me?MP.me.nick:'';return mpPersistNow()?!!(world.flags&&world.flags.owner&&world.flags.owner===me):!!MP.host;} // 방장 = 내 세계 방의 방장 · 공개 서버를 만든 사람
+function cmdIsOp(){if(cmdIsAdmin()||!MP.on||mpBossMe())return true;const me=MP.me?MP.me.nick.toLowerCase():'';if(MP.host&&(world.flags.ops||[]).some(x=>x.toLowerCase()===me))return true;return !!MP.op;}
+function mpSetOp(nk,on){const O=world.flags.ops||(world.flags.ops=[]),i=O.findIndex(n=>n.toLowerCase()===nk.toLowerCase());if(on&&i<0)O.push(nk);if(!on&&i>=0)O.splice(i,1);
+  const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'op',on:on?1:0});if(MP.me&&nk.toLowerCase()===MP.me.nick.toLowerCase())MP.op=!!on;}
 function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a[0]||'').toLowerCase(); // 💻 /un명령어 는 그 명령어를 되돌림 · 그 밖엔 되돌릴 수 있게 상태를 적어 둠
-  if(c.length>2&&c.startsWith('un')&&c!=='undo'){if(!cmdIsOp()){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요',1);return;}cmdUn(c.slice(2));return;}
+  if(c.length>2&&c.startsWith('un')&&c!=='undo'){if(MULTI&&!cmdIsAdmin()&&!MULTI_CMDS.includes(c.slice(2))){cmdOut('🌐 공개 서버(멀티)에서는 쓸 수 없는 명령어예요',1);return;}if(!cmdIsOp()){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요',1);return;}cmdUn(c.slice(2));return;}
   const snap={mode:world.mode,time:world.time,spawn:{...world.spawn},diff:world.diff,fov:camera.fov,inv:JSON.stringify(inv),sky:world.flags.sky},mob0=new Set(mobs);CMD_CUR=c;
   runCmd0(line);CMD_CUR='';CMD_LAST[c]=snap;const nm=mobs.filter(m=>!mob0.has(m)&&!m.dead);if(nm.length)CMD_MOBS[c]=nm;}
 function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
@@ -9342,6 +9367,7 @@ function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
     default:cmdOut(`/${mpEsc(x)} 는 되돌릴 수 없어요 (/undo 는 건축 · /back 은 순간이동)`,1);}}
 let CMD_SW=0;
 function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/^@./.test(w)?w.slice(1):w),c=(a.shift()||'').toLowerCase(),P=player.pos; // 👥 @닉네임 → 닉네임 // 💻 명령어 (싱글 · 방장은 다 쓰고, 친구는 /help · /list · /me 만)
+  if(MULTI&&!cmdIsAdmin()&&!MULTI_CMDS.includes(c)&&!MOD_CMDS[c]){cmdOut('🌐 공개 서버(멀티)에서는 쓸 수 없는 명령어예요 — 모두에게 공정하게 (치트 명령어는 어드민만)',1);return;}
   if(!cmdIsOp()&&!['help','도움말','list','목록','me','rules','규칙'].includes(c)&&!(MOD_CMDS[c]&&MOD_CMDS[c].op===false)){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요 (방장에게 /op 를 받아요)',1);return;}
   const num=(v,base)=>{if(v===undefined)return NaN;if(v[0]==='~')return base+(v.length>1?+v.slice(1):0);return +v;};
   switch(c){
@@ -9550,10 +9576,11 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
     case 'unban':case 'unben':case '밴해제':{if(MP.on&&!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const nk=(a[0]||'').toLowerCase(),B=world.flags.bans||[],i=B.findIndex(x=>x.toLowerCase()===nk);if(i<0){cmdOut('밴 명단에 없어요 · /banlist',1);break;}cmdOut(`🔓 <b>${mpEsc(B[i])}</b> 님의 밴을 풀었어요`);B.splice(i,1);break;}
     case 'banlist':case '밴목록':cmdOut('🔨 밴 명단: '+((world.flags.bans||[]).map(mpEsc).join(' · ')||'없어요'));break;
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
-    case 'op':case 'deop':{if(!MP.on||!MP.host){cmdOut('멀티플레이 <b>방장</b>만 OP를 줄 수 있어요',1);break;}const nk=a[0]||'',O=world.flags.ops||(world.flags.ops=[]),on=c==='op';if(!nk){cmdOut('/op 닉네임 · /deop 닉네임',1);break;}
-      const i=O.findIndex(n=>n.toLowerCase()===nk.toLowerCase());if(on&&i<0)O.push(nk);if(!on&&i>=0)O.splice(i,1);const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'op',on:on?1:0});
-      cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;}
-    case 'ops':cmdOut('🔑 OP: '+[MP.on&&MP.host?MP.me.nick+'(방장)':'',...(world.flags.ops||[])].filter(Boolean).map(mpEsc).join(' · ')||'없어요');break;
+    case 'op':case 'deop':{if(!MP.on){cmdOut('멀티플레이에서만 쓸 수 있어요',1);break;}const nk=a[0]||'',on=c==='op';if(!nk){cmdOut('/op 닉네임 · /deop 닉네임',1);break;}
+      if(!cmdIsAdmin()&&!mpBossMe()){cmdOut('OP는 <b>방장</b>(공개 서버는 서버를 만든 사람)과 <b>어드민</b>만 주고 뺄 수 있어요',1);break;}
+      if(!MP.host){mpSend({t:'opreq',n:nk.slice(0,16),on:on?1:0});cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;} // 방장 자리가 아니어도 서버가 확인하고 처리
+      mpSetOp(nk,on);cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;}
+    case 'ops':{const ow=world.flags&&world.flags.owner,L=[mpPersistNow()?(ow?ow+'(만든 사람)':''):(MP.on&&MP.host?MP.me.nick+'(방장)':(MP.hostNick?MP.hostNick+'(방장)':'')),...(world.flags.ops||[])].filter(Boolean);cmdOut('🔑 OP: '+(L.map(mpEsc).join(' · ')||'없어요'));break;}
     default:{const M=MOD_CMDS[c];if(M){try{M.fn(a,{say:t=>cmdOut(mpEsc(String(t))),nick:MP.on?MP.me.nick:(nickNow()||'플레이어')});}catch(e){cmdOut('모드 명령어 오류: '+mpEsc(e.message||e),1);}break;} // 🧩 모드가 만든 명령어
       cmdOut(`모르는 명령어예요: /${mpEsc(c)} · <b>/help</b>`,1);}}}
 let MOB_FRZ=false;
@@ -9616,8 +9643,8 @@ function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   else if(!MP.on)h=`<div>${mpL('친구가 이 세계에 같이 들어올 수 있게 <b>방</b>을 열어요.','Open a <b>room</b> so friends can join this world.')}</div><div class="mpPubRow"><button class="btn${MP.pubSel?'':' on'}" data-pub="0">🔒 ${mpL('비공개','Private')}</button><button class="btn${MP.pubSel?' on':''}" data-pub="1">🌍 ${mpL('공개','Public')}</button></div><div class="tip">${MP.pubSel?mpL('🌍 공개: 누구나 <b>공개 방 목록</b>에서 들어올 수 있어요','🌍 Public: anyone can join from the room list'):mpL('🔒 비공개: <b>방 코드</b>를 아는 사람만 들어올 수 있어요','🔒 Private: only people with the code can join')}</div><button class="btn" id="mpHostBtn">🌐 ${mpL('방 열기','Open room')}</button>`;
   else if(MP.host)h=`<div>${mpL('방 코드 (친구에게 알려 주세요)','Room code (share with friends)')}</div><div class="code">${MP.code}</div><button class="btn" id="mpCopy">📋 ${mpL('코드 복사','Copy code')}</button>`;
   else h=`<div>🌐 <b>${mpEsc(MP.hostNick)}</b> ${mpL('님의 세계','\'s world')} · ${mpL('방 코드','Code')} <b>${MP.code}</b></div>`;
-  if(MP.on&&MP.host)h+=`<button class="btn" id="mpPubT">${MP.pub?'🌍 '+mpL('공개 방 (누구나)','Public room'):'🔒 '+mpL('비공개 방 (코드만)','Private room')} · ${mpL('바꾸기','switch')}</button>`;
-  if(MP.on&&MP.host)h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
+  if(MP.on&&MP.host&&cmdIsOp())h+=`<button class="btn" id="mpPubT">${MP.pub?'🌍 '+mpL('공개 방 (누구나)','Public room'):'🔒 '+mpL('비공개 방 (코드만)','Private room')} · ${mpL('바꾸기','switch')}</button>`;
+  if(MP.on&&MP.host&&cmdIsOp())h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
   if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?(MP.persist?`<div class="tip">🖥 ${mpL('공개 서버예요 — 내가 나가도 다른 사람이 방장을 이어받고, 아무도 없으면 세계가 저장돼요','Public server — stays up after you leave')}</div><button class="btn" id="mpStopBtn">🚪 ${mpL('나가기 (서버는 계속 열려 있어요)','Leave (server stays up)')}</button>`+(mpCanManage()?mpSetHtml():'')+(mpOwn()[MP.code]?`<button class="btn" id="mpDelSrv">🗑 ${mpL('이 공개 서버 지우기','Delete this server')}</button>`:''):`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`):'');
   h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌍 공개 방 목록이나 🌐 방 코드로 들어와요 · T: 채팅 · /: 명령어<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. 서버 모드는 들어오면 저절로 켜져요 (내 모드 목록은 그대로). PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
