@@ -46,21 +46,18 @@ html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malg
 #mpRooms{max-height:180px;overflow:auto;margin:4px 0}.mpr{display:flex;align-items:center;gap:8px;padding:5px 8px;margin:3px 0;background:rgba(0,0,0,.25);border-radius:6px;font-size:14px}.mpr span{flex:1;text-align:left}.mpr small{display:block;opacity:.7;font-size:12px}.mpr .btn{padding:4px 12px;margin:0}
 .mpPubRow{display:flex;gap:6px;justify-content:center;margin:6px 0}.mpPubRow .btn{margin:0}.mpPubRow .btn.on{outline:3px solid #ffd040}
 #playPanel[data-m=solo] .ppMulti,#playPanel[data-m=multi] .ppSolo{display:none!important}
-#onl{background:radial-gradient(ellipse at 50% 0%,#24324a 0%,#0f141f 70%);overflow:auto;align-items:flex-start;justify-content:center}
-#onl .onlbox{width:min(980px,96vw);margin:28px auto;color:#fff;text-align:center}
-#onl .onlLogo{font:900 min(11vw,64px) sans-serif;letter-spacing:4px;color:#e8f0ff;text-shadow:0 4px 0 #2b3a5c,0 0 26px rgba(90,160,255,.5)}
-#onl .onlLogo span{color:#4aa8ff;text-shadow:0 4px 0 #123a6a,0 0 30px rgba(74,168,255,.8)}
-#onl .onlSub{opacity:.75;margin:4px 0 16px;font-size:14px}
-#onl .onlTop{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}#onl .onlTop .btn{width:auto;margin:0}#onl .onlBig{font-size:20px;padding:10px 26px;background:#2f8f3f}
-#onl .onlForm{background:rgba(255,255,255,.07);border-radius:10px;padding:12px;margin:0 auto 14px;max-width:520px;display:flex;flex-direction:column;gap:8px}
-#onl .onlForm input[type=text],#onl .onlForm input:not([type]){padding:8px;font-size:15px}
-#onl .onlKinds{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}#onl .onlKinds button{width:auto;margin:0;padding:6px 12px}#onl .onlKinds button.on{outline:3px solid #fff}
-#onl .onlBar{text-align:left;margin:6px 4px}
-#onl .onlGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;text-align:left}
-#onl .onlCard{background:rgba(255,255,255,.08);border-radius:10px;padding:10px 12px;border-left:6px solid var(--kc,#7ec850);display:flex;flex-direction:column;gap:4px}
-#onl .onlCard.off{background:rgba(255,215,90,.12)}#onl .onlCard b{font-size:16px}#onl .onlCard small{opacity:.75}
-#onl .onlCard .btn{width:auto;margin:4px 0 0;padding:6px}
-#onl .onlFoot{margin:16px 0;opacity:.85}
+.onlbox{width:min(980px,96vw);margin:0 auto 20px;color:#fff;text-align:center} /* 🌐 ONLINE 서버 목록: 원래 타이틀 안 (배경 · 글씨체 그대로) */
+.onlbox .onlLogo,.onlbox .onlSub{display:none}
+.onlbox .onlTop{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}.onlbox .onlTop .btn{width:auto;margin:0}.onlbox .onlBig{font-size:20px;padding:10px 26px;background:#2f8f3f}
+.onlbox .onlForm{background:rgba(0,0,0,.45);border-radius:10px;padding:12px;margin:0 auto 14px;max-width:520px;display:flex;flex-direction:column;gap:8px}
+.onlbox .onlForm input[type=text],.onlbox .onlForm input:not([type]){padding:8px;font-size:15px}
+.onlbox .onlKinds{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.onlbox .onlKinds button{width:auto!important;min-width:0!important;margin:0!important;padding:6px 12px!important}.onlbox .onlKinds button.on{outline:3px solid #fff}
+.onlbox .onlBar{text-align:left;margin:6px 4px;text-shadow:2px 2px 0 #234}
+.onlbox .onlGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;text-align:left}
+.onlbox .onlCard{background:rgba(0,0,0,.5);border-radius:8px;padding:10px 12px;border-left:6px solid var(--kc,#7ec850);display:flex;flex-direction:column;gap:4px}
+.onlbox .onlCard.off{background:rgba(70,50,0,.6)}.onlbox .onlCard b{font-size:16px}.onlbox .onlCard small{opacity:.8}
+.onlbox .onlFoot{margin:16px 0;text-shadow:2px 2px 0 #234}
+.onlbox .onlCard .btn,.onlbox .onlBar .btn,.onlbox .onlFoot .btn{min-width:0!important;width:auto!important;display:inline-block!important;padding:4px 14px!important;margin:4px 0 0!important}
 #atList{position:fixed;left:10px;bottom:136px;min-width:180px;max-height:40vh;overflow:auto;display:none;z-index:17;background:rgba(20,20,28,.92);border:2px solid #888;font:15px sans-serif;color:#fff}
 #atList div{padding:5px 10px;cursor:pointer}#atList div.on,#atList div:hover{background:#3a6ad0}
 #mpChat{position:fixed;left:10px;bottom:96px;width:min(420px,70vw);display:none;z-index:16;font:15px sans-serif;padding:8px 10px;background:rgba(0,0,0,.7);color:#fff;border:2px solid #888;outline:none}
@@ -2092,7 +2089,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.191 — 🌐 CAVEBUILD ONLINE</h4>
+    <h4>🆕 v26.192 — 🌐 ONLINE uses the original title look</h4>
+    • The server browser now sits on the original title background with the same logo and font.
+    <h4>v26.191 — 🌐 CAVEBUILD ONLINE</h4>
     • Multiplayer is now CAVEBUILD ONLINE: a server browser with quick join, server types (survival, PvP arena, build, organization RP), admin-only official servers, and uploadable server scripts.
     <h4>v26.190 — ⛓ Jail dimension travel fix</h4>
     • Dimensions and blocks from mods added by URL now work (the terrain worker restarts with the new code).
@@ -8623,7 +8622,10 @@ $('btnPlay').onclick=()=>openPlay('solo');$('btnMulti').onclick=()=>openPlay('mu
 $('btnGoMP').onclick=()=>{try{sessionStorage.setItem('cb-play','1');}catch(e){}location.href=new URL('멀티/?play=1',document.baseURI).href;};
 // 🌐 CAVEBUILD ONLINE 첫 화면: 서버 목록 · 빠른 참가 · 서버 만들기 (종류) · ⭐ 공식 서버 (어드민)
 let onlKind='survival',onlRooms=[];
-function onlShow(){if(!MULTI)return;$('title').classList.remove('show');$('onl').classList.add('show');onlLoad();}
+function onlShow(){if(!MULTI)return;const T=$('title'),B=document.querySelector('.onlbox'); // 원래 타이틀(배경 · 로고 글씨체 그대로) 안에 서버 목록을 넣음
+  if(B&&B.parentNode!==T){T.appendChild(B);const keep=new Set([$('titleBg'),$('logoImg'),T.querySelector('.en'),T.querySelector('.sub'),B]);for(const el of [...T.children])if(!keep.has(el))el.style.display='none';
+    const en=T.querySelector('.en'),s=T.querySelector('.sub');if(en){en.textContent='O N L I N E';en.removeAttribute('data-t');}if(s)s.textContent='서버를 골라 바로 들어가요 · 공개 서버 전용 (서바이벌 · 공정한 규칙)';} // 배경 그림 · 로고는 그대로, 로고 밑 글자만 ONLINE
+  $('onl').classList.remove('show');T.classList.add('show');onlLoad();}
 async function onlLoad(){const el=$('onlList');try{onlRooms=await (await fetch(MP_RELAY.replace(/^wss/,'https')+'/rooms',{cache:'no-store'})).json();}catch(e){el.innerHTML='<div>서버 목록을 불러오지 못했어요 · 잠시 뒤 🔄</div>';return;}
   const own=mpOwn(),L=onlRooms;$('onlCount').textContent=L.length?`· ${L.length}개`:'';
   el.innerHTML=L.length?L.map(r=>{const K=KIND_INFO[r.kind]||KIND_INFO.survival;return `<div class="onlCard${r.off?' off':''}" style="--kc:${K[2]}"><b>${r.off?'⭐ ':''}${K[0]} ${mpEsc(r.name||'서버')}</b><small>${K[1]}${r.off?' · 공식 서버':''} · ${r.n?'👥 '+r.n+'/'+r.max:'💤 비어 있음 (들어가면 켜져요)'}</small><small>방장 ${mpEsc(r.nick||'?')} · 코드 ${mpEsc(r.code)}</small><div><button class="btn" data-oj="${mpEsc(r.code)}">▶ 참가</button>${own[r.code]?` <button class="btn" data-od="${mpEsc(r.code)}">🗑</button>`:''}</div></div>`;}).join('')
@@ -8633,12 +8635,12 @@ function onlKinds(){$('onlKinds').innerHTML=Object.entries(KIND_INFO).map(([k,v]
 $('onlKinds').onclick=e=>{const b=e.target.closest('[data-k]');if(b){onlKind=b.dataset.k;onlKinds();}};
 $('onlNew').onclick=()=>{const f=$('onlForm');f.style.display=f.style.display==='none'?'':'none';onlKinds();$('onlOffL').style.display=cmdIsAdmin()?'':'none';if(!$('onlName').value)$('onlName').value=(nickNow()||'나')+'의 서버';};
 $('onlMake').onclick=()=>{if(!nickNow()){toast('🌐 서버를 만들려면 <b>로그인</b>해 주세요 (👕 탈의실 · 로그인)');return;}
-  $('worldName').value=($('onlName').value.trim()||(nickNow()+'의 서버')).slice(0,24);MP.newKind=onlKind;MP.wantOfficial=$('onlOff').checked&&cmdIsAdmin();wantMode=onlKind==='build'?'creative':'survival';MP.autoPub=true;$('onl').classList.remove('show');$('btnNew').click();};
+  $('worldName').value=($('onlName').value.trim()||(nickNow()+'의 서버')).slice(0,24);MP.newKind=onlKind;MP.wantOfficial=$('onlOff').checked&&cmdIsAdmin();wantMode=onlKind==='build'?'creative':'survival';MP.autoPub=true;$('btnNew').click();};
 $('onlQuick').onclick=()=>{const L=onlRooms.filter(r=>r.n<r.max),pick=L.find(r=>r.off&&r.kind==='survival')||L.find(r=>r.off)||L.sort((a,b)=>b.n-a.n)[0];if(!pick){toast('🌐 들어갈 서버가 없어요 — ➕ 서버 만들기');return;}mpJoin(pick.code);};
-$('onlRe').onclick=onlLoad;const onlVia=b=>()=>{$('onl').classList.remove('show');$('title').classList.add('show');$(b).click();}; // 탈의실 · 설정을 닫으면 다시 서버 목록으로
+$('onlRe').onclick=onlLoad;const onlVia=b=>()=>$(b).click();
 $('onlWard').onclick=onlVia('btnWard');$('onlSet').onclick=onlVia('btnTSet');$('onlHub').onclick=()=>$('btnHub').click();
 $('onlCodeGo').onclick=()=>mpJoin($('onlCode').value);$('onlCode').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.isComposing)mpJoin($('onlCode').value);});
-if(MULTI){setInterval(()=>{if(running){$('onl').classList.remove('show');return;}if($('title').classList.contains('show')&&!document.querySelector('.overlay.show:not(#title)'))onlShow();else if($('onl').classList.contains('show')&&!document.hidden&&(onlLoad.t=(onlLoad.t||0)+1)%10===0)onlLoad();},1000);setTimeout(onlShow,300);} // 타이틀 대신 서버 목록 (10초마다 새로고침)
+if(MULTI){setTimeout(onlShow,300);setInterval(()=>{if(!running&&$('title').classList.contains('show')&&!document.hidden&&(onlLoad.t=(onlLoad.t||0)+1)%10===0)onlLoad();},1000);} // 타이틀에 서버 목록 (10초마다 새로고침)
 if(MULTI){$('btnPlay').style.display='none';$('btnMulti').textContent='🌐 공개 서버';const s=document.querySelector('#title .sub');if(s)s.textContent='🌐 멀티 — 공개 서버에서 함께 (서바이벌 · 공정한 규칙)';document.title='CAVEBUILD 멀티';} // 🌐 멀티 모드 타이틀
 $('btnPlayClose').onclick=()=>$('playPanel').classList.remove('show');
 $('btnTSet').onclick=()=>{SFX.click();renderTSettings();$('tSettings').classList.add('show');};
