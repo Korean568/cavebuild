@@ -328,7 +328,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.194 — 🎯 저격소총 · 🎒 팀 장비 · 🕶 불법 거래 상인</h4>
+    <h4>🆕 v26.195 — 🎯 저격소총 손 위치 고침</h4>
+    <ul><li>저격소총을 오른손이 손잡이를 쥐고 왼손이 앞쪽 총몸을 받치게 고쳤어요 · 총도 조금 더 커졌어요</li></ul>
+    <h4>v26.194 — 🎯 저격소총 · 🎒 팀 장비 · 🕶 불법 거래 상인</h4>
     <ul><li>🎯 <b>저격소총</b> (AWM): 한 발씩 · 아주 셈 (헤드샷 2배) · 탄창 5발 · 우클릭하면 조준경 (멀리 확대) · 조준 안 하면 잘 안 맞아요</li><li>🎒 조직 모드: 팀이 되면 기본 장비를 받아요 — 경찰: 권총 · 군사: 권총 · 돌격소총 · 군사경찰 · 교육부: 권총 · 돌격소총 · 수갑 · 장교: 권총 · 블랙 다이아몬드 검 · 수갑 · MP사령부 · 교육사령부: 저격소총 · 돌격소총 · 권총 · 수갑 · 블랙 다이아몬드 검 (/장비 로 잃어버린 것 다시 받기)</li><li>장교(CMO)부터 /team · /진급 · /강등 · /석방 · 총사령부(Owner)는 OP · 고소 · 수배 안 됨</li><li>🕶 <b>불법 거래 상인</b> (NPC): 시민한테만 동전으로 무기를 팔아요 · /상인 으로 위치 · OP는 /상인 설정</li><li>저격소총 3D 모델: 「AWP Sniper」 by Kyler Swanson (CC BY 3.0, Poly Pizza)</li></ul>
     <h4>v26.193 — 🪖 조직 모드: 팀 계급표</h4><!-- 🆕 은 맨 위만 -->
     <ul><li>팀 계급 (아래 → 위): 시민 · 경찰(CP) · 군사(CM) · 군사경찰(CMP) · 장교(CMO) · 교육부(TMC) · MP사령부(CMP 사령부) · 교육사령부(TMC 사령부) · 총사령부(Owner)</li><li>처음엔 누구나 시민 · 서버를 만든 사람이 총사령부(Owner)</li><li>/team 팀 @닉 · /진급 @닉 · /강등 @닉 — 나보다 아래 계급인 사람을, 내 계급보다 아래 팀으로만</li><li>장교(CMO) 이상: 기지 · 집합 · 훈련 · 임무 (내 계급 이하 팀 모두) · 경찰 쪽 팀: 경찰 · 군사경찰 · 장교 · MP사령부 · 총사령부</li></ul>
@@ -2096,7 +2098,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.194 — 🎯 Sniper rifle · 🎒 team kits · 🕶 black-market dealer</h4>
+    <h4>🆕 v26.195 — 🎯 Sniper rifle grip fixed</h4>
+    <ul><li>The right hand now holds the sniper's grip and the left hand supports the front · the rifle is a bit bigger</li></ul>
+    <h4>v26.194 — 🎯 Sniper rifle · 🎒 team kits · 🕶 black-market dealer</h4>
     <ul><li>🎯 <b>Sniper rifle</b> (AWM): single shot · very strong (2× headshot) · 5-round magazine · right-click for a scope · inaccurate without aiming</li><li>🎒 Org mod: each team gets a starter kit (Police: pistol · Military: pistol, rifle · MP / Education: + handcuffs · Officer: pistol, black diamond sword, handcuffs · Commands: sniper, rifle, pistol, handcuffs, black diamond sword) · /장비 to get lost items back</li><li>Officer (CMO)+ can use /team · /진급 · /강등 · /석방 · High Command (Owner) is OP and can't be sued or wanted</li><li>🕶 <b>Black-market dealer</b> (NPC) sells weapons for coins, to citizens only · /상인 shows where · OPs use /상인 설정</li><li>Sniper 3D model: "AWP Sniper" by Kyler Swanson (CC BY 3.0, Poly Pizza)</li></ul>
     <h4>v26.193 — 🪖 Org mod: team rank ladder</h4>
     <ul><li>Teams (low → high): Citizen · Police(CP) · Military(CM) · Military Police(CMP) · Officer(CMO) · Education(TMC) · MP Command(CMP HQ) · Education Command(TMC HQ) · High Command(Owner)</li><li>Everyone starts as Citizen · the server creator is High Command (Owner)</li><li>/team team @nick · /진급 @nick · /강등 @nick — only on people below you, only to teams below you</li><li>Officer(CMO)+: base · gather · training · missions for every team at or below you</li></ul>
@@ -4960,7 +4964,7 @@ function updateSlashTrail(on){
 // 🔫 장전 모션 — 리볼버: 총구를 들어 탄피를 털고 → 옆으로 눕혀 왼손이 스피드로더를 실린더에 꽂음 → 손목을 튕겨 닫음
 //   Tek9: 빈 탄창이 아래로 떨어짐 → 왼손이 새 탄창을 밑에서 끼움 → 장전 손잡이를 당겼다 놓음
 //   왼손은 총 모델 위의 점(탄창 자리 · 손잡이)을 손 화면 좌표로 바꿔서 맞춤 → 총에 정확히 닿음
-const GUN_PTS={[PISTOL]:{well:[-.03,.004,-.063]},[RIFLE]:{well:[0,-.03,-.24],top:[-.02,.19,-.08],hold:[0,-.08,-.23]},[SNIPER]:{well:[0,-.035,-.085],top:[.03,.01,-.05],hold:[0,-.025,-.18]}}; // hold: 양손으로 들 때 왼손 자리 (탄창 앞쪽 아래)
+const GUN_PTS={[PISTOL]:{well:[-.03,.004,-.063]},[RIFLE]:{well:[0,-.03,-.24],top:[-.02,.19,-.08],hold:[0,-.08,-.23]},[SNIPER]:{well:[0,.049,-.115],top:[.025,.092,-.065],hold:[0,.056,-.244]}}; // hold: 양손으로 들 때 왼손 자리 (탄창 앞쪽 아래)
 const _rlV=new THREE.Vector3(),_rlA=new THREE.Vector3(),_rlB=new THREE.Vector3(),_rlT=new THREE.Vector3(),_rlM=new THREE.Vector3(),_rlH=new THREE.Vector3();let magDrop=null,shellsL=null;
 function gunPt(p,out){out.set(p[0],p[1],p[2]);heldModel.localToWorld(out);return handGroup.worldToLocal(out);}
 function reloadPose(bob){const R=player.reload,rifle=longGun(R.s.id),p=Math.min(1,R.t/R.dur),seg=(a,b)=>ease(clamp((p-a)/(b-a),0,1)),ev=(n,at,f)=>{if(p>=at&&!R['e'+n]){R['e'+n]=1;f();}};
@@ -5670,7 +5674,7 @@ function buildItemModel0(id){
 }
 const ITEM_PROTO={};
 // 🔫 총 3D 모델: 권총 = 리볼버, 돌격소총 = Tek9 · 리볼버는 원래 권총 색 (쇠 몸통 · 갈색 손잡이)
-const GUN_GLB={[PISTOL]:{url:'models/revolver.glb',len:.31,ry:-Math.PI/2,paint:1,sh:[0,0,-.041]},[RIFLE]:{url:'models/tek9.glb',len:.42,ry:Math.PI,sh:[0,.106,-.05]},[SNIPER]:{url:'models/awm.glb',len:.6,ry:0,sh:[0,0,-.1]}}; // sh: 손잡이가 주먹 자리에 오게 옮김
+const GUN_GLB={[PISTOL]:{url:'models/revolver.glb',len:.31,ry:-Math.PI/2,paint:1,sh:[0,0,-.041]},[RIFLE]:{url:'models/tek9.glb',len:.42,ry:Math.PI,sh:[0,.106,-.05]},[SNIPER]:{url:'models/awm.glb',len:.75,ry:0,sh:[0,.1,-.13]}}; // sh: 손잡이가 주먹 자리에 오게 옮김
 function gunGlbLoad(){if(!THREE.GLTFLoader)return;const L=new THREE.GLTFLoader();
   for(const k in GUN_GLB){const id=+k,G=GUN_GLB[id];L.load(G.url,gl=>{const s=gl.scene,sk=[];s.traverse(o=>{if(o.isSkinnedMesh)sk.push(o);});
     for(const o of sk){const m=new THREE.Mesh(o.geometry,o.material);m.position.copy(o.position);m.quaternion.copy(o.quaternion);m.scale.copy(o.scale);o.parent.add(m);o.parent.remove(o);} // 뼈대 모델은 복사하면 깨져서 그냥 모델로
