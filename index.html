@@ -325,7 +325,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.192 — 🌐 ONLINE 첫 화면은 원래 타이틀 그대로</h4>
+    <h4>🆕 v26.193 — 🪖 조직 모드: 팀 계급표</h4>
+    <ul><li>팀 계급 (아래 → 위): 시민 · 경찰(CP) · 군사(CM) · 군사경찰(CMP) · 장교(CMO) · 교육부(TMC) · MP사령부(CMP 사령부) · 교육사령부(TMC 사령부) · 총사령부(Owner)</li><li>처음엔 누구나 시민 · 서버를 만든 사람이 총사령부(Owner)</li><li>/team 팀 @닉 · /진급 @닉 · /강등 @닉 — 나보다 아래 계급인 사람을, 내 계급보다 아래 팀으로만</li><li>장교(CMO) 이상: 기지 · 집합 · 훈련 · 임무 (내 계급 이하 팀 모두) · 경찰 쪽 팀: 경찰 · 군사경찰 · 장교 · MP사령부 · 총사령부</li></ul>
+    <h4>v26.192 — 🌐 ONLINE 첫 화면은 원래 타이틀 그대로</h4>
     • CAVEBUILD ONLINE 서버 목록이 <b>원래 타이틀의 배경 그림 · 로고 · 글씨체 그대로</b> 나와요 (로고 밑에 O N L I N E). 작은 버튼 모양도 다듬었어요.
     <h4>v26.191 — 🌐 CAVEBUILD ONLINE</h4>
     • 멀티(cavebuild/멀티/)가 <b>CAVEBUILD ONLINE</b>이라는 따로 된 게임이 됐어요: 첫 화면이 바로 <b>서버 목록</b> (카드 · 종류 · 인원 · ⭐ 공식) · <b>▶ 빠른 참가</b> · <b>➕ 서버 만들기</b>.<br>
@@ -2089,7 +2091,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.192 — 🌐 ONLINE uses the original title look</h4>
+    <h4>🆕 v26.193 — 🪖 Org mod: team rank ladder</h4>
+    <ul><li>Teams (low → high): Citizen · Police(CP) · Military(CM) · Military Police(CMP) · Officer(CMO) · Education(TMC) · MP Command(CMP HQ) · Education Command(TMC HQ) · High Command(Owner)</li><li>Everyone starts as Citizen · the server creator is High Command (Owner)</li><li>/team team @nick · /진급 @nick · /강등 @nick — only on people below you, only to teams below you</li><li>Officer(CMO)+: base · gather · training · missions for every team at or below you</li></ul>
+    <h4>v26.192 — 🌐 ONLINE uses the original title look</h4>
     • The server browser now sits on the original title background with the same logo and font.
     <h4>v26.191 — 🌐 CAVEBUILD ONLINE</h4>
     • Multiplayer is now CAVEBUILD ONLINE: a server browser with quick join, server types (survival, PvP arena, build, organization RP), admin-only official servers, and uploadable server scripts.
@@ -8785,6 +8789,7 @@ const CB={version:'v26.164',
   goDim:(key,x,y,z)=>{if(!DIM[key]||traveling)return false;const p=x!=null?{x,y,z}:(arrivalOf(key)||(world.lastPos&&world.lastPos[key])||(key==='over'?world.spawn:null)||{...DIM[key].spawn});travel(key,{x:p.x,y:p.y,z:p.z,yaw:p.yaw});return true;}, // 🧩 그 차원으로 이동 (자리를 안 주면 도착 자리)
   dimNow:()=>world.dim, // 🧩 지금 있는 차원
   bgm:(mode,lv)=>{const m=mode==='wanted'?'wanted':'calm',l=Math.max(1,Math.min(5,lv|0||1));if(BGM.mode===m&&BGM.lv===l)return;BGM.mode=m;BGM.lv=l;if(m==='wanted'){wtReady(l);bgmStart();}bgmBus();}, // 🧩 배경음악 바꾸기: 'wanted'(수배 곡 · 등급 1~5) · 'calm'(평소 곡)
+  owner:()=>(world.flags&&world.flags.owner)||(!MP.on||MP.host?(MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어')):(MP.hostNick||'')), // 🧩 서버를 만든 사람 (공개 서버) · 방장 (내 세계 방) · 혼자면 나
   opOf:nick=>{if(!MP.on||nick===(MP.me&&MP.me.nick))return cmdIsOp();const c=[...MP.conns].find(q=>q.P&&q.P.nick===nick);return !!c&&mpConnOp(c);}, // 🧩 (방장 게임에서) 그 사람이 OP · 어드민인지
   hud:(id,html)=>{let el=document.getElementById('modhud_'+id);if(html==null){if(el)el.remove();return;}if(!el){el=document.createElement('div');el.id='modhud_'+id;el.className='modhud';document.body.appendChild(el);}el.innerHTML=html;document.querySelectorAll('.modhud').forEach((e,i)=>e.style.top=(60+i*36)+'px');}, // 🧩 화면 오른쪽 위 안내판
   id:name=>{for(let i=1;i<BL.length;i++)if(BL[i]&&BL[i].name===name)return i;for(let i=100;i<IT.length;i++)if(IT[i]&&IT[i].name===name)return i;return null;}, // 한국어 이름 → 번호
