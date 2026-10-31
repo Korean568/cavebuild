@@ -315,7 +315,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.189 — 🌐 CAVEBUILD 멀티 (공개 서버 전용 모드) · 🔑 방장 · OP 규칙 · 🔫 총 PvP</h4>
+    <h4>🆕 v26.190 — ⛓ 감옥 차원 이동 고침</h4>
+    • 모드를 <b>주소(🔗)로 넣었을 때</b> 모드가 만든 차원 · 블록이 생기지 않아 감옥 차원으로 못 가던 문제를 고쳤어요 (늦게 실행된 모드도 지형을 만드는 쪽이 바로 알게 다시 켬).
+    <h4>v26.189 — 🌐 CAVEBUILD 멀티 (공개 서버 전용 모드) · 🔑 방장 · OP 규칙 · 🔫 총 PvP</h4>
     • 공개 서버가 <b>따로 된 모드</b>가 됐어요: 주소 cavebuild/멀티/ · 허브의 <b>🌐 CAVEBUILD 멀티</b>. <b>가방 · 진행 · 모드(Mods) 목록이 솔로와 따로</b>예요.<br>
     • 멀티 규칙: <b>서바이벌만</b> · 아이템 · 이동 · 시간 같은 <b>치트 명령어는 어드민만</b> (정보 · 대화 · 서버 운영 명령어와 서버 모드의 명령어는 OK). 솔로의 🌐 멀티 화면엔 방 코드 참가와 멀티 모드로 가는 버튼이 있어요.<br>
     • 🔑 공개 서버의 <b>방장은 서버를 만든 사람</b>이에요 (세계에 저장된 정보로 판단). 혼자 남아 세계를 돌리고 있어도 만든 사람 · 어드민이 아니면 방장 권한이 없어요. <b>OP 주기 · 빼기는 방장(만든 사람)과 어드민만</b> — 손님으로 들어와 있어도 돼요.<br>
@@ -2061,7 +2063,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.189 — 🌐 CAVEBUILD Multiplayer mode · 🔑 Owner & OP rules · 🔫 Gun PvP</h4>
+    <h4>🆕 v26.190 — ⛓ Jail dimension travel fix</h4>
+    • Dimensions and blocks from mods added by URL now work (the terrain worker restarts with the new code).
+    <h4>v26.189 — 🌐 CAVEBUILD Multiplayer mode · 🔑 Owner & OP rules · 🔫 Gun PvP</h4>
     • Public servers are now their own mode (cavebuild/멀티/) with separate saves, inventory and mods, survival only, and no cheat commands except for admins. The server creator is the owner; only the owner and admins can grant or remove OP. Guns can now hit other players.
     <h4>v26.188 — 👥 /team · @name Enter fix</h4>
     • /team org @name (either order) puts a player in an organization. Pressing Enter after a fully typed @name now runs the command instead of only completing the name.
@@ -4527,9 +4531,10 @@ const OFFS=[];
 for(let dz=-RD-2;dz<=RD+2;dz++)for(let dx=-RD-2;dx<=RD+2;dx++)OFFS.push([dx,dz,dx*dx+dz*dz]);
 OFFS.sort((a,b)=>a[2]-b[2]);
 // ---------- 백그라운드 워커 (청크 생성·메시 계산) ----------
-let WK=null,wEpoch=0,wId=0,wMeshN=0;const wJobs=new Map(),wGenPend=new Set();
+let WK=null,wEpoch=0,wId=0,wMeshN=0,WK_SRC='',wkRefT=0;const wJobs=new Map(),wGenPend=new Set();
+function modWsrcChanged(){clearTimeout(wkRefT);wkRefT=setTimeout(()=>{if(WK&&WK_SRC!==MOD_WSRC){stopWorker();initWorker();}},50);} // 🧩 늦게 실행된 모드(주소 모드 등)의 블록 · 차원도 워커가 알게 다시 켬
 function initWorker(){
-  try{
+  try{WK_SRC=MOD_WSRC;
     const src=$('wcore').textContent+MOD_WSRC+`
 NAT_R=${NAT_R};WINTER=${WINTER};SPOOKY=${SPOOKY};
 const world={dim:'over',homeVillage:null};let hvKey='';
@@ -8725,7 +8730,7 @@ const CB={version:'v26.164',
   payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
   dim:(key,o)=>{key=String(key);o=o||{};if(DIM[key]&&!DIM[key].mod)return false; // 🧩 차원 만들기: {name, bg:[r,g,b], fog:[가까이,멀리], light, day, caveB, stars, spawn:{x,y,z}, noMobs, gen(data,cx,cz)} — gen 은 백그라운드에서도 돌아서 블록 번호(숫자)만 써야 해요
     DIM[key]={name:o.name||key,bg:o.bg||[.05,.05,.07],fog:o.fog||[10,60],light:o.light??.6,day:o.day??.5,caveB:o.caveB??.4,stars:o.stars??0,spawn:o.spawn||{x:.5,y:12,z:.5},noMobs:!!o.noMobs,mod:1};
-    if(typeof o.gen==='function'){GEN[key]=o.gen;let s=o.gen.toString();if(!/^(function|async|\(|[\w$]+\s*=>)/.test(s))s='function '+s;MOD_WSRC+=`\nGEN[${JSON.stringify(key)}]=${s};`;}return true;},
+    if(typeof o.gen==='function'){GEN[key]=o.gen;let s=o.gen.toString();if(!/^(function|async|\(|[\w$]+\s*=>)/.test(s))s='function '+s;MOD_WSRC+=`\nGEN[${JSON.stringify(key)}]=${s};`;modWsrcChanged();}return true;},
   goDim:(key,x,y,z)=>{if(!DIM[key]||traveling)return false;const p=x!=null?{x,y,z}:(arrivalOf(key)||(world.lastPos&&world.lastPos[key])||(key==='over'?world.spawn:null)||{...DIM[key].spawn});travel(key,{x:p.x,y:p.y,z:p.z,yaw:p.yaw});return true;}, // 🧩 그 차원으로 이동 (자리를 안 주면 도착 자리)
   dimNow:()=>world.dim, // 🧩 지금 있는 차원
   bgm:(mode,lv)=>{const m=mode==='wanted'?'wanted':'calm',l=Math.max(1,Math.min(5,lv|0||1));if(BGM.mode===m&&BGM.lv===l)return;BGM.mode=m;BGM.lv=l;if(m==='wanted'){wtReady(l);bgmStart();}bgmBus();}, // 🧩 배경음악 바꾸기: 'wanted'(수배 곡 · 등급 1~5) · 'calm'(평소 곡)
@@ -8737,7 +8742,7 @@ const CB={version:'v26.164',
     const id=modAlloc((modCur||'')+':'+(o.key||o.name),true),tile=modTile++;if(tile>=ATW*ATH)throw new Error('그림 칸이 다 찼어요');
     const col=o.color||[180,180,180];T(tile,o.paint||((u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y),k=(.86+.14*h2(x,y,tile*7+1))*(e<2?.7:1);return [col[0]*k,col[1]*k,col[2]*k];}));
     const p={hard:o.hard||1.5,tool:o.tool||'pick',tier:o.tier||0};defB(id,o.name,tile,p);OPAQUE[id]=SOLID[id]=1;if(o.glow||o.light)EMIT[id]=1;if(o.light)LIGHT_SRC[id]=1;
-    MOD_WSRC+=`\ndefB(${id},${JSON.stringify(o.name)},${tile},${JSON.stringify(p)});OPAQUE[${id}]=SOLID[${id}]=1;${o.glow||o.light?`EMIT[${id}]=1;`:''}${o.light?`LIGHT_SRC[${id}]=1;`:''}`;
+    MOD_WSRC+=`\ndefB(${id},${JSON.stringify(o.name)},${tile},${JSON.stringify(p)});OPAQUE[${id}]=SOLID[${id}]=1;${o.glow||o.light?`EMIT[${id}]=1;`:''}${o.light?`LIGHT_SRC[${id}]=1;`:''}`;modWsrcChanged();
     actx.putImageData(AIMG,0,0);atlasTex.needsUpdate=true;ICON_CANVAS[id]=blockIcon(id);ICON[id]=ICON_CANVAS[id].toDataURL();return id;},
   item(o){ // {key,name,icon:'🍎' 또는 color, stack, food, use(slot,target)}
     const id=modAlloc((modCur||'')+':'+(o.key||o.name),false);IT[id]=Object.assign({name:o.name,stack:o.stack||64},o.food?{food:o.food}:{},o.use?{use:true}:{});
