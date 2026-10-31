@@ -315,7 +315,10 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.187 — 🚨 수배 음악 더 긴장감 있게</h4>
+    <h4>🆕 v26.188 — 👥 /team · @닉네임 Enter 고침</h4>
+    • 조직 모드: <b>/team 조직 @닉네임</b> (또는 /team @닉네임 조직) 으로 그 사람을 그 조직에 넣어요 (OP · 그 조직 · 사령부 장교). /조직 배정 도 순서 상관없이 돼요.<br>
+    • 명령어 끝에 <b>@닉네임을 다 쳐 놓고 Enter</b>를 누르면 이름 고르기만 되고 실행이 안 되던 문제를 고쳤어요. 이름을 다 쳤으면 바로 실행돼요 (덜 쳤을 땐 예전처럼 목록에서 골라요).
+    <h4>v26.187 — 🚨 수배 음악 더 긴장감 있게</h4>
     • 심장 박동 같은 팀파니 「쿵-쿵」 · 16분음표로 몰아치는 피치카토 · 작게 시작해 부풀었다 뚝 끊기는 현악 · <b>마디마다 반음씩 올라가며 조여 오는 바이올린</b> · 엇박 금관 찌르기 · 8마디 끝의 반 마디 정적 뒤 팀파니 롤.<br>
     • 템포 96 (★★★★ 이상 112). ★★★★★ 는 금관 불협화음이 부풀어 올라요.
     <h4>v26.186 — 🚨 수배 음악 「추격」 (조직 모드)</h4>
@@ -2052,7 +2055,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.187 — 🚨 Tenser wanted music</h4>
+    <h4>🆕 v26.188 — 👥 /team · @name Enter fix</h4>
+    • /team org @name (either order) puts a player in an organization. Pressing Enter after a fully typed @name now runs the command instead of only completing the name.
+    <h4>v26.187 — 🚨 Tenser wanted music</h4>
     • Heartbeat timpani, driving 16th-note pizzicato, swelling strings that cut off, a violin line that climbs a semitone every bar, offbeat brass and a sudden silence before each loop.
     <h4>v26.186 — 🚨 Wanted music (organization mod)</h4>
     • Only wanted players hear a new tense orchestral cue (real recorded strings, timpani, violin, brass) that grows with the wanted level. New mod API: CB.bgm.
@@ -9589,14 +9594,15 @@ let AT={on:false,i:0,L:[],st:0};
 function atPlayers(){return MP.on?[MP.me.nick,...mpList()]:[nickNow()||'플레이어'];}
 function atHide(){AT.on=false;$('atList').style.display='none';}
 function atScan(){const el=$('mpChat'),v=el.value,cur=el.selectionStart??v.length,m=/(^|\s)@([^\s@]*)$/.exec(v.slice(0,cur));if(!m){atHide();return;}
-  const q=m[2].toLowerCase();AT.L=atPlayers().filter(n=>n.toLowerCase().includes(q));if(!AT.L.length){atHide();return;}
+  const q=m[2].toLowerCase();AT.q=q;AT.L=atPlayers().filter(n=>n.toLowerCase().includes(q));if(!AT.L.length){atHide();return;}
   AT.st=cur-m[2].length-1;AT.i=Math.min(AT.i,AT.L.length-1);AT.on=true;const B=$('atList');B.innerHTML=AT.L.map((n,i)=>`<div data-i="${i}" class="${i===AT.i?'on':''}">@${mpEsc(n)}${MP.on&&n===MP.me.nick?' <span style="opacity:.6">(나)</span>':''}</div>`).join('');B.style.display='block';}
 function atPick(i){const el=$('mpChat'),v=el.value,cur=el.selectionStart??v.length,n=AT.L[i];if(n==null)return;const ins='@'+n+' ';el.value=(v.slice(0,AT.st)+ins+v.slice(cur)).slice(0,80);const c=Math.min(el.value.length,AT.st+ins.length);el.setSelectionRange(c,c);atHide();el.focus();}
 $('mpChat').addEventListener('input',()=>{AT.i=0;atScan();});$('mpChat').addEventListener('click',atScan);
 $('atList').addEventListener('mousedown',e=>{const d=e.target.closest('[data-i]');if(d){e.preventDefault();atPick(+d.dataset.i);}});
 $('mpChat').addEventListener('keydown',e=>{if(!AT.on||e.isComposing)return;
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();e.stopImmediatePropagation();AT.i=(AT.i+(e.key==='ArrowDown'?1:-1)+AT.L.length)%AT.L.length;atScan();}
-  else if(e.key==='Tab'||e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();atPick(AT.i);}
+  else if(e.key==='Tab'||e.key==='Enter'){if(e.key==='Enter'&&AT.L.some(n=>n.toLowerCase()===AT.q)){atHide();return;} // 닉네임을 다 쳤으면 Enter = 바로 실행 · 보내기
+    e.preventDefault();e.stopImmediatePropagation();atPick(AT.i);}
   else if(e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();atHide();}});
 $('mpChat').addEventListener('keydown',e=>{e.stopPropagation();if(e.isComposing)return;
   if(e.code==='Escape'){e.preventDefault();mpChatClose();}

@@ -4,7 +4,7 @@
 // 멀티플레이에서는 방장 게임이 조직 정보를 저장하고(세계에 저장됨), 친구들의 명령은 방장에게 신호로 보내요.
 //
 // 명령어 (누구나):  /조직 · /조직 목록 · /조직 가입 이름 · /조직 탈퇴 · /기지
-// 명령어 (장교 · OP): /조직 배정 @닉 이름 · /조직 추방 @닉 · /진급 @닉 · /강등 @닉
+// 명령어 (장교 · OP): /team 조직 @닉 (= /조직 배정, 순서 상관없음) · /조직 추방 @닉 · /진급 @닉 · /강등 @닉
 //                    /기지 설정 · /집합 · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
 // 📝 고소:           범죄를 당하면 피해자 이름으로 자동 고소 → 지명수배 · /고소 (목록) · /고소 취소 [@닉] · /고소 @닉 [1|2] 사유
 // 🚨 지명수배:       /수배 (목록) · /감옥 (수감자) — 누구나 · 수배 중인 사람에게만 수배 음악 「추격」 (★ 등급이 높을수록 격해짐)
@@ -348,11 +348,26 @@ CB.on('kill', (m) => {
 
 // ── 명령어 ──
 const pos = () => CB.pos();
+// 「조직 @닉」 이든 「@닉 조직」 이든 알아들음 (조직 이름에 띄어쓰기가 있어도: CMP 사령부)
+function parseTeam(a) {
+  if (a.length < 2) return null;
+  let o = findOrg(a.slice(0, -1).join(' '));
+  if (o) return { o, who: a[a.length - 1] };
+  o = findOrg(a.slice(1).join(' '));
+  if (o) return { o, who: a[0] };
+  return null;
+}
+CB.command('team', '/team 조직 @닉 (또는 /team @닉 조직) — 그 사람을 그 조직으로 (OP · 그 조직 · 사령부 장교) · /team — 조직 목록', (a, c) => {
+  if (!a.length) return CB.run('/조직 목록');
+  const p = parseTeam(a);
+  if (!p) return c.say('/team 조직 @닉 · 조직: ' + Object.keys(ORGS).join(' · '));
+  req('assign', p);
+}, { everyone: true });
 CB.command('조직', '조직 정보 · 가입 · 탈퇴 · 배정 · 추방 (/조직 목록)', (a, c) => {
   const sub = a[0] || '';
   if (sub === '가입') return req('join', { o: a.slice(1).join(' ') });
   if (sub === '탈퇴') return req('leave');
-  if (sub === '배정') return req('assign', { who: a[1], o: a.slice(2).join(' ') });
+  if (sub === '배정') { const p = parseTeam(a.slice(1)); return p ? req('assign', p) : c.say('/조직 배정 @닉 조직 (또는 /조직 배정 조직 @닉)'); }
   if (sub === '추방') return req('kick', { who: a[1] });
   if (sub === '목록') {
     for (const o in ORGS) { const n = Object.values(S.m).filter((x) => x.o === o).length; c.say(`${ORGS[o].ico} ${o} (${ORGS[o].full}) · ${n}명 · 점수 ${S.pts[o] || 0}${ORGS[o].discord ? ' · 디스코드 필요' : ORGS[o].sub ? ' · 배정 필요' : ''}`); }
