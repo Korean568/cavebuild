@@ -330,7 +330,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.197 — 🫡 경례할 때 든 아이템 숨김</h4>
+    <h4>🆕 v26.198 — 🏙 조직 모드: 도시 · 경찰서 · 군부대가 저절로</h4>
+    <ul><li>조직 모드를 깔면 부활 자리 근처 빈 땅에 <b>도시</b>(네거리 · 빌딩 4채 · 가로등 · 태극기 · 뒷골목 상인), <b>🚓 경찰서</b>(파란 벽 · 경찰 마크 · 접수대 · 유치장 3칸 · 주차장), <b>🪖 군부대</b>(담 · 정문 · 망루 4개 · 막사 · 사령부 · 헬기장 · 사격장)가 생겨요</li><li>팀 기지가 저절로 정해져요: 경찰 → 경찰서 · 군사 · 군사경찰 → 군부대 연병장 · 장교 이상 → 사령부 (/기지)</li><li>/도시 로 위치 보기 · OP는 /도시 짓기 로 지금 자리에 새로 지을 수 있어요 · 사람이 많이 지은 땅은 피해요</li><li>🧩 모드 기능: CB.setBlocks (블록 여러 개 한 번에) · CB.loaded · CB.edited</li></ul>
+    <h4>v26.197 — 🫡 경례할 때 든 아이템 숨김</h4>
     <ul><li>경례하는 동안 손에 든 아이템이 안 보여요 (내 화면 · 3인칭 · 친구들 화면 모두)</li></ul>
     <h4>v26.196 — 🫡 경례 · ⚡ 테이저건</h4>
     <ul><li>🫡 <b>경례</b>: <b>G</b> 키나 /경례 · 오른손을 이마 옆에 붙여요 (2.5초) · 멀티에서는 친구들 화면에서도 보이고 채팅에 알려요</li><li>⚡ <b>테이저건</b> (작업대: 철 주괴 2 + 구리 주괴 2 + 에너지 스톤 1): 클릭하면 전극 두 가닥이 날아가요 (12칸) · 맞은 플레이어는 5초 동안 감전돼 못 움직이고 공격도 못 해요 · 몹은 5초 멈춤 · 3초마다 쏠 수 있어요</li><li>🪖 조직 모드: 경찰 · 군사경찰 · MP사령부 장비에 테이저건 추가</li></ul>
@@ -2104,7 +2106,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.197 — 🫡 Held item hidden while saluting</h4>
+    <h4>🆕 v26.198 — 🏙 Org mod: city · police station · army base built automatically</h4>
+    <ul><li>Installing the org mod builds a <b>city</b> (crossroads, 4 buildings, street lamps, flag, back-alley dealer), a <b>🚓 police station</b> (holding cells, front desk, parking lot) and an <b>🪖 army base</b> (walls, gate, 4 watchtowers, barracks, HQ, helipad, shooting range) on open land near spawn</li><li>Team bases are set automatically (/기지) · /도시 shows where · OPs can rebuild with /도시 짓기</li><li>🧩 Mod API: CB.setBlocks · CB.loaded · CB.edited</li></ul>
+    <h4>v26.197 — 🫡 Held item hidden while saluting</h4>
     <ul><li>Your held item is hidden while you salute (first person, third person and on other players' screens)</li></ul>
     <h4>v26.196 — 🫡 Salute · ⚡ Taser</h4>
     <ul><li>🫡 <b>Salute</b>: press <b>G</b> or type /경례 · right hand to the brow for 2.5 s · other players see it too</li><li>⚡ <b>Taser</b> (bench: 2 iron ingots + 2 copper ingots + 1 energy stone): click to fire two probes (12 blocks) · a hit player can't move or attack for 5 s · mobs freeze for 5 s · 3 s cooldown</li><li>🪖 Org mod: Police, Military Police and MP Command kits now include a taser</li></ul>
@@ -8880,6 +8884,9 @@ const CB={version:'v26.164',
   onTick(f){MOD_TICK.push(f);},onUse(id,f){MOD_USE[id]=f;if(IT[id])IT[id].use=true;},
   toast:t=>toast(t),give:(id,n=1)=>{id=typeof id==='string'?CB.id(id):id;if(!id||!(IT[id]||BL[id]))return false;dropAtPlayer(id,addItem(id,Math.max(1,n|0||1)));return true;},player:()=>player,world:()=>world,target:()=>target,
   getBlock:(x,y,z)=>getBlock(x,y,z),setBlock:(x,y,z,id)=>{setBlock(x,y,z,id);remeshAt(x>>4,z>>4);},
+  setBlocks:L=>{const b=new Set();let n=0;for(const q of L||[]){if(!q)continue;const x=q[0]|0,y=q[1]|0,z=q[2]|0,id=q[3]|0;if(getBlock(x,y,z)===id)continue;setBlock(x,y,z,id,b);n++;}for(const k of b){const [cx,cz]=k.split(',').map(Number);remeshAt(cx,cz);}return n;}, // 🧩 블록 여러 개를 한 번에 [[x,y,z,번호],…] (건물 짓기 · 멀티에선 친구들에게도)
+  loaded:(x,z)=>!!getChunk(Math.floor(x)>>4,Math.floor(z)>>4), // 🧩 그 자리 땅이 불러와져 있는지
+  edited:(x1,z1,x2,z2)=>{let n=0;for(let cx=Math.floor(Math.min(x1,x2))>>4;cx<=Math.floor(Math.max(x1,x2))>>4;cx++)for(let cz=Math.floor(Math.min(z1,z2))>>4;cz<=Math.floor(Math.max(z1,z2))>>4;cz++){const m=mods.get(ckey(cx,cz));if(m)n+=m.size;}return n;}, // 🧩 그 구역에서 사람이 바꾼 블록 수 (건물을 지을 빈 땅 찾기)
   blocks:()=>{const L=[];for(let i=1;i<BL.length;i++)if(BL[i]&&!LIQUID[i]&&ICON[i])L.push({id:i,name:tr(BL[i].name),icon:ICON[i]});return L;}, // 🎨 블록 · 아이템 목록 (텍스처 모드용)
   items:()=>{const L=[];for(let i=100;i<IT.length;i++)if(IT[i]&&ICON[i])L.push({id:i,name:tr(IT[i].name),icon:ICON[i]});return L;},
   setBlockTexture(id,img){const B=BL[id];if(!B||!img)return false;const c=makeCanvas(TS,TS),g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(img,0,0,TS,TS);const P=g.getImageData(0,0,TS,TS).data,D=AIMG.data,W=atlas.width; // 블록 그림 바꾸기 (같은 그림 칸을 쓰는 블록도 함께 바뀜)

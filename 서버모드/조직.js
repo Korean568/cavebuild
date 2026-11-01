@@ -6,6 +6,7 @@
 //
 // 🎒 팀이 되면 기본 장비를 받아요 (KITS) · 총사령부(Owner)는 OP · 고소 · 수배 안 됨
 // 🕶 불법 거래 상인 (NPC): 시민한테만 동전으로 무기를 팔아요 (/상인 · /상인 설정)
+// 🏙 모드를 깔면 부활 자리 근처 빈 땅에 도시 · 🚓 경찰서 · 🪖 군부대가 저절로 생겨요 (/도시 · OP는 /도시 짓기)
 // 명령어 (누구나):  /조직 (내 팀) · /조직 목록 · /조직 탈퇴 (시민으로) · /기지 · /장비 · /상인
 // 명령어 (장교(CMO) 이상 · OP): /team 팀 @닉 (순서 상관없음, = /조직 배정) · /진급 @닉 · /강등 @닉 · /조직 추방 @닉 (시민으로) · /석방 @닉
 // 명령어 (장교(CMO) 이상 · OP): /기지 설정 · /집합 (내 계급 이하 모두) · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
@@ -88,7 +89,7 @@ CB.dim('감옥', {
 function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -313,8 +314,14 @@ function apply(op, a, from, fromOp, fromDiscord) {
     }
     case 'dealer': { // 🕶 불법 거래 상인 자리 정하기 (OP)
       if (!fromOp) return tell(from, '상인 자리는 OP(총사령부)만 정할 수 있어요');
-      S.dealer = { x: +a.x, y: +a.y, z: +a.z, dim: String(a.dim || 'over') }; save();
+      S.dealer = { x: +a.x, y: +a.y, z: +a.z, dim: String(a.dim || 'over') }; S.dealerSet = true; save();
       return CB.say('🕶 불법 거래 상인이 자리를 옮겼어요… 어딘가로');
+    }
+    case 'town': { // 🏙 /도시 짓기: 지금 자리에 도시 · 경찰서 · 군부대 (OP)
+      if (!fromOp) return tell(from, '도시는 OP(총사령부)만 지을 수 있어요');
+      const err = buildTown({ x: Math.floor(+a.x), z: Math.floor(+a.z) }, Math.floor(+a.y));
+      if (err) return tell(from, '🏙 ' + err);
+      return;
     }
     case 'mission-cancel': {
       if (!off) return;
@@ -430,6 +437,151 @@ function dealerTick() { // 가까이 있으면 상인이 서 있게 (내 게임�
   if (near && !CB.mobs().some((m) => m.kind === DEALER_K && !m.dead)) { const m = CB.spawn(DEALER, D.x, D.y + 0.1, D.z); if (m) m.orgHome = { x: D.x, z: D.z }; }
 }
 
+// ── 🏙 도시 · 🚓 경찰서 · 🪖 군부대: 모드를 깔면 부활 자리 근처 빈 땅에 저절로 지어요 (방장 게임이 한 번만) ──
+// 사람이 블록을 많이 바꾼 땅은 피해요 · OP는 /도시 짓기 로 지금 자리에 새로 지을 수 있어요
+// 가운데가 도시 (네거리 · 빌딩 4채 · 가로등 · 태극기), 동쪽이 경찰서 (유치장 · 주차장), 서쪽이 군부대 (담 · 망루 · 막사 · 사령부 · 헬기장 · 사격장)
+const BLK = (name, alt) => CB.id(name) || (alt && CB.id(alt)) || CB.id('돌') || 1;
+const T_CONC = CB.block({ key: 'town_concrete', name: '콘크리트', paint: (u, v, x, y) => { const k = 0.9 + 0.1 * Math.sin(x * 12.9 + y * 7.7) * Math.cos(x * 3.1 - y * 5.3); return [150 * k, 150 * k, 154 * k]; } });
+const T_WHITE = CB.block({ key: 'town_white', name: '흰 벽', paint: (u, v, x, y) => { const k = 0.94 + 0.06 * Math.sin(x * 9.1 + y * 4.7); return [232 * k, 230 * k, 224 * k]; } });
+const T_POLICE = CB.block({ key: 'town_police', name: '경찰서 벽', paint: (u, v, x, y) => { const k = 0.92 + 0.08 * Math.sin(x * 5.3 + y * 8.1); return [30 * k, 60 * k, 140 * k]; } });
+const T_STRIPE = CB.block({ key: 'town_stripe', name: '경찰 줄무늬', paint: (u, v, x, y) => (((x >> 2) + (y >> 3)) % 2 ? [240, 240, 240] : [30, 70, 180]) });
+const T_BADGE = CB.block({ key: 'town_badge', name: '경찰 마크', paint: (u, v, x, y) => { const dx = x - 7.5, dy = y - 7.5, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx); return r < 3.4 + 2 * Math.cos(5 * a - Math.PI / 2) ? [250, 200, 40] : r < 7.4 ? [20, 40, 110] : [30, 60, 140]; } });
+const T_CAMO = CB.block({ key: 'town_camo', name: '위장 벽', paint: (u, v, x, y) => { const n = Math.sin(x * 0.9 + Math.sin(y * 0.7) * 2) + Math.cos(y * 0.8 + Math.sin(x * 0.6) * 2); return n > 0.8 ? [60, 52, 34] : n > -0.2 ? [88, 104, 56] : n > -1 ? [120, 116, 80] : [52, 70, 40]; } });
+const T_ARMY = CB.block({ key: 'town_army', name: '군대 마크', paint: (u, v, x, y) => { const dx = x - 7.5, dy = y - 7.5, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx); return r < 3.4 + 2 * Math.cos(5 * a - Math.PI / 2) ? [235, 235, 220] : [70, 84, 44]; } });
+const T_SAND = CB.block({ key: 'town_sandbag', name: '모래주머니', paint: (u, v, x, y) => { const row = y >> 2, e = (((x + (row % 2) * 4) % 8) === 0) || y % 4 === 0; return e ? [120, 100, 64] : [178, 156, 108]; } });
+const T_LINE = CB.block({ key: 'town_line', name: '도로 선', paint: () => [235, 235, 225] });
+const T_TARGET = CB.block({ key: 'town_target', name: '과녁', paint: (u, v, x, y) => { const r = Math.hypot(x - 7.5, y - 7.5); return r < 2 ? [220, 30, 30] : r < 4 ? [240, 240, 240] : r < 6 ? [220, 30, 30] : [240, 240, 240]; } });
+const TOWN_X = 46, TOWN_Z = 24; // 동서 ±46칸 · 남북 ±24칸
+function townPlan(C, G) {
+  const W = new Map(), AIR = 0;
+  const GRASS = BLK('잔디 블록'), ROAD = BLK('도로', '돌'), GLASS = BLK('유리'), WIN = BLK('빛나는 창', '유리'), BRICK = BLK('돌벽돌'), PLANK = BLK('판자');
+  const LAMPB = BLK('등불'), IRON = BLK('철 블록'), FLAG = BLK('태극기', '흰 벽'), BED = BLK('침대', '판자'), SHELF = BLK('책장', '판자'), BOARD = BLK('칠판', '돌'), TILE = BLK('실험실 타일', '흰 벽');
+  const put = (dx, dy, dz, id) => { const x = C.x + dx, y = G + dy, z = C.z + dz; W.set(x + ',' + y + ',' + z, [x, y, z, id]); };
+  const box = (x1, y1, z1, x2, y2, z2, id) => { for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) for (let z = Math.min(z1, z2); z <= Math.max(z1, z2); z++) put(x, y, z, id); };
+  const ring = (x1, z1, x2, z2, y1, y2, id) => { box(x1, y1, z1, x2, y2, z1, id); box(x1, y1, z2, x2, y2, z2, id); box(x1, y1, z1, x1, y2, z2, id); box(x2, y1, z1, x2, y2, z2, id); };
+  const lampPost = (dx, dz) => { box(dx, 0, dz, dx, 2, dz, IRON); put(dx, 3, dz, LAMPB); };
+  // 땅 고르기: 잔디 한 줄 · 위는 비움
+  box(-TOWN_X, -1, -TOWN_Z, TOWN_X, -1, TOWN_Z, GRASS);
+  box(-TOWN_X, 0, -TOWN_Z, TOWN_X, 22, TOWN_Z, AIR);
+  // 🛣 큰길 (동서) · 가운데 점선
+  box(-TOWN_X, -1, -2, TOWN_X, -1, 2, ROAD);
+  for (let dx = -TOWN_X; dx <= TOWN_X; dx++) if (((dx % 4) + 4) % 4 < 2) put(dx, -1, 0, T_LINE);
+  // 🏙 도시: 보도 · 남북 길 · 빌딩 4채 · 가로등 · 태극기
+  box(-17, -1, -TOWN_Z, 17, -1, TOWN_Z, T_CONC);
+  box(-TOWN_X, -1, -2, TOWN_X, -1, 2, ROAD);
+  box(-2, -1, -TOWN_Z, 2, -1, TOWN_Z, ROAD);
+  for (let dz = -TOWN_Z; dz <= TOWN_Z; dz++) if (Math.abs(dz) > 2 && ((dz % 4) + 4) % 4 < 2) put(0, -1, dz, T_LINE);
+  for (let dx = -16; dx <= 16; dx++) if (Math.abs(dx) > 2 && ((dx % 4) + 4) % 4 < 2) put(dx, -1, 0, T_LINE);
+  const tower = (sx, sz, h, wall) => {
+    const ax = Math.min(sx * 5, sx * 14), bx = Math.max(sx * 5, sx * 14), az = Math.min(sz * 5, sz * 14), bz = Math.max(sz * 5, sz * 14);
+    box(ax, -1, az, bx, -1, bz, PLANK);
+    for (let y = 0; y < h; y++) for (let x = ax; x <= bx; x++) for (let z = az; z <= bz; z++) {
+      if (x !== ax && x !== bx && z !== az && z !== bz) continue;
+      const corner = (x === ax || x === bx) && (z === az || z === bz), f = y % 4;
+      put(x, y, z, !corner && (f === 1 || f === 2) && (x + z) % 3 !== 0 ? ((y >> 2) % 2 ? WIN : GLASS) : wall);
+    }
+    for (let y = 4; y < h; y += 4) box(ax + 1, y, az + 1, bx - 1, y, bz - 1, PLANK);
+    for (let y = 3; y < h; y += 4) put((ax + bx) >> 1, y, (az + bz) >> 1, LAMPB);
+    box(ax, h, az, bx, h, bz, T_CONC); put((ax + bx) >> 1, h + 1, (az + bz) >> 1, LAMPB);
+    const dz = sz > 0 ? az : bz, mx = (ax + bx) >> 1; box(mx, 0, dz, mx + 1, 2, dz, AIR); // 큰길 쪽 문
+  };
+  tower(1, 1, 16, T_WHITE); tower(-1, 1, 12, BRICK); tower(1, -1, 20, T_CONC); tower(-1, -1, 8, T_WHITE);
+  for (const d of [-14, -8, 8, 14]) { lampPost(d, 3); lampPost(d, -3); lampPost(3, d); lampPost(-3, d); }
+  box(4, 0, -4, 4, 5, -4, IRON); put(4, 6, -4, FLAG);
+  box(-17, 0, -22, -15, 0, -21, PLANK); put(-17, 1, -22, PLANK); // 🕶 뒷골목 (불법 거래 상인 자리)
+  // 🚓 경찰서 (동쪽 · 큰길 북쪽): 파란 벽 · 줄무늬 · 마크 · 접수대 · 유치장 3칸 · 주차장
+  box(20, -1, 3, 36, -1, 4, T_CONC);
+  box(21, -1, 5, 35, -1, 17, TILE);
+  for (let y = 0; y <= 5; y++) for (let x = 21; x <= 35; x++) for (let z = 5; z <= 17; z++) {
+    if (x !== 21 && x !== 35 && z !== 5 && z !== 17) continue;
+    const corner = (x === 21 || x === 35) && (z === 5 || z === 17);
+    put(x, y, z, y === 3 ? T_STRIPE : !corner && (y === 1 || y === 2) && x % 3 !== 0 && z % 3 !== 0 ? GLASS : T_POLICE);
+  }
+  box(21, 6, 5, 35, 6, 17, T_CONC); ring(21, 5, 35, 17, 7, 7, T_WHITE);
+  for (const [x, z] of [[21, 5], [35, 5], [21, 17], [35, 17]]) put(x, 8, z, LAMPB);
+  box(27, 0, 5, 29, 2, 5, AIR); put(28, 4, 5, T_BADGE); put(27, 4, 5, T_STRIPE); put(29, 4, 5, T_STRIPE);
+  box(23, 0, 9, 33, 0, 9, PLANK); put(28, 0, 9, AIR); // 접수대
+  box(22, 0, 12, 34, 2, 12, JAIL_BARS); box(25, 0, 13, 25, 2, 16, IRON); box(29, 0, 13, 29, 2, 16, IRON); // 유치장 (부술 수 없는 철창)
+  put(23, 0, 16, BED); put(27, 0, 16, BED); put(32, 0, 16, BED);
+  put(24, 5, 8, LAMPB); put(32, 5, 8, LAMPB); put(28, 5, 14, LAMPB);
+  box(21, -1, -5, 35, -1, -16, ROAD);
+  for (let x = 21; x <= 36; x += 3) box(x, -1, -9, x, -1, -14, T_LINE);
+  lampPost(20, -5); lampPost(36, -5); lampPost(20, -16); lampPost(36, -16);
+  // 🪖 군부대 (서쪽): 담 · 정문 · 망루 4개 · 막사 · 사령부 · 헬기장 · 사격장 · 태극기
+  box(-45, -1, -21, -23, -1, 21, GRASS); box(-45, -1, -2, -23, -1, 2, ROAD);
+  ring(-46, -22, -22, 22, 0, 3, T_CAMO); ring(-46, -22, -22, 22, 4, 4, T_CONC);
+  box(-22, 0, -2, -22, 4, 2, AIR); box(-22, 0, -3, -22, 5, -3, T_CONC); box(-22, 0, 3, -22, 5, 3, T_CONC); put(-22, 6, -3, LAMPB); put(-22, 6, 3, LAMPB);
+  box(-20, 0, -6, -20, 1, -4, T_SAND); box(-20, 0, 4, -20, 1, 6, T_SAND);
+  for (const [x, z] of [[-45, -21], [-45, 21], [-23, -21], [-23, 21]]) {
+    box(x - 1, 0, z - 1, x + 1, 6, z + 1, T_CONC); box(x - 2, 7, z - 2, x + 2, 7, z + 2, PLANK);
+    ring(x - 2, z - 2, x + 2, z + 2, 8, 8, T_SAND); put(x, 8, z, LAMPB);
+  }
+  box(-44, -1, 6, -34, -1, 18, PLANK); // 막사
+  for (let y = 0; y <= 4; y++) for (let x = -44; x <= -34; x++) for (let z = 6; z <= 18; z++) {
+    if (x !== -44 && x !== -34 && z !== 6 && z !== 18) continue;
+    put(x, y, z, y === 2 && (x + z) % 2 === 0 && !((x === -44 || x === -34) && (z === 6 || z === 18)) ? GLASS : T_CAMO);
+  }
+  box(-44, 5, 6, -34, 5, 18, T_CONC); box(-40, 0, 6, -38, 2, 6, AIR);
+  for (const z of [9, 11, 13, 15, 17]) { put(-43, 0, z, BED); put(-35, 0, z, BED); }
+  put(-39, 4, 10, LAMPB); put(-39, 4, 15, LAMPB);
+  box(-31, -1, 7, -24, -1, 15, T_CONC); box(-30, -1, 9, -30, -1, 13, T_LINE); box(-26, -1, 9, -26, -1, 13, T_LINE); box(-30, -1, 11, -26, -1, 11, T_LINE); // 헬기장 H
+  for (const [x, z] of [[-31, 7], [-24, 7], [-31, 15], [-24, 15]]) put(x, 0, z, LAMPB);
+  box(-44, -1, -18, -33, -1, -7, TILE); // 사령부
+  for (let y = 0; y <= 6; y++) for (let x = -44; x <= -33; x++) for (let z = -18; z <= -7; z++) {
+    if (x !== -44 && x !== -33 && z !== -18 && z !== -7) continue;
+    const corner = (x === -44 || x === -33) && (z === -18 || z === -7);
+    put(x, y, z, y === 3 ? T_CAMO : !corner && (y === 1 || y === 2 || y === 4 || y === 5) && (x + z) % 3 !== 0 ? GLASS : T_CONC);
+  }
+  box(-44, 7, -18, -33, 7, -7, T_CAMO); box(-40, 0, -7, -38, 2, -7, AIR); put(-39, 4, -7, T_ARMY);
+  box(-40, 1, -18, -37, 2, -18, BOARD); box(-43, 0, -16, -43, 1, -9, SHELF); box(-41, 0, -13, -36, 0, -13, PLANK);
+  put(-41, 6, -10, LAMPB); put(-36, 6, -15, LAMPB);
+  box(-36, 0, -5, -36, 5, -5, IRON); put(-36, 6, -5, FLAG);
+  box(-30, 0, -8, -24, 0, -8, T_SAND); box(-30, 0, -20, -24, 2, -20, T_SAND); // 사격장: 사대 · 뒤쪽 흙벽
+  for (const x of [-29, -27, -25]) { put(x, 0, -18, PLANK); put(x, 1, -18, T_TARGET); }
+  return [...W.values()];
+}
+function townSite() { // 빈 땅 찾기: 부활 자리 둘레 후보 중 다 불러와졌고 · 사람이 거의 안 바꾸고 · 물이 적은 곳
+  const sp = CB.spawnPos(), sx = Math.floor(sp.x), sz = Math.floor(sp.z);
+  for (const [ox, oz] of [[0, 46], [0, -46], [0, 96], [0, -96], [100, 0], [-100, 0]]) {
+    const cx = sx + ox, cz = sz + oz;
+    let ok = true;
+    for (let x = cx - TOWN_X; x <= cx + TOWN_X + 15 && ok; x += 16) for (let z = cz - TOWN_Z; z <= cz + TOWN_Z + 15 && ok; z += 16) if (!CB.loaded(Math.min(x, cx + TOWN_X), Math.min(z, cz + TOWN_Z))) ok = false;
+    if (!ok) continue;
+    if (CB.edited(cx - TOWN_X, cz - TOWN_Z, cx + TOWN_X, cz + TOWN_Z) > 60) continue;
+    const H = [];
+    let wet = 0, n = 0;
+    for (let x = cx - TOWN_X; x <= cx + TOWN_X; x += 6) for (let z = cz - TOWN_Z; z <= cz + TOWN_Z; z += 6) { n++; const y = CB.ground(x, z); if (y == null) wet++; else H.push(y); }
+    if (wet > n * 0.3 || !H.length) continue;
+    H.sort((a, b) => a - b);
+    return { x: cx, z: cz, y: H[H.length >> 1] };
+  }
+  return null;
+}
+function buildTown(C, G) {
+  if (!CB.setBlocks || !CB.loaded) return '이 게임 버전에서는 건물을 지을 수 없어요 (새로고침)';
+  for (let x = C.x - TOWN_X; x <= C.x + TOWN_X + 15; x += 16) for (let z = C.z - TOWN_Z; z <= C.z + TOWN_Z + 15; z += 16) if (!CB.loaded(Math.min(x, C.x + TOWN_X), Math.min(z, C.z + TOWN_Z))) return '아직 그 땅이 다 불러와지지 않았어요 (방장 게임 근처여야 해요)';
+  const L = townPlan(C, G), DIRT = BLK('흙'), soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null));
+  for (let dx = -TOWN_X; dx <= TOWN_X; dx++) for (let dz = -TOWN_Z; dz <= TOWN_Z; dz++) for (let y = G - 2; y > G - 18; y--) { // 아래 빈 곳 · 물은 흙으로 메움
+    if (!soft.has(CB.getBlock(C.x + dx, y, C.z + dz))) break;
+    L.push([C.x + dx, y, C.z + dz, DIRT]);
+  }
+  CB.setBlocks(L);
+  S.town = { x: C.x, y: G, z: C.z };
+  const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
+  const B = { '경찰': at(28, 7), '군사': at(-30, 0), '군사경찰': at(-30, 0), '장교': at(-39, -10), '교육부': at(-39, -10), 'MP사령부': at(-39, -10), '교육사령부': at(-39, -10), '총사령부': at(-39, -10) };
+  for (const o in B) if (!S.base[o]) S.base[o] = B[o];
+  if (!S.dealerSet) S.dealer = { ...at(-16, -20), dim: 'over' };
+  save();
+  CB.say('🏙 도시 · 🚓 경찰서 · 🪖 군부대가 생겼어요! /도시 로 위치를 볼 수 있어요');
+  return '';
+}
+let townT = 0;
+function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음
+  if (S.town || !CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
+  const site = townSite(); if (!site) return;
+  buildTown({ x: site.x, z: site.z }, site.y);
+}
+
 // ── 명령어 ──
 const pos = () => CB.pos();
 // 「조직 @닉」 이든 「@닉 조직」 이든 알아들음 (조직 이름에 띄어쓰기가 있어도: CMP 사령부)
@@ -465,7 +617,16 @@ CB.command('조직', '내 팀 · /조직 목록 (계급표) · /조직 탈퇴 (�
   if (x.o !== '시민') c.say('같은 팀: ' + teamMembers(x.o).join(', '));
   else c.say('더 높은 계급이 /team 팀 @닉 으로 배정해 주면 들어가요 · /조직 목록');
 }, { everyone: true });
-CB.command('장비', '/장비 — 내 팀 기본 장비 중 없는 것 다시 받기 (5분에 한 번)', () => req('rekit'), { everyone: true });
+CB.command('도시', '/도시 — 🏙 도시 · 🚓 경찰서 · 🪖 군부대 위치 · /도시 짓기 (지금 자리에 새로 · OP)', (a, c) => {
+  if (a[0] === '짓기') { const p = pos(); return req('town', { x: p.x, y: p.y, z: p.z }); }
+  const T = S.town;
+  if (!T) return c.say('🏙 아직 도시가 없어요 · 방장이 부활 자리 근처에 있으면 곧 저절로 지어져요 (OP는 /도시 짓기)');
+  const f = (dx, dz) => `${T.x + dx}, ${T.y}, ${T.z + dz}`;
+  c.say(`🏙 도시 한가운데: ${f(0, 0)}`);
+  c.say(`🚓 경찰서: ${f(28, 7)} (도시 동쪽) · 🪖 군부대: ${f(-34, 0)} (도시 서쪽)`);
+  c.say('🏕 /기지 로 우리 팀 기지(경찰서 · 군부대)로 갈 수 있어요');
+}, { everyone: true });
+CB.command('장비','/장비 — 내 팀 기본 장비 중 없는 것 다시 받기 (5분에 한 번)', () => req('rekit'), { everyone: true });
 CB.command('상인', '/상인 — 🕶 불법 거래 상인 위치 · /상인 설정 (지금 자리로 · OP)', (a, c) => {
   if (a[0] === '설정') return req('dealer', { ...pos(), dim: CB.dimNow() });
   const D = dealerSpot();
@@ -536,6 +697,7 @@ CB.onTick((dt) => {
   acc = 0;
   S = load();
   if ((dealerT -= 1) <= 0) { dealerT = 3; try { dealerTick(); } catch (e) {} }
+  if ((townT -= 1) <= 0) { townT = 5; try { townTick(); } catch (e) { console.warn('도시 짓기 오류', e); } }
   // 방장: 접속해 있는 수감자의 남은 시간을 줄임 (나가 있는 동안은 멈춤)
   if (CB.isHost()) {
     const on = CB.players();
