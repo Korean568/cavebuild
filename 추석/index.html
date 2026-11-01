@@ -167,7 +167,7 @@ body.cine #hud,body.cine #crosshair,body.cine #stellarHud,body.cine #compass,bod
 #gmHud{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:10;display:none;background:rgba(10,10,20,.72);border:2px solid #2a5ad0;padding:6px 14px;font-size:14px;text-align:center;pointer-events:none;text-shadow:1px 1px 0 #000}
 #stCount{position:fixed;top:12vh;left:50%;transform:translateX(-50%);z-index:10;font:bold 26px monospace;color:#ff4848;text-shadow:0 0 10px #f00,2px 2px 0 #000;display:none;pointer-events:none;letter-spacing:3px}
 #evHud{position:fixed;top:52px;left:50%;transform:translateX(-50%);z-index:10;display:none;background:rgba(20,16,40,.78);border:2px solid #ffd040;padding:6px 14px;font-size:14px;color:#fff3c0;text-align:center;pointer-events:none;text-shadow:1px 1px 0 #000;max-width:92vw}
-#evDlg .evbox{max-height:84vh;overflow:auto;background:rgba(18,18,30,.95);border:3px solid #ffd040;padding:16px 20px;width:min(560px,90vw);color:#fff;font-size:15px;line-height:1.6;text-align:left}#evDlg .evbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#evDlg input{width:100%;box-sizing:border-box;font:15px 'Malgun Gothic',sans-serif;padding:6px;margin:3px 0}
+#evDlg .evbox{max-height:84vh;overflow:auto;background:rgba(18,18,30,.95);border:3px solid #ffd040;padding:16px 20px;width:min(560px,90vw);color:#fff;font-size:15px;line-height:1.6;text-align:left}#evDlg .evbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;position:sticky;bottom:-16px;padding:8px 0;background:rgba(18,18,30,.97)}#evDlg input{width:100%;box-sizing:border-box;font:15px 'Malgun Gothic',sans-serif;padding:6px;margin:3px 0}
 #evDlg .yb{display:flex;flex-wrap:wrap;gap:3px;margin:8px 0}#evDlg .yb i{width:30px;height:30px;border:2px solid #887;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;background:#2a2a38}#evDlg .yb i.c{border-color:#ffd040}
 @keyframes jsShake{0%{transform:translate(0,0) scale(1.05)}25%{transform:translate(-14px,9px) scale(1.12)}50%{transform:translate(12px,-10px) scale(1.06)}75%{transform:translate(-8px,-6px) scale(1.14)}100%{transform:translate(0,0) scale(1.05)}}
 #evCrash{position:fixed;inset:0;z-index:60;display:none;background:#0a1a8a;color:#fff;font:20px monospace;padding:12vh 10vw;white-space:pre-wrap}
@@ -330,7 +330,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.199 — 🏙 스폰은 도시 한가운데 · 🏠 동전으로 집 사기</h4>
+    <h4>🆕 v26.200 — 🛠 /help 닫기 · 채팅 후 Esc 고침</h4>
+    <ul><li>/help 같은 창을 여는 명령어를 치면 마우스가 잠겨서 <b>닫기</b>를 못 누르던 것 고침 · 목록이 길어도 닫기 버튼이 항상 아래에 보여요</li><li>/ (채팅)를 연 다음 화면을 누르고 Esc를 누르면 설정이 안 나오던 것 고침 — 채팅 중에 화면을 누르면 채팅이 닫히고 게임으로 돌아가요</li></ul>
+    <h4>v26.199 — 🏙 스폰은 도시 한가운데 · 🏠 동전으로 집 사기</h4>
     <ul><li>조직 모드: 세계 스폰이 <b>도시 한가운데</b>(네거리)가 돼요 · 죽으면 팀 기지 → 내 집 → 도시 한가운데 순서로 부활</li><li>🏠 도시 남북 끝에 <b>집 7채</b>(침대 · 상자 · 작업대 · 등불)가 생겨요 · 문 위 <b>초록 표시</b> = 매물</li><li>인게임 <b>동전 20개</b>로 /집 사기 (집 앞에서, 또는 /집 사기 번호) · /집 팔기 (동전 10개 돌려받음) · /집 가기 · /집 (목록) · OP: /집 비우기 번호</li><li>산 집은 표시가 빨강으로 바뀌고, 주인 · OP만 부수거나 놓을 수 있어요 (안 팔린 집도 보호)</li><li>예전에 생긴 도시에는 집만 새로 지어져요</li><li>🧩 모드 기능: CB.take (가방에서 가져가기) · CB.setRespawn (나만의 부활 자리) · CB.guard (부수기 · 놓기 막기) · 모드 명령어가 같은 이름의 기본 명령어보다 먼저 (/집)</li></ul>
     <h4>v26.198 — 🏙 조직 모드: 도시 · 경찰서 · 군부대가 저절로</h4>
     <ul><li>조직 모드를 깔면 부활 자리 근처 빈 땅에 <b>도시</b>(네거리 · 빌딩 4채 · 가로등 · 태극기 · 뒷골목 상인), <b>🚓 경찰서</b>(파란 벽 · 경찰 마크 · 접수대 · 유치장 3칸 · 주차장), <b>🪖 군부대</b>(담 · 정문 · 망루 4개 · 막사 · 사령부 · 헬기장 · 사격장)가 생겨요</li><li>팀 기지가 저절로 정해져요: 경찰 → 경찰서 · 군사 · 군사경찰 → 군부대 연병장 · 장교 이상 → 사령부 (/기지)</li><li>/도시 로 위치 보기 · OP는 /도시 짓기 로 지금 자리에 새로 지을 수 있어요 · 사람이 많이 지은 땅은 피해요</li><li>🧩 모드 기능: CB.setBlocks (블록 여러 개 한 번에) · CB.loaded · CB.edited</li></ul>
@@ -2108,7 +2110,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.199 — 🏙 Spawn in the city center · 🏠 buy houses with coins</h4>
+    <h4>🆕 v26.200 — 🛠 /help close button · Esc after chat fixed</h4>
+    <ul><li>Commands that open a window (like /help) no longer lock the mouse, so you can press <b>Close</b> · the Close button always stays visible</li><li>Opening chat (/), clicking the screen, then pressing Esc now opens settings — clicking the screen during chat closes the chat</li></ul>
+    <h4>v26.199 — 🏙 Spawn in the city center · 🏠 buy houses with coins</h4>
     <ul><li>Org mod: the world spawn is now the city center · you respawn at your team base → your house → the city center</li><li>🏠 7 houses (bed, chest, crafting table, lamp) at the north and south ends of the city · a green sign over the door means for sale</li><li>Buy with 20 in-game <b>coins</b>: /집 사기 (in front of a house, or /집 사기 number) · /집 팔기 (get 10 back) · /집 가기 · /집 (list) · OPs: /집 비우기 number</li><li>Bought houses get a red sign and only the owner or OPs can break or place blocks there (unsold houses are protected too)</li><li>🧩 Mod API: CB.take · CB.setRespawn · CB.guard · mod commands now override built-ins with the same name</li></ul>
     <h4>v26.198 — 🏙 Org mod: city · police station · army base built automatically</h4>
     <ul><li>Installing the org mod builds a <b>city</b> (crossroads, 4 buildings, street lamps, flag, back-alley dealer), a <b>🚓 police station</b> (holding cells, front desk, parking lot) and an <b>🪖 army base</b> (walls, gate, 4 watchtowers, barracks, HQ, helipad, shooting range) on open land near spawn</li><li>Team bases are set automatically (/기지) · /도시 shows where · OPs can rebuild with /도시 짓기</li><li>🧩 Mod API: CB.setBlocks · CB.loaded · CB.edited</li></ul>
@@ -8413,7 +8417,8 @@ function lockPointer(){
 let lockFails=0;
 function showPause(){paused=true;$('pause').classList.add('show');mouseL=mouseR=false;for(const k in keys)keys[k]=false;}
 document.addEventListener('pointerlockchange',()=>{
-  if(document.pointerLockElement===canvas){locked=true;noLock=false;lockFails=0;canvas.style.cursor='';paused=false;$('pause').classList.remove('show');return;}
+  if(document.pointerLockElement===canvas){if(MP.chat){MP.chat=false;const el=$('mpChat');el.style.display='none';el.blur();atHide();} // 채팅 중에 화면을 눌러 다시 잠그면 채팅을 닫음 (Esc가 설정을 열 수 있게)
+    locked=true;noLock=false;lockFails=0;canvas.style.cursor='';paused=false;$('pause').classList.remove('show');return;}
   locked=false;if(noLock)return; // 잠금 없이 하는 중이면 일시정지로 돌리지 않음
   if(running&&!invOpen&&!stMenuOpen&&!player.dead&&!endingOpen&&!MP.chat)showPause();
 });
@@ -8448,6 +8453,7 @@ $('btnUpd').addEventListener('click',()=>{$('title').classList.remove('helpopen'
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;mouseL=mouseR=false;});
 canvas.addEventListener('mousedown',e=>{
   if(MOBILE||!running||invOpen||player.dead)return;
+  if(MP.chat){mpChatClose();return;} // 채팅 중에 화면을 누르면 채팅을 닫고 게임으로 (그다음 Esc = 설정)
   if(!locked&&!noLock){lockPointer();return;}
   if(paused)return;
   audio();
@@ -9790,7 +9796,7 @@ function cmdTick(dt){const p=player,E=p.eff;bombTick(dt);if(MOD_EV.tick)modEmit(
 function cmdBlock(q){q=(q||'').trim();if(!q)return null;if(/^(공기|air|0)$/i.test(q))return AIR;if(/^\d+$/.test(q))return isBlk(+q)?+q:null;const L=[];BL.forEach((b,i)=>{if(b&&i)L.push([b.name,i]);});return cmdFind(q,L);}
 function cmdTitle(t){let el=$('cmdTitle');if(!el){el=document.createElement('div');el.id='cmdTitle';el.style.cssText='position:fixed;left:0;right:0;top:28%;text-align:center;z-index:30;pointer-events:none;font:900 min(9vw,72px) sans-serif;color:#fff;text-shadow:4px 4px 0 #000,0 0 18px rgba(0,0,0,.6);transition:opacity .5s';document.body.appendChild(el);}
   el.textContent=t;el.style.opacity=1;clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity=0,3000);}
-function mpChatClose(){atHide();if(!MP.chat)return;MP.chat=false;const el=$('mpChat');el.style.display='none';el.blur();if(running&&!paused)lockPointer();}
+function mpChatClose(){atHide();if(!MP.chat)return;MP.chat=false;const el=$('mpChat');el.style.display='none';el.blur();if(running&&!paused&&!stMenuOpen&&!invOpen)lockPointer();} // 명령어가 창(/help 등)을 열었으면 마우스를 잠그지 않음 (닫기 버튼을 누를 수 있게)
 // 👥 @ 를 치면 플레이어 목록 · 고르면 @닉네임 이 들어감
 let AT={on:false,i:0,L:[],st:0};
 function atPlayers(){return MP.on?[MP.me.nick,...mpList()]:[nickNow()||'플레이어'];}
@@ -9808,7 +9814,7 @@ $('mpChat').addEventListener('keydown',e=>{if(!AT.on||e.isComposing)return;
   else if(e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();atHide();}});
 $('mpChat').addEventListener('keydown',e=>{e.stopPropagation();if(e.isComposing)return;
   if(e.code==='Escape'){e.preventDefault();mpChatClose();}
-  else if(e.key==='Enter'){e.preventDefault();const m=$('mpChat').value.trim().slice(0,80);mpChatClose();if(m[0]==='/')runCmd(m);else if(m&&MP.on){mpSend({t:'c',n:MP.me.nick,m});mpChatShow(MP.me.nick,m);}else if(m)toast('💻 명령어는 <b>/</b> 로 시작해요 · <b>/help</b>');}});
+  else if(e.key==='Enter'){e.preventDefault();const m=$('mpChat').value.trim().slice(0,80);$('mpChat').style.display='none';if(m[0]==='/')runCmd(m);else if(m&&MP.on){mpSend({t:'c',n:MP.me.nick,m});mpChatShow(MP.me.nick,m);}else if(m)toast('💻 명령어는 <b>/</b> 로 시작해요 · <b>/help</b>');mpChatClose();}}); // 명령어를 먼저 실행 → 창이 열렸으면 마우스를 안 잠금
 $('mpChat').addEventListener('keyup',e=>e.stopPropagation());
 $('mpChatBtn').onclick=e=>{e.preventDefault();mpChatOpen();};
 // 일시정지 → 🌐 멀티플레이 창
