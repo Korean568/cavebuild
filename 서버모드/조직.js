@@ -11,7 +11,8 @@
 // 명령어 (장교(CMO) 이상 · OP): /team 팀 @닉 (순서 상관없음, = /조직 배정) · /진급 @닉 · /강등 @닉 · /조직 추방 @닉 (시민으로) · /석방 @닉
 // 명령어 (장교(CMO) 이상 · OP): /기지 설정 · /집합 (내 계급 이하 모두) · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
 // 📝 고소:           범죄를 당하면 피해자 이름으로 자동 고소 → 지명수배 · /고소 (목록) · /고소 취소 [@닉] · /고소 @닉 [1|2] 사유
-// 🚨 지명수배:       /수배 (목록) · /감옥 (수감자) — 누구나 · 수배 중인 사람에게만 수배 음악 「추격」 (★ 등급이 높을수록 격해짐)
+// 👮 팀은 복장과 머리 위 닉네임 색으로 알아봐요 · 머리 위: 닉네임 → 계급 → 지명수배 (수갑대상 · ★★ · ★★★)
+// 🚨 지명수배:       /수배 (목록) · /감옥 (수감자) — 누구나 · 수배 중인 사람에게만 수배 음악 「추격」 (가장 긴장되는 곡 하나)
 //   🔗 체포는 수갑으로: 경찰 쪽 팀 (경찰 · 군사경찰 · 장교 · MP사령부 · 총사령부)이 수배자 · 무법자를 수갑으로 치면 체포 (벌금 · 징역)
 //   경찰 쪽 장교 이상 · OP:  /수배 @닉 등급 사유 · /수배 해제 @닉 · /감옥 설정 · /석방 @닉
 // 🏴 무법자: 시민이 총을 얻거나 범죄를 저지르면 무법자 팀이 돼요 · 수갑으로 잡히기 전엔 팀을 못 바꿔요
@@ -56,20 +57,32 @@ const KITS = {
   'MP사령부': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
   '교육사령부': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검'],
 };
+// 👮 팀 복장 (팀은 복장과 머리 위 닉네임 색으로 알아봐요): top 웃옷 · bottom 바지 · hat 모자 · badge 배지 색
+const OUTFITS = {
+  '경찰': { top: 0x1f3a7a, bottom: 0x161c2c, hat: 'cap', hatC: 0x1f3a7a, badge: 0xf2c418 },
+  '군사': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x4f5a34 },
+  '군사경찰': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x1a1a1a, badge: 0xfbbf24 },
+  '장교': { top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 },
+  '교육부': { top: 0x2f6a3a, bottom: 0x2a3a26, hat: 'beret', hatC: 0x1f4a2a, badge: 0x4ade80 },
+  'MP사령부': { top: 0x2a2f22, bottom: 0x1e2219, hat: 'beret', hatC: 0x9a1a1a, badge: 0xf59e0b },
+  '교육사령부': { top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 },
+  '총사령부': { top: 0x1c2030, bottom: 0x14161f, hat: 'cap', hatC: 0x1c2030, badge: 0xffd040 },
+  '무법자': { top: 0x262626, bottom: 0x3a2e24, hat: 'bandana', hatC: 0xb02020 },
+  '죄수': { top: 0xe06a1a, bottom: 0xe06a1a },
+};
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
 const tagOf = (o) => (ORGS[o].key === ORGS[o].short ? o : `${o}(${ORGS[o].short})`); // 경찰(CP)
 
 // ── 🚨 지명수배 ──
-// 범죄를 하면 머리 위에 「지명수배 ★ 등급」이 떠요. 경찰 쪽 조직(CP · CMP · 각 사령부)이나 OP가 /체포 해서 처벌하면 지워져요.
-//   ★     1등급 질서위반 — 부적절한 말 (아래 BADWORDS) · 경찰이 /수배 로 올린 부적절한 행동       → 벌금 1 케이브코인
-//   ★★    2등급 경범죄   — 폭행 (먼저 맞지 않았는데 때림) · 도둑질 (남이 놓은 상자를 부숨)       → 벌금 10 케이브코인 또는 징역 10분
-//   ★★★   3등급 중범죄   — 경찰 쪽 조직원 폭행                                                  → 징역 15분 또는 징역 20분
-//   ★★★★  4등급 무단사살 — 플레이어를 쓰러뜨림 (정당방위 · 경찰이 수배자를 쓰러뜨린 건 빼고)        → 징역 30분
-//   ★★★★★ 5등급 대학살   — 5분 안에 3명 이상 쓰러뜨림                                            → 징역 1시간
+// 범죄를 하면 머리 위 닉네임 · 계급 밑에 지명수배가 떠요 (최대 3등급). 경찰 쪽 팀이 수갑으로 잡으면(체포) 처벌받고 지워져요.
+//   1등급 「수갑대상」     경범죄   — 부적절한 말 (아래 BADWORDS) · 폭행 (먼저 맞지 않았는데 때림) · 도둑질 (남의 상자를 부숨) → 벌금 10 케이브코인 (못 내면 징역 10분)
+//   2등급 「지명수배 ★★」  중범죄   — 경찰 쪽 팀원 폭행 · 불법 무기 소지 (시민이 총을 가짐)                                  → 징역 15분
+//   3등급 「지명수배 ★★★」 중대범죄 — 무단사살 (정당방위 · 경찰이 수배자를 쓰러뜨린 건 빼고) · 대학살 · 무단탈영 (군대) · 무기로 협박 → 징역 30분
 const LAW = ['경찰', '군사경찰', '장교', 'MP사령부', '총사령부'];
-const GRADE = { 1: '질서위반', 2: '경범죄', 3: '중범죄', 4: '무단사살', 5: '대학살' };
+const ARMY = ['군사', '군사경찰', '장교', '교육부', 'MP사령부', '교육사령부']; // 군대 (스스로 나가면 무단탈영)
+const GRADE = { 1: '경범죄', 2: '중범죄', 3: '중대범죄' }, WMAX = 3;
 const BADWORDS = ['시발', '씨발', 'ㅅㅂ', 'ㅆㅂ', '병신', 'ㅂㅅ', '개새', '좆', '지랄', '꺼져', '닥쳐', 'fuck', 'shit', 'bitch'];
-const stars = (n) => '★'.repeat(n);
+const stars = (n) => (n >= 3 ? '지명수배 ★★★' : n === 2 ? '지명수배 ★★' : '수갑대상'); // 머리 위 · 안내판에 뜨는 말
 const CHEST = 48; // 상자 블록
 
 // ── ⛓ 감옥 차원: 이 모드를 깔면 「감옥」 차원이 생겨요 ──
@@ -126,10 +139,11 @@ function rewanted(nick) {
   const L = S.suit.filter((c) => c.who === nick);
   if (!L.length) { delete S.w[nick]; return; }
   const top = L.reduce((a, b) => (b.lv > a.lv ? b : a));
-  S.w[nick] = { lv: top.lv, why: `${top.why} · 고소: ${[...new Set(L.map((c) => c.by))].join(', ')}`, t: top.t };
+  S.w[nick] = { lv: Math.min(WMAX, top.lv), why: `${top.why} · 고소: ${[...new Set(L.map((c) => c.by))].join(', ')}`, t: top.t };
 }
 function crime(nick, lv, why, victim) {
   if (!nick || nick === ownerNick()) return; // 총사령부(Owner)는 고소 · 수배 안 됨
+  lv = Math.max(1, Math.min(WMAX, lv | 0));
   const by = victim || '서버', before = (S.w[nick] || {}).lv || 0;
   const old = S.suit.find((c) => c.who === nick && c.by === by);
   if (old && old.lv >= lv) return;
@@ -138,7 +152,7 @@ function crime(nick, lv, why, victim) {
   if (teamOf(nick) === '시민') { setTeam(nick, OUTLAW); CB.say(`🏴 ${nick} 님이 무법자가 됐어요! (${why}) · 경찰이 수갑으로 잡기 전엔 팀을 바꿀 수 없어요`); } // 시민이 범죄 → 무법자
   save();
   if (by !== '서버') tell(by, `📝 ${nick} 님을 자동으로 고소했어요 (${why}) · 취소하려면 /고소 취소 @${nick}`);
-  if (S.w[nick].lv > before) CB.say(`🚨 ${by === '서버' ? '' : by + ' 님이 '}${nick} 님을 고소 · 지명수배 ${stars(S.w[nick].lv)} ${S.w[nick].lv}등급 ${GRADE[S.w[nick].lv]} (${why})`);
+  if (S.w[nick].lv > before) CB.say(`🚨 ${by === '서버' ? '' : by + ' 님이 '}${nick} 님을 고소 · ${stars(S.w[nick].lv)} · ${GRADE[S.w[nick].lv]} (${why})`);
 }
 function clearSuits(nick) { S.suit = S.suit.filter((c) => c.who !== nick); delete S.w[nick]; }
 function toJail(nick, min, why) {
@@ -152,15 +166,14 @@ function askFine(nick, n, why) {
   CB.say(`💸 ${nick} 님 벌금 ${n} 케이브코인 (${why})`);
 }
 function payMine(v) { CB.payFine(v.n, v.why).then((r) => req(r && r.ok ? 'paid' : 'unpaid')).catch(() => req('unpaid')); }
-// 👮 체포 (수갑): 수배 등급대로 벌금 · 징역 · 수배 없는 무법자는 징역 10분 (불법 무기 소지)
+// 👮 체포 (수갑): 수갑대상 → 벌금 10 (못 내면 징역 10분) · ★★ → 징역 15분 · ★★★ → 징역 30분 · 수배 없는 무법자는 징역 10분
 function arrest(who, by) {
-  const W = S.w[who], lv = W ? W.lv : 2, why = `${W ? GRADE[W.lv] : '무법자'} · ${by} 체포`;
-  CB.say(`👮🔗 ${by} 님이 수갑으로 ${who} 님을 체포했어요${W ? ` (지명수배 ${stars(W.lv)})` : ' (🏴 무법자)'}`);
+  const W = S.w[who], lv = W ? Math.min(WMAX, W.lv) : 0, why = `${W ? GRADE[lv] : '무법자'} · ${by} 체포`;
+  CB.say(`👮🔗 ${by} 님이 수갑으로 ${who} 님을 체포했어요 (${W ? stars(lv) : '🏴 무법자'})`);
   if (!W) return toJail(who, 10, why);
-  if (lv === 1) return askFine(who, 1, why);
-  if (lv === 2) return askFine(who, 10, why);
-  if (lv === 3) return toJail(who, 15, why);
-  return toJail(who, lv === 4 ? 30 : 60, why);
+  if (lv === 1) return askFine(who, 10, why);
+  if (lv === 2) return toJail(who, 15, why);
+  return toJail(who, 30, why);
 }
 // 🎒 장비 주기: 방장이 그 사람 게임에 신호 → 그 사람 가방에 없는 것만 들어감
 function giveKit(o) {
@@ -183,12 +196,12 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const o = S.owner[a.key];
       if (!o || o === from) return;
       delete S.owner[a.key]; save();
-      return crime(from, 2, `${o} 님의 상자를 부숨 · 도둑질`, o);
+      return crime(from, 1, `${o} 님의 상자를 부숨 · 도둑질`, o);
     }
     case 'wanted': {
       if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '수배는 장교(CMO) · MP사령부 · 총사령부나 OP만 내릴 수 있어요');
-      const lv = Math.max(1, Math.min(5, Math.floor(+a.lv) || 1));
-      if (!who) return tell(from, '/수배 @닉 등급(1~5) 사유');
+      const lv = Math.max(1, Math.min(WMAX, Math.floor(+a.lv) || 1));
+      if (!who) return tell(from, '/수배 @닉 등급(1 수갑대상 · 2 ★★ · 3 ★★★) 사유');
       if (who === ownerNick()) return tell(from, '총사령부(Owner)는 수배할 수 없어요');
       const W = S.w[who];
       if (W && W.lv >= lv) return tell(from, '이미 그보다 높은 등급으로 수배 중이에요');
@@ -255,7 +268,9 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (Fo === '시민') return tell(from, '이미 시민이에요');
       if (locked(from) && !fromOp) return tell(from, `${tagOf(Fo)}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
       if (Fo === '총사령부') return tell(from, '총사령부(Owner)는 서버를 만든 사람이라 나갈 수 없어요');
-      setTeam(from, '시민'); save(); return CB.say(`${from} 님이 ${tagOf(Fo)}에서 나와 시민이 됐어요`);
+      setTeam(from, '시민'); save(); CB.say(`${from} 님이 ${tagOf(Fo)}에서 나와 시민이 됐어요`);
+      if (ARMY.includes(Fo) && !fromOp) crime(from, 3, `무단탈영 (${tagOf(Fo)})`); // 🪖 군대에서 마음대로 나가면 무단탈영 (★★★ · 무법자)
+      return;
     }
     case 'assign': {
       const o = findOrg(a.o);
@@ -325,6 +340,10 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!fromOp && lvOf(who) > lvOf(from)) return tell(from, '나보다 높은 계급의 임무는 완료 처리할 수 없어요');
       addPts(who, 10); delete S.mission[Fo]; save();
       return CB.say(`✅ ${who} 님 임무 완료! +10점`);
+    }
+    case 'threat': { // 🔫 총으로 2초 넘게 사람을 겨눔 → 무기로 협박 (★★★) · 수배자 · 무법자를 겨눈 건 괜찮음
+      if (!who || who === from || S.w[who] || teamOf(who) === OUTLAW) return;
+      return crime(from, 3, `무기로 협박 · ${who} 님`, who);
     }
     case 'gun': { // 🏴 시민이 총을 가짐 → 불법 무기 소지 (무법자)
       if (teamOf(from) !== '시민') return;
@@ -403,8 +422,8 @@ CB.on('pvp', (a, v) => {
   const selfDef = hitBy[a] && hitBy[a][v] && now - hitBy[a][v] < 30000; // 먼저 맞았으면 정당방위
   if (isLaw(a) && S.w[v]) return;                                       // 경찰이 수배자를 제압
   if (selfDef) return;
-  if (isLaw(v)) crime(a, 3, `경찰 쪽 조직원 ${v} 님 폭행`, v);
-  else crime(a, 2, `${v} 님 폭행`, v);
+  if (isLaw(v)) crime(a, 2, `경찰 쪽 팀원 ${v} 님 폭행`, v); // 중범죄
+  else crime(a, 1, `${v} 님 폭행`, v); // 경범죄
 });
 CB.on('pdeath', (v) => {
   if (!CB.isHost()) return;
@@ -412,12 +431,12 @@ CB.on('pdeath', (v) => {
   if (!L || now - L.t > 10000 || L.by === v) return;
   const k = L.by;
   delete lastHit[v];
-  if (isLaw(k) && (S.w[v] || {}).lv >= 3) return;                       // 경찰이 중범죄 이상 수배자를 쓰러뜨림
+  if (isLaw(k) && ((S.w[v] || {}).lv >= 2 || teamOf(v) === OUTLAW)) return; // 경찰이 ★★ 이상 수배자 · 무법자를 쓰러뜨림
   if (hitBy[k] && hitBy[k][v] && now - hitBy[k][v] < 30000) return;      // 쓰러진 사람이 먼저 때렸으면 정당방위
   const K = (kills[k] = (kills[k] || []).filter((t) => now - t < 300000));
   K.push(now);
-  if (K.length >= 3) crime(k, 5, `5분 안에 ${K.length}명을 쓰러뜨림`, v);
-  else crime(k, 4, `${v} 님을 쓰러뜨림`, v);
+  if (K.length >= 3) crime(k, 3, `대학살 · 5분 안에 ${K.length}명을 쓰러뜨림`, v);
+  else crime(k, 3, `무단사살 · ${v} 님을 쓰러뜨림`, v);
 });
 // 상자 주인 · 도둑질 (부순 사람의 게임이 방장에게 알림)
 const bkey = (x, y, z) => `${x},${y},${z}`;
@@ -770,20 +789,20 @@ CB.command('임무', '/임무 내용 · /임무 완료 @닉 · /임무 취소 (�
 }, { everyone: true });
 
 // ── 🚨 수배 · 체포 명령어 ──
-CB.command('수배', '지명수배 목록 · /수배 @닉 등급 사유 · /수배 해제 @닉 (경찰 장교 · OP)', (a, c) => {
+CB.command('수배', '지명수배 목록 · /수배 @닉 등급(1 수갑대상 · 2 ★★ · 3 ★★★) 사유 · /수배 해제 @닉 (경찰 쪽 장교 이상 · OP)', (a, c) => {
   if (a[0] === '해제') return req('unwanted', { who: a[1] });
   if (a[0]) return req('wanted', { who: a[0], lv: a[1], why: a.slice(2).join(' ') });
   const L = Object.entries(S.w);
   if (!L.length) return c.say('지금 지명수배된 사람이 없어요');
-  for (const [n, W] of L) c.say(`🚨 ${n} · ${stars(W.lv)} ${W.lv}등급 ${GRADE[W.lv]} · ${W.why}`);
+  for (const [n, W] of L) c.say(`🚨 ${n} · ${stars(W.lv)} · ${GRADE[Math.min(WMAX, W.lv)]} · ${W.why}`);
 }, { everyone: true });
 CB.command('고소', '/고소 — 내 고소 목록 · /고소 취소 [@닉] · /고소 @닉 [1|2] 사유 (부적절한 행동)', (a, c) => {
   if (a[0] === '취소') return req('unsue', { who: a[1] });
   if (a[0]) return req('sue', { who: a[0], lv: /^[12]$/.test(a[1] || '') ? a[1] : 1, why: a.slice(/^[12]$/.test(a[1] || '') ? 2 : 1).join(' ') });
   const mineL = S.suit.filter((x) => x.by === me()), onMe = S.suit.filter((x) => x.who === me());
   if (!mineL.length && !onMe.length) return c.say('고소한 것도, 고소당한 것도 없어요');
-  for (const x of mineL) c.say(`📝 내가 고소: ${x.who} · ${stars(x.lv)} ${GRADE[x.lv]} · ${x.why}  (/고소 취소 @${x.who})`);
-  for (const x of onMe) c.say(`⚠ 나를 고소: ${x.by} · ${stars(x.lv)} ${GRADE[x.lv]} · ${x.why}`);
+  for (const x of mineL) c.say(`📝 내가 고소: ${x.who} · ${stars(x.lv)} · ${GRADE[Math.min(WMAX, x.lv)]} · ${x.why}  (/고소 취소 @${x.who})`);
+  for (const x of onMe) c.say(`⚠ 나를 고소: ${x.by} · ${stars(x.lv)} · ${GRADE[Math.min(WMAX, x.lv)]} · ${x.why}`);
 }, { everyone: true });
 CB.command('체포', '🔗 체포는 수갑으로 — 경찰 쪽 팀이 수배자 · 무법자를 수갑으로 치면 체포돼요', (a, c) => c.say('🔗 이제 체포는 수갑으로 해요 — 경찰 쪽 팀(경찰 · 군사경찰 · 장교 · MP사령부 · 총사령부)이 수배자나 🏴 무법자를 수갑으로 치면 바로 체포돼요 (벌금 · 징역)'), { everyone: true });
 CB.on('cuffed', (by, on) => { if (on) req('cuffed', { by }); }); // 🔗 내가 수갑에 채워짐 → 방장에게 (체포인지 방장이 판단)
@@ -804,7 +823,7 @@ CB.command('석방', '/석방 @닉 (장교(CMO) 이상 · OP)', (a) => req('rele
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
-let lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
+let aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
   const T = S.train, x = mine();
@@ -826,17 +845,16 @@ CB.onTick((dt) => {
     for (const n of Object.keys(S.jail)) if (on.includes(n)) { S.jail[n]--; ch = true; if (S.jail[n] <= 0) { delete S.jail[n]; CB.say(`🔓 ${n} 님 형기를 마치고 석방됐어요`); } }
     if (ch && (++saveJailT >= 5 || !Object.keys(S.jail).length)) { saveJailT = 0; save(); }
   }
-  // 머리 위: [조직 계급] + 🚨지명수배 ★ n등급 / ⛓수감
+  // 머리 위: 닉네임 (팀 색) → 계급 → 🚨 지명수배 / ⛓ 수감 · 몸에는 팀 복장
   const now = new Set(), names = new Set([...Object.keys(S.m), ...Object.keys(S.w), ...Object.keys(S.jail), ...(ownerNick() ? [ownerNick()] : [])]);
   for (const n of names) {
     const o = teamOf(n), y = o !== '시민', W = S.w[n];
-    let pre = y ? `[${ORGS[o].ico}${tagOf(o)}]` : '';
-    if (W) pre += ` 🚨지명수배 ${stars(W.lv)} ${W.lv}등급`;
-    if (S.jail[n]) pre += ' ⛓수감';
-    CB.tag(n, pre.trim(), W || S.jail[n] ? '#ff4a4a' : y ? ORGS[o].color : '');
+    const sub = S.jail[n] ? '⛓ 수감 중' : W ? '🚨 ' + stars(W.lv) : '';
+    CB.tag(n, '', y ? ORGS[o].color : '#ffffff', { rank: y ? `${ORGS[o].ico} ${tagOf(o)}` : '', rankColor: y ? ORGS[o].color : '', sub, subColor: '#ff4a4a' });
+    if (CB.outfit) CB.outfit(n, OUTFITS[o] || null);
     now.add(n);
   }
-  for (const n of tagged) if (!now.has(n)) CB.tag(n);
+  for (const n of tagged) if (!now.has(n)) { CB.tag(n); if (CB.outfit) CB.outfit(n, null); }
   tagged = now;
   // 내가 수감 중이면 감옥 밖으로 못 나감
   const J = S.jail[me()];
@@ -859,7 +877,8 @@ CB.onTick((dt) => {
     } else if (hasGun && t === '시민' && lastTeam && (gunRepT -= 1) <= 0) { gunRepT = 10; req('gun'); }
     lastTeam = t;
   }
-  if (CB.bgm) CB.bgm(W && !J ? 'wanted' : 'calm', W ? W.lv : 0); // 🚨 지명수배 중이면 나한테만 수배 음악 (등급이 높을수록 격해짐)
+  if (CB.bgm) CB.bgm(W && !J ? 'wanted' : 'calm', 5); // 🚨 지명수배 중이면 나한테만 수배 음악 (등급과 상관없이 가장 긴장되는 5단계 곡 하나)
+  if (CB.aimAt) { const tg = CB.aimAt(); if (tg && tg === aimN) { if (++aimS === 2) req('threat', { who: tg }); } else { aimN = tg; aimS = tg ? 1 : 0; } } // 🔫 총으로 2초 겨누면 무기로 협박
   let h = '';
   {
     const O = ORGS[y.o], hm = myHouse(me()), b = S.base[y.o] || (hm && hm.door), k = b ? JSON.stringify(b) : 'none';
@@ -869,7 +888,7 @@ CB.onTick((dt) => {
     if (O.lv > 0) for (const mo in S.mission) if (ORGS[mo] && ORGS[mo].lv >= O.lv) h += `<br>📋 임무 (${esc(mo)}): ${esc(S.mission[mo])}`;
     if (S.train && inTrain(me(), S.train) && Date.now() < S.train.until) h += `<br>🎯 훈련(${S.train.kind}) ${Math.ceil((S.train.until - Date.now()) / 1000)}초` + (S.train.kind === '체력' ? ` · ${Math.min(200, ranD | 0)}/200칸` : '');
   }
-  if (W) h += `${h ? '<br>' : ''}<span style="color:#ff5a5a">🚨 <b>지명수배 ${stars(W.lv)} ${W.lv}등급</b> · ${GRADE[W.lv]} (${esc(W.why)})</span>`;
+  if (W) h += `${h ? '<br>' : ''}<span style="color:#ff5a5a">🚨 <b>${stars(W.lv)}</b> · ${GRADE[Math.min(WMAX, W.lv)]} (${esc(W.why)})</span>`;
   if (J > 0) h += `${h ? '<br>' : ''}⛓ <b>수감 중</b> · ${Math.floor(J / 60)}분 ${J % 60}초 남음`;
   CB.hud('org', h || null);
 });

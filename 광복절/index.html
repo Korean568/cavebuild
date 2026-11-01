@@ -330,7 +330,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.201 — 🪜 건물 사다리 · 🏴 무법자 · ⛓ 죄수 · 🔗 수갑 체포 · 건물이 안 보이던 것 고침</h4>
+    <h4>🆕 v26.202 — 👮 팀 복장 · 🚨 지명수배 3등급</h4>
+    <ul><li>👮 팀은 <b>복장</b>과 머리 위 <b>닉네임 색</b>으로 알아봐요: 경찰 (남색 제복 · 경찰모 · 금배지) · 군사 (국방색 · 철모) · 군사경찰 (검은 철모) · 장교 (장교모) · 교육부 · 사령부 (베레모) · 총사령부 (정복) · 🏴 무법자 (빨간 복면) · ⛓ 죄수 (주황 죄수복)</li><li>머리 위: <b>닉네임</b> → <b>계급</b> → 그 밑에 <b>지명수배</b></li><li>🚨 지명수배는 최대 3등급: <b>수갑대상</b> (경범죄: 욕설 · 폭행 · 도둑질 → 벌금 10) · <b>지명수배 ★★</b> (중범죄: 경찰 폭행 · 불법 무기 소지 → 징역 15분) · <b>지명수배 ★★★</b> (무단사살 · 대학살 · 무단탈영 · 무기로 협박 → 징역 30분)</li><li>🪖 무단탈영: 군대 팀에서 스스로 나가면 · 🔫 무기로 협박: 총으로 사람을 2초 넘게 겨누면 (수배자 · 무법자는 빼고)</li><li>🎵 수배 음악은 가장 긴장되는 곡 하나로 통일</li><li>🧩 모드 기능: CB.outfit (복장) · CB.tag 둘째 · 셋째 줄 · CB.aimAt (총으로 겨눈 사람)</li></ul>
+    <h4>v26.201 — 🪜 건물 사다리 · 🏴 무법자 · ⛓ 죄수 · 🔗 수갑 체포 · 건물이 안 보이던 것 고침</h4>
     <ul><li>🪜 도시 빌딩마다 구석에 <b>사다리</b>가 생겨 층마다 · 옥상까지 올라가요 · 경찰서 · 사령부 옥상 · 군부대 망루에도</li><li>🏴 <b>무법자</b>: 시민이 총을 가지거나 범죄를 저지르면 무법자 팀이 돼요 (총 = 불법 무기 소지 ★★) · 수갑으로 잡히기 전엔 팀을 바꿀 수 없어요</li><li>🔗 <b>체포는 수갑으로</b>: 경찰 쪽 팀이 수배자나 무법자를 수갑으로 치면 바로 체포 (벌금 · 징역)</li><li>⛓ 감옥에 있는 동안은 <b>죄수</b> 팀 · 총은 빼앗기고 · 형기를 마치거나 벌금을 내면 시민으로</li><li>팀에서 시민이 되면 총은 반납 · 불법 거래 상인은 시민 · 무법자에게 팔아요</li><li>🛠 조직 모드 건물이 안 보이던 것 고침: 모드 블록이 사람마다 다른 번호가 되던 것 → 고정 번호 · 늦게 켜진 모드 블록도 다시 그려요 · 예전 도시는 같은 자리에 새로 지어져요 (집주인은 그대로)</li></ul>
     <h4>v26.200 — 🛠 /help 닫기 · 채팅 후 Esc 고침</h4>
     <ul><li>/help 같은 창을 여는 명령어를 치면 마우스가 잠겨서 <b>닫기</b>를 못 누르던 것 고침 · 목록이 길어도 닫기 버튼이 항상 아래에 보여요</li><li>/ (채팅)를 연 다음 화면을 누르고 Esc를 누르면 설정이 안 나오던 것 고침 — 채팅 중에 화면을 누르면 채팅이 닫히고 게임으로 돌아가요</li></ul>
@@ -2112,7 +2114,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.201 — 🪜 Ladders · 🏴 outlaws · ⛓ prisoners · 🔗 arrest with handcuffs · invisible buildings fixed</h4>
+    <h4>🆕 v26.202 — 👮 Team uniforms · 🚨 3 wanted levels</h4>
+    <ul><li>👮 Teams are recognized by <b>uniform</b> and <b>nametag color</b> (police cap and badge, army helmet, berets, outlaw red mask, orange prison suit…)</li><li>Nametag: <b>name</b> → <b>rank</b> → <b>wanted</b> underneath</li><li>🚨 Wanted now has 3 levels: <b>수갑대상</b> (misdemeanor → fine 10) · <b>★★</b> (felony → 15 min jail) · <b>★★★</b> (unlawful killing, massacre, desertion, threatening with a weapon → 30 min jail)</li><li>🪖 Desertion: leaving an army team yourself · 🔫 Threat: aiming a gun at someone for 2+ seconds</li><li>🎵 One wanted music track (the most intense one)</li><li>🧩 Mod API: CB.outfit · multi-line CB.tag · CB.aimAt</li></ul>
+    <h4>v26.201 — 🪜 Ladders · 🏴 outlaws · ⛓ prisoners · 🔗 arrest with handcuffs · invisible buildings fixed</h4>
     <ul><li>🪜 City buildings now have <b>ladders</b> to every floor and the roof (also the police station, army HQ and watchtowers)</li><li>🏴 <b>Outlaw</b>: a citizen who holds a gun or commits a crime becomes an outlaw and can't change teams until caught with handcuffs</li><li>🔗 <b>Arrests use handcuffs</b>: police-side teams arrest wanted players and outlaws by cuffing them (fine or jail)</li><li>⛓ Jailed players are on the <b>prisoner</b> team and lose their guns; they become citizens again after serving time or paying</li><li>🛠 Fixed org-mod buildings being invisible: mod blocks now use fixed IDs on everyone's game, late mod blocks are redrawn, and old towns are rebuilt in place (house owners kept)</li></ul>
     <h4>v26.200 — 🛠 /help close button · Esc after chat fixed</h4>
     <ul><li>Commands that open a window (like /help) no longer lock the mouse, so you can press <b>Close</b> · the Close button always stays visible</li><li>Opening chat (/), clicking the screen, then pressing Esc now opens settings — clicking the screen during chat closes the chat</li></ul>
@@ -5181,6 +5185,7 @@ function updateHand(dt){
   if(player.saluteK>.01){const k=ease(player.saluteK),A=handArm.position,R=handArm.rotation; // 🫡 경례: 오른손을 이마 옆으로 (손바닥이 아래 · 들고 있던 건 잠깐 숨김)
     const P=SALUTE_P,Q=SALUTE_R;A.set(lerp(A.x,P[0],k),lerp(A.y,P[1],k),lerp(A.z,P[2],k));R.set(lerp(R.x,Q[0],k),lerp(R.y,Q[1],k),lerp(R.z,Q[2],k));if(heldModel)heldModel.visible=k<.4;}
   else if(heldModel&&!heldModel.visible)heldModel.visible=true;
+  {const o=myOutfit(),ok=JSON.stringify(o||0);if(ok!==avatar.outK){avatar.outK=ok;outfitAvatar(avatar,o);tintHand();}} // 👮 내 팀 복장 (3인칭 몸 · 1인칭 소매)
   const two=hs&&longGun(hs.id)&&heldModel&&!(player.saluteK>.01)&&!player.reload&&!player.dine&&!player.eating&&!player.colaOpen&&!bowAimNow(); // 🔫 돌격소총은 양손: 왼손이 앞쪽(탄창 부분)을 받침
   if(two){if(!leftArm)buildLeftArm();setLeftPlate(0,0);leftArm.userData.two=1;leftArm.visible=true;if(magL)magL.visible=false;leftArm.rotation.set(.9,.3,0);
     handGroup.updateMatrixWorld(true);const T=gunPt(GUN_PTS[hs.id].hold,_rlT),palm=_rlA.set(0,.03,-.3).applyQuaternion(leftArm.quaternion);leftArm.position.copy(T).sub(palm);}
@@ -5817,7 +5822,8 @@ addEventListener('storage',e=>{if(e.key==='cavebuild-wardrobe')refreshWard();});
 function tintHand(){const M=handArm.userData.mats;if(!M)return;const d=SKIN_C.getContext('2d').getImageData(0,0,64,64).data,px=(x,y)=>{const i=(y*64+x)*4;return d[i+3]>100?new THREE.Color(d[i]/255,d[i+1]/255,d[i+2]/255):null;}; // 1인칭 손 · 소매 색을 스킨에서
   const sk=px(45,30)||px(45,29),sl=px(45,21)||px(45,20);
   if(sk)for(const [m,k] of [[M.skin,1.05],[M.skinD,.9]]){m.color.copy(sk).multiplyScalar(k);m.userData.base=m.color.clone();}
-  if(sl)for(const [m,k] of [[M.cloth,1.05],[M.cuff,.82]]){m.color.copy(sl).multiplyScalar(k);m.userData.base=m.color.clone();}}
+  if(sl)for(const [m,k] of [[M.cloth,1.05],[M.cuff,.82]]){m.color.copy(sl).multiplyScalar(k);m.userData.base=m.color.clone();}
+  let o=null;try{o=myOutfit();}catch(e){}if(o&&o.top)for(const [m,k] of [[M.cloth,1],[M.cuff,.8]]){m.color.setHex(o.top).multiplyScalar(k);m.userData.base=m.color.clone();}} // 👮 팀 복장이면 소매도 그 색
 function skinBox(w,h,d,u,v,pw,ph,pd,mat){ // 스킨 펼침 그림을 상자 6면에 입힘: [오른쪽][앞][왼쪽][뒤] · 위 · 아래
   const g=rbGeo(w,h,d,Math.min(Math.min(w,h,d)*.2,.07)),uv=g.attributes.uv,R=[[u,v+pd,pd,ph],[u+pd+pw,v+pd,pd,ph],[u+pd,v,pw,pd],[u+pd+pw,v,pw,pd],[u+2*pd+pw,v+pd,pw,ph],[u+pd,v+pd,pw,ph]]; // 모서리가 둥근 몸
   for(let i=0;i<uv.count;i++){const f=Math.floor(i/25),[x,y,ww,hh]=R[f];let a=uv.getX(i),b=uv.getY(i);if(f===2){a=1-a;b=1-b;}else if(f===3)a=1-a;
@@ -8872,7 +8878,12 @@ const CB={version:'v26.164',
   me:()=>MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어'),pos:()=>({x:player.pos.x,y:player.pos.y,z:player.pos.z}),setSpawn:(x,y,z)=>{world.spawn={x,y,z};}, // 🧩 내 닉네임 · 위치 · 부활 자리
   send:(k,v)=>{if(MP.on)mpSend({t:'mod',k:String(k).slice(0,40),v,n:MP.me.nick});}, // 🧩 다른 사람들의 모드에게 신호 → 받는 쪽은 CB.on('msg',(k,v,보낸닉)=>…)
   save:(k,v)=>{(world.flags.mod||(world.flags.mod={}))[k]=v;},load:k=>world.flags&&world.flags.mod?world.flags.mod[k]:undefined, // 🧩 세계에 저장 (방장이 저장하면 친구들에게 저절로 맞춰짐)
-  tag:(nick,pre,color)=>{nick=String(nick);if(pre==null&&color==null)delete MOD_TAGS[nick];else MOD_TAGS[nick]={pre:pre?String(pre).slice(0,30):'',color:color||''};for(const P of MP.peers.values())if(P.nick===nick&&P.tag){P.tag.material.map.dispose();P.tag.material.map=mpTagTex(nick);P.tag.material.needsUpdate=true;}}, // 🧩 머리 위 닉네임표 앞말 · 색
+  tag:(nick,pre,color,opt)=>{nick=String(nick);opt=opt||{};if(pre==null&&color==null&&!opt.rank&&!opt.sub)delete MOD_TAGS[nick];else MOD_TAGS[nick]={pre:pre?String(pre).slice(0,30):'',color:color||'',rank:opt.rank?String(opt.rank).slice(0,30):'',rankColor:opt.rankColor||'',sub:opt.sub?String(opt.sub).slice(0,30):'',subColor:opt.subColor||''};
+    const k=JSON.stringify(MOD_TAGS[nick]||0);for(const P of MP.peers.values())if(P.nick===nick&&P.tag&&P.tagK!==k){P.tagK=k;P.tag.material.map.dispose();P.tag.material.map=mpTagTex(nick);P.tag.material.needsUpdate=true;mpTagFit(P.tag);}}, // 🧩 머리 위 닉네임표: 앞말 · 색 · {rank: 둘째 줄(계급), sub: 셋째 줄(지명수배 등)}
+  aimAt:()=>{const s=held();if(!isGun(s)||!gunAim()||player.dead)return '';const o=camera.position,d=viewDir(),hit=raycast(o,d,40);let L=hit?hit.dist:40,best=null;
+    for(const m of mpWithDummies(mobs)){if(!m.pvp||m.dead)continue;const hw=m.w/2,t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){L=t;best=m;}}
+    return best?String(best.def.name):'';}, // 🧩 총으로 조준하고 있는 플레이어 닉네임 (40칸 · 없으면 '')
+  outfit:(nick,o)=>{nick=String(nick);if(!o)delete MOD_OUTFIT[nick];else MOD_OUTFIT[nick]={top:o.top|0,bottom:o.bottom|0,hat:String(o.hat||''),hatC:o.hatC|0,badge:o.badge|0};}, // 🧩 복장: {top: 웃옷 색, bottom: 바지 색, hat: 'cap'|'helmet'|'beret'|'bandana', hatC, badge: 가슴 배지 색} · null 이면 벗음
   discord:()=>!!(ACC&&accToken()&&ACC.discord), // 🧩 우리 디스코드 서버에 들어와 있는지 (최근 디스코드 보상 확인 기준)
   payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
   dim:(key,o)=>{key=String(key);o=o||{};if(DIM[key]&&!DIM[key].mod)return false; // 🧩 차원 만들기: {name, bg:[r,g,b], fog:[가까이,멀리], light, day, caveB, stars, spawn:{x,y,z}, noMobs, gen(data,cx,cz)} — gen 은 백그라운드에서도 돌아서 블록 번호(숫자)만 써야 해요
@@ -9055,12 +9066,26 @@ function mpSkinTex(u){const C=makeCanvas(64,64),T=new THREE.CanvasTexture(C);T.m
   const im=new Image();im.onload=()=>{const g=C.getContext('2d');g.drawImage(im,0,0);if(im.height===32){g.drawImage(C,0,16,16,16,16,48,16,16);g.drawImage(C,40,16,16,16,32,48,16,16);}
     const id=g.getImageData(0,0,64,64),D=id.data,b0=D[0],b1=D[1],b2=D[2];if(D[3]>0){for(let y=0;y<64;y++)for(let x=0;x<64;x++){if(!((y<16&&x>=32)||(y>=32&&y<48)||(y>=48&&(x<16||x>=48))))continue;const i=(y*64+x)*4;if(Math.abs(D[i]-b0)<8&&Math.abs(D[i+1]-b1)<8&&Math.abs(D[i+2]-b2)<8)D[i+3]=0;}g.putImageData(id,0,0);}
     T.needsUpdate=true;};im.onerror=()=>{if(u!==DEFAULT_SKIN)im.src=DEFAULT_SKIN;};im.src=u||DEFAULT_SKIN;return T;}
-const MOD_TAGS={}; // 🧩 모드가 정한 닉네임표 (앞말 · 색) — CB.tag
-function mpTagTex(nk){const T=MOD_TAGS[nk]||{},txt=(T.pre?T.pre+' ':'')+nk,c=makeCanvas(512,64),g=c.getContext('2d');g.font="bold 34px 'Malgun Gothic',sans-serif";const w=Math.min(500,g.measureText(txt).width+26);
-  g.fillStyle='rgba(0,0,0,.45)';g.fillRect((512-w)/2,8,w,48);g.fillStyle=T.color||'#fff';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,256,33,490);return new THREE.CanvasTexture(c);}
+const MOD_TAGS={},MOD_OUTFIT={}; // 🧩 모드가 정한 닉네임표 (앞말 · 색 · 계급 · 지명수배) — CB.tag · 복장 — CB.outfit
+function myOutfit(){return MOD_OUTFIT[MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어')]||null;}
+function outfitAvatar(A,o){for(const m of A.outfitParts||[])m.parent&&m.parent.remove(m);A.outfitParts=[];if(!o)return; // 👮 팀 복장: 웃옷 · 바지 · 모자 · 배지 (스킨 위에 살짝 크게 덮음)
+  const add=(par,w,h,d,mat,x,y,z)=>{const p=part(par,w,h,d,mat,x,y,z);A.outfitParts.push(p);return p;},M=c=>imat('of'+c,c,'cloth',.9);
+  if(o.top){const T=M(o.top);add(A.up,.52,.7,.28,T,0,.34,0);for(const a of A.arms)add(a,.215,.5,.235,T,0,-.2,0);if(o.badge)add(A.up,.08,.08,.02,imat('ofB'+o.badge,o.badge,'metal',.3,.7),-.13,.5,-.145);}
+  if(o.bottom){const B=M(o.bottom);for(const l of A.legs)add(l,.255,.77,.265,B,0,-.375,0);}
+  const hc=M(o.hatC||0x222222);
+  if(o.hat==='cap'){add(A.head,.5,.12,.5,hc,0,.5,0);add(A.head,.5,.03,.16,imat('ofK',0x111111,'rough',.5),0,.45,-.3);if(o.badge)add(A.head,.08,.07,.02,imat('ofB'+o.badge,o.badge,'metal',.3,.7),0,.5,-.255);}
+  else if(o.hat==='helmet'){add(A.head,.54,.2,.54,hc,0,.5,0);add(A.head,.56,.06,.56,hc,0,.41,0);}
+  else if(o.hat==='beret'){const b=add(A.head,.52,.09,.5,hc,.04,.5,0);b.rotation.z=-.15;}
+  else if(o.hat==='bandana')add(A.head,.49,.16,.49,hc,0,.1,0);}
+function mpTagTex(nk){const T=MOD_TAGS[nk]||{},L=[[(T.pre?T.pre+' ':'')+nk,T.color||'#fff',34]]; // 닉네임표: 닉네임 → (계급) → (지명수배) 위에서 아래로
+  if(T.rank)L.push([T.rank,T.rankColor||T.color||'#ddd',24]);if(T.sub)L.push([T.sub,T.subColor||'#ff4a4a',26]);
+  const H=8+L.reduce((a,l)=>a+l[2]+16,0),c=makeCanvas(512,H),g=c.getContext('2d');g.textAlign='center';g.textBaseline='middle';let y=4;
+  for(const [txt,col,sz] of L){g.font=`bold ${sz}px 'Malgun Gothic',sans-serif`;const w=Math.min(500,g.measureText(txt).width+22),h=sz+14;g.fillStyle='rgba(0,0,0,.45)';g.fillRect((512-w)/2,y,w,h);g.fillStyle=col;g.fillText(txt,256,y+h/2+1,490);y+=h+2;}
+  const t=new THREE.CanvasTexture(c);t.tagH=H;return t;}
+function mpTagFit(tag){const h=tag.material.map&&tag.material.map.tagH||64,sy=2.4*h/512;tag.scale.set(2.4,sy,1);tag.position.y=2.15+sy/2;} // 줄이 늘면 위로 커짐 (몸에 안 겹치게)
 function mpAdd(o){mpDel(o.id);const A=mkAvatar(mpSkinTex(o.skin));A.shadow.visible=false; // 친구 캐릭터 몸 · 머리 위 닉네임 · 망토
   const nk=String(o.nick||'?').slice(0,16);
-  const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:mpTagTex(nk),depthTest:false,transparent:true}));tag.scale.set(2.4,.3,1);tag.position.y=2.3;A.g.add(tag);
+  const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:mpTagTex(nk),depthTest:false,transparent:true}));mpTagFit(tag);A.g.add(tag);
   A.capeK=CAPES[o.cape]?o.cape:''; // 망토 · 갑옷은 받은 정보로 dressAvatar가 입힘
   MP.peers.set(o.id,{id:o.id,nick:nk,A,t:null,sw:0,tag});}
 function mpDel(id){const P=MP.peers.get(id);if(!P)return;scene.remove(P.A.g,P.A.shadow);MP.peers.delete(id);}
@@ -9319,6 +9344,7 @@ function mpTick(dt){if(!MP.on)return;kindTick(dt);
     if(A.wings)A.wings.forEach((w,i)=>{const sd=i?1:-1;w.rotation.set(-.2-.25*gk,0,sd*(.12+1.15*gk));}); // 겉날개: 활공하면 활짝 펼침
     if(t.aw&&sk<.05)bowPose(A,t.pi,d,Math.min(1,t.aw)); // 친구가 활을 당기는 자세
     if(t.sl>.01&&sk<.05)salutePose(A,t.sl);else A.hand.visible=true; // 🫡 친구가 경례
+    {const ok=JSON.stringify(MOD_OUTFIT[P.nick]||0);if(ok!==P.outK){P.outK=ok;outfitAvatar(A,MOD_OUTFIT[P.nick]);}} // 👮 팀 복장
     {const sid=t.sh||0;if(sid!==A.shieldId){A.shieldId=sid;A.shieldP.clear();if(sid)try{const c=(sid===BZ_SHIELD?SHIELD_MODEL.bz:SHIELD_MODEL.normal).clone();c.visible=true;c.scale.setScalar(1.05);A.shieldP.add(c);}catch(e){}} // 친구 방패 (막으면 몸 앞으로)
       const sh=A.shieldP.children[0];if(sh){A.arms[0].updateMatrix();_shRest.setFromEuler(_shE.set(0,-Math.PI/2,0));_shBlock.copy(A.arms[0].quaternion).invert().multiply(_shFwd);sh.quaternion.copy(_shRest).slerp(_shBlock,bk);A.shieldP.position.set(lerp(-.12,-.02,bk),lerp(-.42,-.76,bk),lerp(0,-.04,bk));}}
     if(A.cape)A.cape.rotation.x=-(.08+Math.min(.85,hs*.13));
