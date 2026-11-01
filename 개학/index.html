@@ -330,7 +330,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.200 — 🛠 /help 닫기 · 채팅 후 Esc 고침</h4>
+    <h4>🆕 v26.201 — 🪜 건물 사다리 · 🏴 무법자 · ⛓ 죄수 · 🔗 수갑 체포 · 건물이 안 보이던 것 고침</h4>
+    <ul><li>🪜 도시 빌딩마다 구석에 <b>사다리</b>가 생겨 층마다 · 옥상까지 올라가요 · 경찰서 · 사령부 옥상 · 군부대 망루에도</li><li>🏴 <b>무법자</b>: 시민이 총을 가지거나 범죄를 저지르면 무법자 팀이 돼요 (총 = 불법 무기 소지 ★★) · 수갑으로 잡히기 전엔 팀을 바꿀 수 없어요</li><li>🔗 <b>체포는 수갑으로</b>: 경찰 쪽 팀이 수배자나 무법자를 수갑으로 치면 바로 체포 (벌금 · 징역)</li><li>⛓ 감옥에 있는 동안은 <b>죄수</b> 팀 · 총은 빼앗기고 · 형기를 마치거나 벌금을 내면 시민으로</li><li>팀에서 시민이 되면 총은 반납 · 불법 거래 상인은 시민 · 무법자에게 팔아요</li><li>🛠 조직 모드 건물이 안 보이던 것 고침: 모드 블록이 사람마다 다른 번호가 되던 것 → 고정 번호 · 늦게 켜진 모드 블록도 다시 그려요 · 예전 도시는 같은 자리에 새로 지어져요 (집주인은 그대로)</li></ul>
+    <h4>v26.200 — 🛠 /help 닫기 · 채팅 후 Esc 고침</h4>
     <ul><li>/help 같은 창을 여는 명령어를 치면 마우스가 잠겨서 <b>닫기</b>를 못 누르던 것 고침 · 목록이 길어도 닫기 버튼이 항상 아래에 보여요</li><li>/ (채팅)를 연 다음 화면을 누르고 Esc를 누르면 설정이 안 나오던 것 고침 — 채팅 중에 화면을 누르면 채팅이 닫히고 게임으로 돌아가요</li></ul>
     <h4>v26.199 — 🏙 스폰은 도시 한가운데 · 🏠 동전으로 집 사기</h4>
     <ul><li>조직 모드: 세계 스폰이 <b>도시 한가운데</b>(네거리)가 돼요 · 죽으면 팀 기지 → 내 집 → 도시 한가운데 순서로 부활</li><li>🏠 도시 남북 끝에 <b>집 7채</b>(침대 · 상자 · 작업대 · 등불)가 생겨요 · 문 위 <b>초록 표시</b> = 매물</li><li>인게임 <b>동전 20개</b>로 /집 사기 (집 앞에서, 또는 /집 사기 번호) · /집 팔기 (동전 10개 돌려받음) · /집 가기 · /집 (목록) · OP: /집 비우기 번호</li><li>산 집은 표시가 빨강으로 바뀌고, 주인 · OP만 부수거나 놓을 수 있어요 (안 팔린 집도 보호)</li><li>예전에 생긴 도시에는 집만 새로 지어져요</li><li>🧩 모드 기능: CB.take (가방에서 가져가기) · CB.setRespawn (나만의 부활 자리) · CB.guard (부수기 · 놓기 막기) · 모드 명령어가 같은 이름의 기본 명령어보다 먼저 (/집)</li></ul>
@@ -2110,7 +2112,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.200 — 🛠 /help close button · Esc after chat fixed</h4>
+    <h4>🆕 v26.201 — 🪜 Ladders · 🏴 outlaws · ⛓ prisoners · 🔗 arrest with handcuffs · invisible buildings fixed</h4>
+    <ul><li>🪜 City buildings now have <b>ladders</b> to every floor and the roof (also the police station, army HQ and watchtowers)</li><li>🏴 <b>Outlaw</b>: a citizen who holds a gun or commits a crime becomes an outlaw and can't change teams until caught with handcuffs</li><li>🔗 <b>Arrests use handcuffs</b>: police-side teams arrest wanted players and outlaws by cuffing them (fine or jail)</li><li>⛓ Jailed players are on the <b>prisoner</b> team and lose their guns; they become citizens again after serving time or paying</li><li>🛠 Fixed org-mod buildings being invisible: mod blocks now use fixed IDs on everyone's game, late mod blocks are redrawn, and old towns are rebuilt in place (house owners kept)</li></ul>
+    <h4>v26.200 — 🛠 /help close button · Esc after chat fixed</h4>
     <ul><li>Commands that open a window (like /help) no longer lock the mouse, so you can press <b>Close</b> · the Close button always stays visible</li><li>Opening chat (/), clicking the screen, then pressing Esc now opens settings — clicking the screen during chat closes the chat</li></ul>
     <h4>v26.199 — 🏙 Spawn in the city center · 🏠 buy houses with coins</h4>
     <ul><li>Org mod: the world spawn is now the city center · you respawn at your team base → your house → the city center</li><li>🏠 7 houses (bed, chest, crafting table, lamp) at the north and south ends of the city · a green sign over the door means for sale</li><li>Buy with 20 in-game <b>coins</b>: /집 사기 (in front of a house, or /집 사기 number) · /집 팔기 (get 10 back) · /집 가기 · /집 (list) · OPs: /집 비우기 number</li><li>Bought houses get a red sign and only the owner or OPs can break or place blocks there (unsold houses are protected too)</li><li>🧩 Mod API: CB.take · CB.setRespawn · CB.guard · mod commands now override built-ins with the same name</li></ul>
@@ -8833,13 +8837,13 @@ function modErr(where,e){console.warn('모드 오류',where,e);toast(`🧩 모�
 function modIds(){if(MP_SMODS)return MP_SMODS.ids||(MP_SMODS.ids={});try{return JSON.parse(localStorage.getItem(MOD_ID_KEY)||'{}');}catch(e){return {};}}
 function modAlloc(key,isBlock){const M=modIds();if(M[key]!==undefined&&(isBlock?!BL[M[key]]&&!IT[M[key]]:!IT[M[key]]&&!BL[M[key]]))return M[key]; // 같은 key는 늘 같은 번호 (저장한 세계가 안 꼬이게)
   const used=new Set(Object.values(M));let id;
-  if(isBlock){id=1500;while(BL[id]||IT[id]||used.has(id))id++;if(id>=BLK_N)throw new Error('모드 블록 칸이 다 찼어요');}
+  if(isBlock){id=1500;while(BL[id]||IT[id]||used.has(id)||(id>=1900&&id<2000))id++;if(id>=BLK_N)throw new Error('모드 블록 칸이 다 찼어요');}
   else{id=400;while(IT[id]||used.has(id))id++;}
   M[key]=id;if(!MP_SMODS)try{localStorage.setItem(MOD_ID_KEY,JSON.stringify(M));}catch(e){}return id;}
 function modIconCanvas(o){const c=makeCanvas(48,48),g=c.getContext('2d');
   if(o.icon&&o.icon.length<=4){g.font='36px serif';g.textAlign='center';g.textBaseline='middle';g.fillText(o.icon,24,27);}
   else{const col=o.color||[200,200,200];g.fillStyle=`rgb(${col})`;g.fillRect(10,10,28,28);g.fillStyle='rgba(255,255,255,.35)';g.fillRect(10,10,28,6);g.strokeStyle='#222';g.lineWidth=3;g.strokeRect(10,10,28,28);}return c;}
-let modCur=null,modRespawn=null;
+let modCur=null,modRespawn=null,modRemeshT=0;
 const MOD_EV={},MOD_CMDS={},MOD_GUARD=[];
 function modGuard(kind,x,y,z,id){for(const f of MOD_GUARD){try{const r=f(kind,x,y,z,id);if(r)return String(r);}catch(e){}}return '';} // 🧩 모드가 부수기 · 놓기를 막으면 그 이유
 function modEmit(ev,...args){const L=MOD_EV[ev];if(!L)return;for(const f of L)try{f(...args);}catch(e){console.warn('모드 이벤트 오류',ev,e);}} // 🧩 모드 이벤트 (tick · chat · join · break · place · death · kill)
@@ -8887,8 +8891,10 @@ const CB={version:'v26.164',
   hud:(id,html)=>{let el=document.getElementById('modhud_'+id);if(html==null){if(el)el.remove();return;}if(!el){el=document.createElement('div');el.id='modhud_'+id;el.className='modhud';document.body.appendChild(el);}el.innerHTML=html;document.querySelectorAll('.modhud').forEach((e,i)=>e.style.top=(60+i*36)+'px');}, // 🧩 화면 오른쪽 위 안내판
   id:name=>{for(let i=1;i<BL.length;i++)if(BL[i]&&BL[i].name===name)return i;for(let i=100;i<IT.length;i++)if(IT[i]&&IT[i].name===name)return i;return null;}, // 한국어 이름 → 번호
   ids:{STONE,COBBLE,DIRT,GRASS,SAND,LOG,PLANKS,GLASS,BRICK,STICK,COAL,IRON_INGOT,CRYSTAL,OBSIDIAN,LAVA,WATER,STEEL,STEEL_ALLOY,SUPER_ALLOY,NUKE,GOLD_INGOT,COPPER_INGOT,TITANIUM_INGOT,DIAMOND,URANIUM,STELLAR_REMOTE,STAR_CORE},
-  block(o){ // {key,name,color:[r,g,b] | paint(u,v,x,y)→[r,g,b], hard,tool,tier,light,glow}
-    const id=modAlloc((modCur||'')+':'+(o.key||o.name),true),tile=modTile++;if(tile>=ATW*ATH)throw new Error('그림 칸이 다 찼어요');
+  block(o){ // {key,name,color:[r,g,b] | paint(u,v,x,y)→[r,g,b], hard,tool,tier,light,glow, id(1900~1999 고정 번호 — 모두의 게임에서 같은 번호)}
+    const fid=o.id|0,id=fid>=1500&&fid<BLK_N&&!BL[fid]&&!IT[fid]?fid:modAlloc((modCur||'')+':'+(o.key||o.name),true),tile=modTile++;
+    if(tile>=ATW*ATH)throw new Error('그림 칸이 다 찼어요');
+    if(running){clearTimeout(modRemeshT);modRemeshT=setTimeout(()=>{for(const c of chunks.values())if(c)c.needsMesh=true;},400);} // 세계가 이미 그려진 뒤에 생긴 블록 → 다시 그림 (안 보이던 건물이 보이게)
     const col=o.color||[180,180,180];T(tile,o.paint||((u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y),k=(.86+.14*h2(x,y,tile*7+1))*(e<2?.7:1);return [col[0]*k,col[1]*k,col[2]*k];}));
     const p={hard:o.hard||1.5,tool:o.tool||'pick',tier:o.tier||0};defB(id,o.name,tile,p);OPAQUE[id]=SOLID[id]=1;if(o.glow||o.light)EMIT[id]=1;if(o.light)LIGHT_SRC[id]=1;
     MOD_WSRC+=`\ndefB(${id},${JSON.stringify(o.name)},${tile},${JSON.stringify(p)});OPAQUE[${id}]=SOLID[${id}]=1;${o.glow||o.light?`EMIT[${id}]=1;`:''}${o.light?`LIGHT_SRC[${id}]=1;`:''}`;modWsrcChanged();
@@ -9367,7 +9373,8 @@ function cuffHit(M){swing=1;tone(1800,1200,.06,.06,'square');tone(900,700,.08,.0
 function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);else if(d.t==='tase')taseIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
 function cuffIn(d){const by=String(d.by||'?').slice(0,16);
   if(player.cuffed){player.cuffed=null;toast(`🔓 <b>${mpEsc(by)}</b> 님이 수갑을 풀어 줬어요`);}else{player.cuffed={by,t:120};toast(`⛓ <b>${mpEsc(by)}</b> 님이 수갑을 채웠어요 — 2분 동안 못 움직여요 (다시 치면 풀려요)`);}
-  tone(1800,1200,.06,.06,'square');const m=MP.me.nick+(player.cuffed?' 님이 수갑에 묶였어요 ⛓':' 님의 수갑이 풀렸어요 🔓');mpSend({t:'c',n:'⛓',m});mpChatShow('⛓',m);}
+  tone(1800,1200,.06,.06,'square');const m=MP.me.nick+(player.cuffed?' 님이 수갑에 묶였어요 ⛓':' 님의 수갑이 풀렸어요 🔓');mpSend({t:'c',n:'⛓',m});mpChatShow('⛓',m);
+  modEmit('cuffed',by,!!player.cuffed);} // 🧩 모드 이벤트: 'cuffed'(채운 사람, 묶였는지) — 수갑 체포
 function cuffTick(dt){const C=player.cuffed;let el=document.getElementById('cuffHud');if(!C){if(el)el.remove();return;}
   C.t-=dt;if(C.t<=0||player.dead){player.cuffed=null;toast('🔓 수갑이 풀렸어요');return;}
   for(const k of ['KeyW','KeyA','KeyS','KeyD','Space'])keys[k]=false;player.vel.x=player.vel.z=0;mouseL=mouseR=false;
