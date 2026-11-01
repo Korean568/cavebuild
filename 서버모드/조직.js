@@ -89,7 +89,7 @@ CB.dim('감옥', {
 function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, houses: s.houses || null }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -317,6 +317,19 @@ function apply(op, a, from, fromOp, fromDiscord) {
       S.dealer = { x: +a.x, y: +a.y, z: +a.z, dim: String(a.dim || 'over') }; S.dealerSet = true; save();
       return CB.say('🕶 불법 거래 상인이 자리를 옮겼어요… 어딘가로');
     }
+    case 'house-buy': { // 🏠 동전은 산 사람 게임에서 먼저 냄 → 못 사면 돌려줌
+      const h = (S.houses || [])[(a.n | 0) - 1], refund = () => { if (from === me()) CB.give('동전', HOUSE_PRICE); else CB.send('org-refund', { to: from, n: HOUSE_PRICE }); };
+      if (!h || h.owner || myHouse(from)) { refund(); return tell(from, !h ? '그런 집이 없어요' : h.owner ? `이미 ${h.owner} 님이 산 집이에요 · 동전을 돌려드렸어요` : '집은 한 채만 살 수 있어요 · 동전을 돌려드렸어요'); }
+      h.owner = from; save(); houseMark(h, true);
+      return CB.say(`🏠 ${from} 님이 ${h.n}번 집을 샀어요!`);
+    }
+    case 'house-sell': {
+      const h = a.n && fromOp ? (S.houses || [])[(a.n | 0) - 1] : myHouse(from);
+      if (!h || !h.owner) return tell(from, '팔 집이 없어요');
+      const was = h.owner; h.owner = null; save(); houseMark(h, false);
+      if (was === from) { if (from === me()) CB.give('동전', HOUSE_PRICE / 2); else CB.send('org-refund', { to: from, n: HOUSE_PRICE / 2 }); }
+      return CB.say(`🏠 ${h.n}번 집이 다시 매물로 나왔어요${was === from ? ` (${from} 님이 팔았어요 · 동전 ${HOUSE_PRICE / 2}개 돌려받음)` : ` (OP가 ${was} 님의 집을 비웠어요)`}`);
+    }
     case 'town': { // 🏙 /도시 짓기: 지금 자리에 도시 · 경찰서 · 군부대 (OP)
       if (!fromOp) return tell(from, '도시는 OP(총사령부)만 지을 수 있어요');
       const err = buildTown({ x: Math.floor(+a.x), z: Math.floor(+a.z) }, Math.floor(+a.y));
@@ -345,6 +358,8 @@ CB.on('msg', (k, v, from) => {
   else if (k === 'org-fine' && v.to === me()) payMine(v);
   else if (k === 'org-jail' && v.to === me()) note('⛓ 감옥에 갇혔어요');
   else if (k === 'org-kit' && v.to === me()) giveKit(v.o);
+  else if (k === 'org-refund' && v.to === me()) { CB.give('동전', v.n | 0); note(`🪙 동전 ${v.n | 0}개를 돌려받았어요`); }
+  else if (k === 'org-mark') setMark(v);
 });
 
 // ── 🚨 범죄 알아채기 (방장 게임) ──
@@ -540,22 +555,69 @@ function townPlan(C, G) {
   for (const x of [-29, -27, -25]) { put(x, 0, -18, PLANK); put(x, 1, -18, T_TARGET); }
   return [...W.values()];
 }
-function townSite() { // 빈 땅 찾기: 부활 자리 둘레 후보 중 다 불러와졌고 · 사람이 거의 안 바꾸고 · 물이 적은 곳
+// 🏠 집: 도시 남북 끝에 7채 · 인게임 동전으로 사요 (/집 사기) · 산 집은 주인 · OP만 부수거나 놓을 수 있어요
+const T_SALE = CB.block({ key: 'town_sale', name: '매물 표시', paint: (u, v, x, y) => { const roof = y >= 3 && y <= 7 && Math.abs(x - 7.5) <= y - 2.5, body = y >= 8 && y <= 13 && x >= 4 && x <= 11, door = y >= 10 && y <= 13 && x >= 7 && x <= 8; return door ? [30, 110, 50] : roof || body ? [250, 250, 240] : [40, 160, 70]; } });
+const T_SOLD = CB.block({ key: 'town_sold', name: '내 집 표시', paint: (u, v, x, y) => { const roof = y >= 3 && y <= 7 && Math.abs(x - 7.5) <= y - 2.5, body = y >= 8 && y <= 13 && x >= 4 && x <= 11, door = y >= 10 && y <= 13 && x >= 7 && x <= 8; return door ? [140, 40, 40] : roof || body ? [250, 230, 200] : [190, 60, 50]; } });
+const HOUSE_PRICE = 20; // 인게임 동전
+const HOUSE_SLOTS = [[-16, 1], [-9, 1], [4, 1], [11, 1], [-9, -1], [4, -1], [11, -1]]; // [서쪽 x, 북(1)/남(-1)] · 남서쪽은 뒷골목
+function housePlan(C, G) {
+  const L = [], H = [], AIR = 0;
+  const PLANK = BLK('판자'), BRICK = BLK('돌벽돌'), LOG = BLK('원목', '판자'), GLASS = BLK('유리'), BED = BLK('침대', '판자'), BENCH = BLK('작업대', '판자'), LAMPB = BLK('등불');
+  const put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + z, id]);
+  const box = (x1, y1, z1, x2, y2, z2, id) => { for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) for (let z = Math.min(z1, z2); z <= Math.max(z1, z2); z++) put(x, y, z, id); };
+  HOUSE_SLOTS.forEach(([ax, sz], i) => {
+    const bx = ax + 5, az = sz > 0 ? 17 : -22, bz = az + 5, front = sz > 0 ? az : bz, back = sz > 0 ? bz : az, mx = ax + 2, wall = [BRICK, PLANK, T_WHITE][i % 3];
+    box(ax, -1, az, bx, -1, bz, PLANK); box(ax, 0, az, bx, 5, bz, AIR);
+    for (let y = 0; y <= 3; y++) for (let x = ax; x <= bx; x++) for (let z = az; z <= bz; z++) {
+      if (x !== ax && x !== bx && z !== az && z !== bz) continue;
+      const corner = (x === ax || x === bx) && (z === az || z === bz), win = (y === 1 || y === 2) && !corner && ((x === ax || x === bx) ? (z === az + 2 || z === az + 3) : (z === back && (x === ax + 2 || x === ax + 3)));
+      put(x, y, z, corner ? LOG : win ? GLASS : wall);
+    }
+    box(ax, 4, az, bx, 4, bz, BRICK); box(ax + 1, 5, az + 1, bx - 1, 5, bz - 1, PLANK);
+    box(mx, 0, front, mx, 1, front, AIR); put(mx, 2, front, T_SALE); // 문 · 매물 표시
+    put(ax + 1, 0, back - sz, BED); put(bx - 1, 0, back - sz, CHEST); put(bx - 1, 0, front + sz, BENCH); put(mx, 3, (az + bz) >> 1, LAMPB);
+    H.push({ n: i + 1, x1: C.x + ax, x2: C.x + bx, z1: C.z + az, z2: C.z + bz, y: G, mark: [C.x + mx, G + 2, C.z + front], door: { x: C.x + mx + 0.5, y: G, z: C.z + front - sz + 0.5 }, owner: null });
+  });
+  return { L, H };
+}
+function buildHouses(C, G) {
+  const P = housePlan(C, G);
+  CB.setBlocks(P.L);
+  S.houses = P.H; save();
+}
+function setMark(v) { if (CB.setBlocks && CB.loaded(v.x, v.z)) CB.setBlocks([[v.x, v.y, v.z, v.sold ? T_SOLD : T_SALE]]); }
+function houseMark(h, sold) { const v = { x: h.mark[0], y: h.mark[1], z: h.mark[2], sold: sold ? 1 : 0 }; setMark(v); CB.send('org-mark', v); } // 문 위 표시: 초록(매물) ↔ 빨강(주인 있음)
+const houseAt = (x, y, z) => (S.houses || []).find((h) => x >= h.x1 && x <= h.x2 && z >= h.z1 && z <= h.z2 && y >= h.y - 1 && y <= h.y + 6);
+const myHouse = (n) => (S.houses || []).find((h) => h.owner === n);
+CB.guard && CB.guard((kind, x, y, z) => { // 남의 집 · 아직 안 팔린 집은 주인 · OP만
+  const h = houseAt(x, y, z);
+  if (!h || h.owner === me() || CB.isOp()) return '';
+  return h.owner ? `${h.owner} 님의 집이에요` : `${h.n}번 집은 아직 안 팔렸어요 · /집 사기 ${h.n} (동전 ${HOUSE_PRICE}개)`;
+});
+function groundAt(x, z) { // 나무는 건너뛰고 땅 높이 · 물이면 wet
+  const W = CB.id('물'), soft = new Set([0, CB.id('나뭇잎'), CB.id('원목')].filter((v) => v != null));
+  for (let y = 100; y > 0; y--) { const b = CB.getBlock(x, y, z); if (b == null || b < 0) return null; if (soft.has(b)) continue; return { y: y + 1, wet: b === W }; }
+  return null;
+}
+function townSite() { // 빈 땅 찾기: 부활 자리 둘레 후보 중 다 불러와졌고 · 사람이 거의 안 바꾼 곳 · 물이 가장 적은 곳 (섬이면 물을 메워서라도)
   const sp = CB.spawnPos(), sx = Math.floor(sp.x), sz = Math.floor(sp.z);
-  for (const [ox, oz] of [[0, 46], [0, -46], [0, 96], [0, -96], [100, 0], [-100, 0]]) {
+  let best = null, waiting = false;
+  for (const [ox, oz] of [[0, 46], [0, -46], [46, 46], [-46, 46], [46, -46], [-46, -46], [0, 96], [0, -96], [100, 0], [-100, 0]]) {
     const cx = sx + ox, cz = sz + oz;
     let ok = true;
     for (let x = cx - TOWN_X; x <= cx + TOWN_X + 15 && ok; x += 16) for (let z = cz - TOWN_Z; z <= cz + TOWN_Z + 15 && ok; z += 16) if (!CB.loaded(Math.min(x, cx + TOWN_X), Math.min(z, cz + TOWN_Z))) ok = false;
-    if (!ok) continue;
+    if (!ok) { if (Math.abs(ox) + Math.abs(oz) <= 92) waiting = true; continue; }
     if (CB.edited(cx - TOWN_X, cz - TOWN_Z, cx + TOWN_X, cz + TOWN_Z) > 60) continue;
     const H = [];
     let wet = 0, n = 0;
-    for (let x = cx - TOWN_X; x <= cx + TOWN_X; x += 6) for (let z = cz - TOWN_Z; z <= cz + TOWN_Z; z += 6) { n++; const y = CB.ground(x, z); if (y == null) wet++; else H.push(y); }
-    if (wet > n * 0.3 || !H.length) continue;
+    for (let x = cx - TOWN_X; x <= cx + TOWN_X; x += 6) for (let z = cz - TOWN_Z; z <= cz + TOWN_Z; z += 6) { const g = groundAt(x, z); if (!g) continue; n++; if (g.wet) wet++; H.push(g.y); }
+    if (!n) continue;
     H.sort((a, b) => a - b);
-    return { x: cx, z: cz, y: H[H.length >> 1] };
+    const site = { x: cx, z: cz, y: H[H.length >> 1], wet: wet / n };
+    if (site.wet <= 0.3) return site;
+    if (!best || site.wet < best.wet) best = site;
   }
-  return null;
+  return waiting ? null : best; // 가까운 후보가 아직 안 불러와졌으면 기다림
 }
 function buildTown(C, G) {
   if (!CB.setBlocks || !CB.loaded) return '이 게임 버전에서는 건물을 지을 수 없어요 (새로고침)';
@@ -566,7 +628,9 @@ function buildTown(C, G) {
     L.push([C.x + dx, y, C.z + dz, DIRT]);
   }
   CB.setBlocks(L);
+  buildHouses(C, G);
   S.town = { x: C.x, y: G, z: C.z };
+  CB.setSpawn(C.x + 0.5, G + 0.1, C.z + 0.5); // 🏙 스폰 = 도시 한가운데
   const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
   const B = { '경찰': at(28, 7), '군사': at(-30, 0), '군사경찰': at(-30, 0), '장교': at(-39, -10), '교육부': at(-39, -10), 'MP사령부': at(-39, -10), '교육사령부': at(-39, -10), '총사령부': at(-39, -10) };
   for (const o in B) if (!S.base[o]) S.base[o] = B[o];
@@ -576,8 +640,12 @@ function buildTown(C, G) {
   return '';
 }
 let townT = 0;
-function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음
-  if (S.town || !CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
+function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음 (예전에 지은 도시에 집이 없으면 집만)
+  if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
+  if (S.town) {
+    if (!S.houses && CB.loaded(S.town.x - 17, S.town.z - 23) && CB.loaded(S.town.x + 17, S.town.z + 23) && CB.loaded(S.town.x - 17, S.town.z + 23) && CB.loaded(S.town.x + 17, S.town.z - 23)) buildHouses({ x: S.town.x, z: S.town.z }, S.town.y);
+    return;
+  }
   const site = townSite(); if (!site) return;
   buildTown({ x: site.x, z: site.z }, site.y);
 }
@@ -625,6 +693,25 @@ CB.command('도시', '/도시 — 🏙 도시 · 🚓 경찰서 · 🪖 군부�
   c.say(`🏙 도시 한가운데: ${f(0, 0)}`);
   c.say(`🚓 경찰서: ${f(28, 7)} (도시 동쪽) · 🪖 군부대: ${f(-34, 0)} (도시 서쪽)`);
   c.say('🏕 /기지 로 우리 팀 기지(경찰서 · 군부대)로 갈 수 있어요');
+}, { everyone: true });
+CB.command('집', `/집 — 🏠 집 목록 · /집 사기 [번호] (동전 ${HOUSE_PRICE}개) · /집 팔기 (동전 ${HOUSE_PRICE / 2}개 돌려받음) · /집 가기 · /집 비우기 번호 (OP)`, (a, c) => {
+  const L = S.houses || [], mine0 = myHouse(me());
+  if (!L.length) return c.say('🏠 아직 집이 없어요 (도시가 생기면 같이 지어져요)');
+  if (a[0] === '사기') {
+    if (mine0) return c.say(`🏠 이미 ${mine0.n}번 집이 있어요 · /집 가기`);
+    const p = pos(), n = +a[1];
+    const h = n ? L[n - 1] : houseAt(Math.floor(p.x), Math.floor(p.y), Math.floor(p.z)) || L.filter((q) => !q.owner).sort((q, r) => Math.hypot(q.door.x - p.x, q.door.z - p.z) - Math.hypot(r.door.x - p.x, r.door.z - p.z))[0];
+    if (!h) return c.say('🏠 그런 집이 없어요 · /집');
+    if (h.owner) return c.say(`🏠 ${h.n}번 집은 이미 ${h.owner} 님의 집이에요`);
+    if (!CB.take || !CB.take('동전', HOUSE_PRICE)) return c.say(`🪙 동전이 모자라요 (${HOUSE_PRICE}개 필요 · 지금 ${CB.has('동전')}개) · 주민과 거래해서 모아요`);
+    c.say(`🪙 동전 ${HOUSE_PRICE}개를 냈어요 · ${h.n}번 집 사는 중…`);
+    return req('house-buy', { n: h.n });
+  }
+  if (a[0] === '팔기') return mine0 ? req('house-sell') : c.say('🏠 내 집이 없어요');
+  if (a[0] === '비우기') return req('house-sell', { n: +a[1] });
+  if (a[0] === '가기') { if (!mine0) return c.say('🏠 내 집이 없어요 · /집 사기'); CB.tp(mine0.door.x, mine0.door.y + 0.2, mine0.door.z); return c.say(`🏠 ${mine0.n}번 집으로 왔어요`); }
+  for (const h of L) c.say(`🏠 ${h.n}번 집 (${h.x1}, ${h.z1}) · ${h.owner ? '주인: ' + h.owner : `매물 · 동전 ${HOUSE_PRICE}개`}`);
+  c.say(mine0 ? `내 집: ${mine0.n}번 · /집 가기` : '집 앞에서 /집 사기 (또는 /집 사기 번호) · 문 위 초록 표시가 매물이에요');
 }, { everyone: true });
 CB.command('장비','/장비 — 내 팀 기본 장비 중 없는 것 다시 받기 (5분에 한 번)', () => req('rekit'), { everyone: true });
 CB.command('상인', '/상인 — 🕶 불법 거래 상인 위치 · /상인 설정 (지금 자리로 · OP)', (a, c) => {
@@ -683,7 +770,7 @@ CB.command('석방', '/석방 @닉 (장교(CMO) 이상 · OP)', (a) => req('rele
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
-let acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
+let townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
   const T = S.train, x = mine();
@@ -733,8 +820,9 @@ CB.onTick((dt) => {
   if (CB.bgm) CB.bgm(W && !J ? 'wanted' : 'calm', W ? W.lv : 0); // 🚨 지명수배 중이면 나한테만 수배 음악 (등급이 높을수록 격해짐)
   let h = '';
   {
-    const O = ORGS[y.o], b = S.base[y.o], k = b ? JSON.stringify(b) : '';
-    if (k && k !== spawnKey) { CB.setSpawn(b.x, b.y + 0.2, b.z); spawnKey = k; }
+    const O = ORGS[y.o], hm = myHouse(me()), b = S.base[y.o] || (hm && hm.door), k = b ? JSON.stringify(b) : 'none';
+    if (k !== spawnKey) { spawnKey = k; if (CB.setRespawn) CB.setRespawn(b ? b.x : null, b ? b.y + 0.2 : 0, b ? b.z : 0); else if (b) CB.setSpawn(b.x, b.y + 0.2, b.z); } // 부활: 팀 기지 → 내 집 → 도시 한가운데
+    if (S.town && townSpawnK !== S.town.x + ',' + S.town.z) { townSpawnK = S.town.x + ',' + S.town.z; CB.setSpawn(S.town.x + 0.5, S.town.y + 0.1, S.town.z + 0.5); } // 🏙 세계 스폰 = 도시 한가운데
     h = `<span style="color:${O.color}">${O.ico} <b>${esc(tagOf(y.o))}</b></span> · ${O.lv + 1}/${TEAMS.length} 계급 · ${y.p || 0}점`;
     if (O.lv > 0) for (const mo in S.mission) if (ORGS[mo] && ORGS[mo].lv >= O.lv) h += `<br>📋 임무 (${esc(mo)}): ${esc(S.mission[mo])}`;
     if (S.train && inTrain(me(), S.train) && Date.now() < S.train.until) h += `<br>🎯 훈련(${S.train.kind}) ${Math.ceil((S.train.until - Date.now()) / 1000)}초` + (S.train.kind === '체력' ? ` · ${Math.min(200, ranD | 0)}/200칸` : '');
