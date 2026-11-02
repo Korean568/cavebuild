@@ -328,7 +328,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.202 — 👮 팀 복장 · 🚨 지명수배 3등급</h4>
+    <h4>🆕 v26.203 — 🪖 전역 · 무단탈영선</h4>
+    <ul><li>군대 팀에서 /조직 탈퇴 = <b>전역</b> (시민이 되고 수배 없음)</li><li><b>무단탈영</b>: 군부대와 도시를 잇는 정문에 <b>빨간 선</b>이 생겼어요 · 군대 팀이 걸어서 군부대 밖으로 나가면 지명수배 ★★★ · 🏴 무법자 (선에 가까이 가면 경고)</li></ul>
+    <h4>v26.202 — 👮 팀 복장 · 🚨 지명수배 3등급</h4>
     <ul><li>👮 팀은 <b>복장</b>과 머리 위 <b>닉네임 색</b>으로 알아봐요: 경찰 (남색 제복 · 경찰모 · 금배지) · 군사 (국방색 · 철모) · 군사경찰 (검은 철모) · 장교 (장교모) · 교육부 · 사령부 (베레모) · 총사령부 (정복) · 🏴 무법자 (빨간 복면) · ⛓ 죄수 (주황 죄수복)</li><li>머리 위: <b>닉네임</b> → <b>계급</b> → 그 밑에 <b>지명수배</b></li><li>🚨 지명수배는 최대 3등급: <b>수갑대상</b> (경범죄: 욕설 · 폭행 · 도둑질 → 벌금 10) · <b>지명수배 ★★</b> (중범죄: 경찰 폭행 · 불법 무기 소지 → 징역 15분) · <b>지명수배 ★★★</b> (무단사살 · 대학살 · 무단탈영 · 무기로 협박 → 징역 30분)</li><li>🪖 무단탈영: 군대 팀에서 스스로 나가면 · 🔫 무기로 협박: 총으로 사람을 2초 넘게 겨누면 (수배자 · 무법자는 빼고)</li><li>🎵 수배 음악은 가장 긴장되는 곡 하나로 통일</li><li>🧩 모드 기능: CB.outfit (복장) · CB.tag 둘째 · 셋째 줄 · CB.aimAt (총으로 겨눈 사람)</li></ul>
     <h4>v26.201 — 🪜 건물 사다리 · 🏴 무법자 · ⛓ 죄수 · 🔗 수갑 체포 · 건물이 안 보이던 것 고침</h4>
     <ul><li>🪜 도시 빌딩마다 구석에 <b>사다리</b>가 생겨 층마다 · 옥상까지 올라가요 · 경찰서 · 사령부 옥상 · 군부대 망루에도</li><li>🏴 <b>무법자</b>: 시민이 총을 가지거나 범죄를 저지르면 무법자 팀이 돼요 (총 = 불법 무기 소지 ★★) · 수갑으로 잡히기 전엔 팀을 바꿀 수 없어요</li><li>🔗 <b>체포는 수갑으로</b>: 경찰 쪽 팀이 수배자나 무법자를 수갑으로 치면 바로 체포 (벌금 · 징역)</li><li>⛓ 감옥에 있는 동안은 <b>죄수</b> 팀 · 총은 빼앗기고 · 형기를 마치거나 벌금을 내면 시민으로</li><li>팀에서 시민이 되면 총은 반납 · 불법 거래 상인은 시민 · 무법자에게 팔아요</li><li>🛠 조직 모드 건물이 안 보이던 것 고침: 모드 블록이 사람마다 다른 번호가 되던 것 → 고정 번호 · 늦게 켜진 모드 블록도 다시 그려요 · 예전 도시는 같은 자리에 새로 지어져요 (집주인은 그대로)</li></ul>
@@ -2112,7 +2114,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.202 — 👮 Team uniforms · 🚨 3 wanted levels</h4>
+    <h4>🆕 v26.203 — 🪖 Discharge · desertion line</h4>
+    <ul><li>/조직 탈퇴 from an army team is now a <b>discharge</b> (back to citizen, not wanted)</li><li><b>Desertion</b>: the base gate facing the city has a <b>red line</b> · army members who walk out of the base get ★★★ and become 🏴 outlaws (with a warning near the line)</li></ul>
+    <h4>v26.202 — 👮 Team uniforms · 🚨 3 wanted levels</h4>
     <ul><li>👮 Teams are recognized by <b>uniform</b> and <b>nametag color</b> (police cap and badge, army helmet, berets, outlaw red mask, orange prison suit…)</li><li>Nametag: <b>name</b> → <b>rank</b> → <b>wanted</b> underneath</li><li>🚨 Wanted now has 3 levels: <b>수갑대상</b> (misdemeanor → fine 10) · <b>★★</b> (felony → 15 min jail) · <b>★★★</b> (unlawful killing, massacre, desertion, threatening with a weapon → 30 min jail)</li><li>🪖 Desertion: leaving an army team yourself · 🔫 Threat: aiming a gun at someone for 2+ seconds</li><li>🎵 One wanted music track (the most intense one)</li><li>🧩 Mod API: CB.outfit · multi-line CB.tag · CB.aimAt</li></ul>
     <h4>v26.201 — 🪜 Ladders · 🏴 outlaws · ⛓ prisoners · 🔗 arrest with handcuffs · invisible buildings fixed</h4>
     <ul><li>🪜 City buildings now have <b>ladders</b> to every floor and the roof (also the police station, army HQ and watchtowers)</li><li>🏴 <b>Outlaw</b>: a citizen who holds a gun or commits a crime becomes an outlaw and can't change teams until caught with handcuffs</li><li>🔗 <b>Arrests use handcuffs</b>: police-side teams arrest wanted players and outlaws by cuffing them (fine or jail)</li><li>⛓ Jailed players are on the <b>prisoner</b> team and lose their guns; they become citizens again after serving time or paying</li><li>🛠 Fixed org-mod buildings being invisible: mod blocks now use fixed IDs on everyone's game, late mod blocks are redrawn, and old towns are rebuilt in place (house owners kept)</li></ul>
