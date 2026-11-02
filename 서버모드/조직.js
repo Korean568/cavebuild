@@ -8,6 +8,7 @@
 // 🕶 불법 거래 상인 (NPC): 시민한테만 동전으로 무기를 팔아요 (/상인 · /상인 설정)
 // 🏙 모드를 깔면 부활 자리 근처 빈 땅에 도시 · 🚓 경찰서 · 🪖 군부대가 저절로 생겨요 (/도시 · OP는 /도시 짓기)
 // 🪖 전역: 군대 팀에서 /조직 탈퇴 · 무단탈영: 군부대 정문의 빨간 선을 넘어 걸어 나가거나 군부대 안에서 /집 가기 (★★★ · 무법자)
+// 🪪 외출: 장교(CMO) 이상이 /외출 @닉 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · /외출 취소 @닉
 // 명령어 (누구나):  /조직 (내 팀) · /조직 목록 · /조직 탈퇴 (시민으로 · 군대는 전역) · /기지 · /장비 · /상인
 // 명령어 (장교(CMO) 이상 · OP): /team 팀 @닉 (순서 상관없음, = /조직 배정) · /진급 @닉 · /강등 @닉 · /조직 추방 @닉 (시민으로) · /석방 @닉
 // 명령어 (장교(CMO) 이상 · OP): /기지 설정 · /집합 (내 계급 이하 모두) · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
@@ -111,7 +112,7 @@ CB.dim('감옥', {
 function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -133,7 +134,7 @@ function addPts(nick, n) { // 점수 (팀 점수에도 더해짐)
 }
 const isLaw = (nick) => LAW.includes(teamOf(nick));
 const inTrain = (nick, T) => { const l = lvOf(nick); return l > 0 && l <= (T.lv != null ? T.lv : (ORGS[T.o] || { lv: 0 }).lv); }; // 훈련 · 집합: 경찰(CP)부터 연 사람 계급까지
-function setTeam(nick, o) { const x = S.m[nick]; if (o === '시민') { if (x) { x.o = '시민'; } else return; } else if (x) x.o = o; else S.m[nick] = { o, r: 0, p: 0 }; }
+function setTeam(nick, o) { if (!ARMY.includes(o)) delete S.leave[nick]; const x = S.m[nick]; if (o === '시민') { if (x) { x.o = '시민'; } else return; } else if (x) x.o = o; else S.m[nick] = { o, r: 0, p: 0 }; }
 // 📝 고소: 범죄를 당한 사람 이름으로 고소가 자동으로 들어가요 → 고소 중 가장 높은 등급이 지명수배 등급
 //    피해자는 /고소 취소 (@닉) 로 취소할 수 있고, 남은 고소가 없으면 지명수배가 풀려요. 피해자가 따로 없는 범죄(욕설)는 「서버」 고소
 function rewanted(nick) {
@@ -343,9 +344,34 @@ function apply(op, a, from, fromOp, fromDiscord) {
     }
     case 'desert': { // 🪖 군부대 밖으로 나감 → 무단탈영 (★★★ · 무법자)
       if (!ARMY.includes(Fo) || fromOp) return;
+      if (S.leave[from]) { // 🪪 외출 허가가 있으면 무단탈영이 아님
+        if (!S.leave[from].out) { S.leave[from].out = true; save(); tell(from, '🪪 외출 허가로 군부대를 나왔어요 · 군부대로 돌아오면 외출이 끝나요'); }
+        return;
+      }
       setTeam(from, OUTLAW); save();
       CB.say(`🏴 ${from} 님이 군부대를 무단으로 벗어나 무법자가 됐어요!`);
       return crime(from, 3, `무단탈영 (${tagOf(Fo)})`);
+    }
+    case 'pass': case 'pass-cancel': { // 🪪 외출 허가 · 취소: 장교(CMO) 이상이 나보다 아래 계급에게 (OP는 누구나)
+      if (!off) return tell(from, '외출 허가는 장교(CMO) 이상이나 OP만 할 수 있어요');
+      if (!who) return tell(from, op === 'pass' ? '/외출 @닉' : '/외출 취소 @닉');
+      if (!ARMY.includes(teamOf(who))) return tell(from, `${who} 님은 군대 쪽 팀이 아니에요`);
+      if (!fromOp && lvOf(from) <= lvOf(who)) return tell(from, '나보다 아래 계급만 허가하거나 취소할 수 있어요');
+      if (op === 'pass') {
+        if (S.leave[who]) return tell(from, `${who} 님은 이미 외출 허가가 있어요`);
+        S.leave[who] = { by: from, out: false }; save();
+        tell(who, `🪪 ${from} 님이 외출을 허가했어요 · 군부대를 나가도 돼요`);
+        return CB.say(`🪪 ${from} 님이 ${who} 님의 외출을 허가했어요`);
+      }
+      if (!S.leave[who]) return tell(from, `${who} 님은 외출 허가가 없어요`);
+      delete S.leave[who]; save();
+      tell(who, `🪪 ${from} 님이 외출 허가를 취소했어요`);
+      return CB.say(`🪪 ${from} 님이 ${who} 님의 외출 허가를 취소했어요`);
+    }
+    case 'pass-back': { // 🪖 외출 나갔다가 군부대로 돌아옴 → 외출 끝
+      if (!S.leave[from] || !S.leave[from].out) return;
+      delete S.leave[from]; save();
+      return tell(from, '🪖 군부대로 복귀했어요 · 외출이 끝났어요');
     }
     case 'threat': { // 🔫 총으로 2초 넘게 사람을 겨눔 → 무기로 협박 (★★★) · 수배자 · 무법자를 겨눈 건 괜찮음
       if (!who || who === from || S.w[who] || teamOf(who) === OUTLAW) return;
@@ -777,6 +803,13 @@ CB.command('집', `/집 — 🏠 집 목록 · /집 사기 [번호] (동전 ${HO
   for (const h of L) c.say(`🏠 ${h.n}번 집 (${h.x1}, ${h.z1}) · ${h.owner ? '주인: ' + h.owner : `매물 · 동전 ${HOUSE_PRICE}개`}`);
   c.say(mine0 ? `내 집: ${mine0.n}번 · /집 가기` : '집 앞에서 /집 사기 (또는 /집 사기 번호) · 문 위 초록 표시가 매물이에요');
 }, { everyone: true });
+CB.command('외출', '/외출 — 외출 허가 목록 · /외출 @닉 (허가) · /외출 취소 @닉 (장교(CMO) 이상 · 나보다 아래 계급 · OP)', (a, c) => {
+  if (a[0] === '취소') return req('pass-cancel', { who: a[1] });
+  if (a[0]) return req('pass', { who: a[0] });
+  const L = Object.entries(S.leave);
+  if (!L.length) return c.say('🪪 지금 외출 허가를 받은 사람이 없어요 · 장교(CMO) 이상이 /외출 @닉 으로 허가해요');
+  for (const [n, v] of L) c.say(`🪪 ${n} · ${v.out ? '외출 중' : '허가됨'} (${v.by})`);
+}, { everyone: true });
 CB.command('장비','/장비 — 내 팀 기본 장비 중 없는 것 다시 받기 (5분에 한 번)', () => req('rekit'), { everyone: true });
 CB.command('상인', '/상인 — 🕶 불법 거래 상인 위치 · /상인 설정 (지금 자리로 · OP)', (a, c) => {
   if (a[0] === '설정') return req('dealer', { ...pos(), dim: CB.dimNow() });
@@ -887,7 +920,9 @@ CB.onTick((dt) => {
       const dx = Math.floor(p.x) - TW.x, dz = Math.floor(p.z) - TW.z, inside = dx >= -46 && dx <= -22 && Math.abs(dz) <= 22;
       if (inBaseP && !inside && Math.hypot(p.x - inBaseP.x, p.z - inBaseP.z) < 20) req('desert');
       inBaseP = inside ? { x: p.x, z: p.z } : null;
-      if (inside && dx >= -26 && Math.abs(dz) <= 5) note('⚠ 앞의 빨간 선을 넘으면 무단탈영이에요 (지명수배 ★★★)');
+      const pass = S.leave[me()];
+      if (inside && pass && pass.out) req('pass-back');
+      if (inside && !pass && dx >= -26 && Math.abs(dz) <= 5) note('⚠ 앞의 빨간 선을 넘으면 무단탈영이에요 (지명수배 ★★★) · 나가려면 장교의 /외출 허가');
     } else inBaseP = null;
   }
   { // 🔫 총: 팀에서 시민으로 내려오거나 감옥에 가면 총을 반납 · 시민이 총을 가지면 불법 무기 소지 (무법자)
@@ -909,6 +944,7 @@ CB.onTick((dt) => {
     if (O.lv > 0) for (const mo in S.mission) if (ORGS[mo] && ORGS[mo].lv >= O.lv) h += `<br>📋 임무 (${esc(mo)}): ${esc(S.mission[mo])}`;
     if (S.train && inTrain(me(), S.train) && Date.now() < S.train.until) h += `<br>🎯 훈련(${S.train.kind}) ${Math.ceil((S.train.until - Date.now()) / 1000)}초` + (S.train.kind === '체력' ? ` · ${Math.min(200, ranD | 0)}/200칸` : '');
   }
+  if (S.leave[me()] && ARMY.includes(y.o)) h += `${h ? '<br>' : ''}🪪 외출 ${S.leave[me()].out ? '중' : '허가됨'} (${esc(S.leave[me()].by)})`;
   if (W) h += `${h ? '<br>' : ''}<span style="color:#ff5a5a">🚨 <b>${stars(W.lv)}</b> · ${GRADE[Math.min(WMAX, W.lv)]} (${esc(W.why)})</span>`;
   if (J > 0) h += `${h ? '<br>' : ''}⛓ <b>수감 중</b> · ${Math.floor(J / 60)}분 ${J % 60}초 남음`;
   CB.hud('org', h || null);
