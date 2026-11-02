@@ -328,7 +328,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.210 — 🪖 상담원 찾기</h4>
+    <h4>🆕 v26.211 — 🪧 입대소 · 경찰서 큰 간판</h4>
+    <ul><li>입대소와 경찰서 위에 <b>큰 글씨 간판</b>이 떠서 멀리서도 보여요</li></ul>
+    <h4>v26.210 — 🪖 상담원 찾기</h4>
     <ul><li>/도시 에 입대 상담원 · 경찰 상담원 위치가 나와요 · 방장이 멀리 있을 때 상담원 · 상인이 사라지던 것 고침</li></ul>
     <h4>v26.209 — 🏴 무법자는 3등급부터</h4>
     <ul><li>시민이 <b>수갑대상 · 지명수배 ★★</b>이면 시민 그대로 · <b>지명수배 ★★★</b> 범죄(무단사살 · 무기로 협박 · 군부대 침입)부터 무법자</li></ul>
@@ -2128,7 +2130,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.210 — 🪖 Finding the recruiters</h4>
+    <h4>🆕 v26.211 — 🪧 Big signs</h4>
+    <ul><li>The enlistment office and police station now have <b>big floating signs</b> you can see from far away</li></ul>
+    <h4>v26.210 — 🪖 Finding the recruiters</h4>
     <ul><li>/도시 now shows where the recruiters are · recruiters and the dealer no longer vanish when the host is far away</li></ul>
     <h4>v26.209 — 🏴 Outlaws start at wanted level 3</h4>
     <ul><li>Citizens at level 1 or 2 stay citizens with a wanted level · only level 3 crimes (unlawful killing, threatening with a weapon, entering the base) make them outlaws</li></ul>
@@ -8926,6 +8930,10 @@ const CB={version:'v26.164',
   owner:()=>(world.flags&&world.flags.owner)||(!MP.on||MP.host?(MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어')):(MP.hostNick||'')), // 🧩 서버를 만든 사람 (공개 서버) · 방장 (내 세계 방) · 혼자면 나
   has:id=>{id=typeof id==='string'?CB.id(id):id;return id?countItem(id):0;}, // 🧩 내 가방에 그 아이템이 몇 개 있는지
   take:(id,n)=>{id=typeof id==='string'?CB.id(id):id;n=Math.max(1,n|0||1);if(!id||countItem(id)<n)return false;removeItem(id,n);return true;}, // 🧩 내 가방에서 아이템 n개 가져가기 (모자라면 false · 안 가져감)
+  bigSign:(key,text,x,y,z,o)=>{key=String(key);o=o||{};let S=MOD_SIGNS[key];if(text==null){if(S){scene.remove(S);S.material.map.dispose();S.material.dispose();delete MOD_SIGNS[key];}return;} // 🧩 큰 글씨 간판: 멀리서도 보이고 늘 나를 봄 · 지울 땐 text 를 null
+    const k=[text,o.bg,o.color,o.w].join('|');if(!S||S.k!==k){if(S){scene.remove(S);S.material.map.dispose();S.material.dispose();}const c=makeCanvas(512,128),g=c.getContext('2d');g.fillStyle=o.bg||'#14325a';g.fillRect(0,0,512,128);g.strokeStyle='#ffffff';g.lineWidth=8;g.strokeRect(6,6,500,116);g.fillStyle=o.color||'#ffffff';g.font="bold 86px 'Black Han Sans','Malgun Gothic',sans-serif";g.textAlign='center';g.textBaseline='middle';g.fillText(String(text),256,68,480);
+      S=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),fog:false}));S.k=k;const w=o.w||12;S.scale.set(w,w/4,1);scene.add(S);MOD_SIGNS[key]=S;}
+    S.position.set(+x,+y,+z);S.visible=world.dim===(o.dim||'over');},
   dialog:(html,btns)=>{evDlg(String(html),(btns&&btns.length?btns:[['닫기']]).map(([t,f])=>[String(t),f?()=>{try{f();}catch(e){console.warn(e);}}:null]));}, // 🧩 대화창: CB.dialog('말',[['네',함수],['아니요']])
   playerPos:nick=>{if(!MP.on||nick===(MP.me&&MP.me.nick))return {x:player.pos.x,y:player.pos.y,z:player.pos.z};for(const P of MP.peers.values())if(P.nick===nick&&P.t&&!P.t.v&&P.t.d===world.dim)return {x:P.t.x,y:P.t.y,z:P.t.z};return null;}, // 🧩 같은 차원에 있는 플레이어 자리
   mobTag:(m,txt,col)=>{if(!m||!m.g||m.modTag)return;txt=String(txt);MOD_TAGS[txt]={color:col||'#fff'};const s=new THREE.Sprite(new THREE.SpriteMaterial({map:mpTagTex(txt),depthTest:false,transparent:true}));mpTagFit(s);m.g.add(s);m.modTag=s;}, // 🧩 몹 머리 위 이름표
@@ -9100,7 +9108,7 @@ function mpSkinTex(u){const C=makeCanvas(64,64),T=new THREE.CanvasTexture(C);T.m
   const im=new Image();im.onload=()=>{const g=C.getContext('2d');g.drawImage(im,0,0);if(im.height===32){g.drawImage(C,0,16,16,16,16,48,16,16);g.drawImage(C,40,16,16,16,32,48,16,16);}
     const id=g.getImageData(0,0,64,64),D=id.data,b0=D[0],b1=D[1],b2=D[2];if(D[3]>0){for(let y=0;y<64;y++)for(let x=0;x<64;x++){if(!((y<16&&x>=32)||(y>=32&&y<48)||(y>=48&&(x<16||x>=48))))continue;const i=(y*64+x)*4;if(Math.abs(D[i]-b0)<8&&Math.abs(D[i+1]-b1)<8&&Math.abs(D[i+2]-b2)<8)D[i+3]=0;}g.putImageData(id,0,0);}
     T.needsUpdate=true;};im.onerror=()=>{if(u!==DEFAULT_SKIN)im.src=DEFAULT_SKIN;};im.src=u||DEFAULT_SKIN;return T;}
-const MOD_TAGS={},MOD_OUTFIT={}; // 🧩 모드가 정한 닉네임표 (앞말 · 색 · 계급 · 지명수배) — CB.tag · 복장 — CB.outfit
+const MOD_SIGNS={},MOD_TAGS={},MOD_OUTFIT={}; // 🧩 모드가 정한 닉네임표 (앞말 · 색 · 계급 · 지명수배) — CB.tag · 복장 — CB.outfit
 function myOutfit(){return MOD_OUTFIT[MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어')]||null;}
 function outfitAvatar(A,o){for(const m of A.outfitParts||[])m.parent&&m.parent.remove(m);A.outfitParts=[];if(!o)return; // 👮 팀 복장: 웃옷 · 바지 · 모자 · 배지 (스킨 위에 살짝 크게 덮음)
   const add=(par,w,h,d,mat,x,y,z)=>{const p=part(par,w,h,d,mat,x,y,z);A.outfitParts.push(p);return p;},M=c=>imat('of'+c,c,'cloth',.9);

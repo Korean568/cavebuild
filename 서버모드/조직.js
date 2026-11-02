@@ -578,6 +578,11 @@ function npcNear(x, z) { // NPC가 있어야 하나: 방장 게임은 누구든 
   const L = CB.isHost() && CB.playerPos ? CB.players().map((n) => CB.playerPos(n)) : [pos()];
   return L.some((q) => q && Math.hypot(q.x - x, q.z - z) < 60);
 }
+function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서도 보임)
+  const T = S.town; if (!T || !CB.bigSign) return;
+  CB.bigSign('org_recruit', '입대소', T.x - 19.5, T.y + 9, T.z + 11.5, { bg: '#3d4a2a', w: 12 });
+  CB.bigSign('org_police', '경찰서', T.x + 28.5, T.y + 12, T.z + 11.5, { bg: '#1f3a7a', w: 16 });
+}
 function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임에 한 명씩)
   const T = S.town; if (!T || CB.dimNow() !== 'over') return;
   for (const k in RECRUITERS) {
@@ -1064,6 +1069,7 @@ CB.onTick((dt) => {
   if ((acc += dt) < 1) return;
   acc = 0;
   S = load();
+  try { signTick(); } catch (e) { console.warn('조직 간판 오류', e); }
   if ((dealerT -= 1) <= 0) { dealerT = 3; try { dealerTick(); recruiterTick(); } catch (e) { console.warn('조직 NPC 오류', e); } }
   examTick();
   if (CB.isHost()) for (const n in S.m) if (S.m[n].o === OUTLAW && !S.jail[n] && !(S.w[n] && S.w[n].lv >= WMAX)) crime(n, WMAX, '🏴 무법자 (자동)'); // 무법자 팀은 언제나 ★★★
