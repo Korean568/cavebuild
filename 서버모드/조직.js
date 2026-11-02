@@ -5,7 +5,8 @@
 // 멀티플레이에서는 방장 게임이 조직 정보를 저장하고(세계에 저장됨), 친구들의 명령은 방장에게 신호로 보내요.
 //
 // 🎒 팀이 되면 기본 장비를 받아요 (KITS) · 총사령부(Owner)는 OP · 고소 · 수배 안 됨
-// 🕶 불법 거래 상인 (NPC): 시민한테만 동전으로 무기를 팔아요 (/상인 · /상인 설정)
+// 🏴 불법 거래 상인 (NPC): 밤에만 나와서 시민 · 무법자에게 동전으로 무기를 팔아요 · 쓰러지면 다음 날 밤에 (/상인 · /상인 설정)
+// 🌙 생활규칙: 밤에는 경찰은 경찰서 구역, 군대는 군부대 안 (군대는 /외출 허가면 예외) · 밖에 60초 넘게 있으면 수갑대상
 // 🏙 모드를 깔면 부활 자리 근처 빈 땅에 도시 · 🚓 경찰서 · 🪖 군부대가 저절로 생겨요 (/도시 · OP는 /도시 짓기)
 // 🪖 전역: 군대 팀에서 /조직 탈퇴 · 무단탈영: 군부대 정문의 빨간 선을 넘어 걸어 나가거나 군부대 안에서 /집 가기 (★★★ · 무법자)
 // 🪪 외출: 장교(CMO) 이상이 /외출 @닉 [분] 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · 시간을 넘기면 무단탈영 · /외출 취소 @닉
@@ -115,7 +116,7 @@ CB.dim('감옥', {
 function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -355,6 +356,14 @@ function apply(op, a, from, fromOp, fromDiscord) {
       addPts(who, 10); delete S.mission[Fo]; save();
       return CB.say(`✅ ${who} 님 임무 완료! +10점`);
     }
+    case 'dealer-dead': { // 🏴 상인이 쓰러짐 → 다음 날 밤까지 안 나옴
+      if (!S.dealerDead) { S.dealerDead = true; save(); }
+      return;
+    }
+    case 'curfew': { // 🌙 생활규칙 위반: 밤에 숙소 밖 → 수갑대상
+      if ((Fo !== '경찰' && !ARMY.includes(Fo)) || fromOp) return;
+      return crime(from, 1, '생활규칙 위반 (밤에 숙소 밖)');
+    }
     case 'desert': { // 🪖 군부대 밖으로 나감 → 무단탈영 (★★★ · 무법자)
       if (!ARMY.includes(Fo) || fromOp) return;
       if (S.leave[from]) { // 🪪 외출 허가가 있으면 무단탈영이 아님
@@ -525,26 +534,15 @@ CB.on('kill', (m) => {
   addPts(who, 1); save();
 });
 
-// ── 🏴 불법 거래 상인 (무법자 팀 NPC): 시민 · 무법자에게 무기를 팔아요 · 동전으로 · 경찰 · 군인이 14칸 안에 오면 도망가요 ──
+// ── 🏴 불법 거래 상인 (무법자 팀 NPC): 밤에만 나와서 시민 · 무법자에게 무기를 팔아요 · 동전으로 ──
 // 자리: OP가 /상인 설정 (안 정하면 세계 부활 자리 근처) · 각자 게임에서 가까이 가면 나타나요
-const DEALER = 'org_dealer', DEALER_K = 'mod_' + DEALER;
+const DEALER = 'org_dealer', DEALER_K = 'mod_' + DEALER, DEALER_HP = 40;
+const nightNow = () => { const w = CB.world && CB.world(); return !!w && Math.sin(w.time * Math.PI * 2) < -0.05; }; // 🌙 게임의 밤 판정과 같음
 const tradeIf = (name) => CB.id(name);
 CB.mob(DEALER, {
-  name: '🏴 불법 거래 상인', hp: 9999, color: 0x262626, head: 0xb02020, eyes: 0xffffff,
-  ai: (m, c, dt) => {
-    let P = null, nd = 14; // 가장 가까운 경찰 · 군인
-    for (const n of CB.players()) { const t = teamOf(n); if (t !== '경찰' && t !== '총사령부' && !ARMY.includes(t)) continue; const q = CB.playerPos && CB.playerPos(n); if (!q) continue; const d = Math.hypot(q.x - m.pos.x, q.z - m.pos.z); if (d < nd) { nd = d; P = q; } }
-    if (P) { m.runFrom = P; m.runT = 6; }
-    if (m.runT > 0) { // 도망: 그 사람 반대쪽으로 달림 · 6초 동안 안 보이면 돌아옴
-      m.runT -= dt; m.face = false;
-      const dx = m.pos.x - m.runFrom.x, dz = m.pos.z - m.runFrom.z, l = Math.hypot(dx, dz) || 1;
-      m.yaw = Math.atan2(dx, dz); steer(m, dx / l * 6, dz / l * 6, dt); autoJump(m);
-      return;
-    }
-    const H = m.orgHome, hd = H ? Math.hypot(H.x - m.pos.x, H.z - m.pos.z) : 0;
-    if (hd > 1) { m.face = false; m.yaw = Math.atan2(H.x - m.pos.x, H.z - m.pos.z); steer(m, (H.x - m.pos.x) / hd * 3, (H.z - m.pos.z) / hd * 3, dt); autoJump(m); }
-    else { m.face = true; steer(m, 0, 0, dt); }
-  },
+  name: '🏴 불법 거래 상인', hp: DEALER_HP, color: 0x262626, head: 0xb02020, eyes: 0xffffff,
+  ai: (m) => { m.vel.x = m.vel.z = 0; m.face = true; if (m.orgHome && Math.hypot(m.pos.x - m.orgHome.x, m.pos.z - m.orgHome.z) > 0.5) { m.pos.x = m.orgHome.x; m.pos.z = m.orgHome.z; } },
+  onDeath: () => req('dealer-dead'), // 쓰러지면 다음 날 밤에 다시 나옴
   trades: [
     { give: [[tradeIf('동전'), 8]], get: [tradeIf('권총'), 1] },
     { give: [[tradeIf('동전'), 16]], get: [tradeIf('돌격소총'), 1] },
@@ -653,9 +651,11 @@ function dealerTick() { // 가까이 있으면 상인이 서 있게 (내 게임�
   const D = dealerSpot(); if (!D) return;
   if (!S.dealer && CB.isHost()) { S.dealer = D; save(); } // 처음 정한 자리를 저장 (모두 같은 자리)
   if (CB.dimNow() !== (D.dim || 'over')) return;
-  const near = npcNear(D.x, D.z);
+  const night = nightNow();
+  if (!night && S.dealerDead && CB.isHost()) { S.dealerDead = false; save(); }
+  const near = night && !S.dealerDead && npcNear(D.x, D.z); // 🌙 밤에만 · 쓰러졌으면 다음 날 밤에
   const L = CB.mobs().filter((m) => m.kind === DEALER_K && !m.dead);
-  for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x: D.x, z: D.z }; if (CB.mobTag) CB.mobTag(m, '🏴 불법 거래 상인', '#ff4040'); } }
+  for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x: D.x, z: D.z }; if (m.hp > DEALER_HP) m.hp = DEALER_HP; if (CB.mobTag) CB.mobTag(m, '🏴 불법 거래 상인', '#ff4040'); } }
   if (near && !CB.mobs().some((m) => m.kind === DEALER_K && !m.dead)) { const m = CB.spawn(DEALER, D.x, D.y + 0.1, D.z); if (m) m.orgHome = { x: D.x, z: D.z }; }
 }
 
@@ -1003,7 +1003,7 @@ CB.command('상인', '/상인 — 🕶 불법 거래 상인 위치 · /상인 �
   if (a[0] === '설정') return req('dealer', { ...pos(), dim: CB.dimNow() });
   const D = dealerSpot();
   if (!D) return c.say('🕶 상인이 어디 있는지 아무도 몰라요…');
-  c.say(`🕶 불법 거래 상인: ${Math.round(D.x)}, ${Math.round(D.y)}, ${Math.round(D.z)} 근처 · 시민한테만 무기를 팔아요 (동전) · 우클릭으로 거래`);
+  c.say(`🏴 불법 거래 상인: ${Math.round(D.x)}, ${Math.round(D.y)}, ${Math.round(D.z)} 근처 · 🌙 밤에만 나와요 · 시민 · 무법자에게 무기를 팔아요 (동전) · 우클릭으로 거래`);
 }, { everyone: true });
 CB.command('진급', '/진급 @닉 — 한 계급 위 팀으로 (장교(CMO) 이상 · OP)', (a) => req('promote', { who: a[0] }), { everyone: true });
 CB.command('강등', '/강등 @닉 — 한 계급 아래 팀으로 (장교(CMO) 이상 · OP)', (a) => req('demote', { who: a[0] }), { everyone: true });
@@ -1056,7 +1056,7 @@ CB.command('석방', '/석방 @닉 (장교(CMO) 이상 · OP)', (a) => req('rele
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
-let baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
+let curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
   const T = S.train, x = mine();
@@ -1135,6 +1135,17 @@ CB.onTick((dt) => {
       if (inside && pass && pass.out) req('pass-back');
       if (inside && !pass && dx >= -26 && Math.abs(dz) <= 5) note('⚠ 앞의 빨간 선을 넘으면 무단탈영이에요 (지명수배 ★★★) · 나가려면 장교의 /외출 허가');
     } else inBaseP = null;
+  }
+  { // 🌙 생활규칙: 밤에는 경찰은 경찰서 구역, 군대는 군부대 안 (군대는 외출 허가가 있으면 예외) · 밖에 60초 넘게 있으면 수갑대상
+    const TW = S.town, p = pos(), army = ARMY.includes(y.o);
+    if (TW && (army || y.o === '경찰') && nightNow() && CB.dimNow() === 'over' && !CB.isOp() && !S.jail[me()]) {
+      const dx = Math.floor(p.x) - TW.x, dz = Math.floor(p.z) - TW.z;
+      const home = army ? dx >= -46 && dx <= -22 && Math.abs(dz) <= 22 : dx >= 20 && dx <= 36 && dz >= -17 && dz <= 18;
+      if (home || W || (army && S.leave[me()])) curfewT = 0;
+      else if (++curfewT <= 60) note(`🌙 생활규칙: 밤에는 ${army ? '군부대' : '경찰서'}로 돌아가야 해요 · ${61 - curfewT}초 뒤 수갑대상`);
+      else if (curfewT === 61) req('curfew');
+      else if (curfewT > 70) curfewT = 60;
+    } else curfewT = 0;
   }
   { // 🔫 총: 팀에서 시민으로 내려오거나 감옥에 가면 총을 반납 · 시민이 총을 가지면 불법 무기 소지 (무법자)
     const t = y.o, hasGun = GUNS.some((g) => CB.has(g) > 0);
