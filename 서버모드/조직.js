@@ -574,11 +574,14 @@ for (const k in RECRUITERS) {
     },
   });
 }
+function npcNear(x, z) { // NPC가 있어야 하나: 방장 게임은 누구든 60칸 안에 있으면 (친구 곁의 NPC를 지우지 않게) · 친구 게임은 나만 봄
+  const L = CB.isHost() && CB.playerPos ? CB.players().map((n) => CB.playerPos(n)) : [pos()];
+  return L.some((q) => q && Math.hypot(q.x - x, q.z - z) < 60);
+}
 function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임에 한 명씩)
   const T = S.town; if (!T || CB.dimNow() !== 'over') return;
-  const p = pos();
   for (const k in RECRUITERS) {
-    const R = RECRUITERS[k], x = T.x + R.dx + 0.5, z = T.z + R.dz + 0.5, near = Math.hypot(p.x - x, p.z - z) < 60;
+    const R = RECRUITERS[k], x = T.x + R.dx + 0.5, z = T.z + R.dz + 0.5, near = npcNear(x, z);
     const L = CB.mobs().filter((m) => m.kind === 'mod_' + k && !m.dead);
     for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x, z }; if (CB.mobTag) CB.mobTag(m, R.name, R.tag); } }
     if (near && !L.length && CB.loaded(x, z)) { const m = CB.spawn(k, x, T.y + 0.1, z); if (m) m.orgHome = { x, z }; }
@@ -645,7 +648,7 @@ function dealerTick() { // 가까이 있으면 상인이 서 있게 (내 게임�
   const D = dealerSpot(); if (!D) return;
   if (!S.dealer && CB.isHost()) { S.dealer = D; save(); } // 처음 정한 자리를 저장 (모두 같은 자리)
   if (CB.dimNow() !== (D.dim || 'over')) return;
-  const p = pos(), near = Math.hypot(p.x - D.x, p.z - D.z) < 60;
+  const near = npcNear(D.x, D.z);
   const L = CB.mobs().filter((m) => m.kind === DEALER_K && !m.dead);
   for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x: D.x, z: D.z }; if (CB.mobTag) CB.mobTag(m, '🏴 불법 거래 상인', '#ff4040'); } }
   if (near && !CB.mobs().some((m) => m.kind === DEALER_K && !m.dead)) { const m = CB.spawn(DEALER, D.x, D.y + 0.1, D.z); if (m) m.orgHome = { x: D.x, z: D.z }; }
@@ -961,6 +964,7 @@ CB.command('도시', '/도시 — 🏙 도시 · 🚓 경찰서 · 🪖 군부�
   const f = (dx, dz) => `${T.x + dx}, ${T.y}, ${T.z + dz}`;
   c.say(`🏙 도시 한가운데: ${f(0, 0)}`);
   c.say(`🚓 경찰서: ${f(28, 7)} (도시 동쪽) · 🪖 군부대: ${f(-34, 0)} (도시 서쪽)`);
+  c.say(`🪖 입대 상담원: ${f(-20, 11)} (입대소 · 군부대 정문 옆 건물) · 🚓 경찰 상담원: ${f(25, 10)} (경찰서 접수대 뒤)`);
   c.say('🏕 /기지 로 우리 팀 기지(경찰서 · 군부대)로 갈 수 있어요');
 }, { everyone: true });
 CB.command('집', `/집 — 🏠 집 목록 · /집 사기 [번호] (동전 ${HOUSE_PRICE}개) · /집 팔기 (동전 ${HOUSE_PRICE / 2}개 돌려받음) · /집 가기 · /집 비우기 번호 (OP)`, (a, c) => {
