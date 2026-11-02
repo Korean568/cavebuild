@@ -116,7 +116,7 @@ CB.dim('감옥', {
 function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -580,6 +580,8 @@ function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서�
   const T = S.town; if (!T || !CB.bigSign) return;
   CB.bigSign('org_recruit', '입대소', T.x - 19.5, T.y + 9, T.z + 11.5, { bg: '#3d4a2a', w: 12 });
   CB.bigSign('org_police', '경찰서', T.x + 28.5, T.y + 12, T.z + 11.5, { bg: '#1f3a7a', w: 16 });
+  CB.bigSign('org_food', '음식점', T.x + 41.5, T.y + 9, T.z + 8.5, { bg: '#a8421a', w: 12 });
+  if (S.village) CB.bigSign('org_food2', '음식점', T.x + S.village.fx, T.y + 9, T.z + S.village.s * S.village.fd, { bg: '#a8421a', w: 12 });
 }
 function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임에 한 명씩)
   const T = S.town; if (!T || CB.dimNow() !== 'over') return;
@@ -675,7 +677,8 @@ const T_LINE = CB.block({ id: 1910, key: 'town_line', name: '도로 선', paint:
 const T_TARGET = CB.block({ id: 1911, key: 'town_target', name: '과녁', paint: (u, v, x, y) => { const r = Math.hypot(x - 7.5, y - 7.5); return r < 2 ? [220, 30, 30] : r < 4 ? [240, 240, 240] : r < 6 ? [220, 30, 30] : [240, 240, 240]; } });
 const TOWN_X = 46, TOWN_Z = 24; // 동서 ±46칸 · 남북 ±24칸
 const LAD_W = 44, LAD_E = 45, LAD_N = 46, LAD_S = 47; // 🪜 사다리 블록 (붙은 벽: 서 · 동 · 북(-z) · 남(+z))
-const TOWN_V = 5; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2 ~ 4는 없는 것만 더함 (탈영선 · 성벽 · 입대소 · 점프맵 · 성문 길)
+const TOWN_V = 6; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2 ~ 5는 없는 것만 더함 (탈영선 · 성벽 · 입대소 · 점프맵 · 음식점)
+const VIL_D = 34; // 🏘 도시 옆 마을 깊이 (성문 밖 34칸)
 const T_DESERT = CB.block({ id: 1914, key: 'town_desert', name: '탈영선', paint: (u, v, x, y) => (((x + y) >> 2) % 2 ? [235, 225, 60] : [205, 30, 30]) });
 function wallPlan(C, G) { // 🏰 성벽: 도시 · 경찰서 · 군부대 둘레 (높이 7칸 · 톱니 · 모서리 탑 · 동 · 남 · 북 성문 · 올라가는 사다리)
   const L = [], BR = BLK('돌벽돌'), LAMPB = BLK('등불'), put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + z, id]);
@@ -704,8 +707,76 @@ function campPlan(C, G) { // 🪖 입대소 (정문 옆 · 군부대 밖) · �
   EX_JUMP.forEach(([x, h], i) => { for (const z of [3, 4]) for (let y = 0; y < h; y++) put(x, y, z, i === EX_JUMP.length - 1 && y === h - 1 ? GOLD : T_CONC); });
   return L;
 }
+function foodPlan(C, G) { // 🍳 도시 음식점 (큰길 동쪽 · 문은 큰길 쪽) · 뒤쪽 조리대 · 상자 · 가스레인지
+  const L = [], WALL = BLK('돌벽돌'), PLANK = BLK('판자'), GLASS = BLK('유리'), LAMPB = BLK('등불'), STOVE = BLK('가스레인지', '판자'), put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + z, id]);
+  for (let x = 38; x <= 44; x++) for (let z = 5; z <= 11; z++) {
+    put(x, -1, z, PLANK); put(x, 4, z, T_CONC);
+    const edge = x === 38 || x === 44 || z === 5 || z === 11, corner = (x === 38 || x === 44) && (z === 5 || z === 11);
+    for (let y = 0; y <= 3; y++) put(x, y, z, !edge ? 0 : !corner && y === 2 ? GLASS : T_WHITE);
+  }
+  for (let y = 0; y <= 2; y++) put(41, y, 5, 0);
+  for (let x = 39; x <= 43; x++) put(x, 0, 10, PLANK);
+  put(41, 0, 10, CHEST); put(39, 0, 10, STOVE); put(41, 3, 8, LAMPB);
+  return L;
+}
+function cookbookIn(x, y, z) { const id = CB.id('요리 가이드북'); if (CB.fillChest && id) CB.fillChest(x, y, z, [[id, 1]]); }
+function spawnVillager(prof, x, y, z) { // 주민: 직업을 정해서 (6 = 요리사)
+  try { if (prof != null) VPROF = prof; const m = CB.spawn('villager', x, y, z); if (m) m.home = { x, z }; return m; } catch (e) { console.warn(e); return null; }
+}
+function cityFoodDone(C, G) { cookbookIn(C.x + 41, G, C.z + 10); spawnVillager(6, C.x + 41.5, G + 0.1, C.z + 8.5); }
+function villageSite(C) { // 🏘 북문 · 남문 밖 중 물이 적은 쪽 (땅이 다 불러와진 쪽만)
+  let best = null;
+  for (const s of [1, -1]) {
+    let ok = true, wet = 0, n = 0;
+    for (let x = C.x - 22; x <= C.x + 22 + 15 && ok; x += 16) for (let d = TOWN_Z + 1; d <= TOWN_Z + VIL_D + 15 && ok; d += 16) if (!CB.loaded(Math.min(x, C.x + 22), C.z + s * Math.min(d, TOWN_Z + VIL_D))) ok = false;
+    if (!ok) continue;
+    for (let x = C.x - 22; x <= C.x + 22; x += 6) for (let d = TOWN_Z + 1; d <= TOWN_Z + VIL_D; d += 6) { const g = groundAt(x, C.z + s * d); n++; if (g && g.wet) wet++; }
+    if (wet / n <= 0.3) return s;
+    if (best == null || wet / n < best.w) best = { s, w: wet / n };
+  }
+  return best ? best.s : null;
+}
+function buildVillage(C, G, s) { // 🏘 성문 바로 밖 마을: 길 양쪽에 집 5채 · 음식점 · 가로등 · 주민
+  const L = [], GRASS = BLK('잔디 블록'), ROAD = BLK('도로', '돌'), PLANK = BLK('판자'), LOG = BLK('원목', '판자'), BRICK = BLK('돌벽돌'), GLASS = BLK('유리'), LAMPB = BLK('등불'), IRON = BLK('철 블록'), BED = BLK('침대', '판자'), DIRT = BLK('흙'), STOVE = BLK('가스레인지', '판자');
+  const put = (x, y, d, id) => L.push([C.x + x, G + y, C.z + s * d, id]);
+  const soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null));
+  const D0 = TOWN_Z + 1, D1 = TOWN_Z + VIL_D;
+  for (let x = -22; x <= 22; x++) for (let d = D0; d <= D1; d++) {
+    put(x, -1, d, Math.abs(x) <= 2 ? ROAD : GRASS);
+    for (let y = 0; y <= 12; y++) put(x, y, d, 0);
+    for (let y = G - 2; y > G - 18; y--) { if (!soft.has(CB.getBlock(C.x + x, y, C.z + s * d))) break; L.push([C.x + x, y, C.z + s * d, DIRT]); }
+  }
+  for (let d = D0; d <= D1; d++) if (d % 4 < 2) put(0, -1, d, T_LINE);
+  const house = (x0, d0, food) => {
+    const wall = food ? T_WHITE : PLANK, doorX = x0 < 0 ? x0 + 6 : x0, backX = x0 < 0 ? x0 + 1 : x0 + 5, mid = d0 + 3;
+    for (let x = x0; x <= x0 + 6; x++) for (let d = d0; d <= d0 + 6; d++) {
+      put(x, -1, d, PLANK);
+      const ex = x === x0 || x === x0 + 6, ed = d === d0 || d === d0 + 6;
+      if (ex || ed) for (let y = 0; y <= 3; y++) put(x, y, d, ex && ed ? LOG : y === 2 && (food || (ex && d === mid) || (ed && x === x0 + 3)) ? GLASS : wall);
+      put(x, 4, d, BRICK);
+      if (x > x0 && x < x0 + 6 && d > d0 && d < d0 + 6) put(x, 5, d, BRICK);
+    }
+    for (let y = 0; y <= 1; y++) put(doorX, y, mid, 0);
+    put(x0 + 3, 3, mid, LAMPB);
+    if (food) { for (let d = d0 + 1; d <= d0 + 5; d++) put(backX, 0, d, PLANK); put(backX, 0, mid, CHEST); put(backX, 0, d0 + 1, STOVE); }
+    else put(backX, 0, d0 + 1, BED);
+  };
+  const HS = [[-13, D0 + 3], [7, D0 + 3], [-13, D0 + 13], [7, D0 + 13], [7, D0 + 23]];
+  HS.forEach(([x, d]) => house(x, d, false));
+  const FD = [-13, D0 + 23]; house(FD[0], FD[1], true);
+  for (const d of [D0 + 1, D0 + 11, D0 + 21, D0 + 31]) for (const x of [-4, 4]) { for (let y = 0; y <= 2; y++) put(x, y, d, IRON); put(x, 3, d, LAMPB); }
+  CB.setBlocks(L);
+  const chestX = C.x + FD[0] + 1, chestZ = C.z + s * (FD[1] + 3);
+  cookbookIn(chestX, G, chestZ);
+  spawnVillager(6, C.x + FD[0] + 3.5, G + 0.1, C.z + s * (FD[1] + 3) + 0.5);
+  spawnVillager(1, C.x + HS[0][0] + 3.5, G + 0.1, C.z + s * (HS[0][1] + 3) + 0.5);
+  for (let i = 1; i < HS.length; i++) spawnVillager(i - 1 === 1 ? 2 : i - 1, C.x + HS[i][0] + 3.5, G + 0.1, C.z + s * (HS[i][1] + 3) + 0.5);
+  S.village = { s, fx: FD[0] + 3.5, fd: FD[1] + 3.5 };
+  S.gates[s > 0 ? 1 : 2] = 0; save();
+  CB.say('🏘 도시 옆에 마을이 생겼어요!');
+}
 function gatePlan(C, G, i) { // 🏰 성문 밖 길: 땅 높이까지 한 칸씩 이어서 성벽 · 절벽에 막히지 않게 (언덕은 깎고 물 위는 다리) · 땅이 아직 안 불러와졌으면 null
-  const L = [], ROAD = BLK('도로', '돌'), DIRT = BLK('흙'), [ax, az, from] = [[1, 0, TOWN_X], [0, 1, TOWN_Z], [0, -1, TOWN_Z]][i];
+  const L = [], ROAD = BLK('도로', '돌'), DIRT = BLK('흙'), [ax, az, from0] = [[1, 0, TOWN_X], [0, 1, TOWN_Z], [0, -1, TOWN_Z]][i], from = from0 + (az && S.village && S.village.s === az ? VIL_D : 0);
   for (let k = 1; k <= 24; k++) if (!CB.loaded(C.x + ax * (from + k), C.z + az * (from + k))) return null;
   {
     let cur = G - 1;
@@ -888,8 +959,9 @@ function buildTown(C, G) {
     if (!soft.has(CB.getBlock(C.x + dx, y, C.z + dz))) break;
     L.push([C.x + dx, y, C.z + dz, DIRT]);
   }
-  L.push(...wallPlan(C, G), ...campPlan(C, G));
+  L.push(...wallPlan(C, G), ...campPlan(C, G), ...foodPlan(C, G));
   CB.setBlocks(L);
+  cityFoodDone(C, G);
   const again =!!(S.town && S.town.x === C.x && S.town.z === C.z);
   buildHouses(C, G);
   S.town = { x: C.x, y: G, z: C.z }; S.townV = TOWN_V;
@@ -910,12 +982,14 @@ function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾�
       for (let x = S.town.x - TOWN_X; x <= S.town.x + TOWN_X + 15; x += 16) for (let z = S.town.z - TOWN_Z; z <= S.town.z + TOWN_Z + 15; z += 16) if (!CB.loaded(Math.min(x, S.town.x + TOWN_X), Math.min(z, S.town.z + TOWN_Z))) return;
       const L = S.townV < 4 ? wallPlan(S.town, S.town.y) : [];
       if (S.townV === 2) for (let dz = -2; dz <= 2; dz++) L.push([S.town.x - 22, S.town.y - 1, S.town.z + dz, T_DESERT]);
-      L.push(...campPlan(S.town, S.town.y));
-      CB.setBlocks(L); S.townV = TOWN_V; save();
-      CB.say('🏙 도시에 입대소 · 점프 시험장이 생겼어요');
+      if (S.townV < 5) L.push(...campPlan(S.town, S.town.y));
+      L.push(...foodPlan(S.town, S.town.y));
+      CB.setBlocks(L); cityFoodDone(S.town, S.town.y); S.townV = TOWN_V; save();
+      CB.say('🏙 도시에 새 건물이 생겼어요 (음식점 등)');
       return;
     }
-    for (let i = 0; i < 3; i++) if (!S.gates[i] && S.townV === TOWN_V) { // 성문 밖 길: 그쪽 땅이 불러와지면 지음
+    if (!S.village && S.townV === TOWN_V) { const s = villageSite(S.town); if (s != null) buildVillage(S.town, S.town.y, s); }
+    for (let i = 0; i < 3; i++) if (!S.gates[i] && S.townV === TOWN_V && (i === 0 || S.village)) { // 성문 밖 길: 그쪽 땅이 불러와지면 지음
       const L = gatePlan(S.town, S.town.y, i);
       if (L) { CB.setBlocks(L); S.gates[i] = 1; save(); }
     }
@@ -969,6 +1043,7 @@ CB.command('도시', '/도시 — 🏙 도시 · 🚓 경찰서 · 🪖 군부�
   const f = (dx, dz) => `${T.x + dx}, ${T.y}, ${T.z + dz}`;
   c.say(`🏙 도시 한가운데: ${f(0, 0)}`);
   c.say(`🚓 경찰서: ${f(28, 7)} (도시 동쪽) · 🪖 군부대: ${f(-34, 0)} (도시 서쪽)`);
+  c.say(`🍳 음식점: ${f(41, 8)} (도시 동쪽)${S.village ? ` · 🏘 마을: ${f(0, S.village.s * (TOWN_Z + VIL_D / 2))} (${S.village.s > 0 ? '북문' : '남문'} 밖)` : ''}`);
   c.say(`🪖 입대 상담원: ${f(-20, 11)} (입대소 · 군부대 정문 옆 건물) · 🚓 경찰 상담원: ${f(25, 10)} (경찰서 접수대 뒤)`);
   c.say('🏕 /기지 로 우리 팀 기지(경찰서 · 군부대)로 갈 수 있어요');
 }, { everyone: true });
