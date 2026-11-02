@@ -20,6 +20,7 @@ async function isAdminToken(token) {
 }
 const CHUNK = 32000;      // 저장소 한 칸에 넣는 글자 수
 const SEND_CHUNK = 250000; // 저장된 세계를 보낼 때 한 번에 보내는 글자 수
+const HOST_ANSWER_MS = 20000; // 친구가 말을 걸었는데 방장이 이만큼 답이 없으면 방장을 내보냄
 const cors = { 'access-control-allow-origin': '*', 'content-type': 'application/json; charset=utf-8' };
 
 export class Room {
@@ -36,7 +37,9 @@ export class Room {
     this.up = null;   // 올라오는 중인 세계 조각
     this.grace = null; // 방장이 끊긴 뒤 기다리는 중 (그동안 같은 방장만 tok 으로 다시 붙을 수 있음)
     this.hostTok = '';
-    this.ready = state.blockConcurrencyWhile(async () => { this.meta = (await state.storage.get('meta')) || null; if (this.meta) this.pub = this.meta.pub; });
+    this.answered = new Set(); // 방장이 답한 적 있는 친구 번호
+    this.dropHost = null;
+    this.ready =state.blockConcurrencyWhile(async () => { this.meta = (await state.storage.get('meta')) || null; if (this.meta) this.pub = this.meta.pub; });
   }
   lobby(del) { // 로비에 이 방을 올리거나 내림
     if (!this.code) return;
@@ -149,7 +152,8 @@ export class Room {
           }
           const i = ev.data.indexOf('|');
           if (i < 0) { if (this.pub && Date.now() - this.lobbyT > 60000) this.lobby(); return; } // 핑 · 1분마다 로비에 살아 있다고 알림
-          const g = this.guests.get(ev.data.slice(0, i));
+          const gid = ev.data.slice(0, i), g = this.guests.get(gid);
+          this.answered.add(gid);
           if (g) try { g.send(ev.data.slice(i + 1)); } catch (e) {}
         });
         const bye = () => {
@@ -173,6 +177,8 @@ export class Room {
         };
         ws.addEventListener('close', bye);
         ws.addEventListener('error', bye);
+        // 👻 유령 방장 내보내기: 연결만 살아 있고 답을 안 하면 (세계를 못 열었거나 탭이 멈춤) 방이 묶이지 않게 끊음
+        this.dropHost = () => { bye(); try { ws.close(4002, 'no answer'); } catch (e) {} };
       }
     } else {
       const persist = !!(this.meta && this.meta.persist);
@@ -185,11 +191,16 @@ export class Room {
         try { this.host.send(id + '|{"t":"_join"}'); } catch (e) {}
         ws.send(JSON.stringify({ t: '_ok', persist: persist ? 1 : 0 }));
         if (this.pub) this.lobby();
+        let askT = null;
         ws.addEventListener('message', (ev) => {
           if (typeof ev.data !== 'string' || ev.data === 'p') return; // 핑
-          if (this.host) try { this.host.send(id + '|' + ev.data); } catch (e) {}
+          if (!this.host) return;
+          try { this.host.send(id + '|' + ev.data); } catch (e) {}
+          if (askT === null) { const h = this.host; askT = setTimeout(() => { if (this.host === h && this.guests.has(id) && !this.answered.has(id) && this.dropHost) this.dropHost(); }, HOST_ANSWER_MS); }
         });
         const left = () => {
+          if (askT !== null) clearTimeout(askT);
+          this.answered.delete(id);
           if (!this.guests.delete(id)) return;
           if (this.host) try { this.host.send(id + '|{"t":"_leave"}'); } catch (e) {}
           if (this.pub) this.lobby();
