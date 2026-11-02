@@ -330,7 +330,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.203 — 🪖 전역 · 무단탈영선</h4>
+    <h4>🆕 v26.204 — 🪖 /집 가기도 무단탈영</h4>
+    <ul><li>군대 팀이 군부대 안에서 /집 가기로 빠져나가도 <b>무단탈영</b> (지명수배 ★★★ · 🏴 무법자)</li></ul>
+    <h4>v26.203 — 🪖 전역 · 무단탈영선</h4>
     <ul><li>군대 팀에서 /조직 탈퇴 = <b>전역</b> (시민이 되고 수배 없음)</li><li><b>무단탈영</b>: 군부대와 도시를 잇는 정문에 <b>빨간 선</b>이 생겼어요 · 군대 팀이 걸어서 군부대 밖으로 나가면 지명수배 ★★★ · 🏴 무법자 (선에 가까이 가면 경고)</li></ul>
     <h4>v26.202 — 👮 팀 복장 · 🚨 지명수배 3등급</h4>
     <ul><li>👮 팀은 <b>복장</b>과 머리 위 <b>닉네임 색</b>으로 알아봐요: 경찰 (남색 제복 · 경찰모 · 금배지) · 군사 (국방색 · 철모) · 군사경찰 (검은 철모) · 장교 (장교모) · 교육부 · 사령부 (베레모) · 총사령부 (정복) · 🏴 무법자 (빨간 복면) · ⛓ 죄수 (주황 죄수복)</li><li>머리 위: <b>닉네임</b> → <b>계급</b> → 그 밑에 <b>지명수배</b></li><li>🚨 지명수배는 최대 3등급: <b>수갑대상</b> (경범죄: 욕설 · 폭행 · 도둑질 → 벌금 10) · <b>지명수배 ★★</b> (중범죄: 경찰 폭행 · 불법 무기 소지 → 징역 15분) · <b>지명수배 ★★★</b> (무단사살 · 대학살 · 무단탈영 · 무기로 협박 → 징역 30분)</li><li>🪖 무단탈영: 군대 팀에서 스스로 나가면 · 🔫 무기로 협박: 총으로 사람을 2초 넘게 겨누면 (수배자 · 무법자는 빼고)</li><li>🎵 수배 음악은 가장 긴장되는 곡 하나로 통일</li><li>🧩 모드 기능: CB.outfit (복장) · CB.tag 둘째 · 셋째 줄 · CB.aimAt (총으로 겨눈 사람)</li></ul>
@@ -2116,7 +2118,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.203 — 🪖 Discharge · desertion line</h4>
+    <h4>🆕 v26.204 — 🪖 /집 가기 counts as desertion</h4>
+    <ul><li>Army members who use /집 가기 from inside the base now count as <b>deserters</b> (★★★ · 🏴 outlaw)</li></ul>
+    <h4>v26.203 — 🪖 Discharge · desertion line</h4>
     <ul><li>/조직 탈퇴 from an army team is now a <b>discharge</b> (back to citizen, not wanted)</li><li><b>Desertion</b>: the base gate facing the city has a <b>red line</b> · army members who walk out of the base get ★★★ and become 🏴 outlaws (with a warning near the line)</li></ul>
     <h4>v26.202 — 👮 Team uniforms · 🚨 3 wanted levels</h4>
     <ul><li>👮 Teams are recognized by <b>uniform</b> and <b>nametag color</b> (police cap and badge, army helmet, berets, outlaw red mask, orange prison suit…)</li><li>Nametag: <b>name</b> → <b>rank</b> → <b>wanted</b> underneath</li><li>🚨 Wanted now has 3 levels: <b>수갑대상</b> (misdemeanor → fine 10) · <b>★★</b> (felony → 15 min jail) · <b>★★★</b> (unlawful killing, massacre, desertion, threatening with a weapon → 30 min jail)</li><li>🪖 Desertion: leaving an army team yourself · 🔫 Threat: aiming a gun at someone for 2+ seconds</li><li>🎵 One wanted music track (the most intense one)</li><li>🧩 Mod API: CB.outfit · multi-line CB.tag · CB.aimAt</li></ul>
