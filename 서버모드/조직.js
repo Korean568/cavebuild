@@ -8,7 +8,8 @@
 // 🕶 불법 거래 상인 (NPC): 시민한테만 동전으로 무기를 팔아요 (/상인 · /상인 설정)
 // 🏙 모드를 깔면 부활 자리 근처 빈 땅에 도시 · 🚓 경찰서 · 🪖 군부대가 저절로 생겨요 (/도시 · OP는 /도시 짓기)
 // 🪖 전역: 군대 팀에서 /조직 탈퇴 · 무단탈영: 군부대 정문의 빨간 선을 넘어 걸어 나가거나 군부대 안에서 /집 가기 (★★★ · 무법자)
-// 🪪 외출: 장교(CMO) 이상이 /외출 @닉 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · /외출 취소 @닉
+// 🪪 외출: 장교(CMO) 이상이 /외출 @닉 [분] 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · 시간을 넘기면 무단탈영 · /외출 취소 @닉
+// 🏰 도시 둘레에 성벽 (동 · 남 · 북 성문)
 // 명령어 (누구나):  /조직 (내 팀) · /조직 목록 · /조직 탈퇴 (시민으로 · 군대는 전역) · /기지 · /장비 · /상인
 // 명령어 (장교(CMO) 이상 · OP): /team 팀 @닉 (순서 상관없음, = /조직 배정) · /진급 @닉 · /강등 @닉 · /조직 추방 @닉 (시민으로) · /석방 @닉
 // 명령어 (장교(CMO) 이상 · OP): /기지 설정 · /집합 (내 계급 이하 모두) · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
@@ -168,6 +169,12 @@ function askFine(nick, n, why) {
   CB.say(`💸 ${nick} 님 벌금 ${n} 케이브코인 (${why})`);
 }
 function payMine(v) { CB.payFine(v.n, v.why).then((r) => req(r && r.ok ? 'paid' : 'unpaid')).catch(() => req('unpaid')); }
+function desert(nick, why) { // 🪖 무단탈영: ★★★ · 무법자
+  setTeam(nick, OUTLAW); save();
+  CB.say(`🏴 ${nick} 님이 ${why}로 무법자가 됐어요!`);
+  crime(nick, 3, why);
+}
+const mmss = (s) => `${Math.floor(s / 60)}분 ${s % 60}초`;
 // 👮 체포 (수갑): 수갑대상 → 벌금 10 (못 내면 징역 10분) · ★★ → 징역 15분 · ★★★ → 징역 30분 · 수배 없는 무법자는 징역 10분
 function arrest(who, by) {
   const W = S.w[who], lv = W ? Math.min(WMAX, W.lv) : 0, why = `${W ? GRADE[lv] : '무법자'} · ${by} 체포`;
@@ -348,9 +355,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
         if (!S.leave[from].out) { S.leave[from].out = true; save(); tell(from, '🪪 외출 허가로 군부대를 나왔어요 · 군부대로 돌아오면 외출이 끝나요'); }
         return;
       }
-      setTeam(from, OUTLAW); save();
-      CB.say(`🏴 ${from} 님이 군부대를 무단으로 벗어나 무법자가 됐어요!`);
-      return crime(from, 3, `무단탈영 (${tagOf(Fo)})`);
+      return desert(from, `무단탈영 (${tagOf(Fo)})`);
     }
     case 'pass': case 'pass-cancel': { // 🪪 외출 허가 · 취소: 장교(CMO) 이상이 나보다 아래 계급에게 (OP는 누구나)
       if (!off) return tell(from, '외출 허가는 장교(CMO) 이상이나 OP만 할 수 있어요');
@@ -359,11 +364,18 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!fromOp && lvOf(from) <= lvOf(who)) return tell(from, '나보다 아래 계급만 허가하거나 취소할 수 있어요');
       if (op === 'pass') {
         if (S.leave[who]) return tell(from, `${who} 님은 이미 외출 허가가 있어요`);
-        S.leave[who] = { by: from, out: false }; save();
-        tell(who, `🪪 ${from} 님이 외출을 허가했어요 · 군부대를 나가도 돼요`);
-        return CB.say(`🪪 ${from} 님이 ${who} 님의 외출을 허가했어요`);
+        const min = Math.max(1, Math.min(60, Math.floor(+a.min) || 10));
+        S.leave[who] = { by: from, out: false, sec: min * 60 }; save();
+        tell(who, `🪪 ${from} 님이 외출을 ${min}분 허가했어요 · 시간 안에 돌아오지 않으면 무단탈영이에요`);
+        return CB.say(`🪪 ${from} 님이 ${who} 님의 외출을 ${min}분 허가했어요`);
       }
-      if (!S.leave[who]) return tell(from, `${who} 님은 외출 허가가 없어요`);
+      const P = S.leave[who];
+      if (!P) return tell(from, `${who} 님은 외출 허가가 없어요`);
+      if (P.out) { // 이미 나가 있으면 바로 탈영으로 몰지 않고 1분 안에 복귀
+        P.sec = Math.min(P.sec == null ? 60 : P.sec, 60); save();
+        tell(who, `🪪 ${from} 님이 외출을 취소했어요 · 1분 안에 군부대로 돌아오세요`);
+        return CB.say(`🪪 ${from} 님이 ${who} 님에게 복귀 명령을 내렸어요 (1분)`);
+      }
       delete S.leave[who]; save();
       tell(who, `🪪 ${from} 님이 외출 허가를 취소했어요`);
       return CB.say(`🪪 ${from} 님이 ${who} 님의 외출 허가를 취소했어요`);
@@ -543,8 +555,24 @@ const T_LINE = CB.block({ id: 1910, key: 'town_line', name: '도로 선', paint:
 const T_TARGET = CB.block({ id: 1911, key: 'town_target', name: '과녁', paint: (u, v, x, y) => { const r = Math.hypot(x - 7.5, y - 7.5); return r < 2 ? [220, 30, 30] : r < 4 ? [240, 240, 240] : r < 6 ? [220, 30, 30] : [240, 240, 240]; } });
 const TOWN_X = 46, TOWN_Z = 24; // 동서 ±46칸 · 남북 ±24칸
 const LAD_W = 44, LAD_E = 45, LAD_N = 46, LAD_S = 47; // 🪜 사다리 블록 (붙은 벽: 서 · 동 · 북(-z) · 남(+z))
-const TOWN_V = 3; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2는 탈영선만 그음
+const TOWN_V = 4; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2 · 3은 탈영선 · 성벽만 더함
 const T_DESERT = CB.block({ id: 1914, key: 'town_desert', name: '탈영선', paint: (u, v, x, y) => (((x + y) >> 2) % 2 ? [235, 225, 60] : [205, 30, 30]) });
+function wallPlan(C, G) { // 🏰 성벽: 도시 · 경찰서 · 군부대 둘레 (높이 7칸 · 톱니 · 모서리 탑 · 동 · 남 · 북 성문 · 올라가는 사다리)
+  const L = [], BR = BLK('돌벽돌'), LAMPB = BLK('등불'), put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + z, id]);
+  const gate = (x, z) => (x === TOWN_X && Math.abs(z) <= 2) || (Math.abs(z) === TOWN_Z && Math.abs(x) <= 2);
+  for (let x = -TOWN_X; x <= TOWN_X; x++) for (let z = -TOWN_Z; z <= TOWN_Z; z++) {
+    if (Math.abs(x) !== TOWN_X && Math.abs(z) !== TOWN_Z) continue;
+    for (let y = 0; y <= 6; y++) put(x, y, z, gate(x, z) && y <= 4 ? 0 : BR);
+    if ((x + z) % 2 === 0) put(x, 7, z, BR);
+  }
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { // 모서리 탑
+    for (let i = 0; i <= 2; i++) for (let j = 0; j <= 2; j++) for (let y = 0; y <= 9; y++) put(sx * (TOWN_X - i), y, sz * (TOWN_Z - j), BR);
+    put(sx * (TOWN_X - 1), 10, sz * (TOWN_Z - 1), LAMPB);
+  }
+  for (const [x, z] of [[TOWN_X, -3], [TOWN_X, 3], [-3, TOWN_Z], [3, TOWN_Z], [-3, -TOWN_Z], [3, -TOWN_Z]]) put(x, 8, z, LAMPB); // 성문 등불
+  for (let y = 0; y <= 6; y++) { put(TOWN_X - 1, y, 4, LAD_E); put(4, y, TOWN_Z - 1, LAD_S); put(4, y, 1 - TOWN_Z, LAD_N); } // 🪜 성벽 위로
+  return L;
+}
 function townPlan(C, G) {
   const W = new Map(), AIR = 0;
   const GRASS = BLK('잔디 블록'), ROAD = BLK('도로', '돌'), GLASS = BLK('유리'), WIN = BLK('빛나는 창', '유리'), BRICK = BLK('돌벽돌'), PLANK = BLK('판자');
@@ -710,8 +738,9 @@ function buildTown(C, G) {
     if (!soft.has(CB.getBlock(C.x + dx, y, C.z + dz))) break;
     L.push([C.x + dx, y, C.z + dz, DIRT]);
   }
+  L.push(...wallPlan(C, G));
   CB.setBlocks(L);
-  const again = !!(S.town && S.town.x === C.x && S.town.z === C.z);
+  const again =!!(S.town && S.town.x === C.x && S.town.z === C.z);
   buildHouses(C, G);
   S.town = { x: C.x, y: G, z: C.z }; S.townV = TOWN_V;
   CB.setSpawn(C.x + 0.5, G + 0.1, C.z + 0.5); // 🏙 스폰 = 도시 한가운데
@@ -727,10 +756,13 @@ let townT = 0;
 function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음 (예전에 지은 도시에 집이 없으면 집만)
   if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
   if (S.town) {
-    if (S.townV === 2) { // v2 도시 → 정문에 탈영선만 긋기 (플레이어가 지은 건 그대로)
-      if (!CB.loaded(S.town.x - 22, S.town.z - 2) || !CB.loaded(S.town.x - 22, S.town.z + 2)) return;
-      const L = []; for (let dz = -2; dz <= 2; dz++) L.push([S.town.x - 22, S.town.y - 1, S.town.z + dz, T_DESERT]);
-      CB.setBlocks(L); S.townV = TOWN_V; save(); return;
+    if (S.townV === 2 || S.townV === 3) { // v2 · v3 도시 → 탈영선 · 성벽만 더하기 (안쪽에 지은 건 그대로 · 땅이 다 불러와지면)
+      for (let x = S.town.x - TOWN_X; x <= S.town.x + TOWN_X + 15; x += 16) for (let z = S.town.z - TOWN_Z; z <= S.town.z + TOWN_Z + 15; z += 16) if (!CB.loaded(Math.min(x, S.town.x + TOWN_X), Math.min(z, S.town.z + TOWN_Z))) return;
+      const L = wallPlan(S.town, S.town.y);
+      if (S.townV === 2) for (let dz = -2; dz <= 2; dz++) L.push([S.town.x - 22, S.town.y - 1, S.town.z + dz, T_DESERT]);
+      CB.setBlocks(L); S.townV = TOWN_V; save();
+      CB.say('🏰 도시 둘레에 성벽이 생겼어요 (동 · 남 · 북 성문)');
+      return;
     }
     if (S.townV !== TOWN_V) { buildTown({ x: S.town.x, z: S.town.z }, S.town.y); return; } // 예전 도시 → 같은 자리에 새로 (땅이 다 불러와지면)
     if (!S.houses && CB.loaded(S.town.x - 17, S.town.z - 23) && CB.loaded(S.town.x + 17, S.town.z + 23) && CB.loaded(S.town.x - 17, S.town.z + 23) && CB.loaded(S.town.x + 17, S.town.z - 23)) buildHouses({ x: S.town.x, z: S.town.z }, S.town.y);
@@ -803,12 +835,12 @@ CB.command('집', `/집 — 🏠 집 목록 · /집 사기 [번호] (동전 ${HO
   for (const h of L) c.say(`🏠 ${h.n}번 집 (${h.x1}, ${h.z1}) · ${h.owner ? '주인: ' + h.owner : `매물 · 동전 ${HOUSE_PRICE}개`}`);
   c.say(mine0 ? `내 집: ${mine0.n}번 · /집 가기` : '집 앞에서 /집 사기 (또는 /집 사기 번호) · 문 위 초록 표시가 매물이에요');
 }, { everyone: true });
-CB.command('외출', '/외출 — 외출 허가 목록 · /외출 @닉 (허가) · /외출 취소 @닉 (장교(CMO) 이상 · 나보다 아래 계급 · OP)', (a, c) => {
+CB.command('외출', '/외출 — 외출 허가 목록 · /외출 @닉 [분] (허가 · 기본 10분 · 최대 60분) · /외출 취소 @닉 (장교(CMO) 이상 · 나보다 아래 계급 · OP)', (a, c) => {
   if (a[0] === '취소') return req('pass-cancel', { who: a[1] });
-  if (a[0]) return req('pass', { who: a[0] });
+  if (a[0]) return req('pass', { who: a[0], min: a[1] });
   const L = Object.entries(S.leave);
   if (!L.length) return c.say('🪪 지금 외출 허가를 받은 사람이 없어요 · 장교(CMO) 이상이 /외출 @닉 으로 허가해요');
-  for (const [n, v] of L) c.say(`🪪 ${n} · ${v.out ? '외출 중' : '허가됨'} (${v.by})`);
+  for (const [n, v] of L) c.say(`🪪 ${n} · ${v.out ? '외출 중' : '허가됨'} · 남은 시간 ${mmss(v.sec || 0)} (${v.by})`);
 }, { everyone: true });
 CB.command('장비','/장비 — 내 팀 기본 장비 중 없는 것 다시 받기 (5분에 한 번)', () => req('rekit'), { everyone: true });
 CB.command('상인', '/상인 — 🕶 불법 거래 상인 위치 · /상인 설정 (지금 자리로 · OP)', (a, c) => {
@@ -868,7 +900,7 @@ CB.command('석방', '/석방 @닉 (장교(CMO) 이상 · OP)', (a) => req('rele
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
-let inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
+let saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
   const T = S.train, x = mine();
@@ -888,6 +920,15 @@ CB.onTick((dt) => {
     const on = CB.players();
     let ch = false;
     for (const n of Object.keys(S.jail)) if (on.includes(n)) { S.jail[n]--; ch = true; if (S.jail[n] <= 0) { delete S.jail[n]; CB.say(`🔓 ${n} 님 형기를 마치고 석방됐어요`); } }
+    let lch = false; // 🪪 외출 시간: 접속해 있는 동안만 줄어듦 · 나가 있는데 시간이 끝나면 무단탈영
+    for (const n of Object.keys(S.leave)) if (on.includes(n)) {
+      const v = S.leave[n]; v.sec = (v.sec == null ? 600 : v.sec) - 1; lch = true;
+      if (v.sec === 60 && v.out) tell(n, '⏰ 외출 시간이 1분 남았어요 · 군부대로 돌아오세요');
+      if (v.sec > 0) continue;
+      delete S.leave[n]; save();
+      if (v.out && ARMY.includes(teamOf(n)) && !CB.opOf(n)) desert(n, '무단탈영 (외출 시간 초과)'); else tell(n, '🪪 외출 허가 시간이 끝났어요');
+    }
+    if (lch && ++saveLeaveT >= 5) { saveLeaveT = 0; save(); }
     if (ch && (++saveJailT >= 5 || !Object.keys(S.jail).length)) { saveJailT = 0; save(); }
   }
   // 머리 위: 닉네임 (팀 색) → 계급 → 🚨 지명수배 / ⛓ 수감 · 몸에는 팀 복장
@@ -944,7 +985,7 @@ CB.onTick((dt) => {
     if (O.lv > 0) for (const mo in S.mission) if (ORGS[mo] && ORGS[mo].lv >= O.lv) h += `<br>📋 임무 (${esc(mo)}): ${esc(S.mission[mo])}`;
     if (S.train && inTrain(me(), S.train) && Date.now() < S.train.until) h += `<br>🎯 훈련(${S.train.kind}) ${Math.ceil((S.train.until - Date.now()) / 1000)}초` + (S.train.kind === '체력' ? ` · ${Math.min(200, ranD | 0)}/200칸` : '');
   }
-  if (S.leave[me()] && ARMY.includes(y.o)) h += `${h ? '<br>' : ''}🪪 외출 ${S.leave[me()].out ? '중' : '허가됨'} (${esc(S.leave[me()].by)})`;
+  if (S.leave[me()] && ARMY.includes(y.o)) h += `${h ? '<br>' : ''}🪪 외출 ${S.leave[me()].out ? '중' : '허가됨'} · 남은 시간 ${mmss(S.leave[me()].sec || 0)} (${esc(S.leave[me()].by)})`;
   if (W) h += `${h ? '<br>' : ''}<span style="color:#ff5a5a">🚨 <b>${stars(W.lv)}</b> · ${GRADE[Math.min(WMAX, W.lv)]} (${esc(W.why)})</span>`;
   if (J > 0) h += `${h ? '<br>' : ''}⛓ <b>수감 중</b> · ${Math.floor(J / 60)}분 ${J % 60}초 남음`;
   CB.hud('org', h || null);

@@ -125,7 +125,7 @@ export class Room {
           this.pub = null;
           if (q('pub') === '1') this.pub = { name: q('name').slice(0, 30), nick: q('nick').slice(0, 16), mode: q('mode').slice(0, 20), kind: KINDS.includes(q('kind')) ? q('kind') : 'survival' };
           if (q('persist') === '1' && this.pub && q('key').length >= 16) { this.meta = { persist: true, key: q('key').slice(0, 64), pub: this.pub, wn: 0, t: Date.now() }; await this.saveMeta(); }
-        } else if (q('nick')) { this.pub = { ...this.meta.pub, nick: q('nick').slice(0, 16) }; } // 지금 방장 이름으로 목록에 보임
+        } else if (this.meta.pub) { this.pub = this.meta.pub; } // 목록의 방장은 서버를 만든 사람 그대로 (세계를 돌리는 사람이 바뀌어도)
         const P = !!(this.meta && this.meta.persist);
         ws.send(JSON.stringify({ t: '_ok', persist: P ? 1 : 0, pub: this.pub, saved: P ? (this.meta.wn || 0) : 0, tok: this.hostTok, back: back ? 1 : 0, guests: [...this.guests.keys()] }));
         if (q('resume') === '1' && q('local') !== '1') await this.sendWorld(ws);
@@ -142,7 +142,7 @@ export class Room {
             return;
           }
           if (ev.data.startsWith('!pub')) { // 공개 · 비공개 바꾸기
-            try { const o = JSON.parse(ev.data.slice(4)), keep = this.pub || (this.meta && this.meta.pub) || {}; this.pub = o && o.on ? { name: String(o.name || '').slice(0, 30), nick: String(o.nick || '').slice(0, 16), mode: String(o.mode || '').slice(0, 20), kind: keep.kind || 'survival', ...(keep.off ? { off: 1 } : {}) } : null; } catch (e) {}
+            try { const o = JSON.parse(ev.data.slice(4)), keep = this.pub || (this.meta && this.meta.pub) || {}; this.pub = o && o.on ? { name: String(o.name || '').slice(0, 30), nick: String((this.meta && this.meta.persist && keep.nick && !o.own ? keep.nick : o.nick) || '').slice(0, 16), mode: String(o.mode || '').slice(0, 20), kind: keep.kind || 'survival', ...(keep.off ? { off: 1 } : {}) } : null; } catch (e) {}
             if (this.meta && this.meta.persist && this.pub) { this.meta.pub = this.pub; await this.saveMeta(); }
             this.lobby();
             return;
