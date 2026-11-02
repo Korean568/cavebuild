@@ -328,7 +328,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.206 — ⏰ 외출 복귀 시간 · 🏰 성벽 · 🎁 /give @닉 · 🔑 방장 표시</h4>
+    <h4>🆕 v26.207 — 🪖 입대 상담 · 📝 진급 시험 · 🏴 무법자 규칙 · 🎮 /모드이름 @닉</h4>
+    <ul><li>🪖 시민은 <b>입대소 · 경찰서의 상담원</b>에게 우클릭 → 「입대하시겠어요?」에 <b>네</b> 해야 군사 · 경찰이 돼요</li><li>📝 군대 진급은 <b>/시험 사격 · /시험 점프</b>를 둘 다 통과해야 해요 (군부대 안)</li><li>🏴 무법자 팀은 자동으로 <b>지명수배 ★★★</b> · 시민이 입대 없이 군부대에 들어가면 무법자 · 경찰 · 군대는 무법자가 안 되고 지명수배만</li><li>🏴 불법 거래 상인은 무법자 팀이라 경찰 · 군인을 보면 도망가요</li><li>🏰 성문 밖 길을 땅까지 이어서 성벽에 막히지 않아요</li><li>🎮 <b>/서바이벌 · /크리에이티브 · /관전 [@닉]</b> — 그 사람만 게임 모드 바꾸기</li></ul>
+    <h4>v26.206 — ⏰ 외출 복귀 시간 · 🏰 성벽 · 🎁 /give @닉 · 🔑 방장 표시</h4>
     <ul><li>⏰ /외출 @닉 [분] (기본 10분 · 최대 60분) · 복귀 시간을 넘기면 <b>무단탈영</b> (접속해 있는 동안만 시간이 가요) · 외출 중에 /외출 취소 하면 1분 안에 복귀</li><li>🏰 도시 · 경찰서 · 군부대 둘레에 <b>성벽</b> (동 · 남 · 북 성문 · 모서리 탑 · 사다리)</li><li>🎁 <b>/give @닉 아이템 [개수]</b> — 나에게도, 다른 사람에게도</li><li>🔑 공개 서버의 방장은 언제나 <b>서버를 만든 사람</b>으로 표시돼요 (세계를 돌리는 사람이 바뀌어도 그대로)</li></ul>
     <h4>v26.205 — 🪪 /외출</h4>
     <ul><li>장교(CMO) 이상이 나보다 아래 계급에게 <b>/외출 @닉</b> 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출이 끝나요</li><li>/외출 (목록) · /외출 취소 @닉 · OP는 누구에게나 허가할 수 있어요</li></ul>
@@ -2120,7 +2122,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.206 — ⏰ Leave time limit · 🏰 city walls · 🎁 /give @nick · 🔑 host label</h4>
+    <h4>🆕 v26.207 — 🪖 Enlistment · 📝 promotion exams · 🏴 outlaw rules · 🎮 /mode @nick</h4>
+    <ul><li>🪖 Citizens join the army or police by talking to a <b>recruiter</b> and answering <b>Yes</b></li><li>📝 Army promotions need both <b>/시험 사격</b> and <b>/시험 점프</b></li><li>🏴 Outlaws are automatically ★★★ · citizens who enter the base unenlisted become outlaws · police and army only get wanted levels</li><li>🏴 The black-market dealer runs from police and soldiers</li><li>🏰 Roads now continue past the city gates</li><li>🎮 <b>/서바이벌 · /크리에이티브 · /관전 [@nick]</b> change one player's game mode</li></ul>
+    <h4>v26.206 — ⏰ Leave time limit · 🏰 city walls · 🎁 /give @nick · 🔑 host label</h4>
     <ul><li>⏰ /외출 @nick [minutes] (default 10, max 60) · returning late counts as <b>desertion</b> · the timer only runs while online</li><li>🏰 <b>City walls</b> around the town, with gates, corner towers and ladders</li><li>🎁 <b>/give @nick item [count]</b> works for yourself and others</li><li>🔑 A public server's host is always shown as the <b>player who created it</b></li></ul>
     <h4>v26.205 — 🪪 /외출 leave pass</h4>
     <ul><li>Officers (CMO+) can give lower ranks a leave pass with <b>/외출 @nick</b> · leaving the base with a pass isn't desertion · the pass ends when they return</li><li>/외출 (list) · /외출 취소 @nick · OPs can give a pass to anyone</li></ul>
@@ -7065,7 +7069,7 @@ function gunShot(rifle,snip){const s=held();if(!s||!isGun(s)||player.dead||playe
   const R=snip?220:100,o=camera.position.clone(),hit=raycast(o,d,R);let L=hit?hit.dist:R,best=null;
   for(const m of mpWithDummies(mobs)){if(m.dead)continue;const hw=m.w/2;const t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){L=t;best=m;}} // 🔫 멀티에선 다른 플레이어도 맞힘
   if(best){const hy=o.y+d.y*L,head=hy>best.pos.y+best.h*.72,dmg=(snip?24:rifle?6:9)*(head?2:1);best.byPlayer=performance.now();best.hurt(dmg,d.x*.4,d.z*.4);if(head){SFX.crit();toast('🎯 헤드샷!');}}
-  else if(hit)spawnParticles(o.x+d.x*L,o.y+d.y*L,o.z+d.z*L,new THREE.Color(0xc8b090),6,.15,3);
+  else if(hit){modEmit('shot',hit.x,hit.y,hit.z,hit.id);spawnParticles(o.x+d.x*L,o.y+d.y*L,o.z+d.z*L,new THREE.Color(0xc8b090),6,.15,3);} // 🧩 모드 이벤트: 'shot'(x,y,z,블록) 총알이 블록에 맞음
   flashBeam(o.clone().add(new THREE.Vector3(0,-.18,0)).addScaledVector(d,.7),o.clone().addScaledVector(d,L),0xffe08a,.04,.07);
   spawnParticles(o.x+d.x*.9,o.y-.15+d.y*.9,o.z+d.z*.9,new THREE.Color(0xffc040),4,.08,2);
   if(snip){if(playSnd('rifle',1,.55))tone(60,30,.5,.3,'sine');else SFX.gun();}else if(rifle){if(!playSnd('rifle',.6))SFX.gun();}else if(playSnd('rifle',.85,.74+Math.random()*.04))tone(90,40,.25,.25,'sine');else SFX.revolver();gunKick=1;player.pitch=Math.min(1.5,player.pitch+(snip?.06:rifle?.012:.03));shake(snip?.12:.05,snip?.15:.08);}
@@ -8084,6 +8088,7 @@ function useItem(){
   if(s&&s.id===CAPE){toast('👕 망토는 타이틀 화면의 <b>탈의실</b>에서 입을 수 있어요');return;}
   if(player.veh&&player.veh.btn){vehBoost(player.veh);return;} // 탄 채로 우클릭 = 버튼
   if(s&&s.id===EGG&&mobTarget&&mobTarget.kind==='cluck'&&!mobTarget.dead){s.count--;if(!s.count)inv[sel]=null;invChanged();swing=1;njEggVideo(mobTarget);return;} // 새에게 알을 주면 영상 → 끝나면 근육질로 변해 덤빔 (원래 게임 · 뇌절모드 모두)
+  if(mobTarget&&mobTarget.def.talk&&!mobTarget.dead){try{mobTarget.def.talk(mobTarget);}catch(e){console.warn(e);}return;}
   if(mobTarget&&(mobTarget.kind==='villager'||mobTarget.def.trades)&&!mobTarget.dead){if(mobTarget.def.trades&&mobTarget.def.canTrade&&!mobTarget.def.canTrade()){toast('🚫 '+mpEsc(mobTarget.def.name)+': '+(mobTarget.def.noTrade||'거래할 수 없어요'));return;}openTrade(mobTarget);return;}
   if(s&&s.id===NET&&mobTarget&&mobTarget.kind==='squid'&&!mobTarget.dead){ // 그물로 오징어를 산 채로 잡음
     const m=mobTarget;spawnParticles(m.pos.x,m.pos.y+.4,m.pos.z,new THREE.Color(0xcfeeff),12,.4,3);m.remove();
@@ -8784,7 +8789,7 @@ const isCreative=()=>world.mode==='creative',isHardcore=()=>world.diff==='hardco
 const DIFF_MUL={safe:.5,easy:.5,normal:1,hard:1.5,hardcore:1.5}; // 몹에게 맞는 피해 배율
 function setDiff(d){world.diff=d;if(d==='safe'){player.hp=20;player.food=20;for(const o of [...mobs])if(o.def.hostile&&!o.def.boss)o.remove();}lastStats='';renderStats();updModeBtn();} // 난이도 바꾸기
 function setMode(m){if(SPEEDRUN&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('⏱ 스피드런에서는 크리에이티브 · 관전 모드를 쓸 수 없어요');return;}
-  if(MULTI&&!cmdIsAdmin()&&!(m==='creative'&&world.flags&&world.flags.kind==='build')&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('🌐 공개 서버(멀티)는 <b>서바이벌</b>만 돼요 (공정한 규칙)');return;} // 하드코어로 쓰러진 뒤 관전은 그대로
+  if(MULTI&&!MP.gmOk&&!cmdIsAdmin()&&!(m==='creative'&&world.flags&&world.flags.kind==='build')&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('🌐 공개 서버(멀티)는 <b>서바이벌</b>만 돼요 (공정한 규칙)');return;} // 하드코어로 쓰러진 뒤 관전은 그대로
   const was=world.mode;world.mode=m;player.flying=false;player.gliding=false;
   if(m==='creative'||m==='spectator'){player.hp=20;player.food=20;player.air=10;}
   if(m==='spectator'){if(player.boat){player.boat.passenger=null;player.boat=null;}if(invOpen)closeInv(true);}
@@ -8879,7 +8884,7 @@ function modMobDef(key,o){const col=o.color??0x6a8a5a,hd=o.head??0xd8a07c,sp=o.s
       else if(ai==='flee'&&c.dist<8){fleeFrom(m,c,sp*1.3,dt);}else wander(m,sp*.4,dt);if(!o.fly)autoJump(m);},
     anim:(m,dt,hs)=>{if(m.u.legs)legSwing(m.u.legs,m.walk,.6*Math.min(1,hs));if(o.anim)try{o.anim(m,dt);}catch(e){}},
     onDeath:o.onDeath?(m)=>{try{o.onDeath(m);}catch(e){}}:undefined,
-    trades:Array.isArray(o.trades)?o.trades.filter(t=>t&&t.give&&t.get&&(IT[t.get[0]]||BL[t.get[0]])):undefined,canTrade:typeof o.canTrade==='function'?()=>{try{return !!o.canTrade();}catch(e){return false;}}:undefined,noTrade:o.noTrade}; // 🧩 trades:[{give:[[번호,개수]],get:[번호,개수]}] 이면 우클릭으로 거래 · canTrade() 가 false 면 거절 (noTrade: 거절 말)
+    trades:Array.isArray(o.trades)?o.trades.filter(t=>t&&t.give&&t.get&&(IT[t.get[0]]||BL[t.get[0]])):undefined,canTrade:typeof o.canTrade==='function'?()=>{try{return !!o.canTrade();}catch(e){return false;}}:undefined,noTrade:o.noTrade,talk:typeof o.talk==='function'?o.talk:undefined}; // 🧩 talk(몹): 우클릭하면 대화 · trades:[{give:[[번호,개수]],get:[번호,개수]}] 이면 우클릭으로 거래 · canTrade() 가 false 면 거절 (noTrade: 거절 말)
 }
 const CB={version:'v26.164',
   on:(ev,f)=>{(MOD_EV[ev]||(MOD_EV[ev]=[])).push(f);}, // 🧩 이벤트: 'tick'(dt) · 'chat'(닉, 말) · 'join'(닉) · 'break'(x,y,z,블록) · 'place'(x,y,z,블록) · 'death'(이유) · 'kill'(몹)
@@ -8909,6 +8914,9 @@ const CB={version:'v26.164',
   owner:()=>(world.flags&&world.flags.owner)||(!MP.on||MP.host?(MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어')):(MP.hostNick||'')), // 🧩 서버를 만든 사람 (공개 서버) · 방장 (내 세계 방) · 혼자면 나
   has:id=>{id=typeof id==='string'?CB.id(id):id;return id?countItem(id):0;}, // 🧩 내 가방에 그 아이템이 몇 개 있는지
   take:(id,n)=>{id=typeof id==='string'?CB.id(id):id;n=Math.max(1,n|0||1);if(!id||countItem(id)<n)return false;removeItem(id,n);return true;}, // 🧩 내 가방에서 아이템 n개 가져가기 (모자라면 false · 안 가져감)
+  dialog:(html,btns)=>{evDlg(String(html),(btns&&btns.length?btns:[['닫기']]).map(([t,f])=>[String(t),f?()=>{try{f();}catch(e){console.warn(e);}}:null]));}, // 🧩 대화창: CB.dialog('말',[['네',함수],['아니요']])
+  playerPos:nick=>{if(!MP.on||nick===(MP.me&&MP.me.nick))return {x:player.pos.x,y:player.pos.y,z:player.pos.z};for(const P of MP.peers.values())if(P.nick===nick&&P.t&&!P.t.v&&P.t.d===world.dim)return {x:P.t.x,y:P.t.y,z:P.t.z};return null;}, // 🧩 같은 차원에 있는 플레이어 자리
+  mobTag:(m,txt,col)=>{if(!m||!m.g||m.modTag)return;txt=String(txt);MOD_TAGS[txt]={color:col||'#fff'};const s=new THREE.Sprite(new THREE.SpriteMaterial({map:mpTagTex(txt),depthTest:false,transparent:true}));mpTagFit(s);m.g.add(s);m.modTag=s;}, // 🧩 몹 머리 위 이름표
   guard:f=>{if(typeof f==='function')MOD_GUARD.push(f);}, // 🧩 부수기 · 놓기 막기: f('break'|'place',x,y,z,번호) 가 글자를 돌려주면 막고 그 글자를 보여 줌
   setRespawn:(x,y,z)=>{modRespawn=x==null?null:{x:+x,y:+y,z:+z};}, // 🧩 나만의 부활 자리 (null 이면 세계 스폰) · 세계 스폰은 그대로
   ground:(x,z)=>{const s=surfaceAt(Math.floor(x),Math.floor(z));return s?s.y:null;},spawnPos:()=>({...world.spawn}), // 🧩 그 자리 땅 높이 · 세계 부활 자리
@@ -9232,7 +9240,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object'||!MP.on)return;
   else if(d.t==='banreq'){if(mpConnOp(c))mpBanNick(d.n);}
   else if(d.t==='opreq'){if(c.P.nick==='운영자'||c.P.adm||mpConnBoss(c))mpSetOp(String(d.n||'').slice(0,16),!!d.on);} // 🔑 OP 주기 · 빼기는 방장(만든 사람) · 어드민만 (서버가 확인)
   else if(d.t==='cuff'||d.t==='tase'){d.by=c.P.nick;mpRoute(d);}
-  else if(d.t==='give'){if((!MULTI||c.P.adm||c.P.nick==='운영자')&&mpConnOp(c)){d.by=c.P.nick;mpRoute(d);}} // 🎁 /give @닉: OP만 (공개 서버는 어드민만 · 서버가 확인)
+  else if(d.t==='give'||d.t==='gmp'){if((!MULTI||c.P.adm||c.P.nick==='운영자')&&mpConnOp(c)){d.by=c.P.nick;mpRoute(d);}} // 🎁 /give @닉 · 🎮 /모드이름 @닉: OP만 (공개 서버는 어드민만 · 서버가 확인)
   else if(d.t==='mod'){d.n=c.P.nick;mpSend(d,c);modEmit('msg',d.k,d.v,d.n);}
   else if(d.t==='smods'){if(!mpConnOp(c)||!Array.isArray(d.mods))return;const L=d.mods.filter(m=>m&&typeof m.name==='string'&&(typeof m.code==='string'||typeof m.url==='string')).slice(0,40).map(m=>({name:m.name.slice(0,60),code:m.code||'',url:m.url||undefined,on:true}));
     modSave(L);mpSend({t:'c',n:'🧩 서버',m:c.P.nick+' 님(OP)이 서버 모드를 '+L.length+'개로 바꿨어요 · 방을 다시 열면 적용'});toast(mpL(`🧩 OP <b>${mpEsc(c.P.nick)}</b> 님이 서버 모드를 바꿨어요 — 새로고침 후 방을 다시 열면 적용돼요`,'🧩 An OP changed the server mods — reopen the room to apply'));}
@@ -9311,6 +9319,7 @@ function mpGuestRecv(d){
   else if(d.t==='cuff')cuffIn(d); // ⛓ 수갑
   else if(d.t==='tase')taseIn(d); // ⚡ 테이저건
   else if(d.t==='give')giveIn(d); // 🎁 /give @닉
+  else if(d.t==='gmp')gmIn(d); // 🎮 /모드이름 @닉
   else if(d.t==='mod')modEmit('msg',d.k,d.v,d.n); // 🧩 모드 신호
   else if(d.t==='bye'){MP.byeGot=true;mpEnd(mpL('방장이 방을 닫았어요','The host closed the room'));}}
 function mpState(){return {t:'st',inv,armor,dim:world.dim,p:{x:player.pos.x,y:player.pos.y,z:player.pos.z,yaw:player.yaw,pitch:player.pitch,hp:player.hp,food:player.food}};}
@@ -9413,7 +9422,9 @@ function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x
 function cuffHit(M){swing=1;tone(1800,1200,.06,.06,'square');tone(900,700,.08,.05,'square',.06);
   if(M.pvp){mpRoute({t:'cuff',to:M.id,by:MP.me.nick});toast(`⛓ <b>${mpEsc(M.def.name)}</b> 님에게 수갑을 채우거나 풀었어요`);return;}
   M.cuffT=M.cuffT>0?0:30;toast(M.cuffT>0?`⛓ <b>${M.def.name||'몹'}</b>을(를) 30초 동안 묶었어요`:'🔓 몹을 풀어 줬어요');}
-function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);else if(d.t==='tase')taseIn(d);else if(d.t==='give')giveIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
+function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);else if(d.t==='tase')taseIn(d);else if(d.t==='give')giveIn(d);else if(d.t==='gmp')gmIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
+const GM_NAMES={survival:'survival','서바이벌':'survival',creative:'creative','크리에이티브':'creative',spectator:'spectator','관전':'spectator'},GM_KO={survival:'서바이벌',creative:'크리에이티브',spectator:'관전'};
+function gmIn(d){if(!GM_KO[d.m]||world.mode===d.m||(world.flags&&world.flags.hcDead))return;MP.rx=1;MP.gmOk=1;try{setMode(d.m);}finally{MP.rx=0;MP.gmOk=0;}try{renderSettings();}catch(e){}toast(`🎮 <b>${mpEsc(String(d.by||'?').slice(0,16))}</b> 님이 내 게임 모드를 <b>${GM_KO[d.m]}</b>(으)로 바꿨어요`);} // /모드이름 @닉: 그 사람만 바뀜
 function giveIn(d){const id=d.id|0,n=Math.max(1,Math.min(999,d.n|0));if(!BL[id]&&!IT[id])return;const left=addItem(id,n);if(left>0)dropAtPlayer(id,left);invChanged();toast(`🎁 <b>${mpEsc(String(d.by||'?').slice(0,16))}</b> 님이 <b>${info(id).name}</b> ${n}개를 줬어요`);}
 function cuffIn(d){const by=String(d.by||'?').slice(0,16);
   if(player.cuffed){player.cuffed=null;toast(`🔓 <b>${mpEsc(by)}</b> 님이 수갑을 풀어 줬어요`);}else{player.cuffed={by,t:120};toast(`⛓ <b>${mpEsc(by)}</b> 님이 수갑을 채웠어요 — 2분 동안 못 움직여요 (다시 치면 풀려요)`);}
@@ -9508,7 +9519,7 @@ function mpModeIn(d){if(!MODE_INFO[d.m]||world.mode===d.m||world.flags&&world.fl
 function mpChatOpen(pre){if(MP.chat||!running)return;MP.chat=true;for(const k in keys)keys[k]=false;mouseL=mouseR=false;const el=$('mpChat');el.value=pre||'';el.placeholder=MP.on?'채팅 · /명령어 (/help) · Enter 보내기 · Esc 닫기':'명령어 (/help) · Enter 실행 · Esc 닫기';el.style.display='block';
   try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>el.focus(),30);}
 const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에이티브|관전','게임 모드'],['/time set 낮|정오|밤|자정|0~24000','시간'],['/tp x y z · /tp 닉네임','순간이동 (~ 는 지금 위치 기준)'],
-  ['/give [@닉] 아이템이름 [개수]','아이템 받기 · 다른 사람에게 주기'],['/summon 몹이름 [마리]','몹 소환'],['/heal','체력 · 배고픔 가득'],['/kill','쓰러지기'],['/clear','인벤토리 비우기'],['/fly','날기 켜고 끄기'],
+  ['/give [@닉] 아이템이름 [개수]','아이템 받기 · 다른 사람에게 주기'],['/서바이벌 · /크리에이티브 · /관전 [@닉]','그 사람만 게임 모드 바꾸기'],['/summon 몹이름 [마리]','몹 소환'],['/heal','체력 · 배고픔 가득'],['/kill','쓰러지기'],['/clear','인벤토리 비우기'],['/fly','날기 켜고 끄기'],
   ['/spawnpoint','여기를 스폰 지점으로'],['/difficulty 세이프|쉬움|보통|어려움|하드코어','난이도'],['/seed','세계 시드'],['/list','같이 있는 사람'],['/me 할 말','행동 말하기'],
   ['/setblock x y z 블록','블록 하나 놓기'],['/fill x1 y1 z1 x2 y2 z2 블록','네모로 채우기 (공기 = 지우기 · 2만 칸까지)'],['/speed 배수','이동 속도 (0.5~5 · /speed 1 원래대로)'],['/god','무적 켜고 끄기'],
   ['/feed','배고픔 가득'],['/day · /night','낮 · 밤으로'],['/pos','지금 좌표'],['/spawn','스폰 지점으로'],['/dim 차원','차원 이동 (프론티어 · 어비스 · 판데모니움 · 네크로폴리스 · 호라이즌)'],
@@ -9600,6 +9611,10 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
   if(MULTI&&!cmdIsAdmin()&&!MULTI_CMDS.includes(c)&&!MOD_CMDS[c]){cmdOut('🌐 공개 서버(멀티)에서는 쓸 수 없는 명령어예요 — 모두에게 공정하게 (치트 명령어는 어드민만)',1);return;}
   if(!cmdIsOp()&&!['help','도움말','list','목록','me','rules','규칙'].includes(c)&&!(MOD_CMDS[c]&&MOD_CMDS[c].op===false)){cmdOut('이 명령어는 이 서버의 <b>OP</b>나 <b>어드민</b>만 쓸 수 있어요 (방장에게 /op 를 받아요)',1);return;}
   const num=(v,base)=>{if(v===undefined)return NaN;if(v[0]==='~')return base+(v.length>1?+v.slice(1):0);return +v;};
+  if(GM_NAMES[c]&&!MOD_CMDS[c]){const m=GM_NAMES[c],myN=MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어'),t=(a[0]||'').toLowerCase(),peer=[...MP.peers.values()].find(P=>String(P.nick).toLowerCase()===t); // 🎮 /서바이벌 · /크리에이티브 · /관전 [@닉]: 그 사람만 게임 모드 바꾸기
+    if(!t||t===myN.toLowerCase()){gmIn({m,by:myN});cmdOut(`🎮 내 게임 모드: <b>${GM_KO[m]}</b>`);return;}
+    if(!peer){cmdOut('그 사람을 찾지 못했어요 · /list',1);return;}
+    mpRoute({t:'gmp',to:peer.id,m,by:myN});cmdOut(`🎮 <b>${mpEsc(peer.nick)}</b> 님의 게임 모드: <b>${GM_KO[m]}</b>`);return;}
   if(MOD_CMDS[c]&&c!=='help'&&c!=='도움말'){const M=MOD_CMDS[c];try{M.fn(a,{say:t=>cmdOut(mpEsc(String(t))),nick:MP.on?MP.me.nick:(nickNow()||'플레이어')});}catch(e){cmdOut('모드 명령어 오류: '+mpEsc(e.message||e),1);}return;} // 🧩 모드 명령어가 같은 이름의 기본 명령어보다 먼저 (예: 조직 모드의 /집)
   switch(c){
     case 'help':case '도움말':evDlg('💻 <b>명령어</b> (T 또는 / 를 눌러 입력) · <b>/un명령어</b> 로 되돌리기'+(cmdIsOp()?' · 🔑 나는 OP':' · 🔒 OP가 없어요 (방장에게 /op 를 받아요)')+'<br><br>'+CMD_HELP.concat(Object.entries(MOD_CMDS).map(([k,v])=>['/'+k,'🧩 '+(v.desc||'모드 명령어')])).map(([k,d])=>`<b>${k}</b> — ${d}`).join('<br>'),[['닫기']]);break;

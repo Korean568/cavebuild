@@ -9,7 +9,9 @@
 // 🏙 모드를 깔면 부활 자리 근처 빈 땅에 도시 · 🚓 경찰서 · 🪖 군부대가 저절로 생겨요 (/도시 · OP는 /도시 짓기)
 // 🪖 전역: 군대 팀에서 /조직 탈퇴 · 무단탈영: 군부대 정문의 빨간 선을 넘어 걸어 나가거나 군부대 안에서 /집 가기 (★★★ · 무법자)
 // 🪪 외출: 장교(CMO) 이상이 /외출 @닉 [분] 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · 시간을 넘기면 무단탈영 · /외출 취소 @닉
-// 🏰 도시 둘레에 성벽 (동 · 남 · 북 성문)
+// 🏰 도시 둘레에 성벽 (동 · 남 · 북 성문 · 성문 밖 길)
+// 🪖 입대: 시민이 입대소 · 경찰서의 상담원에게 우클릭 → 「네」 · 시민이 입대 없이 군부대에 들어가면 🏴 무법자 · 경찰 · 군대는 무법자가 안 되고 지명수배만
+// 📝 진급: 군대 팀은 /시험 사격 · /시험 점프 를 둘 다 통과해야 /진급 (진급마다 다시 · OP는 시험 없이)
 // 명령어 (누구나):  /조직 (내 팀) · /조직 목록 · /조직 탈퇴 (시민으로 · 군대는 전역) · /기지 · /장비 · /상인
 // 명령어 (장교(CMO) 이상 · OP): /team 팀 @닉 (순서 상관없음, = /조직 배정) · /진급 @닉 · /강등 @닉 · /조직 추방 @닉 (시민으로) · /석방 @닉
 // 명령어 (장교(CMO) 이상 · OP): /기지 설정 · /집합 (내 계급 이하 모두) · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
@@ -113,7 +115,7 @@ CB.dim('감옥', {
 function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -142,7 +144,7 @@ function rewanted(nick) {
   const L = S.suit.filter((c) => c.who === nick);
   if (!L.length) { delete S.w[nick]; return; }
   const top = L.reduce((a, b) => (b.lv > a.lv ? b : a));
-  S.w[nick] = { lv: Math.min(WMAX, top.lv), why: `${top.why} · 고소: ${[...new Set(L.map((c) => c.by))].join(', ')}`, t: top.t };
+  S.w[nick] = { lv: teamOf(nick) === OUTLAW ? WMAX : Math.min(WMAX, top.lv), why: `${top.why} · 고소: ${[...new Set(L.map((c) => c.by))].join(', ')}`, t: top.t };
 }
 function crime(nick, lv, why, victim) {
   if (!nick || nick === ownerNick()) return; // 총사령부(Owner)는 고소 · 수배 안 됨
@@ -151,8 +153,8 @@ function crime(nick, lv, why, victim) {
   const old = S.suit.find((c) => c.who === nick && c.by === by);
   if (old && old.lv >= lv) return;
   if (old) Object.assign(old, { lv, why, t: Date.now() }); else S.suit.push({ who: nick, by, lv, why, t: Date.now() });
+  if (teamOf(nick) === '시민') { setTeam(nick, OUTLAW); CB.say(`🏴 ${nick} 님이 무법자가 됐어요! (${why}) · 경찰이 수갑으로 잡기 전엔 팀을 바꿀 수 없어요`); } // 시민이 범죄 → 무법자 (경찰 · 군대는 지명수배만)
   rewanted(nick);
-  if (teamOf(nick) === '시민') { setTeam(nick, OUTLAW); CB.say(`🏴 ${nick} 님이 무법자가 됐어요! (${why}) · 경찰이 수갑으로 잡기 전엔 팀을 바꿀 수 없어요`); } // 시민이 범죄 → 무법자
   save();
   if (by !== '서버') tell(by, `📝 ${nick} 님을 자동으로 고소했어요 (${why}) · 취소하려면 /고소 취소 @${nick}`);
   if (S.w[nick].lv > before) CB.say(`🚨 ${by === '서버' ? '' : by + ' 님이 '}${nick} 님을 고소 · ${stars(S.w[nick].lv)} · ${GRADE[S.w[nick].lv]} (${why})`);
@@ -169,11 +171,7 @@ function askFine(nick, n, why) {
   CB.say(`💸 ${nick} 님 벌금 ${n} 케이브코인 (${why})`);
 }
 function payMine(v) { CB.payFine(v.n, v.why).then((r) => req(r && r.ok ? 'paid' : 'unpaid')).catch(() => req('unpaid')); }
-function desert(nick, why) { // 🪖 무단탈영: ★★★ · 무법자
-  setTeam(nick, OUTLAW); save();
-  CB.say(`🏴 ${nick} 님이 ${why}로 무법자가 됐어요!`);
-  crime(nick, 3, why);
-}
+function desert(nick, why) { crime(nick, 3, why); } // 🪖 무단탈영: ★★★ (군대는 무법자가 되지 않고 지명수배만)
 const mmss = (s) => `${Math.floor(s / 60)}분 ${s % 60}초`;
 // 👮 체포 (수갑): 수갑대상 → 벌금 10 (못 내면 징역 10분) · ★★ → 징역 15분 · ★★★ → 징역 30분 · 수배 없는 무법자는 징역 10분
 function arrest(who, by) {
@@ -288,6 +286,8 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (locked(who) && !fromOp) return tell(from, `${who} 님은 ${tagOf(teamOf(who))}라서 팀을 바꿀 수 없어요 (수갑으로 잡아야 해요)`);
       const myLv = lvOf(from);
       if (!off) return tell(from, '배정(임용)은 장교(CMO) 이상이나 OP만 할 수 있어요');
+      if (!fromOp && teamOf(who) === '시민') return tell(from, `${who} 님은 시민이에요 · 입대소나 경찰서의 상담원에게 직접 가야 해요`);
+      if (!fromOp && ARMY.includes(o) && ORGS[o].lv > lvOf(who)) return tell(from, `군대 계급을 올리려면 시험에 합격한 뒤 /진급 @${who} 해야 해요`);
       if (!fromOp && !(myLv > ORGS[o].lv && myLv > lvOf(who))) return tell(from, `배정할 권한이 없어요 (내 계급 ${tagOf(Fo)}보다 아래 팀으로, 나보다 아래 계급인 사람만)`);
       setTeam(who, o); save(); sendKit(who);
       return CB.say(`${ORGS[o].ico} ${who} 님이 ${tagOf(o)}에 배정됐어요 (${from})`);
@@ -309,6 +309,12 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!off) return tell(from, `${op === 'promote' ? '진급' : '강등'}은 장교(CMO) 이상이나 OP만 할 수 있어요`);
       const ok = fromOp || (lvOf(from) > cur && lvOf(from) > nl);
       if (!ok) return tell(from, '그 계급으로 바꿀 권한이 없어요 (나보다 아래 계급만, 내 계급보다 높게는 못 올려요)');
+      if (op === 'promote' && !fromOp) {
+        if (cur === 0) return tell(from, `${who} 님은 시민이에요 · 입대소나 경찰서의 상담원에게 직접 가야 해요`);
+        const E = S.exam[who];
+        if (ARMY.includes(teamOf(who)) && !(E && E.shoot && E.jump)) { tell(who, '📝 진급하려면 /시험 사격 · /시험 점프 를 통과해야 해요'); return tell(from, `${who} 님은 아직 진급 시험을 통과하지 못했어요 (${E && E.shoot ? '사격 ✅' : '사격 ❌'} · ${E && E.jump ? '점프 ✅' : '점프 ❌'})`); }
+      }
+      if (op === 'promote') delete S.exam[who]; // 시험은 진급마다 다시
       const no = TEAMS[nl].key; setTeam(who, no); save(); sendKit(who);
       return CB.say(`${op === 'promote' ? '⬆ 진급' : '⬇ 강등'}: ${who} 님 → ${ORGS[no].ico} ${tagOf(no)}`);
     }
@@ -384,6 +390,25 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!S.leave[from] || !S.leave[from].out) return;
       delete S.leave[from]; save();
       return tell(from, '🪖 군부대로 복귀했어요 · 외출이 끝났어요');
+    }
+    case 'enlist': { // 🪖 상담원에게 「네」: 시민 → 군사 · 경찰
+      const o = a.o === '경찰' ? '경찰' : '군사';
+      if (Fo !== '시민') return tell(from, `이미 ${tagOf(Fo)}이에요`);
+      if (S.w[from]) return tell(from, '지명수배 중에는 입대할 수 없어요');
+      setTeam(from, o); save(); sendKit(from);
+      return CB.say(`${ORGS[o].ico} ${from} 님이 ${tagOf(o)}에 ${o === '경찰' ? '임용' : '입대'}했어요!`);
+    }
+    case 'trespass': { // 🏴 시민이 입대 없이 군부대에 들어옴
+      if (Fo !== '시민' || fromOp) return;
+      return crime(from, 3, '군부대 무단 침입');
+    }
+    case 'exam': { // 📝 진급 시험 통과 (사격 · 점프)
+      if (!ARMY.includes(Fo) || (a.kind !== 'shoot' && a.kind !== 'jump')) return;
+      const E = S.exam[from] || (S.exam[from] = {});
+      E[a.kind] = 1; save();
+      tell(from, `📝 ${a.kind === 'shoot' ? '사격' : '점프'} 시험 합격!${E.shoot && E.jump ? ' · 이제 장교(CMO) 이상이 /진급 시켜 줄 수 있어요' : ` · ${a.kind === 'shoot' ? '/시험 점프' : '/시험 사격'} 도 통과해야 해요`}`);
+      if (E.shoot && E.jump) CB.say(`📝 ${from} 님이 진급 시험을 통과했어요!`);
+      return;
     }
     case 'threat': { // 🔫 총으로 2초 넘게 사람을 겨눔 → 무기로 협박 (★★★) · 수배자 · 무법자를 겨눈 건 괜찮음
       if (!who || who === from || S.w[who] || teamOf(who) === OUTLAW) return;
@@ -500,13 +525,26 @@ CB.on('kill', (m) => {
   addPts(who, 1); save();
 });
 
-// ── 🕶 불법 거래 상인 (팀 없는 NPC): 시민한테만 무기를 팔아요 · 동전으로 ──
+// ── 🏴 불법 거래 상인 (무법자 팀 NPC): 시민 · 무법자에게 무기를 팔아요 · 동전으로 · 경찰 · 군인이 14칸 안에 오면 도망가요 ──
 // 자리: OP가 /상인 설정 (안 정하면 세계 부활 자리 근처) · 각자 게임에서 가까이 가면 나타나요
 const DEALER = 'org_dealer', DEALER_K = 'mod_' + DEALER;
 const tradeIf = (name) => CB.id(name);
 CB.mob(DEALER, {
-  name: '🕶 불법 거래 상인', hp: 9999, color: 0x1e1e24, head: 0xc89a74, eyes: 0xff3030,
-  ai: (m) => { m.vel.x = m.vel.z = 0; m.face = true; if (m.orgHome && Math.hypot(m.pos.x - m.orgHome.x, m.pos.z - m.orgHome.z) > 1.5) { m.pos.x = m.orgHome.x; m.pos.z = m.orgHome.z; } },
+  name: '🏴 불법 거래 상인', hp: 9999, color: 0x262626, head: 0xb02020, eyes: 0xffffff,
+  ai: (m, c, dt) => {
+    let P = null, nd = 14; // 가장 가까운 경찰 · 군인
+    for (const n of CB.players()) { const t = teamOf(n); if (t !== '경찰' && t !== '총사령부' && !ARMY.includes(t)) continue; const q = CB.playerPos && CB.playerPos(n); if (!q) continue; const d = Math.hypot(q.x - m.pos.x, q.z - m.pos.z); if (d < nd) { nd = d; P = q; } }
+    if (P) { m.runFrom = P; m.runT = 6; }
+    if (m.runT > 0) { // 도망: 그 사람 반대쪽으로 달림 · 6초 동안 안 보이면 돌아옴
+      m.runT -= dt; m.face = false;
+      const dx = m.pos.x - m.runFrom.x, dz = m.pos.z - m.runFrom.z, l = Math.hypot(dx, dz) || 1;
+      m.yaw = Math.atan2(dx, dz); steer(m, dx / l * 6, dz / l * 6, dt); autoJump(m);
+      return;
+    }
+    const H = m.orgHome, hd = H ? Math.hypot(H.x - m.pos.x, H.z - m.pos.z) : 0;
+    if (hd > 1) { m.face = false; m.yaw = Math.atan2(H.x - m.pos.x, H.z - m.pos.z); steer(m, (H.x - m.pos.x) / hd * 3, (H.z - m.pos.z) / hd * 3, dt); autoJump(m); }
+    else { m.face = true; steer(m, 0, 0, dt); }
+  },
   trades: [
     { give: [[tradeIf('동전'), 8]], get: [tradeIf('권총'), 1] },
     { give: [[tradeIf('동전'), 16]], get: [tradeIf('돌격소총'), 1] },
@@ -518,6 +556,80 @@ CB.mob(DEALER, {
   canTrade: () => teamOf(me()) === '시민' || teamOf(me()) === OUTLAW,
   noTrade: '…경찰이랑 군인한텐 안 팔아',
 });
+// ── 🪖 입대 상담원 · 🚓 경찰 상담원: 우클릭 → 「입대하시겠어요?」 → 네 ──
+const RECRUITERS = {
+  org_rec_army: { o: '군사', name: '🪖 입대 상담원', dx: -20, dz: 11, color: 0x55663a, q: '🪖 <b>입대 상담원</b><br><br>입대하시겠어요?', tag: '#7ec850' },
+  org_rec_police: { o: '경찰', name: '🚓 경찰 상담원', dx: 25, dz: 10, color: 0x1f3a7a, q: '🚓 <b>경찰 상담원</b><br><br>경찰에 지원하시겠어요?', tag: '#4aa8ff' },
+};
+for (const k in RECRUITERS) {
+  const R = RECRUITERS[k];
+  CB.mob(k, {
+    name: R.name, hp: 9999, color: R.color, head: 0xd8a07c,
+    ai: (m) => { m.vel.x = m.vel.z = 0; m.face = true; if (m.orgHome && Math.hypot(m.pos.x - m.orgHome.x, m.pos.z - m.orgHome.z) > 0.5) { m.pos.x = m.orgHome.x; m.pos.z = m.orgHome.z; } },
+    talk: () => {
+      const t = teamOf(me());
+      if (t !== '시민') return note(t === OUTLAW || t === PRISONER ? `${R.name}: ${tagOf(t)}는 받아 줄 수 없어요` : `${R.name}: 이미 ${tagOf(t)}이시네요`);
+      if (S.w[me()]) return note(`${R.name}: 지명수배 중에는 안 돼요`);
+      CB.dialog(R.q, [['네', () => req('enlist', { o: R.o })], ['아니요']]);
+    },
+  });
+}
+function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임에 한 명씩)
+  const T = S.town; if (!T || CB.dimNow() !== 'over') return;
+  const p = pos();
+  for (const k in RECRUITERS) {
+    const R = RECRUITERS[k], x = T.x + R.dx + 0.5, z = T.z + R.dz + 0.5, near = Math.hypot(p.x - x, p.z - z) < 60;
+    const L = CB.mobs().filter((m) => m.kind === 'mod_' + k && !m.dead);
+    for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x, z }; if (CB.mobTag) CB.mobTag(m, R.name, R.tag); } }
+    if (near && !L.length && CB.loaded(x, z)) { const m = CB.spawn(k, x, T.y + 0.1, z); if (m) m.orgHome = { x, z }; }
+  }
+}
+// ── 📝 진급 시험: 군부대 안에서 /시험 사격 · /시험 점프 (둘 다 통과해야 /진급) ──
+const EX_TARGETS = [-29, -27, -25], EX_JUMP = [[-43, 1], [-41, 2], [-39, 3], [-36, 3], [-34, 4], [-31, 3], [-28, 2]]; // 점프맵 기둥 [x, 높이] (걸어서도 건널 수 있게: 올라갈 땐 한 칸 · 평지 · 내리막은 두 칸 간격)
+let EX = null; // 내 게임에서 치르는 중인 시험
+function examEnd(ok, msg) { const k = EX && EX.kind; EX = null; note(msg); if (ok) req('exam', { kind: k }); }
+function examStart(kind, c) {
+  const T = S.town, t = teamOf(me());
+  if (!T) return c.say('📝 아직 군부대가 없어요');
+  if (!ARMY.includes(t)) return c.say('📝 진급 시험은 군대 쪽 팀만 볼 수 있어요');
+  if (EX) return c.say('📝 이미 시험 중이에요');
+  const p = pos(), dx = Math.floor(p.x) - T.x, dz = Math.floor(p.z) - T.z;
+  if (!(dx >= -46 && dx <= -22 && Math.abs(dz) <= 22)) return c.say('📝 시험은 군부대 안에서만 볼 수 있어요');
+  if (kind === 'shoot') {
+    if (!GUNS.some((g) => CB.has(g) > 0)) return c.say('📝 사격 시험은 총이 있어야 해요 · /장비');
+    EX = { kind, sec: 40, hits: 0, t: Math.floor(Math.random() * 3) };
+    CB.tp(T.x - 26.5, T.y + 0.2, T.z - 5.5);
+    return c.say('🎯 사격 시험: 40초 안에 안내판에 나온 과녁을 5번 맞혀요');
+  }
+  EX = { kind, sec: 60, up: false };
+  CB.tp(T.x - 43.5, T.y + 0.2, T.z + 4);
+  c.say('🦘 점프 시험: 60초 안에 기둥을 밟고 끝의 금 블록까지 가요 · 땅에 떨어지면 실패');
+}
+function examTick() {
+  if (!EX) return;
+  const T = S.town, p = pos();
+  if (!T || !ARMY.includes(teamOf(me()))) { EX = null; return; }
+  if (--EX.sec <= 0) return examEnd(false, `📝 시간 초과 · ${EX.kind === 'shoot' ? '/시험 사격' : '/시험 점프'} 로 다시 해요`);
+  if (EX.kind === 'jump') {
+    const h = p.y - T.y;
+    if (h >= 0.9) EX.up = true;
+    if (EX.up && h < 0.5) return examEnd(false, '🦘 떨어졌어요 · /시험 점프 로 다시 해요');
+    const G0 = EX_JUMP[EX_JUMP.length - 1];
+    if (Math.floor(p.x) - T.x === G0[0] && (Math.floor(p.z) - T.z === 3 || Math.floor(p.z) - T.z === 4) && h >= G0[1] - 0.1) return examEnd(true, '🦘 점프 시험 통과!');
+  }
+}
+CB.on('shot', (x, y, z, id) => {
+  if (!EX || EX.kind !== 'shoot' || id !== T_TARGET) return;
+  const T = S.town; if (!T || x !== T.x + EX_TARGETS[EX.t] || z !== T.z - 18) return;
+  if (++EX.hits >= 5) return examEnd(true, '🎯 사격 시험 통과!');
+  EX.t = (EX.t + 1 + Math.floor(Math.random() * 2)) % 3;
+});
+CB.command('시험', '/시험 — 내 진급 시험 결과 · /시험 사격 · /시험 점프 (군부대 안)', (a, c) => {
+  if (a[0] === '사격') return examStart('shoot', c);
+  if (a[0] === '점프') return examStart('jump', c);
+  const E = S.exam[me()] || {};
+  c.say(`📝 진급 시험: 사격 ${E.shoot ? '✅' : '❌'} · 점프 ${E.jump ? '✅' : '❌'} · /시험 사격 · /시험 점프`);
+}, { everyone: true });
 function dealerSpot() {
   if (S.dealer) return S.dealer;
   if (!CB.ground || !CB.spawnPos) return null;
@@ -535,7 +647,7 @@ function dealerTick() { // 가까이 있으면 상인이 서 있게 (내 게임�
   if (CB.dimNow() !== (D.dim || 'over')) return;
   const p = pos(), near = Math.hypot(p.x - D.x, p.z - D.z) < 60;
   const L = CB.mobs().filter((m) => m.kind === DEALER_K && !m.dead);
-  for (const m of L) { if (!near || Math.hypot(m.pos.x - D.x, m.pos.z - D.z) > 3 || m !== L[0]) m.remove(); else m.orgHome = { x: D.x, z: D.z }; }
+  for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x: D.x, z: D.z }; if (CB.mobTag) CB.mobTag(m, '🏴 불법 거래 상인', '#ff4040'); } }
   if (near && !CB.mobs().some((m) => m.kind === DEALER_K && !m.dead)) { const m = CB.spawn(DEALER, D.x, D.y + 0.1, D.z); if (m) m.orgHome = { x: D.x, z: D.z }; }
 }
 
@@ -555,7 +667,7 @@ const T_LINE = CB.block({ id: 1910, key: 'town_line', name: '도로 선', paint:
 const T_TARGET = CB.block({ id: 1911, key: 'town_target', name: '과녁', paint: (u, v, x, y) => { const r = Math.hypot(x - 7.5, y - 7.5); return r < 2 ? [220, 30, 30] : r < 4 ? [240, 240, 240] : r < 6 ? [220, 30, 30] : [240, 240, 240]; } });
 const TOWN_X = 46, TOWN_Z = 24; // 동서 ±46칸 · 남북 ±24칸
 const LAD_W = 44, LAD_E = 45, LAD_N = 46, LAD_S = 47; // 🪜 사다리 블록 (붙은 벽: 서 · 동 · 북(-z) · 남(+z))
-const TOWN_V = 4; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2 · 3은 탈영선 · 성벽만 더함
+const TOWN_V = 5; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2 ~ 4는 없는 것만 더함 (탈영선 · 성벽 · 입대소 · 점프맵 · 성문 길)
 const T_DESERT = CB.block({ id: 1914, key: 'town_desert', name: '탈영선', paint: (u, v, x, y) => (((x + y) >> 2) % 2 ? [235, 225, 60] : [205, 30, 30]) });
 function wallPlan(C, G) { // 🏰 성벽: 도시 · 경찰서 · 군부대 둘레 (높이 7칸 · 톱니 · 모서리 탑 · 동 · 남 · 북 성문 · 올라가는 사다리)
   const L = [], BR = BLK('돌벽돌'), LAMPB = BLK('등불'), put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + z, id]);
@@ -571,6 +683,36 @@ function wallPlan(C, G) { // 🏰 성벽: 도시 · 경찰서 · 군부대 둘�
   }
   for (const [x, z] of [[TOWN_X, -3], [TOWN_X, 3], [-3, TOWN_Z], [3, TOWN_Z], [-3, -TOWN_Z], [3, -TOWN_Z]]) put(x, 8, z, LAMPB); // 성문 등불
   for (let y = 0; y <= 6; y++) { put(TOWN_X - 1, y, 4, LAD_E); put(4, y, TOWN_Z - 1, LAD_S); put(4, y, 1 - TOWN_Z, LAD_N); } // 🪜 성벽 위로
+  return L;
+}
+function campPlan(C, G) { // 🪖 입대소 (정문 옆 · 군부대 밖) · 🦘 점프 시험장 (연병장 북쪽)
+  const L = [], WALL = BLK('돌벽돌'), PLANK = BLK('판자'), LAMPB = BLK('등불'), GOLD = BLK('금 블록'), put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + z, id]);
+  for (let x = -21; x <= -18; x++) for (let z = 8; z <= 14; z++) {
+    put(x, -1, z, PLANK); put(x, 4, z, T_CAMO);
+    for (let y = 0; y <= 3; y++) put(x, y, z, x === -21 || x === -18 || z === 8 || z === 14 ? WALL : 0);
+  }
+  for (let z = 10; z <= 11; z++) for (let y = 0; y <= 2; y++) put(-18, y, z, 0); // 문 (도시 쪽)
+  put(-18, 3, 10, T_ARMY); put(-18, 3, 11, T_ARMY); put(-20, 3, 9, LAMPB); put(-19, 3, 13, LAMPB);
+  EX_JUMP.forEach(([x, h], i) => { for (const z of [3, 4]) for (let y = 0; y < h; y++) put(x, y, z, i === EX_JUMP.length - 1 && y === h - 1 ? GOLD : T_CONC); });
+  return L;
+}
+function gatePlan(C, G, i) { // 🏰 성문 밖 길: 땅 높이까지 한 칸씩 이어서 성벽 · 절벽에 막히지 않게 (언덕은 깎고 물 위는 다리) · 땅이 아직 안 불러와졌으면 null
+  const L = [], ROAD = BLK('도로', '돌'), DIRT = BLK('흙'), [ax, az, from] = [[1, 0, TOWN_X], [0, 1, TOWN_Z], [0, -1, TOWN_Z]][i];
+  for (let k = 1; k <= 24; k++) if (!CB.loaded(C.x + ax * (from + k), C.z + az * (from + k))) return null;
+  {
+    let cur = G - 1;
+    for (let k = 1; k <= 24; k++) {
+      const cx = C.x + ax * (from + k), cz = C.z + az * (from + k);
+      const g = groundAt(cx, cz), want = g && !g.wet ? g.y - 1 : cur;
+      if (want > cur) cur++; else if (want < cur) cur--;
+      for (let w = -2; w <= 2; w++) {
+        const x = cx + (az ? w : 0), z = cz + (ax ? w : 0);
+        L.push([x, cur, z, ROAD], [x, cur - 1, z, DIRT]);
+        for (let y = cur + 1; y <= cur + 6; y++) L.push([x, y, z, 0]);
+      }
+      if (k >= 3 && g && !g.wet && cur === want) break;
+    }
+  }
   return L;
 }
 function townPlan(C, G) {
@@ -738,7 +880,7 @@ function buildTown(C, G) {
     if (!soft.has(CB.getBlock(C.x + dx, y, C.z + dz))) break;
     L.push([C.x + dx, y, C.z + dz, DIRT]);
   }
-  L.push(...wallPlan(C, G));
+  L.push(...wallPlan(C, G), ...campPlan(C, G));
   CB.setBlocks(L);
   const again =!!(S.town && S.town.x === C.x && S.town.z === C.z);
   buildHouses(C, G);
@@ -756,13 +898,18 @@ let townT = 0;
 function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음 (예전에 지은 도시에 집이 없으면 집만)
   if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
   if (S.town) {
-    if (S.townV === 2 || S.townV === 3) { // v2 · v3 도시 → 탈영선 · 성벽만 더하기 (안쪽에 지은 건 그대로 · 땅이 다 불러와지면)
+    if (S.townV >= 2 && S.townV < TOWN_V) { // 예전 도시 → 없는 것만 더하기 (안쪽에 지은 건 그대로 · 땅이 다 불러와지면)
       for (let x = S.town.x - TOWN_X; x <= S.town.x + TOWN_X + 15; x += 16) for (let z = S.town.z - TOWN_Z; z <= S.town.z + TOWN_Z + 15; z += 16) if (!CB.loaded(Math.min(x, S.town.x + TOWN_X), Math.min(z, S.town.z + TOWN_Z))) return;
-      const L = wallPlan(S.town, S.town.y);
+      const L = S.townV < 4 ? wallPlan(S.town, S.town.y) : [];
       if (S.townV === 2) for (let dz = -2; dz <= 2; dz++) L.push([S.town.x - 22, S.town.y - 1, S.town.z + dz, T_DESERT]);
+      L.push(...campPlan(S.town, S.town.y));
       CB.setBlocks(L); S.townV = TOWN_V; save();
-      CB.say('🏰 도시 둘레에 성벽이 생겼어요 (동 · 남 · 북 성문)');
+      CB.say('🏙 도시에 입대소 · 점프 시험장이 생겼어요');
       return;
+    }
+    for (let i = 0; i < 3; i++) if (!S.gates[i] && S.townV === TOWN_V) { // 성문 밖 길: 그쪽 땅이 불러와지면 지음
+      const L = gatePlan(S.town, S.town.y, i);
+      if (L) { CB.setBlocks(L); S.gates[i] = 1; save(); }
     }
     if (S.townV !== TOWN_V) { buildTown({ x: S.town.x, z: S.town.z }, S.town.y); return; } // 예전 도시 → 같은 자리에 새로 (땅이 다 불러와지면)
     if (!S.houses && CB.loaded(S.town.x - 17, S.town.z - 23) && CB.loaded(S.town.x + 17, S.town.z + 23) && CB.loaded(S.town.x - 17, S.town.z + 23) && CB.loaded(S.town.x + 17, S.town.z - 23)) buildHouses({ x: S.town.x, z: S.town.z }, S.town.y);
@@ -805,7 +952,7 @@ CB.command('조직', '내 팀 · /조직 목록 (계급표) · /조직 탈퇴 (�
   const x = mine();
   c.say(`${ORGS[x.o].ico} ${tagOf(x.o)} (${ORGS[x.o].special ? (x.o === OUTLAW ? '수갑으로 잡히기 전엔 팀을 못 바꿔요' : '형기를 마치면 시민') : `${ORGS[x.o].lv + 1}/${TEAMS.length}번째 계급`}) · 내 점수 ${x.p || 0} · 팀 점수 ${S.pts[x.o] || 0}`);
   if (x.o !== '시민') c.say('같은 팀: ' + teamMembers(x.o).join(', '));
-  else c.say('더 높은 계급이 /team 팀 @닉 으로 배정해 주면 들어가요 · /조직 목록');
+  else c.say('군대는 군부대 옆 입대소, 경찰은 경찰서의 상담원에게 우클릭해서 지원해요 · /조직 목록');
 }, { everyone: true });
 CB.command('도시', '/도시 — 🏙 도시 · 🚓 경찰서 · 🪖 군부대 위치 · /도시 짓기 (지금 자리에 새로 · OP)', (a, c) => {
   if (a[0] === '짓기') { const p = pos(); return req('town', { x: p.x, y: p.y, z: p.z }); }
@@ -900,7 +1047,7 @@ CB.command('석방', '/석방 @닉 (장교(CMO) 이상 · OP)', (a) => req('rele
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
-let saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
+let baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
   const T = S.train, x = mine();
@@ -913,7 +1060,9 @@ CB.onTick((dt) => {
   if ((acc += dt) < 1) return;
   acc = 0;
   S = load();
-  if ((dealerT -= 1) <= 0) { dealerT = 3; try { dealerTick(); } catch (e) {} }
+  if ((dealerT -= 1) <= 0) { dealerT = 3; try { dealerTick(); recruiterTick(); } catch (e) { console.warn('조직 NPC 오류', e); } }
+  examTick();
+  if (CB.isHost()) for (const n in S.m) if (S.m[n].o === OUTLAW && !S.jail[n] && !(S.w[n] && S.w[n].lv >= WMAX)) crime(n, WMAX, '🏴 무법자 (자동)'); // 무법자 팀은 언제나 ★★★
   if ((townT -= 1) <= 0) { townT = 5; try { townTick(); } catch (e) { console.warn('도시 짓기 오류', e); } }
   // 방장: 접속해 있는 수감자의 남은 시간을 줄임 (나가 있는 동안은 멈춤)
   if (CB.isHost()) {
@@ -952,9 +1101,20 @@ CB.onTick((dt) => {
   } else if (jailFrom) { // 형기가 끝남 → 원래 자리로
     const f = jailFrom; jailFrom = null; jailGoT = 0;
     if (CB.dimNow() !== f.dim) CB.goDim(f.dim, f.x, f.y + 0.2, f.z); else CB.tp(f.x, f.y + 0.2, f.z);
+    baseGrace = 20; // 군부대에서 잡혔다 풀려난 사람이 바로 침입으로 잡히지 않게
     note('🔓 풀려났어요 — 원래 있던 곳으로 돌아가요');
   } else if (CB.dimNow() === '감옥' && !(CB.isOp() || isLaw(me())) && (jailGoT -= 1) <= 0) { jailGoT = 4; CB.goDim('over'); } // 수감자가 아닌데 감옥 차원에 있으면 (새로고침 등) 프론티어로
   const y = mine(), W = S.w[me()];
+  { // 🏴 시민이 입대 없이 군부대에 들어가면 무법자 (전역 · 강등으로 막 시민이 됐으면 정문 밖으로 내보냄)
+    const TW = S.town, p = pos();
+    if (baseGrace > 0) baseGrace--;
+    if (TW && y.o === '시민' && CB.dimNow() === 'over' && !CB.isOp()) {
+      const dx = Math.floor(p.x) - TW.x, dz = Math.floor(p.z) - TW.z, inside = dx >= -46 && dx <= -22 && Math.abs(dz) <= 22;
+      if (inside && lastTeam && ARMY.includes(lastTeam)) { inBaseP = null; CB.tp(TW.x - 20 + 0.5, TW.y + 0.2, TW.z + 0.5); note('🎖 전역했어요 · 군부대 밖으로 나왔어요'); }
+      else if (inside && baseGrace <= 0) req('trespass');
+      else if (!inside && dx >= -21 && dx <= -17 && Math.abs(dz) <= 3) note('⚠ 입대하지 않고 군부대에 들어가면 🏴 무법자가 돼요 · 입대는 옆 건물 상담원에게');
+    }
+  }
   { // 🪖 무단탈영: 군대 팀이 걸어서 군부대 밖으로 나가면 (정문의 빨간 선) · 순간이동 · OP는 빼고
     const TW = S.town, p = pos();
     if (TW && ARMY.includes(y.o) && CB.dimNow() === 'over' && !CB.isOp()) {
@@ -985,6 +1145,7 @@ CB.onTick((dt) => {
     if (O.lv > 0) for (const mo in S.mission) if (ORGS[mo] && ORGS[mo].lv >= O.lv) h += `<br>📋 임무 (${esc(mo)}): ${esc(S.mission[mo])}`;
     if (S.train && inTrain(me(), S.train) && Date.now() < S.train.until) h += `<br>🎯 훈련(${S.train.kind}) ${Math.ceil((S.train.until - Date.now()) / 1000)}초` + (S.train.kind === '체력' ? ` · ${Math.min(200, ranD | 0)}/200칸` : '');
   }
+  if (EX) h += `${h ? '<br>' : ''}📝 ${EX.kind === 'shoot' ? `🎯 사격 시험 ${EX.hits}/5 · <b>${['왼쪽', '가운데', '오른쪽'][EX.t]} 과녁</b>을 맞혀요` : '🦘 점프 시험'} · ${EX.sec}초`;
   if (S.leave[me()] && ARMY.includes(y.o)) h += `${h ? '<br>' : ''}🪪 외출 ${S.leave[me()].out ? '중' : '허가됨'} · 남은 시간 ${mmss(S.leave[me()].sec || 0)} (${esc(S.leave[me()].by)})`;
   if (W) h += `${h ? '<br>' : ''}<span style="color:#ff5a5a">🚨 <b>${stars(W.lv)}</b> · ${GRADE[Math.min(WMAX, W.lv)]} (${esc(W.why)})</span>`;
   if (J > 0) h += `${h ? '<br>' : ''}⛓ <b>수감 중</b> · ${Math.floor(J / 60)}분 ${J % 60}초 남음`;
