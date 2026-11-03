@@ -23,6 +23,8 @@
 //   경찰 쪽 장교 이상 · OP:  /수배 @닉 등급 사유 · /수배 해제 @닉 · /감옥 설정 · /석방 @닉
 // 🏴 무법자: 시민이 지명수배 3등급 범죄를 저지르면 (무단사살 · 무기로 협박 · 군부대 침입 등) 무법자 팀이 돼요 · 수갑대상 · ★★는 시민 그대로 · 수갑으로 잡히기 전엔 팀을 못 바꿔요
 // ⛓ 죄수: 감옥에 있는 동안은 죄수 팀 · 형기를 마치거나 벌금을 내면 시민으로 돌아가요
+// 🏦 은행: 도시 동쪽 은행원에게 우클릭 · /은행 (잔액) · /은행 입금 · 출금 (은행 안에서) · /은행 송금 @닉 개수 · 화폐는 인게임 동전
+// 💼 직업: 직업소개소 상담원에게 우클릭 · /직업 · 시민만 (경찰 · 군대는 팀 월급) · 번 돈과 월급은 통장으로 (10분마다)
 
 const TEAMS = [ // 아래 → 위 (계급 순서)
   { key: '시민', short: '시민', ico: '🙂', color: '#e0e0e0' },
@@ -78,10 +80,33 @@ const OUTFITS = {
 };
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
 const tagOf = (o) => (ORGS[o].key === ORGS[o].short ? o : `${o}(${ORGS[o].short})`); // 경찰(CP)
+const CITY_NAME = 'CAVE CITY', ARMY_NAME = 'CAVE ARMY', POLICE_NAME = 'CLKKY POLICE';
+const orgNameOf = (o) => (ARMY.includes(o) ? ARMY_NAME : o === '경찰' ? POLICE_NAME : ''); // 그 팀이 속한 조직 이름
+
+// ── 🏦 화폐 · 💼 직업 ──
+const COIN = '동전', JOB_SALARY = 2, JOB_CAP = 20; // 직업 월급 (10분마다) · 일해서 버는 돈은 1분에 이만큼까지
+const JOBS = {
+  광부: { ico: '⛏', d: '광석을 캐면 동전을 받아요 (비싼 광석일수록 많이)' },
+  벌목꾼: { ico: '🪓', d: '원목 3개를 캘 때마다 동전 1개' },
+  농부: { ico: '🌾', d: '쌀 · 감자 · 사과 · 호박을 직업소개소에 납품해요' },
+  어부: { ico: '🎣', d: '잡은 물고기를 직업소개소에 납품해요' },
+  요리사: { ico: '🍳', d: '만든 요리를 직업소개소에 납품해요 (어려운 요리일수록 비싸게)' },
+  사냥꾼: { ico: '🏹', d: '몹을 잡을 때마다 동전 1개' },
+  건축가: { ico: '🧱', d: '블록 30개를 놓을 때마다 동전 1개' },
+  배달부: { ico: '📦', d: '화면에 뜬 곳까지 가면 동전 (멀수록 많이)' },
+  의사: { ico: '🩺', d: '/치료 @닉 — 곁에 있는 사람을 치료하면 동전 2개 (20초에 한 번)' },
+  기자: { ico: '📰', d: '/뉴스 내용 — 모두에게 소식을 전하면 동전 2개 (3분에 한 번)' },
+};
+const ORE_PAY = { '석탄 광석': 1, '구리 광석': 1, '철 광석': 2, '금 광석': 3, '수정 광석': 3, '다이아몬드 광석': 5, '티타늄 광석': 5, '에너지 스톤 광석': 6, '우라늄 광석': 6, '라듐 광석': 6, '폴로늄 광석': 6, '플루토늄 광석': 6, '별의 힘 광석': 10 };
+const SELL = { // 납품 값 (한 개당 동전)
+  농부: [['쌀', 1], ['감자', 1], ['사과', 1], ['호박', 2]],
+  어부: [['물고기', 1], ['생선', 1], ['구운 생선', 2]],
+  요리사: [['구운 고기', 1], ['구운 생선', 1], ['스테이크', 2], ['사과 수프', 2], ['사과 셔벗', 2], ['카라멜 사과', 2], ['고기 수프', 3], ['고기 계란 볶음', 3], ['생선 수프', 3], ['떡국', 3], ['사과 파이', 3]],
+};
 
 // ── 🚨 지명수배 ──
 // 범죄를 하면 머리 위 닉네임 · 계급 밑에 지명수배가 떠요 (최대 3등급). 경찰 쪽 팀이 수갑으로 잡으면(체포) 처벌받고 지워져요.
-//   1등급 「수갑대상」     경범죄   — 부적절한 말 (아래 BADWORDS) · 폭행 (먼저 맞지 않았는데 때림) · 도둑질 (남의 상자를 부숨) → 벌금 10 케이브코인 (못 내면 징역 10분)
+//   1등급 「수갑대상」     경범죄   — 부적절한 말 (아래 BADWORDS) · 폭행 (먼저 맞지 않았는데 때림) · 도둑질 (남의 상자를 부숨) → 벌금 동전 10개 (가방 → 통장 순서로 · 못 내면 징역 10분)
 //   2등급 「지명수배 ★★」  중범죄   — 경찰 쪽 팀원 폭행 · 불법 무기 소지 (시민이 총을 가짐)                                  → 징역 15분
 //   3등급 「지명수배 ★★★」 중대범죄 — 무단사살 (정당방위 · 경찰이 수배자를 쓰러뜨린 건 빼고) · 대학살 · 무단탈영 (군대) · 무기로 협박 → 징역 30분
 const LAW = ['경찰', '군사경찰', '장교', 'MP사령부', '총사령부'];
@@ -116,7 +141,7 @@ CB.dim('감옥', {
 function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: s.base || {}, mission: s.mission || {}, pts: s.pts || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -169,9 +194,21 @@ function toJail(nick, min, why) {
 function askFine(nick, n, why) {
   S.fine[nick] = { n, why }; save();
   if (nick === me()) payMine({ n, why }); else CB.send('org-fine', { to: nick, n, why });
-  CB.say(`💸 ${nick} 님 벌금 ${n} 케이브코인 (${why})`);
+  CB.say(`💸 ${nick} 님 벌금 동전 ${n}개 (${why})`);
 }
-function payMine(v) { CB.payFine(v.n, v.why).then((r) => req(r && r.ok ? 'paid' : 'unpaid')).catch(() => req('unpaid')); }
+// 💸 벌금: 가방의 동전을 먼저 내고 → 모자라면 방장이 통장에서 뺌 → 그래도 모자라면 돌려주고 징역
+function payMine(v) { const n = Math.min(CB.has(COIN) || 0, v.n | 0), got = n > 0 && CB.take(COIN, n); req('fine-pay', { n: got ? n : 0 }); }
+const bal = (n) => S.bank[n] || 0;
+const jobOf = (n) => (teamOf(n) === '시민' ? S.job[n] || '' : ''); // 직업은 시민만 (경찰 · 군대는 팀 월급)
+function cashTo(n, v) { if (n === me()) CB.give(COIN, v); else CB.send('org-cash', { to: n, n: v }); }
+const jobCap = {}, healT = {}, newsT = {};
+function jobEarn(n, v) { // 일해서 번 돈 → 통장 (1분 한도)
+  const old = jobCap[n], c = old && Date.now() - old.t < 60000 ? old : (jobCap[n] = { t: Date.now(), c: 0 });
+  v = Math.min(v | 0, JOB_CAP - c.c);
+  if (v <= 0) return;
+  c.c += v; S.bank[n] = bal(n) + v; save();
+  tell(n, `${(JOBS[jobOf(n)] || { ico: '🪙' }).ico} 동전 +${v} · 통장 ${bal(n)}개`);
+}
 function desert(nick, why) { crime(nick, 3, why); } // 🪖 무단탈영: ★★★ (군대는 무법자가 되지 않고 지명수배만)
 const mmss = (s) => `${Math.floor(s / 60)}분 ${s % 60}초`;
 // 👮 체포 (수갑): 수갑대상 → 벌금 10 (못 내면 징역 10분) · ★★ → 징역 15분 · ★★★ → 징역 30분 · 수배 없는 무법자는 징역 10분
@@ -243,14 +280,75 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!S.w[from] && teamOf(from) !== OUTLAW) return;
       return arrest(from, by);
     }
-    case 'paid': {
-      if (!S.fine[from]) return;
+    case 'fine-pay': { // 💸 가방에서 낸 만큼(a.n)을 빼고 나머지는 통장에서
+      const F = S.fine[from], paid = Math.max(0, a.n | 0);
+      if (!F) { if (paid) cashTo(from, paid); return; }
+      const need = Math.max(0, F.n - paid);
+      if (need > bal(from)) { if (paid) cashTo(from, paid); return toJail(from, 10, '벌금을 내지 못함'); }
+      if (need) S.bank[from] = bal(from) - need;
       delete S.fine[from]; clearSuits(from); if (S.m[from] && S.m[from].o === OUTLAW) S.m[from].o = '시민'; save();
-      return CB.say(`✅ ${from} 님이 벌금을 냈어요 · 지명수배 해제`);
+      return CB.say(`✅ ${from} 님이 벌금 동전 ${F.n}개를 냈어요${need ? ` (통장에서 ${need}개)` : ''} · 지명수배 해제`);
     }
-    case 'unpaid': {
-      if (!S.fine[from]) return;
-      return toJail(from, 10, '벌금을 내지 못함');
+    case 'bank-in': { // 🏦 동전은 낸 사람 게임에서 이미 가방에서 뺐음
+      const n = Math.max(0, a.n | 0); if (!n) return;
+      S.bank[from] = bal(from) + n; save();
+      return tell(from, `🏦 동전 ${n}개 입금 · 통장 ${bal(from)}개`);
+    }
+    case 'bank-out': {
+      const n = Math.max(0, a.n | 0);
+      if (!n) return tell(from, '🏦 출금할 돈이 없어요');
+      if (bal(from) < n) return tell(from, `🏦 잔액이 모자라요 (통장 ${bal(from)}개)`);
+      S.bank[from] = bal(from) - n; save(); cashTo(from, n);
+      return tell(from, `🏦 동전 ${n}개 출금 · 통장 ${bal(from)}개`);
+    }
+    case 'bank-send': {
+      const n = Math.max(0, a.n | 0);
+      if (!who || who === from || !n) return tell(from, '/은행 송금 @닉 개수');
+      if (!CB.players().includes(who) && S.bank[who] == null && !S.m[who]) return tell(from, `🏦 ${who} 님을 찾을 수 없어요`);
+      if (bal(from) < n) return tell(from, `🏦 잔액이 모자라요 (통장 ${bal(from)}개)`);
+      S.bank[from] = bal(from) - n; S.bank[who] = bal(who) + n; save();
+      tell(who, `🏦 ${from} 님이 동전 ${n}개를 보냈어요 · 통장 ${bal(who)}개`);
+      return tell(from, `🏦 ${who} 님에게 동전 ${n}개를 보냈어요 · 통장 ${bal(from)}개`);
+    }
+    case 'job-set': {
+      const j = String(a.j || '');
+      if (Fo !== '시민') return tell(from, Fo === OUTLAW || Fo === PRISONER ? `💼 ${tagOf(Fo)}는 직업을 가질 수 없어요` : `💼 ${tagOf(Fo)}는 팀 월급을 받아요 · 직업은 시민만`);
+      if (!j) { if (!S.job[from]) return tell(from, '💼 지금 직업이 없어요'); delete S.job[from]; save(); return tell(from, '💼 일을 그만뒀어요'); }
+      if (!JOBS[j]) return tell(from, '💼 그런 직업은 없어요 · /직업 목록');
+      if (S.w[from]) return tell(from, '💼 지명수배 중에는 취직할 수 없어요');
+      S.job[from] = j; save();
+      return CB.say(`${JOBS[j].ico} ${from} 님이 ${j} 일을 시작했어요!`);
+    }
+    case 'job-pay': { // 광부 · 벌목꾼 · 건축가 · 배달부: 그 사람 게임이 일한 만큼 알려 줌
+      if (!['광부', '벌목꾼', '건축가', '배달부'].includes(jobOf(from))) return;
+      return jobEarn(from, Math.min(a.n | 0, 12));
+    }
+    case 'job-sell': { // 납품: 물건은 그 사람 게임에서 이미 가방에서 뺐음
+      const n = Math.min(Math.max(0, a.n | 0), 200);
+      if (!n || !SELL[jobOf(from)]) return;
+      S.bank[from] = bal(from) + n; save();
+      return tell(from, `📦 납품 완료 · 동전 +${n} · 통장 ${bal(from)}개`);
+    }
+    case 'job-heal': {
+      if (jobOf(from) !== '의사') return tell(from, '🩺 치료는 의사만 할 수 있어요 · /직업');
+      if (!who || who === from || !CB.players().includes(who)) return tell(from, '/치료 @닉 (접속 중인 다른 사람)');
+      const A = CB.playerPos(from), B = CB.playerPos(who);
+      if (!A || !B || Math.hypot(A.x - B.x, A.z - B.z) > 6) return tell(from, `🩺 ${who} 님 곁으로 가야 해요`);
+      const left = 20 - (Date.now() - (healT[from] || 0)) / 1000;
+      if (left > 0) return tell(from, `🩺 ${Math.ceil(left)}초 뒤에 다시 치료할 수 있어요`);
+      healT[from] = Date.now();
+      if (who === me()) healMe(from); else CB.send('org-heal', { to: who, by: from });
+      return jobEarn(from, 2);
+    }
+    case 'job-news': {
+      if (jobOf(from) !== '기자') return tell(from, '📰 뉴스는 기자만 전할 수 있어요 · /직업');
+      const text = String(a.text || '').trim().slice(0, 60);
+      if (!text) return tell(from, '/뉴스 내용');
+      const left = 180 - (Date.now() - (newsT[from] || 0)) / 1000;
+      if (left > 0) return tell(from, `📰 ${Math.ceil(left)}초 뒤에 다시 전할 수 있어요`);
+      newsT[from] = Date.now();
+      CB.say(`📰 ${from}: ${text}`);
+      return jobEarn(from, 2);
     }
     case 'jailpos': {
       if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '감옥은 장교(CMO) · MP사령부 · 총사령부나 OP만 정할 수 있어요');
@@ -404,8 +502,8 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const o = a.o === '경찰' ? '경찰' : '군사';
       if (Fo !== '시민') return tell(from, `이미 ${tagOf(Fo)}이에요`);
       if (S.w[from]) return tell(from, '지명수배 중에는 입대할 수 없어요');
-      setTeam(from, o); save(); sendKit(from);
-      return CB.say(`${ORGS[o].ico} ${from} 님이 ${tagOf(o)}에 ${o === '경찰' ? '임용' : '입대'}했어요!`);
+      setTeam(from, o); delete S.job[from]; save(); sendKit(from);
+      return CB.say(`${ORGS[o].ico} ${from} 님이 ${orgNameOf(o)} ${tagOf(o)}에 ${o === '경찰' ? '임용' : '입대'}했어요!`);
     }
     case 'trespass': { // 🏴 시민이 입대 없이 군부대에 들어옴
       if (Fo !== '시민' || fromOp) return;
@@ -480,8 +578,11 @@ CB.on('msg', (k, v, from) => {
   else if (k === 'org-jail' && v.to === me()) note('⛓ 감옥에 갇혔어요');
   else if (k === 'org-kit' && v.to === me()) giveKit(v.o);
   else if (k === 'org-refund' && v.to === me()) { CB.give('동전', v.n | 0); note(`🪙 동전 ${v.n | 0}개를 돌려받았어요`); }
+  else if (k === 'org-cash' && v.to === me()) CB.give(COIN, v.n | 0);
+  else if (k === 'org-heal' && v.to === me()) healMe(v.by);
   else if (k === 'org-mark') setMark(v);
 });
+function healMe(by) { const P = CB.player && CB.player(); if (!P || P.dead) return; P.hp = Math.max(P.hp, Math.min(20, P.hp + 8)); note(`🩺 ${by} 님이 치료해 줬어요`); }
 
 // ── 🚨 범죄 알아채기 (방장 게임) ──
 const hitBy = {}, lastHit = {}, kills = {};
@@ -524,6 +625,27 @@ CB.on('break', (x, y, z, id) => {
   const k = bkey(x, y, z), o = S.owner[k];
   if (o && o !== me()) req('theft', { key: k }); else if (o) req('unown', { key: k });
 });
+// 💼 일해서 벌기 (내 게임이 방장에게 알림 · 크리에이티브 · 내가 놓은 블록을 다시 캔 건 빼고)
+const creative = () => { const w = CB.world && CB.world(); return !!w && w.mode === 'creative'; };
+const myPlaced = new Set();
+let jobN = 0;
+CB.on('place', (x, y, z) => {
+  if (creative()) return;
+  if (myPlaced.size > 4000) myPlaced.clear();
+  myPlaced.add(bkey(x, y, z));
+  if (jobOf(me()) === '건축가' && ++jobN >= 30) { jobN = 0; req('job-pay', { n: 1 }); }
+});
+CB.on('break', (x, y, z, id) => {
+  if (myPlaced.delete(bkey(x, y, z)) || creative()) return;
+  const j = jobOf(me());
+  if (j === '광부') { for (const name in ORE_PAY) if (CB.id(name) === id) { req('job-pay', { n: ORE_PAY[name] }); break; } }
+  else if (j === '벌목꾼' && id === CB.id('원목') && ++jobN >= 3) { jobN = 0; req('job-pay', { n: 1 }); }
+});
+CB.on('kill', (m) => { // 사냥꾼 (몹은 방장 게임에서 쓰러짐)
+  if (!CB.isHost() || !m.byPlayer || m.orgTarget || m.kind === 'villager' || /^mod_org/.test(m.kind || '')) return;
+  const who = m.byNick || me();
+  if (jobOf(who) === '사냥꾼') jobEarn(who, 1);
+});
 
 // 훈련 표적 (가만히 서 있음) · 맞혀서 쓰러뜨리면 그 사람에게 1점
 CB.mob('org_target', { name: '🎯 훈련 표적', hp: 6, color: 0xd8b070, head: 0xffffff, ai: (m) => { m.vel.x = m.vel.z = 0; } });
@@ -556,8 +678,10 @@ CB.mob(DEALER, {
 });
 // ── 🪖 입대 상담원 · 🚓 경찰 상담원: 우클릭 → 「입대하시겠어요?」 → 네 ──
 const RECRUITERS = {
-  org_rec_army: { o: '군사', name: '🪖 입대 상담원', dx: -20, dz: 11, color: 0x55663a, q: '🪖 <b>입대 상담원</b><br><br>입대하시겠어요?', tag: '#7ec850' },
-  org_rec_police: { o: '경찰', name: '🚓 경찰 상담원', dx: 25, dz: 10, color: 0x1f3a7a, q: '🚓 <b>경찰 상담원</b><br><br>경찰에 지원하시겠어요?', tag: '#4aa8ff' },
+  org_rec_army: { o: '군사', name: '🪖 입대 상담원', dx: -20, dz: 11, color: 0x55663a, q: `🪖 <b>${ARMY_NAME} 입대 상담원</b><br><br>입대하시겠어요?`, tag: '#7ec850' },
+  org_rec_police: { o: '경찰', name: '🚓 경찰 상담원', dx: 25, dz: 10, color: 0x1f3a7a, q: `🚓 <b>${POLICE_NAME} 상담원</b><br><br>경찰에 지원하시겠어요?`, tag: '#4aa8ff' },
+  org_banker: { name: '🏦 은행원', dx: 41, dz: -10, color: 0x2a2f45, tag: '#ffd040', talk: () => bankDialog() },
+  org_jobs: { name: '💼 직업 상담원', dx: 41, dz: 18, color: 0x2a6a7a, tag: '#7ad0e0', talk: () => jobDialog() },
 };
 for (const k in RECRUITERS) {
   const R = RECRUITERS[k];
@@ -565,6 +689,7 @@ for (const k in RECRUITERS) {
     name: R.name, hp: 9999, color: R.color, head: 0xd8a07c,
     ai: (m) => { m.vel.x = m.vel.z = 0; m.face = true; if (m.orgHome && Math.hypot(m.pos.x - m.orgHome.x, m.pos.z - m.orgHome.z) > 0.5) { m.pos.x = m.orgHome.x; m.pos.z = m.orgHome.z; } },
     talk: () => {
+      if (R.talk) return R.talk();
       const t = teamOf(me());
       if (t !== '시민') return note(t === OUTLAW || t === PRISONER ? `${R.name}: ${tagOf(t)}는 받아 줄 수 없어요` : `${R.name}: 이미 ${tagOf(t)}이시네요`);
       if (S.w[me()]) return note(`${R.name}: 지명수배 중에는 안 돼요`);
@@ -572,15 +697,75 @@ for (const k in RECRUITERS) {
     },
   });
 }
+// 🏦 은행 · 💼 직업소개소 대화창 (대화창 버튼에서 새 대화창을 열 땐 먼저 닫히는 걸 기다림)
+const nextDlg = (f) => () => { setTimeout(f, 30); };
+function bankIn(n) {
+  n = Math.min(n | 0, CB.has(COIN) || 0);
+  if (n <= 0) return note('🪙 가진 동전이 없어요');
+  if (CB.take(COIN, n)) req('bank-in', { n });
+}
+function bankDialog() {
+  const b = bal(me()), c = CB.has(COIN) || 0;
+  CB.dialog(`🏦 <b>은행원</b><br><br>어서 오세요! 통장 <b>${b}</b>개 · 가방 <b>${c}</b>개<br><small>벌금은 가방 → 통장 순서로 나가요 · /은행 송금 @닉 개수</small>`, [['전부 입금', () => bankIn(c)], ['10개 입금', () => bankIn(10)], ['10개 출금', () => req('bank-out', { n: 10 })], ['전부 출금', () => req('bank-out', { n: b })], ['닫기']]);
+}
+function jobInfo(n) {
+  const J = JOBS[n];
+  CB.dialog(`${J.ico} <b>${n}</b><br><br>${J.d}<br>월급: 10분마다 동전 ${JOB_SALARY}개 (통장으로)`, [['이 일 하기', () => req('job-set', { j: n })], ['뒤로', nextDlg(jobDialog)]]);
+}
+function jobSell() {
+  const j = jobOf(me()), L = SELL[j];
+  if (!L) return note('📦 납품은 농부 · 어부 · 요리사만 해요');
+  let coins = 0, items = 0;
+  for (const [name, price] of L) {
+    if (!CB.id(name)) continue;
+    const n = Math.min(CB.has(name) || 0, 64 - items);
+    if (n > 0 && CB.take(name, n)) { coins += n * price; items += n; }
+  }
+  if (!coins) return note(`📦 납품할 게 없어요 (${L.map((x) => x[0]).join(' · ')})`);
+  req('job-sell', { n: coins });
+}
+function jobDialog() {
+  const t = teamOf(me()), j = jobOf(me());
+  if (t !== '시민') return note(t === OUTLAW || t === PRISONER ? `💼 ${tagOf(t)}는 직업을 가질 수 없어요` : `💼 ${tagOf(t)}는 팀 월급을 받아요 · 직업은 시민만`);
+  const B = [];
+  if (SELL[j]) B.push(['📦 납품하기', jobSell]);
+  for (const n in JOBS) if (n !== j) B.push([`${JOBS[n].ico} ${n}`, nextDlg(() => jobInfo(n))]);
+  if (j) B.push(['그만두기', () => req('job-set', { j: '' })]);
+  B.push(['닫기']);
+  CB.dialog(`💼 <b>직업소개소</b><br><br>${j ? `지금 직업: <b>${JOBS[j].ico} ${j}</b>` : '어떤 일을 해 보시겠어요?'}`, B);
+}
+// 📦 배달부: 도시 안 목적지까지 가면 동전 · 다음 일감은 5초 뒤
+let DEL = null, delWait = 0;
+function deliverySpots() {
+  const T = S.town, L = [['경찰서 앞', 28, 3], ['음식점 앞', 41, 3], ['은행 앞', 41, -3], ['직업소개소 앞', 40, 13], ['입대소 앞', -16, 11], ['도시 한가운데', 0, 0]];
+  const out = L.map(([n, dx, dz]) => ({ n, x: T.x + dx + 0.5, z: T.z + dz + 0.5 }));
+  for (const h of S.houses || []) out.push({ n: `${h.n}번 집`, x: h.door.x, z: h.door.z });
+  return out;
+}
+function deliveryTick() {
+  if (jobOf(me()) !== '배달부' || !S.town || CB.dimNow() !== 'over') { DEL = null; return; }
+  const p = pos();
+  if (!DEL) {
+    if (delWait > 0) { delWait--; return; }
+    const L = deliverySpots().filter((q) => Math.hypot(q.x - p.x, q.z - p.z) > 15);
+    if (L.length) { const q = L[Math.floor(Math.random() * L.length)]; DEL = { ...q, far: Math.hypot(q.x - p.x, q.z - p.z) }; }
+    return;
+  }
+  if (Math.hypot(DEL.x - p.x, DEL.z - p.z) < 4) { req('job-pay', { n: Math.max(1, Math.min(4, Math.round(DEL.far / 25))) }); DEL = null; delWait = 5; }
+}
 function npcNear(x, z) { // NPC가 있어야 하나: 방장 게임은 누구든 60칸 안에 있으면 (친구 곁의 NPC를 지우지 않게) · 친구 게임은 나만 봄
   const L = CB.isHost() && CB.playerPos ? CB.players().map((n) => CB.playerPos(n)) : [pos()];
   return L.some((q) => q && Math.hypot(q.x - x, q.z - z) < 60);
 }
 function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서도 보임)
   const T = S.town; if (!T || !CB.bigSign) return;
-  CB.bigSign('org_recruit', '입대소', T.x - 19.5, T.y + 9, T.z + 11.5, { bg: '#3d4a2a', w: 12 });
-  CB.bigSign('org_police', '경찰서', T.x + 28.5, T.y + 12, T.z + 11.5, { bg: '#1f3a7a', w: 16 });
+  CB.bigSign('org_city', CITY_NAME, T.x + 0.5, T.y + 13, T.z + 0.5, { bg: '#14325a', w: 20 });
+  CB.bigSign('org_army', ARMY_NAME, T.x - 21.5, T.y + 10, T.z + 0.5, { bg: '#3d4a2a', w: 16 });
+  CB.bigSign('org_recruit', `${ARMY_NAME} 입대소`, T.x - 19.5, T.y + 7, T.z + 11.5, { bg: '#3d4a2a', w: 18 });
+  CB.bigSign('org_police', `${POLICE_NAME} 경찰서`, T.x + 28.5, T.y + 12, T.z + 11.5, { bg: '#1f3a7a', w: 24 });
   CB.bigSign('org_food', '음식점', T.x + 41.5, T.y + 9, T.z + 8.5, { bg: '#a8421a', w: 12 });
+  CB.bigSign('org_bank', '🏦 은행', T.x + 41.5, T.y + 9, T.z - 7.5, { bg: '#8a6a10', w: 12 });
+  CB.bigSign('org_jobs', '💼 직업소개소', T.x + 41.5, T.y + 9, T.z + 17.5, { bg: '#2a6a7a', w: 14 });
   if (S.village) CB.bigSign('org_food2', '음식점', T.x + S.village.fx, T.y + 9, T.z + S.village.s * S.village.fd, { bg: '#a8421a', w: 12 });
 }
 function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임에 한 명씩)
@@ -677,7 +862,7 @@ const T_LINE = CB.block({ id: 1910, key: 'town_line', name: '도로 선', paint:
 const T_TARGET = CB.block({ id: 1911, key: 'town_target', name: '과녁', paint: (u, v, x, y) => { const r = Math.hypot(x - 7.5, y - 7.5); return r < 2 ? [220, 30, 30] : r < 4 ? [240, 240, 240] : r < 6 ? [220, 30, 30] : [240, 240, 240]; } });
 const TOWN_X = 46, TOWN_Z = 24; // 동서 ±46칸 · 남북 ±24칸
 const LAD_W = 44, LAD_E = 45, LAD_N = 46, LAD_S = 47; // 🪜 사다리 블록 (붙은 벽: 서 · 동 · 북(-z) · 남(+z))
-const TOWN_V = 6; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2 ~ 5는 없는 것만 더함 (탈영선 · 성벽 · 입대소 · 점프맵 · 음식점)
+const TOWN_V = 7; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2 ~ 6은 없는 것만 더함 (탈영선 · 성벽 · 입대소 · 점프맵 · 음식점 · 은행 · 직업소개소)
 const VIL_D = 34; // 🏘 도시 옆 마을 깊이 (성문 밖 34칸)
 const T_DESERT = CB.block({ id: 1914, key: 'town_desert', name: '탈영선', paint: (u, v, x, y) => (((x + y) >> 2) % 2 ? [235, 225, 60] : [205, 30, 30]) });
 function wallPlan(C, G) { // 🏰 성벽: 도시 · 경찰서 · 군부대 둘레 (높이 7칸 · 톱니 · 모서리 탑 · 동 · 남 · 북 성문 · 올라가는 사다리)
@@ -717,6 +902,28 @@ function foodPlan(C, G) { // 🍳 도시 음식점 (큰길 동쪽 · 문은 큰�
   for (let y = 0; y <= 2; y++) put(41, y, 5, 0);
   for (let x = 39; x <= 43; x++) put(x, 0, 10, PLANK);
   put(41, 0, 10, CHEST); put(39, 0, 10, STOVE); put(41, 3, 8, LAMPB);
+  return L;
+}
+const T_BANK = CB.block({ id: 1915, key: 'town_bank', name: '은행 벽', paint: (u, v, x, y) => { const k = 0.93 + 0.07 * Math.sin(x * 6.1 + y * 3.7); return [214 * k, 196 * k, 150 * k]; } });
+function bankPlan(C, G) { // 🏦 은행 (큰길 북쪽 · 문은 큰길 쪽) · 💼 직업소개소 (음식점 남쪽 · 문은 음식점 쪽)
+  const L = [], PLANK = BLK('판자'), GLASS = BLK('유리'), LAMPB = BLK('등불'), GOLD = BLK('금 블록'), IRON = BLK('철 블록'), SHELF = BLK('책장', '판자'), put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + z, id]);
+  const room = (z1, z2, wall, roof) => {
+    for (let x = 38; x <= 44; x++) for (let z = z1; z <= z2; z++) {
+      put(x, -1, z, PLANK); put(x, 4, z, roof);
+      const edge = x === 38 || x === 44 || z === z1 || z === z2, corner = (x === 38 || x === 44) && (z === z1 || z === z2);
+      for (let y = 0; y <= 3; y++) put(x, y, z, !edge ? 0 : !corner && y === 2 ? GLASS : wall);
+    }
+    put(41, 3, (z1 + z2) >> 1, LAMPB);
+  };
+  room(-11, -5, T_BANK, GOLD);
+  for (let y = 0; y <= 2; y++) put(41, y, -5, 0);
+  for (let x = 39; x <= 43; x++) put(x, 0, -8, PLANK); // 창구
+  for (let y = 0; y <= 1; y++) { put(39, y, -10, IRON); put(43, y, -10, IRON); } // 금고
+  put(39, 2, -10, GOLD); put(43, 2, -10, GOLD);
+  room(14, 20, T_WHITE, T_CONC);
+  for (let y = 0; y <= 2; y++) put(41, y, 14, 0);
+  for (let x = 39; x <= 43; x++) put(x, 0, 17, PLANK); // 상담 창구
+  for (let y = 0; y <= 1; y++) { put(39, y, 19, SHELF); put(43, y, 19, SHELF); }
   return L;
 }
 function cookbookIn(x, y, z) { const id = CB.id('요리 가이드북'); if (CB.fillChest && id) CB.fillChest(x, y, z, [[id, 1]]); }
@@ -959,7 +1166,7 @@ function buildTown(C, G) {
     if (!soft.has(CB.getBlock(C.x + dx, y, C.z + dz))) break;
     L.push([C.x + dx, y, C.z + dz, DIRT]);
   }
-  L.push(...wallPlan(C, G), ...campPlan(C, G), ...foodPlan(C, G));
+  L.push(...wallPlan(C, G), ...campPlan(C, G), ...foodPlan(C, G), ...bankPlan(C, G));
   CB.setBlocks(L);
   cityFoodDone(C, G);
   const again =!!(S.town && S.town.x === C.x && S.town.z === C.z);
@@ -983,9 +1190,11 @@ function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾�
       const L = S.townV < 4 ? wallPlan(S.town, S.town.y) : [];
       if (S.townV === 2) for (let dz = -2; dz <= 2; dz++) L.push([S.town.x - 22, S.town.y - 1, S.town.z + dz, T_DESERT]);
       if (S.townV < 5) L.push(...campPlan(S.town, S.town.y));
-      L.push(...foodPlan(S.town, S.town.y));
-      CB.setBlocks(L); cityFoodDone(S.town, S.town.y); S.townV = TOWN_V; save();
-      CB.say('🏙 도시에 새 건물이 생겼어요 (음식점 등)');
+      const needFood = S.townV < 6; // 음식점이 이미 있으면 다시 안 지음 (요리사가 늘지 않게)
+      if (needFood) L.push(...foodPlan(S.town, S.town.y));
+      L.push(...bankPlan(S.town, S.town.y));
+      CB.setBlocks(L); if (needFood) cityFoodDone(S.town, S.town.y); S.townV = TOWN_V; save();
+      CB.say('🏙 도시에 새 건물이 생겼어요 (🏦 은행 · 💼 직업소개소)');
       return;
     }
     if (!S.village && S.townV === TOWN_V) { const s = villageSite(S.town); if (s != null) buildVillage(S.town, S.town.y, s); }
@@ -1027,26 +1236,48 @@ CB.command('조직', '내 팀 · /조직 목록 (계급표) · /조직 탈퇴 (�
   if (sub === '배정') { const p = parseTeam(a.slice(1)); return p ? req('assign', p) : c.say('/조직 배정 @닉 팀 (또는 /조직 배정 팀 @닉)'); }
   if (sub === '추방') return req('kick', { who: a[1] });
   if (sub === '목록') {
-    c.say('🪖 팀 계급표 (위 → 아래)');
-    for (let i = TOP; i >= 0; i--) { const o = TEAMS[i].key, n = teamMembers(o).length; c.say(`${i + 1}. ${ORGS[o].ico} ${tagOf(o)}${o === '시민' ? '' : ` · ${n}명`} · 점수 ${S.pts[o] || 0}${i === TOP ? ' · 서버를 만든 사람' : i >= OFFICER_LV ? ' · 지휘' : ''}`); }
+    c.say(`🪖 팀 계급표 (위 → 아래) · ${ARMY_NAME} · ${POLICE_NAME}`);
+    for (let i = TOP; i >= 0; i--) { const o = TEAMS[i].key, n = teamMembers(o).length, on = orgNameOf(o); c.say(`${i + 1}. ${ORGS[o].ico} ${on ? on + ' ' : ''}${tagOf(o)}${o === '시민' ? '' : ` · ${n}명`} · 점수 ${S.pts[o] || 0}${i === TOP ? ' · 서버를 만든 사람' : i >= OFFICER_LV ? ' · 지휘' : ''}`); }
     return;
   }
   const x = mine();
   c.say(`${ORGS[x.o].ico} ${tagOf(x.o)} (${ORGS[x.o].special ? (x.o === OUTLAW ? '수갑으로 잡히기 전엔 팀을 못 바꿔요' : '형기를 마치면 시민') : `${ORGS[x.o].lv + 1}/${TEAMS.length}번째 계급`}) · 내 점수 ${x.p || 0} · 팀 점수 ${S.pts[x.o] || 0}`);
   if (x.o !== '시민') c.say('같은 팀: ' + teamMembers(x.o).join(', '));
-  else c.say('군대는 군부대 옆 입대소, 경찰은 경찰서의 상담원에게 우클릭해서 지원해요 · /조직 목록');
+  else c.say(`${ARMY_NAME}는 군부대 옆 입대소, ${POLICE_NAME}는 경찰서의 상담원에게 우클릭해서 지원해요 · /조직 목록`);
 }, { everyone: true });
 CB.command('도시', '/도시 — 🏙 도시 · 🚓 경찰서 · 🪖 군부대 위치 · /도시 짓기 (지금 자리에 새로 · OP)', (a, c) => {
   if (a[0] === '짓기') { const p = pos(); return req('town', { x: p.x, y: p.y, z: p.z }); }
   const T = S.town;
   if (!T) return c.say('🏙 아직 도시가 없어요 · 방장이 부활 자리 근처에 있으면 곧 저절로 지어져요 (OP는 /도시 짓기)');
   const f = (dx, dz) => `${T.x + dx}, ${T.y}, ${T.z + dz}`;
-  c.say(`🏙 도시 한가운데: ${f(0, 0)}`);
-  c.say(`🚓 경찰서: ${f(28, 7)} (도시 동쪽) · 🪖 군부대: ${f(-34, 0)} (도시 서쪽)`);
+  c.say(`🏙 ${CITY_NAME} 한가운데: ${f(0, 0)}`);
+  c.say(`🚓 ${POLICE_NAME} 경찰서: ${f(28, 7)} (도시 동쪽) · 🪖 ${ARMY_NAME} 군부대: ${f(-34, 0)} (도시 서쪽)`);
+  c.say(`🏦 은행: ${f(41, -8)} · 💼 직업소개소: ${f(41, 17)} (도시 동쪽)`);
   c.say(`🍳 음식점: ${f(41, 8)} (도시 동쪽)${S.village ? ` · 🏘 마을: ${f(0, S.village.s * (TOWN_Z + VIL_D / 2))} (${S.village.s > 0 ? '북문' : '남문'} 밖)` : ''}`);
   c.say(`🪖 입대 상담원: ${f(-20, 11)} (입대소 · 군부대 정문 옆 건물) · 🚓 경찰 상담원: ${f(25, 10)} (경찰서 접수대 뒤)`);
   c.say('🏕 /기지 로 우리 팀 기지(경찰서 · 군부대)로 갈 수 있어요');
 }, { everyone: true });
+const nearSpot = (dx, dz) => { const T = S.town, p = pos(); return !T || CB.isOp() || (CB.dimNow() === 'over' && Math.hypot(p.x - (T.x + dx), p.z - (T.z + dz)) <= 9); };
+CB.command('은행', '/은행 — 🏦 잔액 · /은행 입금 [개수|전부] · /은행 출금 [개수|전부] (은행 안에서) · /은행 송금 @닉 개수', (a, c) => {
+  const sub = a[0] || '', b = bal(me());
+  if (!sub) return c.say(`🏦 통장 ${b}개 · 가방 ${CB.has(COIN) || 0}개 · 은행은 도시 동쪽 (/도시)`);
+  if (sub === '송금') return req('bank-send', { who: a[1], n: Math.floor(+a[2]) || 0 });
+  if (sub !== '입금' && sub !== '출금') return c.say('/은행 · /은행 입금 개수 · /은행 출금 개수 · /은행 송금 @닉 개수');
+  if (!nearSpot(41.5, -8)) return c.say('🏦 입금 · 출금은 은행 안에서 해요 (/도시)');
+  const all = a[1] === '전부', n = Math.floor(+a[1]) || 0;
+  if (sub === '입금') return bankIn(all ? CB.has(COIN) : n);
+  req('bank-out', { n: all ? b : n });
+}, { everyone: true });
+CB.command('직업', '/직업 — 💼 내 직업 · /직업 목록 · /직업 선택 이름 · /직업 그만 · /직업 납품 (직업소개소에서)', (a, c) => {
+  const sub = a[0] || '', j = jobOf(me());
+  if (sub === '목록') { for (const n in JOBS) c.say(`${JOBS[n].ico} ${n}: ${JOBS[n].d}`); return; }
+  if (sub === '선택') return req('job-set', { j: a[1] || '-' });
+  if (sub === '그만') return req('job-set', { j: '' });
+  if (sub === '납품') return nearSpot(41.5, 17.5) ? jobSell() : c.say('📦 납품은 직업소개소에서 해요 (/도시)');
+  c.say(j ? `💼 내 직업: ${JOBS[j].ico} ${j} · ${JOBS[j].d}` : '💼 지금 직업이 없어요 · 직업소개소 상담원에게 우클릭하거나 /직업 선택 이름 · /직업 목록');
+}, { everyone: true });
+CB.command('치료', '/치료 @닉 — 🩺 의사: 곁에 있는 사람 치료', (a) => req('job-heal', { who: a[0] }), { everyone: true });
+CB.command('뉴스', '/뉴스 내용 — 📰 기자: 모두에게 소식 전하기', (a) => req('job-news', { text: a.join(' ') }), { everyone: true });
 CB.command('집', `/집 — 🏠 집 목록 · /집 사기 [번호] (동전 ${HOUSE_PRICE}개) · /집 팔기 (동전 ${HOUSE_PRICE / 2}개 돌려받음) · /집 가기 · /집 비우기 번호 (OP)`, (a, c) => {
   const L = S.houses || [], mine0 = myHouse(me());
   if (!L.length) return c.say('🏠 아직 집이 없어요 (도시가 생기면 같이 지어져요)');
@@ -1131,7 +1362,7 @@ CB.command('석방', '/석방 @닉 (장교(CMO) 이상 · OP)', (a) => req('rele
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
-let curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
+let payT = 0, curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
   const T = S.train, x = mine();
@@ -1147,6 +1378,7 @@ CB.onTick((dt) => {
   try { signTick(); } catch (e) { console.warn('조직 간판 오류', e); }
   if ((dealerT -= 1) <= 0) { dealerT = 3; try { dealerTick(); recruiterTick(); } catch (e) { console.warn('조직 NPC 오류', e); } }
   examTick();
+  deliveryTick();
   if (CB.isHost()) for (const n in S.m) if (S.m[n].o === OUTLAW && !S.jail[n] && !(S.w[n] && S.w[n].lv >= WMAX)) crime(n, WMAX, '🏴 무법자 (자동)'); // 무법자 팀은 언제나 ★★★
   if ((townT -= 1) <= 0) { townT = 5; try { townTick(); } catch (e) { console.warn('도시 짓기 오류', e); } }
   // 방장: 접속해 있는 수감자의 남은 시간을 줄임 (나가 있는 동안은 멈춤)
@@ -1162,15 +1394,24 @@ CB.onTick((dt) => {
       delete S.leave[n]; save();
       if (v.out && ARMY.includes(teamOf(n)) && !CB.opOf(n)) desert(n, '무단탈영 (외출 시간 초과)'); else tell(n, '🪪 외출 허가 시간이 끝났어요');
     }
+    if (++payT >= 600) { // 💰 월급 (10분마다 · 접속 중인 사람) → 통장: 경찰 · 군대는 계급만큼 · 시민은 직업이 있으면
+      payT = 0;
+      for (const n of on) {
+        const o = teamOf(n), v = o === OUTLAW || o === PRISONER ? 0 : o === '시민' ? (S.job[n] ? JOB_SALARY : 0) : 3 + ORGS[o].lv;
+        if (!v) continue;
+        S.bank[n] = bal(n) + v; tell(n, `💰 월급 동전 ${v}개가 통장에 들어왔어요 · 통장 ${bal(n)}개`);
+      }
+      save();
+    }
     if (lch && ++saveLeaveT >= 5) { saveLeaveT = 0; save(); }
     if (ch && (++saveJailT >= 5 || !Object.keys(S.jail).length)) { saveJailT = 0; save(); }
   }
   // 머리 위: 닉네임 (팀 색) → 계급 → 🚨 지명수배 / ⛓ 수감 · 몸에는 팀 복장
-  const now = new Set(), names = new Set([...Object.keys(S.m), ...Object.keys(S.w), ...Object.keys(S.jail), ...(ownerNick() ? [ownerNick()] : [])]);
+  const now = new Set(), names = new Set([...Object.keys(S.m), ...Object.keys(S.w), ...Object.keys(S.jail), ...Object.keys(S.job), ...(ownerNick() ? [ownerNick()] : [])]);
   for (const n of names) {
-    const o = teamOf(n), y = o !== '시민', W = S.w[n];
+    const o = teamOf(n), y = o !== '시민', W = S.w[n], jb = jobOf(n);
     const sub = S.jail[n] ? '⛓ 수감 중' : W ? '🚨 ' + stars(W.lv) : '';
-    CB.tag(n, '', y ? ORGS[o].color : '#ffffff', { rank: y ? `${ORGS[o].ico} ${tagOf(o)}` : '', rankColor: y ? ORGS[o].color : '', sub, subColor: '#ff4a4a' });
+    CB.tag(n, '', y ? ORGS[o].color : '#ffffff', { rank: y ? `${ORGS[o].ico} ${tagOf(o)}` : jb ? `${JOBS[jb].ico} ${jb}` : '', rankColor: y ? ORGS[o].color : jb ? '#ffe9a8' : '', sub, subColor: '#ff4a4a' });
     if (CB.outfit) CB.outfit(n, OUTFITS[o] || null);
     now.add(n);
   }
@@ -1237,7 +1478,10 @@ CB.onTick((dt) => {
     const O = ORGS[y.o], hm = myHouse(me()), b = S.base[y.o] || (hm && hm.door), k = b ? JSON.stringify(b) : 'none';
     if (k !== spawnKey) { spawnKey = k; if (CB.setRespawn) CB.setRespawn(b ? b.x : null, b ? b.y + 0.2 : 0, b ? b.z : 0); else if (b) CB.setSpawn(b.x, b.y + 0.2, b.z); } // 부활: 팀 기지 → 내 집 → 도시 한가운데
     if (S.town && townSpawnK !== S.town.x + ',' + S.town.z) { townSpawnK = S.town.x + ',' + S.town.z; CB.setSpawn(S.town.x + 0.5, S.town.y + 0.1, S.town.z + 0.5); } // 🏙 세계 스폰 = 도시 한가운데
-    h = `<span style="color:${O.color}">${O.ico} <b>${esc(tagOf(y.o))}</b></span>${O.special ? '' : ` · ${O.lv + 1}/${TEAMS.length} 계급`} · ${y.p || 0}점`;
+    const on = orgNameOf(y.o), jb = jobOf(me());
+    h = `<span style="color:${O.color}">${O.ico} <b>${on ? on + ' ' : ''}${esc(tagOf(y.o))}</b></span>${O.special ? '' : ` · ${O.lv + 1}/${TEAMS.length} 계급`} · ${y.p || 0}점`;
+    h += `<br>🏦 통장 ${bal(me())}개${jb ? ` · ${JOBS[jb].ico} ${jb}` : ''}`;
+    if (DEL) h += `<br>📦 배달: <b>${esc(DEL.n)}</b> (${Math.round(Math.hypot(DEL.x - pos().x, DEL.z - pos().z))}칸)`;
     if (O.lv > 0) for (const mo in S.mission) if (ORGS[mo] && ORGS[mo].lv >= O.lv) h += `<br>📋 임무 (${esc(mo)}): ${esc(S.mission[mo])}`;
     if (S.train && inTrain(me(), S.train) && Date.now() < S.train.until) h += `<br>🎯 훈련(${S.train.kind}) ${Math.ceil((S.train.until - Date.now()) / 1000)}초` + (S.train.kind === '체력' ? ` · ${Math.min(200, ranD | 0)}/200칸` : '');
   }
