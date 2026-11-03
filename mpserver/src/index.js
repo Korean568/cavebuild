@@ -220,9 +220,39 @@ export class Lobby { // 공개 방 목록 (보통 방은 3분 동안 소식이 �
     this.ready = state.blockConcurrencyWhile(async () => { const m = (await state.storage.get('persist')) || {}; for (const k in m) this.rooms.set(k, m[k]); });
   }
   async keep() { const o = {}; for (const [k, r] of this.rooms) if (r.persist) o[k] = r; await this.state.storage.put('persist', o); }
+  // 👁 감시 기능 보고 (이 클래스의 'reports' 인스턴스에만 쌓임): 같은 문제는 한 줄에 횟수만 올림 · 닉네임 · IP는 저장 안 함
+  async reportAdd(req) {
+    const text = await req.text().catch(() => '');
+    if (text.length > 3000) return new Response('too big', { status: 413, headers: cors });
+    let b; try { b = JSON.parse(text); } catch (e) { return new Response('bad', { status: 400, headers: cors }); }
+    const clean = (v, n) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]+/g, ' ').slice(0, n);
+    const k = ['error', 'stall', 'mod'].includes(b.k) ? b.k : '';
+    const v = clean(b.v, 12), m = clean(b.m, 240);
+    if (!k || !m || !/^(26\.\d+|test)$/.test(v)) return new Response('bad', { status: 400, headers: cors });
+    const sig = (k + '|' + v + '|' + m).slice(0, 300), now = Date.now();
+    const all = (await this.state.storage.get('reports')) || {};
+    const row = all[sig];
+    if (row) { row.n++; row.last = now; }
+    else {
+      const recent = Object.values(all).filter((r) => now - r.first < 3600000).length;
+      if (recent >= 60) return new Response('busy', { status: 429, headers: cors });
+      all[sig] = { sig, k, v, m, s: clean(b.s, 700), sec: clean(b.sec, 20), mp: clean(b.mp, 8), ua: clean(b.ua, 16), n: 1, first: now, last: now };
+      const keys = Object.keys(all);
+      if (keys.length > 200) { keys.sort((a, c) => all[a].last - all[c].last); for (const x of keys.slice(0, keys.length - 200)) delete all[x]; }
+    }
+    await this.state.storage.put('reports', all);
+    return new Response('{"ok":true}', { headers: cors });
+  }
+  async reportList(url) {
+    const since = +url.searchParams.get('since') || 0, all = (await this.state.storage.get('reports')) || {};
+    const L = Object.values(all).filter((r) => r.last > since).sort((a, b) => b.last - a.last).slice(0, 50);
+    return new Response(JSON.stringify(L), { headers: cors });
+  }
   async fetch(req) {
     await this.ready;
     const url = new URL(req.url);
+    if (url.pathname === '/report-add') return this.reportAdd(req);
+    if (url.pathname === '/report-list') return this.reportList(url);
     if (req.method === 'POST' && url.pathname === '/set') {
       const o = await req.json().catch(() => null);
       if (o && /^[A-Z0-9]{6}$/.test(o.code)) {
@@ -247,6 +277,8 @@ export default {
     const path = new URL(req.url).pathname;
     if (req.method === 'OPTIONS') return new Response(null, { headers: { ...cors, 'access-control-allow-methods': 'GET, POST', 'access-control-allow-headers': 'content-type' } });
     if (path === '/rooms') return env.LOBBY.get(env.LOBBY.idFromName('lobby')).fetch('https://lobby/list');
+    if (path === '/report' && req.method === 'POST') return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch(new Request('https://lobby/report-add', { method: 'POST', body: await req.text() }));
+    if (path === '/reports') return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch('https://lobby/report-list' + new URL(req.url).search);
     const m = path.match(/^\/room\/([A-Z0-9]{6})(\/del|\/official)?$/);
     if (!m) return new Response('CAVEBUILD multiplayer relay', { headers: { 'access-control-allow-origin': '*' } });
     return env.ROOM.get(env.ROOM.idFromName(m[1])).fetch(req);

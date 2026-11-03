@@ -1375,12 +1375,12 @@ CB.onTick((dt) => {
   if ((acc += dt) < 1) return;
   acc = 0;
   S = load();
-  try { signTick(); } catch (e) { console.warn('조직 간판 오류', e); }
-  if ((dealerT -= 1) <= 0) { dealerT = 3; try { dealerTick(); recruiterTick(); } catch (e) { console.warn('조직 NPC 오류', e); } }
+  try { signTick(); } catch (e) { console.warn('조직 간판 오류', e); if (CB.report) CB.report('조직 간판', e); }
+  if ((dealerT -= 1) <= 0) { dealerT = 3; try { dealerTick(); recruiterTick(); } catch (e) { console.warn('조직 NPC 오류', e); if (CB.report) CB.report('조직 NPC', e); } }
   examTick();
   deliveryTick();
   if (CB.isHost()) for (const n in S.m) if (S.m[n].o === OUTLAW && !S.jail[n] && !(S.w[n] && S.w[n].lv >= WMAX)) crime(n, WMAX, '🏴 무법자 (자동)'); // 무법자 팀은 언제나 ★★★
-  if ((townT -= 1) <= 0) { townT = 5; try { townTick(); } catch (e) { console.warn('도시 짓기 오류', e); } }
+  if ((townT -= 1) <= 0) { townT = 5; try { townTick(); } catch (e) { console.warn('도시 짓기 오류', e); if (CB.report) CB.report('조직 도시', e); } }
   // 방장: 접속해 있는 수감자의 남은 시간을 줄임 (나가 있는 동안은 멈춤)
   if (CB.isHost()) {
     const on = CB.players();

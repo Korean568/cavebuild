@@ -330,7 +330,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.219 — 🏙 CAVE CITY 서버 설정</h4>
+    <h4>🆕 v26.220 — 👁 감시 기능</h4>
+    <ul><li>👁 게임에 오류가 나거나 8초 넘게 멈추면 오류 내용이 자동으로 개발자에게 전해져요 (닉네임 · 세계 내용은 보내지 않아요)</li></ul>
+    <h4>v26.219 — 🏙 CAVE CITY 서버 설정</h4>
     <ul><li>🏙 「운영자의 SMP」 세계를 켜면 이름이 <b>CAVE CITY</b>로 바뀌고, 몬스터와 차원문이 꺼져요</li></ul>
     <h4>v26.218 — 🚫 몬스터 · 차원문 끄기</h4>
     <ul><li>🚫 /몬스터 끔 — 내 세계 · 서버에 몬스터가 나오지 않아요 (동물 · 주민은 그대로)</li><li>🚫 /포탈 끔 — 차원문으로 이동할 수 없어요 (/몬스터 켬 · /포탈 켬 으로 되돌려요)</li></ul>
@@ -2159,7 +2161,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.219 — 🏙 CAVE CITY server settings</h4>
+    <h4>🆕 v26.220 — 👁 Watchdog</h4>
+    <ul><li>👁 If the game hits an error or freezes for over 8 seconds, the error details go to the developer automatically (no nickname or world data is sent)</li></ul>
+    <h4>v26.219 — 🏙 CAVE CITY server settings</h4>
     <ul><li>🏙 Opening the "운영자의 SMP" world renames it to <b>CAVE CITY</b> and turns off monsters and portals</li></ul>
     <h4>v26.218 — 🚫 Turn off monsters and portals</h4>
     <ul><li>🚫 /몬스터 끔 stops monsters in your world or server (animals and villagers stay)</li><li>🚫 /포탈 끔 stops portal travel (/몬스터 켬 and /포탈 켬 turn them back on)</li></ul>
@@ -5879,6 +5883,27 @@ const NKEY='cavebuild-user',NLIST='cavebuild-nicks';
 const CB_API='https://geulbeot-rho.vercel.app/api/cavebuild',TKEY='cavebuild-token',ACCK='cavebuild-acc'; // 계정은 서버(글벗 창고)에 · 이 브라우저는 로그인 열쇠만 들고 있음 (허브와 함께 씀)
 let ACC=null;try{ACC=JSON.parse(localStorage.getItem(ACCK)||'null');}catch(e){}
 const CB_ONSITE=/github\.io$|^localhost$|^127\./.test(location.hostname); // 게임 주소(또는 내 PC)에서만 서버 계정을 쓸 수 있음 (claude.ai 미리보기는 바깥 서버 연결이 막힘)
+// 👁 감시 기능: 오류가 나거나 게임이 8초 넘게 멈추면 릴레이 서버에 알림 (닉네임 · 세계 내용은 보내지 않음)
+//   멈춤은 별도 스레드(Worker)가 잡아요: 게임이 멈추면 게임 쪽 코드는 아무것도 못 보내니까요
+var WD_URL='https://cavebuild-mp.zombie-killer-match.workers.dev/report',WD_SEC=['idle','player','mobs','spawn','world','sky','hand+mods','chunks','render','net'],wdW=null,wdS=0,wdN=0,wdBeatT=0,wdSeen=new Set(),wdV='',wdUa=(/Mobile/.test(navigator.userAgent)?'M ':'')+((navigator.userAgent.match(/(Edg|Chrome|Firefox|Safari)\//)||[,'?'])[1]);
+var wdTest=false;try{wdTest=sessionStorage.getItem('cb-wd-test')==='1';}catch(e){}
+var wdOn=wdTest||/github\.io$/.test(location.hostname);
+for(const h of document.querySelectorAll('h4')){const m=h.textContent.match(/v26\.(\d+)/);if(m){wdV=wdTest?'test':'26.'+m[1];break;}}
+function wdogMp(){try{return MP.on?(MP.host?'host':'guest'):'solo';}catch(e){return 'solo';}}
+function wdClean(s){return String(s||'').replace(/https?:\/\/[^\s)]*\/([^\s/)]*)/g,'$1').slice(0,700);}
+function wdSend(o){if(!wdOn||wdN>=5)return;const sig=o.k+'|'+o.m;if(wdSeen.has(sig))return;wdSeen.add(sig);wdN++;try{fetch(WD_URL,{method:'POST',body:JSON.stringify({v:wdV,ua:wdUa,mp:wdogMp(),sec:WD_SEC[wdS],...o}),keepalive:true}).catch(()=>{});}catch(e){}}
+function wdReport(k,e,where){wdSend({k,m:(where?where+': ':'')+String(e&&e.message||e).slice(0,200),s:wdClean(e&&e.stack)});}
+function wdM(n){wdS=n;if(wdW)wdW.postMessage(n);}
+function wdFrame(now){if(!wdW||now-wdBeatT<1000)return;wdBeatT=now;wdW.postMessage({vis:document.visibilityState==='visible'?1:0,run:running?1:0,mp:wdogMp()});}
+if(wdOn){
+  addEventListener('error',e=>{if(!e.message||e.message==='Script error.')return;const f=e.filename||'';if(f&&!f.includes(location.host))return;wdReport('error',e.error||(e.message+' @'+e.lineno));});
+  addEventListener('unhandledrejection',e=>{const r=e.reason;if(!(r instanceof Error)||!String(r.stack).includes(location.host)||/fetch|network|abort|NotAllowed|pointer|fullscreen|load/i.test(r.name+' '+r.message))return;wdReport('error',r);});
+  addEventListener('visibilitychange',()=>{if(wdW)wdW.postMessage({vis:document.visibilityState==='visible'?1:0});});
+  try{wdW=new Worker(URL.createObjectURL(new Blob([`let last=Date.now(),tick=Date.now(),sec=0,vis=1,run=0,cfg={},sent=0,hang=0;
+onmessage=e=>{const d=e.data;if(typeof d==='number'){sec=d;return;}if(d.pong){last=Date.now();hang=0;return;}Object.assign(cfg,d);if('vis'in d)vis=d.vis;if('run'in d)run=d.run;};
+setInterval(()=>{const n=Date.now(),g=n-tick;tick=n;if(g>3000||!vis||!run)last=n;postMessage(1);if(!hang&&sent<3&&n-last>8000){hang=1;sent++;const at=(cfg.names||[])[sec]||'?';fetch(cfg.url,{method:'POST',body:JSON.stringify({k:'stall',v:cfg.v,ua:cfg.ua,mp:cfg.mp,sec:at,m:'main thread blocked over 8s, last section '+at}),keepalive:true}).catch(()=>{});}},1000);`],{type:'text/javascript'})));
+    wdW.onmessage=()=>wdW.postMessage({pong:1});wdW.postMessage({url:WD_URL,v:wdV,ua:wdUa,mp:'solo',names:WD_SEC});}catch(e){wdW=null;}
+}
 async function cbApi(body){let r,d={};try{r=await fetch(CB_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});}catch(e){throw new Error(CB_ONSITE?'서버에 연결하지 못했어요 (인터넷을 확인해 주세요)':'이 미리보기(아티팩트)에서는 서버에 연결할 수 없어요 — <a href="https://korean568.github.io/cavebuild/?play=1" target="_blank" style="color:#ffe066">게임 주소</a>에서 로그인해 주세요');}
   try{d=await r.json();}catch(e){}if(!r.ok||d.error)throw new Error(d.error||('서버 오류 '+r.status));return d;}
 function accToken(){try{return localStorage.getItem(TKEY)||'';}catch(e){return '';}}
@@ -9025,6 +9050,7 @@ const CB={version:'v26.164',
     try{renderHotbar();if(invOpen)renderInv();}catch(e){}return true;},
   setItemIcon(id,img){if(!IT[id]&&!BL[id]||!img)return false;const c=makeCanvas(48,48),g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(img,0,0,48,48);ICON_CANVAS[id]=c;ICON[id]=c.toDataURL(); // 아이템 아이콘 바꾸기
     try{renderHotbar();if(invOpen)renderInv();}catch(e){}return true;},
+  report:(w,e)=>wdReport('mod',e,String(w).slice(0,40)), // 👁 모드 오류를 감시 기능으로 보고
   loadUrl:u=>modUrlRun({name:String(u).split('/').filter(Boolean).pop()||String(u),url:String(u)}), // 🔗 주소의 모드 불러오기 (마켓 모드도 이걸로 늘 최신)
   explode:(x,y,z,r)=>explode(x,y,z,r||3,'모드 폭발에 휘말렸습니다'),flash:(o,t,c)=>flash(o,t,c),shake:(a,t)=>shake(a,t),sound:n=>SFX[n]&&SFX[n](),
   THREE};
@@ -9033,7 +9059,7 @@ function modRunAll(){if(!MP_SMODS){const L=modLoad(),K=L.filter(m=>!/const ATW=\
   for(const m of MP_SMODS?MP_SMODS.mods:modLoad()){if(!m.on&&!MP_SMODS)continue;if(m.url){MOD_RAN.push({name:m.name,code:'CB.loadUrl('+JSON.stringify(m.url)+');'});modUrlRun(m);continue;} // 🔗 주소 모드는 늘 최신으로
     MOD_RAN.push({name:m.name,code:m.code});if(/🪖 조직 \(팀/.test(m.code||'')){orgLatest(m);continue;} // 🪖 파일로 넣은 조직 모드도 늘 최신판으로 (받지 못하면 넣어 둔 복사본)
     modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
-function orgLatest(m){window.ORG_LOADING=1;window.ORG_WAIT=fetch('https://korean568.github.io/cavebuild/'+encodeURIComponent('서버모드')+'/'+encodeURIComponent('조직.js'),{cache:'no-store',...(AbortSignal.timeout?{signal:AbortSignal.timeout(6000)}:{})}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(t=>/🪖 조직 \(팀/.test(t)?t:m.code).catch(()=>m.code).then(code=>{const was=modCur;modCur=m.name;try{new Function('CB',code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}finally{modCur=was;window.ORG_LOADING=0;window.ORG_WAIT=null;}});}
+function orgLatest(m){window.ORG_LOADING=1;window.ORG_WAIT=fetch('https://korean568.github.io/cavebuild/'+encodeURIComponent('서버모드')+'/'+encodeURIComponent('조직.js'),{cache:'no-store',...(AbortSignal.timeout?{signal:AbortSignal.timeout(6000)}:{})}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(t=>/🪖 조직 \(팀/.test(t)?t:m.code).catch(()=>m.code).then(code=>{const was=modCur;modCur=m.name;try{new Function('CB',code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);wdReport('mod',e,'조직 로드');}finally{modCur=was;window.ORG_LOADING=0;window.ORG_WAIT=null;}});}
 function modUrlRun(m){fetch(m.url,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(t=>{ // 🔗 주소(도메인)에 올린 모드: .js 는 그대로, .html 은 HTML 모드로
     if(/const ATW=\d+,ATH=\d+/.test(t)){toast('🎮 그 주소는 케이브빌드 게임 파일이에요 — 🎮 게임 모드에서 골라 주세요');return;}
     const code=/\.html?(\?|#|$)/i.test(m.url)||/^\s*</.test(t)?modFromHTML(t,m.name):t;const was=modCur;modCur=m.name;try{new Function('CB',code)(CB);}finally{modCur=was;}})
@@ -9208,7 +9234,7 @@ function mpHost(opt){opt=opt||{};if(!mpOk()||(!opt.re&&(MP.on||MP.ws)))return;if
   const pi=mpPubInfo(),pub=opt.re?MP.pub:(MP.pubSel||persist),E=encodeURIComponent;
   const extra=(pub?`&pub=1&name=${E(pi.name)}&mode=${E(pi.mode)}&kind=${E(pi.kind)}`:'')+`&nick=${E(MP.me.nick)}`+(key?`&persist=1&key=${key}`:'')+(opt.resume?'&resume=1':'')+(opt.local?'&local=1':'')+(opt.re&&MP.hostTok?`&tok=${E(MP.hostTok)}`:'');
   const ws=mpWS(code,'host',extra);MP.ws=ws;MP.pub=!!pub;if(!opt.re)MP.byId=new Map();const byId=MP.byId,wb=[];MP.leaving=false;
-  ws.onmessage=ev=>{const s=ev.data;if(typeof s!=='string')return;
+  ws.onmessage=ev=>{wdM(9);const s=ev.data;if(typeof s!=='string')return;
     if(s[0]==='{'){const d=JSON.parse(s);
       if(d.t==='_ok'){MP.persist=!!d.persist;MP.reN=0;if(d.tok)MP.hostTok=d.tok;if(d.pub)MP.srvPub=d.pub;
         if(opt.re){toast(mpL('🌐 서버에 다시 연결했어요','🌐 Reconnected'));if(MP.persist)mpSaveLoop();
@@ -9337,7 +9363,7 @@ function mpJoin(code,retry){code=String(code||'').trim().toUpperCase();MP.op=fal
   const fail=m=>{if(got)return;toast('🌐 '+m);ws.onclose=null;try{ws.close();}catch(e){}MP.ws=null;MP.hc=null;};
   MP.hc={get open(){return ws.readyState===1;},send(o){if(ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(x);}};
   const tm=setTimeout(()=>fail(mpL('방에 연결하지 못했어요 (잠시 뒤 다시 해 보세요)','Could not reach the room')),40000);
-  ws.onmessage=ev=>{const d=mpUnpack(B,ev.data);if(!d||typeof d!=='object')return;
+  ws.onmessage=ev=>{wdM(9);const d=mpUnpack(B,ev.data);if(!d||typeof d!=='object')return;
     if(d.t==='_ok'){MP.gPersist=!!d.persist;const st=MP.carry;MP.carry=null;ws.send(JSON.stringify({t:'hi',...MP.me,adm:cmdIsAdmin()?1:0,mods:MOD_RAN,...(st?{st}:{})}));return;}
     if(d.t==='_promote'||d.t==='_rehost'){clearTimeout(tm);ws.onclose=null;MP.ws=null;MP.hc=null;mpHandoff(code,d.t==='_promote');return;} // 🌍 공개 서버의 방장이 바뀜
     if(d.t==='mods'){clearTimeout(tm);mpModsAsk(code,d);return;}
@@ -10082,7 +10108,7 @@ $('setGfx').onclick=e=>{const b=e.target.closest('button');if(!b)return;HQ.set(b
 
 let srLast=0;const fmtT=ms=>{ms=Math.max(0,ms|0);const h=ms/3600000|0,m=(ms/60000|0)%60,s2=(ms/1000|0)%60;return `${h}:${String(m).padStart(2,'0')}:${String(s2).padStart(2,'0')}.${String(ms%1000).padStart(3,'0')}`;}; // 스톱워치
 function frame(now){
-  requestAnimationFrame(frame);
+  requestAnimationFrame(frame);wdFrame(now);
   const dt=Math.min(.05,(now-last)/1000);last=now;timeU.value=now/1000%3600; // 물·용암 움직임
   if(SPEEDRUN&&running&&world.sr&&!world.sr.done)world.sr.ms+=Math.min(1000,now-(srLast||now));srLast=now; // ⏱ 세계에 있는 동안 계속 흐름 (일시정지 중에도)
   fpsA+=dt;fpsN++;if(fpsA>.5){fps=Math.round(fpsN/fpsA);fpsA=0;fpsN=0;}if(running)gqTick(dt);
@@ -10090,28 +10116,28 @@ function frame(now){
   const active=!paused&&!endingOpen&&!player.dead; // 쓰러져 있으면 세계가 멈춤 (hp 0으로 저장되지 않게)
   if(MOBILE)document.body.classList.toggle('playing',active&&!invOpen&&!player.dead&&!stFrozen());
   if(active){
-    if(!stFrozen()&&!gm){ // 스텔라 연출 · 미사일 조종 중에는 플레이어가 멈춤
+    wdM(1);if(!stFrozen()&&!gm){ // 스텔라 연출 · 미사일 조종 중에는 플레이어가 멈춤
     cuffTick(dt);taseTick(dt);if(taserCD>0)taserCD-=dt;updatePlayer(dt);if(player.cuffed||player.tased){player.vel.x=player.vel.z=0;}
     updateTarget();updateMining(dt);
     if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}if(mouseL&&!invOpen&&isGun(held()))fireGun(held());updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}colaTick(dt);
-    for(const m of [...mobs])mpMobUpdate(m,dt);
-    if(!MP.on||MP.host||mpLocalMobs()){spawnMobs(dt);noMonsters();}updateParticles(dt);updateGroundItems(dt);if(!MP.on||MP.host)updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
+    wdM(2);for(const m of [...mobs])mpMobUpdate(m,dt);
+    wdM(3);if(!MP.on||MP.host||mpLocalMobs()){spawnMobs(dt);noMonsters();}wdM(4);updateParticles(dt);updateGroundItems(dt);if(!MP.on||MP.host)updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
   }
-  updateSky(active?dt:0);if(active){hwTick(dt);if(EVENT&&!HALLOWEEN)evTick(dt);cmdTick(dt);}
+  wdM(5);updateSky(active?dt:0);if(active){hwTick(dt);if(EVENT&&!HALLOWEEN)evTick(dt);cmdTick(dt);}
   if(active)updateSurvival(dt);
-  updateHand(dt);updateAvatar(dt);mpTick(dt);updateBobber(active?dt:0);updateFireworks(dt);updateNukes(active?dt:0);if(gm&&active)updateGM(dt);gunCD=Math.max(0,gunCD-dt);if(active)for(const f of MOD_TICK)try{f(dt);}catch(e){modErr('틱',e);}if(active||stCast)updateStellar(dt);else stHud();
-  updateChunks();
+  wdM(6);updateHand(dt);updateAvatar(dt);mpTick(dt);updateBobber(active?dt:0);updateFireworks(dt);updateNukes(active?dt:0);if(gm&&active)updateGM(dt);gunCD=Math.max(0,gunCD-dt);if(active)for(const f of MOD_TICK)try{f(dt);}catch(e){modErr('틱',e);}if(active||stCast)updateStellar(dt);else stHud();
+  wdM(7);updateChunks();
   if(debugOn){const p=player.pos;$('debug').textContent=`CAVEBUILD  ${fps} fps\nXYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}\n차원: ${DIM[world.dim].name}  청크: ${chunks.size}  몹: ${mobs.length}\n시간: ${(world.time*24+6)%24|0}시  시드: ${seed}\n바라보는 블록: ${target?BL[target.id].name:'-'}`+(SPEEDRUN&&world.sr?`\n⏱ ${fmtT(world.sr.ms)}${world.sr.done?'  ✅ 완주':''}`:'');}
   if(shakeT>0&&!player.dead&&!stFrozen()){const a=shakeAmp*Math.min(1,shakeT);camera.position.x+=(Math.random()-.5)*a;camera.position.y+=(Math.random()-.5)*a;camera.position.z+=(Math.random()-.5)*a;camera.updateMatrixWorld();} // 화면 흔들림
   if(stFrozen()&&cineRender(stCast))return; // 스텔라 연출 화면
   if(gm){gmRender();return;} // 미사일 조종 화면
-  const tp=thirdPersonCam(),hq=HQ.begin(); // 🎬 고퀄: 그림판에 먼저 그림
+  wdM(8);const tp=thirdPersonCam(),hq=HQ.begin(); // 🎬 고퀄: 그림판에 먼저 그림
   renderer.render(scene,camera);
   if(tp){camera.position.copy(camSave.pos);camera.quaternion.copy(camSave.q);camera.updateMatrixWorld();} // 3인칭: 손은 그리지 않음
   else if(!player.dead&&!endingOpen&&!isSpec()&&!scopeOn()){handGroup.position.copy(camera.position);handGroup.quaternion.copy(camera.quaternion);
     renderer.autoClear=false;renderer.clearDepth();renderer.render(handScene,camera);renderer.autoClear=true;}
-  if(hq)HQ.end();
+  if(hq)HQ.end();wdM(0);
 }
 requestAnimationFrame(frame);
 </script>
