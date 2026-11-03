@@ -330,7 +330,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.218 — 🚫 몬스터 · 차원문 끄기</h4>
+    <h4>🆕 v26.219 — 🏙 CAVE CITY 서버 설정</h4>
+    <ul><li>🏙 「운영자의 SMP」 세계를 켜면 이름이 <b>CAVE CITY</b>로 바뀌고, 몬스터와 차원문이 꺼져요</li></ul>
+    <h4>v26.218 — 🚫 몬스터 · 차원문 끄기</h4>
     <ul><li>🚫 /몬스터 끔 — 내 세계 · 서버에 몬스터가 나오지 않아요 (동물 · 주민은 그대로)</li><li>🚫 /포탈 끔 — 차원문으로 이동할 수 없어요 (/몬스터 켬 · /포탈 켬 으로 되돌려요)</li></ul>
     <h4>v26.217 — 🪲 밤에 나던 오류 수정</h4>
     <ul><li>🪲 밤마다 방장 게임에서 오류가 나 화면이 잠깐씩 건너뛰고 몹이 덜 나오던 문제를 고쳤어요</li><li>🌾 농부 · 어부 납품 목록을 실제 아이템에 맞췄어요</li></ul>
@@ -2157,7 +2159,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.218 — 🚫 Turn off monsters and portals</h4>
+    <h4>🆕 v26.219 — 🏙 CAVE CITY server settings</h4>
+    <ul><li>🏙 Opening the "운영자의 SMP" world renames it to <b>CAVE CITY</b> and turns off monsters and portals</li></ul>
+    <h4>v26.218 — 🚫 Turn off monsters and portals</h4>
     <ul><li>🚫 /몬스터 끔 stops monsters in your world or server (animals and villagers stay)</li><li>🚫 /포탈 끔 stops portal travel (/몬스터 켬 and /포탈 켬 turn them back on)</li></ul>
     <h4>v26.217 — 🪲 Fixed a nighttime error</h4>
     <ul><li>🪲 At night the host's game hit an error that skipped frames and spawned fewer mobs; this is fixed</li><li>🌾 Farmer and fisher delivery lists now match the real items</li></ul>
@@ -8776,6 +8780,7 @@ function startWorld(save,onOk){refreshWard();modRespawn=null; // 탈의실에서
     for(let i=0;i<inv.length;i++)if(inv[i]&&inv[i].id===CAPE)inv[i]=null; // 망토는 세계에 없음 (탈의실에서만)
     if(MOBILE&&innerHeight>innerWidth)toast('📱 가로 모드로 돌리면 더 편하게 플레이할 수 있어요');
     lockPointer();
+    if(world.name==='운영자의 SMP'){world.name='CAVE CITY';world.flags.nomonster=true;world.flags.noportal=true;} // 운영자 서버 설정 (한 번만: 이름이 바뀌면 다시 안 함)
     if(onOk)onOk();
    }catch(err){ // 세계를 못 만들면 타이틀로 돌아가고 기존 저장은 건드리지 않음
     console.error(err);running=false;try{mpAbort();}catch(e){}
