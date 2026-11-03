@@ -328,7 +328,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.217 — 🪲 밤에 나던 오류 수정</h4>
+    <h4>🆕 v26.218 — 🚫 몬스터 · 차원문 끄기</h4>
+    <ul><li>🚫 /몬스터 끔 — 내 세계 · 서버에 몬스터가 나오지 않아요 (동물 · 주민은 그대로)</li><li>🚫 /포탈 끔 — 차원문으로 이동할 수 없어요 (/몬스터 켬 · /포탈 켬 으로 되돌려요)</li></ul>
+    <h4>v26.217 — 🪲 밤에 나던 오류 수정</h4>
     <ul><li>🪲 밤마다 방장 게임에서 오류가 나 화면이 잠깐씩 건너뛰고 몹이 덜 나오던 문제를 고쳤어요</li><li>🌾 농부 · 어부 납품 목록을 실제 아이템에 맞췄어요</li></ul>
     <h4>v26.216 — 🏦 은행 · 💼 직업 10가지 · 🏙 CAVE CITY</h4>
     <ul><li>🏦 조직 모드 도시에 <b>은행</b>이 생겼어요 (은행원에게 우클릭 · /은행 · 입금 · 출금 · 송금, 화폐는 동전)</li><li>💼 <b>직업소개소</b>에서 직업을 골라요: 광부 · 벌목꾼 · 농부 · 어부 · 요리사 · 사냥꾼 · 건축가 · 배달부 · 의사 · 기자 (/직업)</li><li>💰 10분마다 월급이 통장으로 들어와요 (경찰 · 군대는 계급만큼)</li><li>💸 벌금을 이제 동전으로 내요 (가방 → 통장 순서 · 못 내면 징역)</li><li>🏙 이름: 도시 <b>CAVE CITY</b> · 군대 <b>CAVE ARMY</b> · 경찰 <b>CLKKY POLICE</b></li><li>🖥 /서버이름 새 이름 — 방장이 서버 이름을 바꿔요</li></ul>
@@ -2153,7 +2155,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.217 — 🪲 Fixed a nighttime error</h4>
+    <h4>🆕 v26.218 — 🚫 Turn off monsters and portals</h4>
+    <ul><li>🚫 /몬스터 끔 stops monsters in your world or server (animals and villagers stay)</li><li>🚫 /포탈 끔 stops portal travel (/몬스터 켬 and /포탈 켬 turn them back on)</li></ul>
+    <h4>v26.217 — 🪲 Fixed a nighttime error</h4>
     <ul><li>🪲 At night the host's game hit an error that skipped frames and spawned fewer mobs; this is fixed</li><li>🌾 Farmer and fisher delivery lists now match the real items</li></ul>
     <h4>v26.216 — 🏦 Bank · 💼 10 jobs · 🏙 CAVE CITY</h4>
     <ul><li>🏦 The org-mod city now has a <b>bank</b> (right-click the teller or use /은행: deposit, withdraw, transfer; coins are the currency)</li><li>💼 Pick a job at the <b>job center</b>: miner, lumberjack, farmer, fisher, cook, hunter, builder, courier, doctor, reporter (/직업)</li><li>💰 Pay reaches your account every 10 minutes (police and army by rank)</li><li>💸 Fines are now paid in coins (bag first, then account; jail if you can't pay)</li><li>🏙 Names: city <b>CAVE CITY</b>, army <b>CAVE ARMY</b>, police <b>CLKKY POLICE</b></li><li>🖥 /서버이름 lets the host rename the server</li></ul>
@@ -6325,7 +6329,7 @@ class Mob{
     if(this.dustT!==undefined){this.dustT-=dt;spawnParticles(this.pos.x+(Math.random()-.5)*this.w,this.pos.y+Math.random()*this.h,this.pos.z+(Math.random()-.5)*this.w,new THREE.Color(0x7a5a3a),2,.25,.8); // 먼지가 되어 흩어짐
       if(this.dustT<=0){for(let k=0;k<3;k++)spawnParticles(this.pos.x,this.pos.y+this.h/2,this.pos.z,new THREE.Color(0x8a6a48),12,.5,1.5);this.remove();}return;}
     if(this.webT>0){this.webT-=dt;if(Math.random()<.08)spawnParticles(this.pos.x,this.pos.y+this.h/2,this.pos.z,new THREE.Color(0xffffff),1,.3,.5);return;} // 거미줄에 묶임
-    if(!this.boat&&(this.ptT=(this.ptT||0)-dt)<=0){this.ptT=.25;const pb=overlapBlock(this,b=>PORTAL[b]===1),dest=pb&&(PORTAL_DEST[pb]||{})[world.dim];if(dest){mobPortal(this,dest);return;}} // 차원문에 닿으면 건너감
+    if(!this.boat&&(this.ptT=(this.ptT||0)-dt)<=0){this.ptT=.25;const pb=overlapBlock(this,b=>PORTAL[b]===1),dest=pb&&(PORTAL_DEST[pb]||{})[world.dim];if(dest&&!(world.flags&&world.flags.noportal)){mobPortal(this,dest);return;}} // 차원문에 닿으면 건너감
     if(d.hostile&&!d.boss&&this.kind!=='teleporter'){ // 적대 몹은 주민·가디언도 노림
       let best=player.dead?16:Math.hypot(player.pos.x-this.pos.x,player.pos.z-this.pos.z);
       for(const o of mobs)if((o.kind==='villager'||o.kind==='vguard')&&!o.dead&&!o.boat){const dd=Math.hypot(o.pos.x-this.pos.x,o.pos.z-this.pos.z);if(dd<16&&dd<best){best=dd;tg=o;}}}
@@ -6453,6 +6457,8 @@ function caveSpot(minD,maxD,yMin,yMax,tall=2){
     if(ok)return {x:x+.5,y,z:z+.5};}
   return null;
 }
+// 💻 /몬스터 끔: 적대 몹이 생기면 바로 없앰 (보스 · /summon 으로 부른 몹 · 모드 캐릭터는 그대로)
+function noMonsters(){if(!world.flags||!world.flags.nomonster)return;let keep=null;for(let i=mobs.length-1;i>=0;i--){const m=mobs[i];if(!m.def.hostile||m.def.boss||m.net||m.dead||/^mod_/.test(m.kind))continue;if(!keep)keep=new Set(Object.values(CMD_MOBS).flat());if(!keep.has(m))m.remove();}}
 function spawnMobs(dt){
   spawnT-=dt;if(spawnT>0)return;spawnT=1;if(world.flags.nospawn||(DIM[world.dim]&&DIM[world.dim].noMobs))return; // 💻 /mobspawn off
   for(const m of mobs)if(m.def.boss&&!m.dead&&!m.net)(world.flags.bossHp||(world.flags.bossHp={}))[m.kind]=m.hp; // 💗 보스 체력 기억 (멀리 가서 사라져도)
@@ -6548,6 +6554,7 @@ function overlapBlock(e,test){
   return 0;
 }
 function usePortal(pid){
+  if(world.flags&&world.flags.noportal){portalLock=true;portalT=0;toast(mpL('🚫 이 세계에서는 차원문을 쓸 수 없어요','🚫 Portals are turned off in this world'));return;} // 💻 /포탈 끔
   const cur=world.dim,dest=(PORTAL_DEST[pid]||{})[cur];if(!dest)return;
   let pos;
   if(dest==='over')pos=world.lastPos.over||world.spawn;
@@ -9584,7 +9591,7 @@ function mpModeIn(d){if(!MODE_INFO[d.m]||world.mode===d.m||world.flags&&world.fl
 function mpChatOpen(pre){if(MP.chat||!running)return;MP.chat=true;for(const k in keys)keys[k]=false;mouseL=mouseR=false;const el=$('mpChat');el.value=pre||'';el.placeholder=MP.on?'채팅 · /명령어 (/help) · Enter 보내기 · Esc 닫기':'명령어 (/help) · Enter 실행 · Esc 닫기';el.style.display='block';
   try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>el.focus(),30);}
 const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에이티브|관전','게임 모드'],['/time set 낮|정오|밤|자정|0~24000','시간'],['/tp x y z · /tp 닉네임','순간이동 (~ 는 지금 위치 기준)'],
-  ['/서버이름 새 이름','세계 · 서버 이름 바꾸기'],['/give [@닉] 아이템이름 [개수]','아이템 받기 · 다른 사람에게 주기'],['/서바이벌 · /크리에이티브 · /관전 [@닉]','그 사람만 게임 모드 바꾸기'],['/summon 몹이름 [마리]','몹 소환'],['/heal','체력 · 배고픔 가득'],['/kill','쓰러지기'],['/clear','인벤토리 비우기'],['/fly','날기 켜고 끄기'],
+  ['/서버이름 새 이름','세계 · 서버 이름 바꾸기'],['/몬스터 끔 · 켬','몬스터 안 나오게 (동물 · 주민은 그대로)'],['/포탈 끔 · 켬','차원문 이동 막기'],['/give [@닉] 아이템이름 [개수]','아이템 받기 · 다른 사람에게 주기'],['/서바이벌 · /크리에이티브 · /관전 [@닉]','그 사람만 게임 모드 바꾸기'],['/summon 몹이름 [마리]','몹 소환'],['/heal','체력 · 배고픔 가득'],['/kill','쓰러지기'],['/clear','인벤토리 비우기'],['/fly','날기 켜고 끄기'],
   ['/spawnpoint','여기를 스폰 지점으로'],['/difficulty 세이프|쉬움|보통|어려움|하드코어','난이도'],['/seed','세계 시드'],['/list','같이 있는 사람'],['/me 할 말','행동 말하기'],
   ['/setblock x y z 블록','블록 하나 놓기'],['/fill x1 y1 z1 x2 y2 z2 블록','네모로 채우기 (공기 = 지우기 · 2만 칸까지)'],['/speed 배수','이동 속도 (0.5~5 · /speed 1 원래대로)'],['/god','무적 켜고 끄기'],
   ['/feed','배고픔 가득'],['/day · /night','낮 · 밤으로'],['/pos','지금 좌표'],['/spawn','스폰 지점으로'],['/dim 차원','차원 이동 (프론티어 · 어비스 · 판데모니움 · 네크로폴리스 · 호라이즌)'],
@@ -9875,6 +9882,8 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
     case 'setrules':case '규칙정하기':{const t=a.join(' ').slice(0,300);if(!t){cmdOut('/setrules 욕하지 않기 | 남의 집 부수지 않기',1);break;}world.flags.rules=t;cmdOut('📜 규칙을 정했어요 (/rules 로 누구나 볼 수 있어요)');if(MP.on&&MP.host)mpSend({t:'c',n:'📜 규칙',m:t.slice(0,80)});break;}
     case 'setmotd':case '환영인사':{const t=a.join(' ').slice(0,80);world.flags.motd=t||'';cmdOut(t?'📢 환영 인사: '+mpEsc(t):'환영 인사를 지웠어요');break;}
     case 'pvp':{if(!MP.on||!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const v=(a[0]||'').toLowerCase();MP.pvp=v==='on'||v==='켬'?true:v==='off'||v==='끔'?false:!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();cmdOut('⚔ PvP '+(MP.pvp?'<b>켬</b>':'<b>끔</b>'));break;}
+    case 'monster':case 'monsters':case '몬스터':{if(MP.on&&!MP.host){cmdOut('세계를 돌리는 방장만 바꿀 수 있어요',1);break;}const v=(a[0]||'').toLowerCase();world.flags.nomonster=v==='off'||v==='끔'?true:v==='on'||v==='켬'?false:!world.flags.nomonster;cmdOut(world.flags.nomonster?'🚫 이제 몬스터가 나오지 않아요 (동물 · 주민은 그대로)':'👾 몬스터가 다시 나와요');break;}
+    case 'portal':case 'portals':case '포탈':case '차원문':{if(MP.on&&!MP.host){cmdOut('세계를 돌리는 방장만 바꿀 수 있어요',1);break;}const v=(a[0]||'').toLowerCase();world.flags.noportal=v==='off'||v==='끔'?true:v==='on'||v==='켬'?false:!world.flags.noportal;cmdOut(world.flags.noportal?'🚫 이제 차원문으로 이동할 수 없어요':'🌀 차원문을 다시 쓸 수 있어요');break;}
     case 'mobspawn':case '몹생성':{const v=(a[0]||'').toLowerCase();world.flags.nospawn=v==='off'||v==='끔'?true:v==='on'||v==='켬'?false:!world.flags.nospawn;cmdOut(world.flags.nospawn?'🚫 몹이 저절로 생기지 않아요':'몹이 다시 저절로 생겨요');break;}
     case 'kit':case '꾸러미':{const k=(a[0]||'도구').toLowerCase(),G=[];
       if(k==='도구'||k==='tools'){IT.forEach((t,i)=>{if(t&&t.tool&&/^철 /.test(t.name))G.push([i,1]);});G.push([COOKED_MEAT,8]);}
@@ -10079,7 +10088,7 @@ function frame(now){
     updateTarget();updateMining(dt);
     if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}if(mouseL&&!invOpen&&isGun(held()))fireGun(held());updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}colaTick(dt);
     for(const m of [...mobs])mpMobUpdate(m,dt);
-    if(!MP.on||MP.host||mpLocalMobs())spawnMobs(dt);updateParticles(dt);updateGroundItems(dt);if(!MP.on||MP.host)updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
+    if(!MP.on||MP.host||mpLocalMobs()){spawnMobs(dt);noMonsters();}updateParticles(dt);updateGroundItems(dt);if(!MP.on||MP.host)updateHoppers(dt);if(!MP.on||MP.host)updateSaplings(dt);MP.lq=1;updateLiquids(dt);MP.lq=0;updateProjectiles(dt);updateBoats(dt);updateVehicles(dt);updateStoves(dt);updatePots(dt);updateGrassField(dt);updateBeams(dt);updateBossBar();updateCompass();world.stats.play+=dt;
     saveT+=dt;if(saveT>15){saveT=0;saveGame();}
   }
   updateSky(active?dt:0);if(active){hwTick(dt);if(EVENT&&!HALLOWEEN)evTick(dt);cmdTick(dt);}
