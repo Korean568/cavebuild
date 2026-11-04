@@ -21,9 +21,11 @@
     if (read(key)) return;
 
     if (game === "cavebuild") {
+      // 케이브빌드는 허브(/cavebuildhome/)에 들어올 때 먼저 나온다. 허브의 PLAY 는 같은 탭에서
+      // 게임으로 넘어가므로 표시를 같이 쓰는 게임 쪽에서는 다시 안 나온다.
       // 허브로 돌려보내질 주소이거나, 멀티가 스스로 새로고침하는 중이면 틀지 않는다.
       // 재접속은 2초 안팎의 타이머로 이어지므로 오프닝이 끼어들면 방장 교체가 막힐 수 있다.
-      if (location.hostname === "korean568.github.io" && !/[?&]play=1/.test(location.search)) return;
+      if (location.hostname === "korean568.github.io" && location.pathname.indexOf("/cavebuildhome") !== 0 && !/[?&]play=1/.test(location.search)) return;
       if (read("cb-handoff")) return;
       try { if ((JSON.parse(read("cb-mpmods") || "{}") || {}).pending === true) return; } catch (e) {}
     }
