@@ -37,5 +37,6 @@ jobs:
         run: python3 .github/scripts/watchdog_filter.py
       - name: guard claude branches
         env:
-          GUARD_DRY: ${{ github.event.inputs.dry || '0' }}
+          # 비상 스위치: 저장소 변수 GUARD_DRY=1 이면 검문만 하고 배포하지 않음
+          GUARD_DRY: ${{ vars.GUARD_DRY || github.event.inputs.dry || '0' }}
         run: python3 .github/scripts/branch_guard.py
