@@ -64,6 +64,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Malg
 #atList{position:fixed;left:10px;bottom:136px;min-width:180px;max-height:40vh;overflow:auto;display:none;z-index:17;background:rgba(20,20,28,.92);border:2px solid #888;font:15px sans-serif;color:#fff}
 #atList div{padding:5px 10px;cursor:pointer}#atList div.on,#atList div:hover{background:#3a6ad0}
 #mpChat{position:fixed;left:10px;bottom:96px;width:min(420px,70vw);display:none;z-index:16;font:15px sans-serif;padding:8px 10px;background:rgba(0,0,0,.7);color:#fff;border:2px solid #888;outline:none}
+#chatLog{position:fixed;left:10px;bottom:136px;width:min(440px,70vw);max-height:32vh;overflow-y:auto;display:none;z-index:15;font:14px sans-serif;line-height:1.35;color:#fff;background:rgba(0,0,0,.35);padding:4px 8px;border-radius:6px;pointer-events:none;text-shadow:0 1px 2px #000;word-break:break-word}
+#chatLog .err{color:#ff9090;font-weight:bold}#chatLog small{opacity:.6;margin-right:4px}
+#mpChat[style*="display: block"]~#chatLog{pointer-events:auto;user-select:text;background:rgba(0,0,0,.65)}body.cine #chatLog{display:none!important}
 #mpChatBtn{position:fixed;left:8px;top:64px;z-index:9;display:none;font-size:20px;background:rgba(0,0,0,.45);border:2px solid #666;color:#fff;border-radius:6px;padding:4px 8px}body.mpon #mpChatBtn{display:block}
 #mpBody{font-size:15px;line-height:1.6;margin-bottom:8px}#mpBody .code{font-size:40px;letter-spacing:8px;font-weight:bold;color:#ffe066;margin:6px 0}#mpBody .tip{font-size:13px;color:#aaa}#mpBody ul{list-style:none;padding:0;margin:6px 0}
 #title{background:linear-gradient(#3a7bd5 0%,#6fb1fc 55%,#5b9e3c 55%,#4a7f31 100%)}
@@ -330,7 +333,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.221 — 🪧 표지판 오류 수정</h4>
+    <h4>🆕 v26.222 — 💬 채팅창 · 🌀 /tp 수정</h4>
+    <ul><li>💬 왼쪽 아래에 <b>채팅창</b>이 생겼어요. 채팅 · 명령어 결과 · 안내가 1시간 동안 남아요 (T로 채팅을 열면 스크롤 · 복사)</li><li>⚠ 오류가 나면 <b>오류 코드</b>가 채팅창에 빨갛게 남아요</li><li>🌀 /tp 닉네임 이 가끔 땅 밑으로 데려가던 문제를 고쳤어요</li></ul>
+    <h4>v26.221 — 🪧 표지판 오류 수정</h4>
     <ul><li>🪧 표지판을 주워서 손에 들 때 나던 오류를 고쳤어요</li></ul>
     <h4>v26.220 — 👁 감시 기능</h4>
     <ul><li>👁 게임에 오류가 나거나 8초 넘게 멈추면 오류 내용이 자동으로 개발자에게 전해져요 (닉네임 · 세계 내용은 보내지 않아요)</li></ul>
@@ -1028,7 +1033,7 @@ body.mobile #toasts{top:72px}
 </div>
 <div id="mpUI" class="overlay"><div class="ppbox"><h2>🌐 멀티플레이</h2><div id="mpBody"></div><button class="btn" id="mpClose">닫기</button></div></div>
 <div id="atList"></div><input id="mpChat" type="text" maxlength="80" placeholder="채팅 · Enter 보내기 · Esc 닫기" autocomplete="off">
-<button id="mpChatBtn">💬</button>
+<button id="mpChatBtn">💬</button><div id="chatLog"></div>
 <div id="settings" class="overlay">
   <h2>⚙ 서버 설정</h2>
   <div style="margin-bottom:6px;text-shadow:2px 2px 0 #222">게임 모드</div>
@@ -2163,7 +2168,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.221 — 🪧 Sign error fix</h4>
+    <h4>🆕 v26.222 — 💬 Chat box · 🌀 /tp fix</h4>
+    <ul><li>💬 A <b>chat box</b> now sits at the bottom left: chat, command results and notices stay for 1 hour (press T to scroll and copy)</li><li>⚠ Errors leave a red <b>error code</b> in the chat box</li><li>🌀 Fixed /tp to a player sometimes sending you underground</li></ul>
+    <h4>v26.221 — 🪧 Sign error fix</h4>
     <ul><li>🪧 Fixed an error when picking up a sign and holding it in your hand</li></ul>
     <h4>v26.220 — 👁 Watchdog</h4>
     <ul><li>👁 If the game hits an error or freezes for over 8 seconds, the error details go to the developer automatically (no nickname or world data is sent)</li></ul>
@@ -5896,17 +5903,24 @@ for(const h of document.querySelectorAll('h4')){const m=h.textContent.match(/v26
 function wdogMp(){try{return MP.on?(MP.host?'host':'guest'):'solo';}catch(e){return 'solo';}}
 function wdClean(s){return String(s||'').replace(/https?:\/\/[^\s)]*\/([^\s/)]*)/g,'$1').slice(0,700);}
 function wdSend(o){if(!wdOn||wdN>=5)return;const sig=o.k+'|'+o.m;if(wdSeen.has(sig))return;wdSeen.add(sig);wdN++;try{fetch(WD_URL,{method:'POST',body:JSON.stringify({v:wdV,ua:wdUa,mp:wdogMp(),sec:WD_SEC[wdS],...o}),keepalive:true}).catch(()=>{});}catch(e){}}
-function wdReport(k,e,where){wdSend({k,m:(where?where+': ':'')+String(e&&e.message||e).slice(0,200),s:wdClean(e&&e.stack)});}
+// 💬 채팅창: 채팅 · 명령어 결과 · 오류 코드가 1시간 동안 남음 (새로고침해도 이 탭에서는 그대로)
+var CHAT_MS=3600000,CHAT=[],chatT=0,chatSeen=new Set();try{CHAT=JSON.parse(sessionStorage.getItem('cb-chatlog')||'[]').filter(x=>Date.now()-x.t<CHAT_MS);}catch(e){CHAT=[];}
+function chatEsc(s){return String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+function chatRender(){const el=$('chatLog');if(!el)return;const end=el.scrollHeight-el.scrollTop-el.clientHeight<30;el.innerHTML=CHAT.map(x=>{const d=new Date(x.t);return `<div class="${x.c||''}"><small>${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</small>${x.h}</div>`;}).join('');if(end)el.scrollTop=el.scrollHeight;}
+function chatAdd(h,c){CHAT.push({t:Date.now(),h,c:c||''});if(CHAT.length>500)CHAT.shift();try{sessionStorage.setItem('cb-chatlog',JSON.stringify(CHAT));}catch(e){}chatRender();}
+function chatTick(now){if(now-chatT<1000&&now>=chatT)return;chatT=now;const n=CHAT.length;while(CHAT.length&&Date.now()-CHAT[0].t>=CHAT_MS)CHAT.shift();if(CHAT.length!==n){try{sessionStorage.setItem('cb-chatlog',JSON.stringify(CHAT));}catch(e){}chatRender();}const el=$('chatLog');if(el){const d=running&&CHAT.length?'block':'none';if(el.style.display!==d){el.style.display=d;if(d==='block'){chatRender();el.scrollTop=el.scrollHeight;}}}}
+function wdCode(s){let h=0;s=String(s);for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))&65535;return 'E-'+h.toString(16).toUpperCase().padStart(4,'0');}
+function wdReport(k,e,where){const msg=(where?where+': ':'')+String(e&&e.message||e).slice(0,200),code=wdCode(msg);if(!chatSeen.has(code)&&chatSeen.size<30){chatSeen.add(code);chatAdd(`⚠ 오류 코드 <b>${code}</b>: ${chatEsc(msg.slice(0,120))}`,'err');}wdSend({k,m:'['+code+'] '+msg,s:wdClean(e&&e.stack)});}
 function wdM(n){wdS=n;if(wdW)wdW.postMessage(n);}
 function wdFrame(now){if(!wdW||now-wdBeatT<1000)return;wdBeatT=now;wdW.postMessage({vis:document.visibilityState==='visible'?1:0,run:running?1:0,mp:wdogMp()});}
+addEventListener('error',e=>{if(!e.message||e.message==='Script error.')return;const f=e.filename||'';if(f&&!f.includes(location.host))return;wdReport('error',e.error||(e.message+' @'+e.lineno));});
+addEventListener('unhandledrejection',e=>{const r=e.reason;if(!(r instanceof Error)||!String(r.stack).includes(location.host)||/fetch|network|abort|NotAllowed|pointer|fullscreen|load/i.test(r.name+' '+r.message))return;wdReport('error',r);});
 if(wdOn){
-  addEventListener('error',e=>{if(!e.message||e.message==='Script error.')return;const f=e.filename||'';if(f&&!f.includes(location.host))return;wdReport('error',e.error||(e.message+' @'+e.lineno));});
-  addEventListener('unhandledrejection',e=>{const r=e.reason;if(!(r instanceof Error)||!String(r.stack).includes(location.host)||/fetch|network|abort|NotAllowed|pointer|fullscreen|load/i.test(r.name+' '+r.message))return;wdReport('error',r);});
   addEventListener('visibilitychange',()=>{if(wdW)wdW.postMessage({vis:document.visibilityState==='visible'?1:0});});
-  try{wdW=new Worker(URL.createObjectURL(new Blob([`let last=Date.now(),tick=Date.now(),sec=0,vis=1,run=0,cfg={},sent=0,hang=0;
-onmessage=e=>{const d=e.data;if(typeof d==='number'){sec=d;return;}if(d.pong){last=Date.now();hang=0;return;}Object.assign(cfg,d);if('vis'in d)vis=d.vis;if('run'in d)run=d.run;};
-setInterval(()=>{const n=Date.now(),g=n-tick;tick=n;if(g>3000||!vis||!run)last=n;postMessage(1);if(!hang&&sent<3&&n-last>8000){hang=1;sent++;const at=(cfg.names||[])[sec]||'?';fetch(cfg.url,{method:'POST',body:JSON.stringify({k:'stall',v:cfg.v,ua:cfg.ua,mp:cfg.mp,sec:at,m:'main thread blocked over 8s, last section '+at}),keepalive:true}).catch(()=>{});}},1000);`],{type:'text/javascript'})));
-    wdW.onmessage=()=>wdW.postMessage({pong:1});wdW.postMessage({url:WD_URL,v:wdV,ua:wdUa,mp:'solo',names:WD_SEC});}catch(e){wdW=null;}
+  try{wdW=new Worker(URL.createObjectURL(new Blob([`let last=Date.now(),tick=Date.now(),sec=0,vis=1,run=0,cfg={},sent=0,hang=0,hangAt='';
+onmessage=e=>{const d=e.data;if(typeof d==='number'){sec=d;return;}if(d.pong){if(hang)postMessage({st:hangAt,ms:Date.now()-last});last=Date.now();hang=0;return;}Object.assign(cfg,d);if('vis'in d)vis=d.vis;if('run'in d)run=d.run;};
+setInterval(()=>{const n=Date.now(),g=n-tick;tick=n;if(g>3000||!vis||!run)last=n;postMessage(1);if(!hang&&sent<3&&n-last>8000){hang=1;sent++;const at=(cfg.names||[])[sec]||'?';hangAt=at;fetch(cfg.url,{method:'POST',body:JSON.stringify({k:'stall',v:cfg.v,ua:cfg.ua,mp:cfg.mp,sec:at,m:'[S-'+at.toUpperCase()+'] main thread blocked over 8s, last section '+at}),keepalive:true}).catch(()=>{});}},1000);`],{type:'text/javascript'})));
+    wdW.onmessage=e=>{if(e.data&&e.data.st)chatAdd(`⚠ 오류 코드 <b>S-${chatEsc(String(e.data.st).toUpperCase())}</b>: 게임이 ${Math.round(e.data.ms/1000)}초 동안 멈췄어요`,'err');wdW.postMessage({pong:1});};wdW.postMessage({url:WD_URL,v:wdV,ua:wdUa,mp:'solo',names:WD_SEC});}catch(e){wdW=null;}
 }
 async function cbApi(body){let r,d={};try{r=await fetch(CB_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});}catch(e){throw new Error(CB_ONSITE?'서버에 연결하지 못했어요 (인터넷을 확인해 주세요)':'이 미리보기(아티팩트)에서는 서버에 연결할 수 없어요 — <a href="https://korean568.github.io/cavebuild/?play=1" target="_blank" style="color:#ffe066">게임 주소</a>에서 로그인해 주세요');}
   try{d=await r.json();}catch(e){}if(!r.ok||d.error)throw new Error(d.error||('서버 오류 '+r.status));return d;}
@@ -8989,7 +9003,7 @@ const CB={version:'v26.164',
   command:(name,desc,fn,opts)=>{MOD_CMDS[String(name).toLowerCase()]={desc,fn,op:!(opts&&opts.everyone)};}, // 🧩 명령어 만들기: fn(인자들, {say, nick}) · {everyone:true} 면 OP 아니어도 씀
   mob:(key,o)=>{const k='mod_'+String(key);MOBDEF[k]=modMobDef(k,o||{});return k;}, // 🧩 캐릭터(몹) 만들기 → /summon 이름 으로도 소환
   spawn:(k,x,y,z)=>{const m=new Mob(MOBDEF[k]?k:'mod_'+k,x,y,z);return m;},mobs:()=>mobs,
-  say:t=>{toast('📢 '+mpEsc(String(t)));if(MP.on&&MP.host)mpSend({t:'c',n:'📢',m:String(t).slice(0,80)});},title:t=>cmdTitle(String(t)),
+  say:t=>{chatAdd('📢 '+mpEsc(String(t)));if(MP.on&&MP.host)mpSend({t:'c',n:'📢',m:String(t).slice(0,80)});},title:t=>cmdTitle(String(t)),
   tp:(x,y,z)=>{player.pos.set(x,y,z);player.vel.set(0,0,0);player.peakY=y;},isOp:()=>cmdIsOp(),isAdmin:()=>cmdIsAdmin(),isHost:()=>!MP.on||MP.host,
   players:()=>MP.on?[MP.me.nick,...mpList()]:[nickNow()||'플레이어'],run:line=>runCmd(String(line).startsWith('/')?String(line):'/'+line),
   me:()=>MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어'),pos:()=>({x:player.pos.x,y:player.pos.y,z:player.pos.z}),setSpawn:(x,y,z)=>{world.spawn={x,y,z};}, // 🧩 내 닉네임 · 위치 · 부활 자리
@@ -9224,7 +9238,7 @@ function mpApply(L){MP.rx=1;try{for(let [d,x,y,z,id] of L){if(id&&!BL[id])id=STO
     if(d===world.dim&&chunks.get(k)){if(getBlock(x,y,z)!==id)setBlock(x,y,z,id);}
     else{const mm=modsByDim[d]||(modsByDim[d]=new Map());let m=mm.get(k);if(!m){m=new Map();mm.set(k,m);}m.set((y*16+(z&15))*16+(x&15),id);modDirty.add(d+'|'+k);}}}catch(e){console.error(e);}finally{MP.rx=0;}}
 function mpPos(P,o){P.t=o;if(o.s&&P.sw<=0)P.sw=1;}
-function mpChatShow(n,m){modEmit('chat',n,m);const me=MP.on&&MP.me.nick&&n!==MP.me.nick&&m.toLowerCase().includes('@'+MP.me.nick.toLowerCase());toast(`💬 <b>${mpEsc(n)}</b>: ${mpEsc(m).replace(/@([^\s@<&]+)/g,'<b style="color:#7ab0ff">@$1</b>')}`);if(me){tone(1320,1760,.12,.08);toast(`🔔 <b>${mpEsc(n)}</b> 님이 나를 불렀어요`);}}
+function mpChatShow(n,m){modEmit('chat',n,m);const me=MP.on&&MP.me.nick&&n!==MP.me.nick&&m.toLowerCase().includes('@'+MP.me.nick.toLowerCase());chatAdd(`<b>${mpEsc(n)}</b>: ${mpEsc(m).replace(/@([^\s@<&]+)/g,'<b style="color:#7ab0ff">@$1</b>')}`);if(me){tone(1320,1760,.12,.08);toast(`🔔 <b>${mpEsc(n)}</b> 님이 나를 불렀어요`);}}
 // 방장: 방 열기 → 친구가 들어오면 세계를 통째로 보내 줌
 // 🌍 공개 서버(persist): 방장이 나가도 꺼지지 않음 — 30초마다 세계를 중계 서버에 저장, 방장이 바뀌면 다른 사람이 이어서 켬
 //   opt: persist(공개 서버) · code · key(만든 사람 열쇠) · resume(저장된 세계로 켜기) · local(내 세계 그대로 다시 연결) · re(끊긴 연결 다시)
@@ -9656,7 +9670,7 @@ const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에�
 ['/ban 닉네임','방에서 밴 (다시 못 들어옴)'],['/unben 닉네임 · /banlist','밴 풀기 (/unban 도 돼요) · 밴 명단'],['/give banhammer','🔨 밴 해머 (플레이어를 치면 밴 · 몹을 치면 없앰)'],
   ['/op 닉네임 · /deop 닉네임 · /ops','OP 주기 · 빼기 · 목록 (방장) — OP · 어드민만 명령어를 쓸 수 있어요'],
   ['/un명령어','그 명령어 되돌리기 (예: /unfly · /ungod · /untree · /ungive · /unsummon · /untp · /ungamemode · /unspeed)']];
-function cmdOut(t,bad){toast((bad?'❌ ':'💻 ')+t);}
+function cmdOut(t,bad){const h=(bad?'❌ ':'💻 ')+t;if(running)chatAdd(h,bad?'err':'');else toast(h);}
 function cmdFind(q,list){q=q.toLowerCase();let hit=list.find(([n])=>n.toLowerCase()===q);if(!hit)hit=list.find(([n])=>n.toLowerCase().replace(/\s/g,'')===q.replace(/\s/g,''));if(!hit)hit=list.find(([n])=>n.toLowerCase().includes(q));return hit?hit[1]:null;}
 function cmdItems(){const L=[['banhammer',BANHAMMER],['ban hammer',BANHAMMER]];BL.forEach((b,i)=>{if(b&&!LIQUID[i])L.push([b.name,i]);});IT.forEach((t,i)=>{if(t)L.push([t.name,i]);});return L;}
 let CMD_CUR='',CMD_LAST={},CMD_MOBS={};
@@ -9732,7 +9746,7 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
     case 'time':case '시간':{if(a[0]==='add'||a[0]==='더하기'){const n=+a[1];if(!isFinite(n)){cmdOut('/time add 1000',1);break;}world.time=((world.time+n/24000)%1+1)%1;updateSky(0);cmdOut('⏩ 시간을 앞으로 돌렸어요');break;}const v=(a[0]==='set'||a[0]==='설정'?a[1]:a[0]||'').toLowerCase(),T={day:.05,'낮':.05,noon:.25,'정오':.25,night:.55,'밤':.55,midnight:.75,'자정':.75,sunrise:0,'아침':0,sunset:.5,'저녁':.5}[v];
       const t=T!==undefined?T:isFinite(+v)&&v!==''?((+v%24000)+24000)%24000/24000:null;if(t===null){cmdOut('/time set 낮 · 정오 · 밤 · 자정 · 0~24000',1);break;}world.time=t;updateSky(0);cmdOut('시간을 바꿨어요');break;}
     case 'tp':case 'teleport':case '순간이동':{cmdMark();if(a.length>=3){const x=num(a[0],P.x),y=num(a[1],P.y),z=num(a[2],P.z);if(![x,y,z].every(isFinite)){cmdOut('/tp x y z',1);break;}player.pos.set(x,Math.max(1,Math.min(CH+40,y)),z);player.vel.set(0,0,0);player.peakY=player.pos.y;loadNear(4);cmdOut(`(${Math.round(x)}, ${Math.round(y)}, ${Math.round(z)}) 로 이동했어요`);}
-      else if(a[0]){const T=[...MP.peers.values()].find(q=>q.nick.toLowerCase()===a[0].toLowerCase());const g=T&&T.A&&T.A.g;if(!g){cmdOut('그 사람을 찾지 못했어요',1);break;}player.pos.set(g.position.x,g.position.y,g.position.z);player.vel.set(0,0,0);player.peakY=player.pos.y;cmdOut(`<b>${mpEsc(T.nick)}</b> 님에게 갔어요`);}
+      else if(a[0]){const T=[...MP.peers.values()].find(q=>q.nick.toLowerCase()===a[0].toLowerCase());const t=T&&T.t;if(!T){cmdOut('그 사람을 찾지 못했어요',1);break;}if(!t){cmdOut('아직 그 사람의 위치를 받지 못했어요 · 잠시 뒤 다시 해 보세요',1);break;}if(t.d!==world.dim){cmdOut('그 사람은 다른 차원에 있어요',1);break;}player.pos.set(t.x,t.y,t.z);player.vel.set(0,0,0);player.peakY=player.pos.y;loadNear(4);cmdOut(`<b>${mpEsc(T.nick)}</b> 님에게 갔어요`);} // 캐릭터 모델은 위치를 받기 전엔 (0,0,0)이라 받은 위치로 이동
       else cmdOut('/tp x y z · /tp 닉네임',1);break;}
     case 'give':case '주기':{const myN=MP.on&&MP.me?MP.me.nick:(nickNow()||'플레이어'),first=(a[0]||'').toLowerCase(),isMe=first===myN.toLowerCase(),peer=[...MP.peers.values()].find(P=>String(P.nick).toLowerCase()===first); // /give @닉 아이템 [개수] (@ 없이 닉네임만 써도 돼요)
       if(/^\s*\/\S+\s+@/.test(line)&&!isMe&&!peer){cmdOut('그 사람을 찾지 못했어요 · /list',1);break;}
@@ -10112,7 +10126,7 @@ $('setGfx').onclick=e=>{const b=e.target.closest('button');if(!b)return;HQ.set(b
 
 let srLast=0;const fmtT=ms=>{ms=Math.max(0,ms|0);const h=ms/3600000|0,m=(ms/60000|0)%60,s2=(ms/1000|0)%60;return `${h}:${String(m).padStart(2,'0')}:${String(s2).padStart(2,'0')}.${String(ms%1000).padStart(3,'0')}`;}; // 스톱워치
 function frame(now){
-  requestAnimationFrame(frame);wdFrame(now);
+  requestAnimationFrame(frame);wdFrame(now);chatTick(now);
   const dt=Math.min(.05,(now-last)/1000);last=now;timeU.value=now/1000%3600; // 물·용암 움직임
   if(SPEEDRUN&&running&&world.sr&&!world.sr.done)world.sr.ms+=Math.min(1000,now-(srLast||now));srLast=now; // ⏱ 세계에 있는 동안 계속 흐름 (일시정지 중에도)
   fpsA+=dt;fpsN++;if(fpsA>.5){fps=Math.round(fpsN/fpsA);fpsA=0;fpsN=0;}if(running)gqTick(dt);
