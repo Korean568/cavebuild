@@ -222,6 +222,12 @@ export class Lobby { // 공개 방 목록 (보통 방은 3분 동안 소식이 �
   async keep() { const o = {}; for (const [k, r] of this.rooms) if (r.persist) o[k] = r; await this.state.storage.put('persist', o); }
   // 👁 감시 기능 보고 (이 클래스의 'reports' 인스턴스에만 쌓임): 같은 문제는 한 줄에 횟수만 올림 · 닉네임 · IP는 저장 안 함
   async reportAdd(req) {
+    // 🛡 한 사람(IP를 해시한 값 · 저장 안 함)이 1시간에 보낼 수 있는 보고 수 제한
+    const who = req.headers.get('x-c') || '?', hour = Math.floor(Date.now() / 3600000);
+    if (!this.repH || this.repH !== hour) { this.repH = hour; this.repN = new Map(); }
+    const sentN = (this.repN.get(who) || 0) + 1;
+    this.repN.set(who, sentN);
+    if (sentN > 20) return new Response('busy', { status: 429, headers: cors });
     const text = await req.text().catch(() => '');
     if (text.length > 3000) return new Response('too big', { status: 413, headers: cors });
     let b; try { b = JSON.parse(text); } catch (e) { return new Response('bad', { status: 400, headers: cors }); }
@@ -277,7 +283,12 @@ export default {
     const path = new URL(req.url).pathname;
     if (req.method === 'OPTIONS') return new Response(null, { headers: { ...cors, 'access-control-allow-methods': 'GET, POST', 'access-control-allow-headers': 'content-type' } });
     if (path === '/rooms') return env.LOBBY.get(env.LOBBY.idFromName('lobby')).fetch('https://lobby/list');
-    if (path === '/report' && req.method === 'POST') return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch(new Request('https://lobby/report-add', { method: 'POST', body: await req.text() }));
+    if (path === '/report' && req.method === 'POST') {
+      const ip = req.headers.get('cf-connecting-ip') || '?';
+      const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('cb-report|' + Math.floor(Date.now() / 86400000) + '|' + ip));
+      const who = [...new Uint8Array(h).slice(0, 8)].map((b) => b.toString(16).padStart(2, '0')).join('');
+      return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch(new Request('https://lobby/report-add', { method: 'POST', headers: { 'x-c': who }, body: await req.text() }));
+    }
     if (path === '/reports') return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch('https://lobby/report-list' + new URL(req.url).search);
     const m = path.match(/^\/room\/([A-Z0-9]{6})(\/del|\/official)?$/);
     if (!m) return new Response('CAVEBUILD multiplayer relay', { headers: { 'access-control-allow-origin': '*' } });

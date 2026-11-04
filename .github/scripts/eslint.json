@@ -1,0 +1,1 @@
+{"root":true,"env":{"browser":true,"es2022":true},"parserOptions":{"ecmaVersion":2022,"sourceType":"script"},"globals":{"THREE":"readonly","VPROF":"writable","claude":"readonly","CB":"readonly","steer":"writable","autoJump":"writable"},"rules":{"no-undef":"error","no-const-assign":"error","no-dupe-keys":"error","no-unreachable":"error"}}

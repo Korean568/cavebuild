@@ -1,0 +1,41 @@
+# 👁 감시 봇 (Claude 사용량 0 · 사용자 PC 필요 없음): 서버 보고 → 이슈, claude/ 브랜치 → 검문 후 배포
+name: watchdog-bot
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: '1 이면 검문만 하고 배포하지 않음'
+        required: false
+        default: '0'
+permissions:
+  contents: write
+  issues: write
+  pages: write
+concurrency:
+  group: watchdog-bot
+  cancel-in-progress: false
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: labels
+        run: |
+          gh label create watchdog --color 5319e7 --force
+          gh label create auto-fix --color d93f0b --force
+          gh label create needs-human --color fbca04 --force
+          gh label create watchdog-guard --color b60205 --force
+      - name: reports to issues
+        run: python3 .github/scripts/watchdog_filter.py
+      - name: guard claude branches
+        env:
+          GUARD_DRY: ${{ github.event.inputs.dry || '0' }}
+        run: python3 .github/scripts/branch_guard.py
