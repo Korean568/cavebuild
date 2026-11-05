@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.227 — 🎮 카테고리와 게임 모드 분리</h4>
+    <h4>🆕 v26.228 — 🏷 카테고리는 이름표로만</h4>
+    <ul><li>🏷 서버 카테고리는 이제 목록에 보이는 이름표예요. 게임 모드 · PvP · 몹 · 장비 · 조직 모드에 영향을 주지 않아요</li></ul>
+    <h4>v26.227 — 🎮 카테고리와 게임 모드 분리</h4>
     <ul><li>🎮 서버를 만들 때 카테고리와 게임 모드(서바이벌 · 크리에이티브)를 따로 골라요. 예: 빌드 카테고리 + 서바이벌 (이미 있는 서버는 그대로예요)</li></ul>
     <h4>v26.226 — 🚫 공식 서버 무기 금지</h4>
     <ul><li>🚫 새 공식 서버에서는 <b>스텔라 리모컨 · 폭탄 · 핵 · 미사일</b>을 쓸 수 없어요</li><li>🚫 방장은 /무기 끔 · /무기 켬 으로 다른 서버에서도 정할 수 있어요</li></ul>
@@ -2179,7 +2181,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.227 — 🎮 Category and game mode are separate</h4>
+    <h4>🆕 v26.228 — 🏷 Categories are labels only</h4>
+    <ul><li>🏷 Server categories are now just labels in the list. They no longer affect game mode, PvP, mobs, gear or the org mod</li></ul>
+    <h4>v26.227 — 🎮 Category and game mode are separate</h4>
     <ul><li>🎮 When creating a server, pick the category and game mode (Survival or Creative) separately, e.g. Build + Survival (existing servers stay as they are)</li></ul>
     <h4>v26.226 — 🚫 Weapon ban on official servers</h4>
     <ul><li>🚫 New official servers block the <b>Stellar Remote, bombs, nukes and missiles</b></li><li>🚫 Hosts can use /무기 끔 and /무기 켬 on other servers</li></ul>
@@ -8930,7 +8934,7 @@ const isCreative=()=>world.mode==='creative',isHardcore=()=>world.diff==='hardco
 const DIFF_MUL={safe:.5,easy:.5,normal:1,hard:1.5,hardcore:1.5}; // 몹에게 맞는 피해 배율
 function setDiff(d){world.diff=d;if(d==='safe'){player.hp=20;player.food=20;for(const o of [...mobs])if(o.def.hostile&&!o.def.boss)o.remove();}lastStats='';renderStats();updModeBtn();} // 난이도 바꾸기
 function setMode(m){if(SPEEDRUN&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('⏱ 스피드런에서는 크리에이티브 · 관전 모드를 쓸 수 없어요');return;}
-  if(MULTI&&!MP.gmOk&&!cmdIsAdmin()&&!(m==='creative'&&world.flags&&(world.flags.srvMode?world.flags.srvMode==='creative':world.flags.kind==='build'))&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('🌐 공개 서버(멀티)는 <b>서바이벌</b>만 돼요 (공정한 규칙)');return;} // 하드코어로 쓰러진 뒤 관전은 그대로
+  if(MULTI&&!MP.gmOk&&!cmdIsAdmin()&&!(m==='creative'&&world.flags&&world.flags.srvMode==='creative')&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('🌐 공개 서버(멀티)는 <b>서바이벌</b>만 돼요 (공정한 규칙)');return;} // 하드코어로 쓰러진 뒤 관전은 그대로
   const was=world.mode;world.mode=m;player.flying=false;player.gliding=false;
   if(m==='creative'||m==='spectator'){player.hp=20;player.food=20;player.air=10;}
   if(m==='spectator'){if(player.boat){player.boat.passenger=null;player.boat=null;}if(invOpen)closeInv(true);}
@@ -9480,22 +9484,9 @@ function mpBye(){if(!MP.on&&!MP.ws)return;if(MP.host){mpStop();return;}try{MP.hc
 addEventListener('pagehide',()=>{if(MP.on)mpBye();});
 const _mpV=new THREE.Vector3();
 // 🌐 CAVEBUILD ONLINE 서버 종류별 규칙 (세계에 저장된 종류로 모두의 게임이 맞춤)
-//   🌍 survival 서바이벌 · ⚔ pvp 아레나 (PvP 켬 · 몹 없음 · 부활하면 장비 · 킬 순위) · 🏗 build 빌드 (크리에이티브 · PvP 끔 · 몹 없음) · 🪖 rp 조직 RP (조직 모드 자동)
+//   카테고리는 서버 목록에 보이는 이름표일 뿐 게임 규칙에는 영향이 없음 (게임 모드는 world.flags.srvMode)
 const KIND_INFO={survival:['🌍','서바이벌','#7ec850'],pvp:['⚔','PvP 아레나','#ff6a5a'],build:['🏗','빌드','#ffc94a'],rp:['🪖','조직 RP','#7ab0ff']};
-const ORG_URL='https://korean568.github.io/cavebuild/'+encodeURIComponent('서버모드')+'/'+encodeURIComponent('조직.js');
-let kindT=0,kindWasDead=false,kindOrg=false;
-function kindKit(){const add=(id,n)=>{if(id&&IT[id]){const left=addItem(id,n);if(left>0)dropAtPlayer(id,left);}};let sw=null;IT.forEach((t,i)=>{if(t&&t.tool&&t.tool.type==='sword'&&/^철 /.test(t.name))sw=i;});
-  add(sw,1);add(BOW,1);add(ARROW,32);add(COOKED_MEAT,16);for(let pi=0;pi<4;pi++){const id=armorId(1,pi);if(IT[id]&&!armor[pi])armor[pi]={id,count:1,dur:IT[id].maxDur};}invChanged();renderStats();lastStats='';toast('⚔ 아레나 장비를 받았어요');}
-function kindTick(dt){const k=world.flags&&world.flags.kind;if(!k||(kindT+=dt)<1)return;kindT=0;
-  if(k==='build'){if(!world.flags.srvMode&&world.mode!=='creative')setMode('creative');if(MP.host){world.flags.nospawn=true;if(MP.pvp){MP.pvp=false;mpSend({t:'cfg',pvp:false});}}}
-  if(k==='pvp'){if(MP.host){world.flags.nospawn=true;if(!MP.pvp){MP.pvp=true;mpSend({t:'cfg',pvp:true});}}if(!world.flags.srvMode&&world.mode!=='survival')setMode('survival');
-    if(kindWasDead&&!player.dead)kindKit();else if(!world.flags.kitGot&&!player.dead&&!inv.some(Boolean)){kindKit();}kindWasDead=player.dead;
-    const K=world.flags.kills||{},top=Object.entries(K).sort((a,b)=>b[1]-a[1]).slice(0,5);CB.hud('arena',top.length?'⚔ <b>킬 순위</b><br>'+top.map(([n,c],i)=>`${i+1}. ${mpEsc(n)} · ${c}`).join('<br>'):'⚔ 아레나 — 먼저 쓰러뜨려 보세요!');}
-  else CB.hud('arena',null);
-  if(k==='rp'&&!kindOrg&&!window.ORG_LOADING&&!MOD_CMDS['조직']){kindOrg=true;fetch(ORG_URL).then(r=>r.text()).then(t=>{try{new Function('CB',t)(CB);toast('🪖 조직 RP 서버 — /조직 목록 · /조직 가입 이름');}catch(e){console.warn(e);}}).catch(()=>{kindOrg=false;});}}
-{const lastHitK={};CB.on('pvp',(a,v)=>{lastHitK[v]={by:a,t:Date.now()};}); // ⚔ 아레나 킬 수 (방장 게임이 셈 → 세계에 저장 → 모두에게)
-  CB.on('pdeath',v=>{if(!(world.flags&&world.flags.kind==='pvp'))return;const L=lastHitK[v];if(!L||Date.now()-L.t>10000||L.by===v)return;const K=world.flags.kills||(world.flags.kills={});K[L.by]=(K[L.by]||0)+1;delete lastHitK[v];mpSend({t:'c',n:'⚔',m:`${L.by} → ${v} (${K[L.by]}킬)`});mpChatShow('⚔',`${L.by} → ${v} (${K[L.by]}킬)`);});}
-function mpTick(dt){if(!MP.on)return;kindTick(dt);weaponTick(dt);
+function mpTick(dt){if(!MP.on)return;weaponTick(dt);
   if(!MP.host&&(MP.stT=(MP.stT||0)+dt)>20){MP.stT=0;try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}} // 🌍 20초마다 내 가방 · 위치를 방장에게 (방장이 바뀌어도 이어서)
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
