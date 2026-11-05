@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.229 — 🗑 어드민 공식 서버 삭제</h4>
+    <h4>🆕 v26.230 — 🔑 OP도 서버 삭제</h4>
+    <ul><li>🔑 공개 서버의 OP도 서버를 지울 수 있어요 (코드를 입력해서 확인). OP 명단은 서버에 저장돼서 만든 사람과 어드민만 바꿔요</li><li>🔑 이 업데이트 전에 준 OP는 /op 닉네임 을 한 번 더 해야 지우기 권한이 생겨요</li></ul>
+    <h4>v26.229 — 🗑 어드민 공식 서버 삭제</h4>
     <ul><li>🗑 어드민 계정은 어느 브라우저에서든 공식 서버를 지울 수 있어요 (코드를 입력해서 확인)</li></ul>
     <h4>v26.228 — 🏷 카테고리는 이름표로만</h4>
     <ul><li>🏷 서버 카테고리는 이제 목록에 보이는 이름표예요. 게임 모드 · PvP · 몹 · 장비 · 조직 모드에 영향을 주지 않아요</li></ul>
@@ -2183,7 +2185,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.229 — 🗑 Admins can delete official servers</h4>
+    <h4>🆕 v26.230 — 🔑 OPs can delete servers</h4>
+    <ul><li>🔑 OPs of a public server can now delete it (type the code to confirm). The OP list is stored on the server and only the creator and admins can change it</li><li>🔑 OPs given before this update need /op again to get delete rights</li></ul>
+    <h4>v26.229 — 🗑 Admins can delete official servers</h4>
     <ul><li>🗑 Admin accounts can delete official servers from any browser (type the code to confirm)</li></ul>
     <h4>v26.228 — 🏷 Categories are labels only</h4>
     <ul><li>🏷 Server categories are now just labels in the list. They no longer affect game mode, PvP, mobs, gear or the org mod</li></ul>
@@ -8893,12 +8897,14 @@ function onlShow(){if(!MULTI)return;const T=$('title'),B=document.querySelector(
   $('onl').classList.remove('show');T.classList.add('show');onlLoad();}
 async function onlLoad(){const el=$('onlList');try{onlRooms=await (await fetch(MP_RELAY.replace(/^wss/,'https')+'/rooms',{cache:'no-store'})).json();}catch(e){el.innerHTML='<div>서버 목록을 불러오지 못했어요 · 잠시 뒤 🔄</div>';return;}
   const own=mpOwn(),L=onlRooms;$('onlCount').textContent=L.length?`· ${L.length}개`:'';
-  el.innerHTML=L.length?L.map(r=>{const K=KIND_INFO[r.kind]||KIND_INFO.survival;return `<div class="onlCard${r.off?' off':''}" style="--kc:${K[2]}"><b>${r.off?'⭐ ':''}${K[0]} ${mpEsc(r.name||'서버')}</b><small>${K[1]}${r.off?' · 공식 서버':''} · ${r.n?'👥 '+r.n+'/'+r.max:'💤 비어 있음 (들어가면 켜져요)'}</small><small>방장 ${mpEsc(r.nick||'?')} · 코드 ${mpEsc(r.code)}</small><div><button class="btn" data-oj="${mpEsc(r.code)}">▶ 참가</button>${own[r.code]?` <button class="btn" data-od="${mpEsc(r.code)}">🗑</button>`:r.off&&cmdIsAdmin()?` <button class="btn" data-oa="${mpEsc(r.code)}">🗑</button>`:''}</div></div>`;}).join('')
+  el.innerHTML=L.length?L.map(r=>{const K=KIND_INFO[r.kind]||KIND_INFO.survival;return `<div class="onlCard${r.off?' off':''}" style="--kc:${K[2]}"><b>${r.off?'⭐ ':''}${K[0]} ${mpEsc(r.name||'서버')}</b><small>${K[1]}${r.off?' · 공식 서버':''} · ${r.n?'👥 '+r.n+'/'+r.max:'💤 비어 있음 (들어가면 켜져요)'}</small><small>방장 ${mpEsc(r.nick||'?')} · 코드 ${mpEsc(r.code)}</small><div><button class="btn" data-oj="${mpEsc(r.code)}">▶ 참가</button>${own[r.code]?` <button class="btn" data-od="${mpEsc(r.code)}">🗑</button>`:(r.off&&cmdIsAdmin())||(r.ops||[]).includes((nickNow()||'').toLowerCase())?` <button class="btn" data-oa="${mpEsc(r.code)}">🗑</button>`:''}</div></div>`;}).join('')
     :'<div>아직 서버가 없어요 · ➕ 서버 만들기로 첫 서버를 열어 보세요</div>';
   el.querySelectorAll('[data-oj]').forEach(b=>b.onclick=()=>mpJoin(b.dataset.oj));el.querySelectorAll('[data-od]').forEach(b=>b.onclick=()=>mpDelServer(b.dataset.od));el.querySelectorAll('[data-oa]').forEach(b=>b.onclick=()=>mpDelOfficial(b.dataset.oa));}
-// ⭐ 어드민: 다른 브라우저에서 만든 공식 서버도 지우기 (릴레이가 어드민 계정인지 확인 · 잘못 누르지 않게 코드를 직접 입력)
-function mpDelOfficial(code){const r=onlRooms.find(x=>x.code===code),t=prompt(mpL(`공식 서버 「${r?r.name:''}」를 지울까요? 세계가 영원히 사라져요. 지우려면 코드 ${code} 를 입력하세요`,`Delete official server "${r?r.name:''}"? The world will be gone forever. Type ${code} to confirm`));if(t===null)return;if(t.trim().toUpperCase()!==code){toast(mpL('🌐 코드가 달라서 지우지 않았어요','🌐 Code did not match, nothing deleted'));return;}
-  fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/official',{method:'POST',body:JSON.stringify({del:1,token:accToken()})}).then(x=>x.json()).then(d=>{if(d.error){toast('🌐 '+mpEsc(d.error));return;}toast(mpL('🗑 공식 서버를 지웠어요','🗑 Official server deleted'));onlLoad();}).catch(()=>toast(mpL('🌐 지우지 못했어요','🌐 Could not delete')));}
+// 🔑 어드민 · 이 서버의 OP: 내가 만들지 않은 서버도 지우기 (릴레이가 로그인 계정과 OP 명단을 확인 · 잘못 누르지 않게 코드를 직접 입력)
+function mpDelOfficial(code){const r=onlRooms.find(x=>x.code===code),t=prompt(mpL(`서버 「${r?r.name:code}」를 지울까요? 세계가 영원히 사라져요. 지우려면 코드 ${code} 를 입력하세요`,`Delete server "${r?r.name:code}"? The world will be gone forever. Type ${code} to confirm`));if(t===null)return;if(t.trim().toUpperCase()!==code){toast(mpL('🌐 코드가 달라서 지우지 않았어요','🌐 Code did not match, nothing deleted'));return;}
+  fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/del',{method:'POST',body:JSON.stringify({token:accToken()})}).then(x=>x.json()).then(d=>{if(d.error){toast('🌐 '+mpEsc(d.error));return;}toast(mpL('🗑 서버를 지웠어요','🗑 Server deleted'));if(MP.on&&MP.code===code){MP.leaving=true;mpStop();}onlLoad();}).catch(()=>toast(mpL('🌐 지우지 못했어요','🌐 Could not delete')));}
+// /op · /deop 를 릴레이의 OP 명단에도 적음 (명단은 만든 사람 · 어드민만 바꿀 수 있고, 지우기 권한은 이 명단으로 확인)
+function mpOpsSync(nk,on){if(!MP.persist&&!MP.gPersist)return;fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+MP.code+'/ops',{method:'POST',body:JSON.stringify({token:accToken(),key:mpOwn()[MP.code]||'',n:nk,on:on?1:0})}).then(x=>x.json()).then(d=>{if(d.error)cmdOut('🔑 서버 지우기 권한은 바꾸지 못했어요: '+mpEsc(d.error),1);}).catch(()=>{});}
 function onlKinds(){$('onlKinds').innerHTML=Object.entries(KIND_INFO).map(([k,v])=>`<button class="btn${k===onlKind?' on':''}" data-k="${k}" style="background:${v[2]};color:#111">${v[0]} ${v[1]}</button>`).join('');
   $('onlModes').innerHTML=['survival','creative'].map(m=>`<button class="btn${m===onlMode?' on':''}" data-gm="${m}">${MODE_INFO[m][0]}</button>`).join('');}
 $('onlKinds').onclick=e=>{const b=e.target.closest('[data-k]');if(b){onlKind=b.dataset.k;onlKinds();}};
@@ -9984,7 +9990,7 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
     case 'op':case 'deop':{if(!MP.on){cmdOut('멀티플레이에서만 쓸 수 있어요',1);break;}const nk=a[0]||'',on=c==='op';if(!nk){cmdOut('/op 닉네임 · /deop 닉네임',1);break;}
       if(!cmdIsAdmin()&&!mpBossMe()){cmdOut('OP는 <b>방장</b>(공개 서버는 서버를 만든 사람)과 <b>어드민</b>만 주고 뺄 수 있어요',1);break;}
-      if(!MP.host){mpSend({t:'opreq',n:nk.slice(0,16),on:on?1:0});cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;} // 방장 자리가 아니어도 서버가 확인하고 처리
+      mpOpsSync(nk,on);if(!MP.host){mpSend({t:'opreq',n:nk.slice(0,16),on:on?1:0});cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;} // 방장 자리가 아니어도 서버가 확인하고 처리
       mpSetOp(nk,on);cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;}
     case 'ops':{const ow=world.flags&&world.flags.owner,L=[mpPersistNow()?(ow?ow+'(만든 사람)':''):(MP.on&&MP.host?MP.me.nick+'(방장)':(MP.hostNick?MP.hostNick+'(방장)':'')),...(world.flags.ops||[])].filter(Boolean);cmdOut('🔑 OP: '+(L.map(mpEsc).join(' · ')||'없어요'));break;}
     default:{const M=MOD_CMDS[c];if(M){try{M.fn(a,{say:t=>cmdOut(mpEsc(String(t))),nick:MP.on?MP.me.nick:(nickNow()||'플레이어')});}catch(e){cmdOut('모드 명령어 오류: '+mpEsc(e.message||e),1);}break;} // 🧩 모드가 만든 명령어
@@ -10051,10 +10057,10 @@ function renderMP(busy){const el=$('mpBody');if(!el)return;let h='';
   else{const ow=MP.gPersist?(world.flags&&world.flags.owner)||'':MP.hostNick;h=`<div>🌐 ${ow?`<b>${mpEsc(ow)}</b> ${mpL('님의 세계','\'s world')}`:mpL('공개 서버','Public server')} · ${mpL('방 코드','Code')} <b>${MP.code}</b></div>`;}
   if(MP.on&&MP.host&&cmdIsOp())h+=`<button class="btn" id="mpPubT">${MP.pub?'🌍 '+mpL('공개 방 (누구나)','Public room'):'🔒 '+mpL('비공개 방 (코드만)','Private room')} · ${mpL('바꾸기','switch')}</button>`;
   if(MP.on&&MP.host&&cmdIsOp())h+=`<button class="btn" id="mpPvp">⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</button>`;else if(MP.on)h+=`<div>⚔ PvP: ${MP.pvp?mpL('켬','ON'):mpL('끔','OFF')}</div>`;
-  if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?(MP.persist?`<div class="tip">🖥 ${mpL('공개 서버예요 — 내가 나가도 다른 사람의 게임이 서버를 이어서 돌리고, 아무도 없으면 세계가 저장돼요 · 방장은 언제나 서버를 만든 사람이에요','Public server — stays up after you leave')}</div><button class="btn" id="mpStopBtn">🚪 ${mpL('나가기 (서버는 계속 열려 있어요)','Leave (server stays up)')}</button>`+(mpCanManage()?mpSetHtml():'')+(mpOwn()[MP.code]?`<button class="btn" id="mpDelSrv">🗑 ${mpL('이 공개 서버 지우기','Delete this server')}</button>`:''):`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`):'');
+  if(MP.on)h+=`<div style="margin-top:8px">👥 ${mpL('같이 있는 사람','Players')}: <b>${mpEsc(MP.me.nick)}</b> (${mpL('나','me')})${mpList().map(n=>' · '+mpEsc(n)).join('')}</div>`+(MP.host?(MP.persist?`<div class="tip">🖥 ${mpL('공개 서버예요 — 내가 나가도 다른 사람의 게임이 서버를 이어서 돌리고, 아무도 없으면 세계가 저장돼요 · 방장은 언제나 서버를 만든 사람이에요','Public server — stays up after you leave')}</div><button class="btn" id="mpStopBtn">🚪 ${mpL('나가기 (서버는 계속 열려 있어요)','Leave (server stays up)')}</button>`+(mpCanManage()?mpSetHtml():'')+(mpOwn()[MP.code]||mpCanManage()?`<button class="btn" id="mpDelSrv">🗑 ${mpL('이 공개 서버 지우기','Delete this server')}</button>`:''):`<button class="btn" id="mpStopBtn">✖ ${mpL('방 닫기','Close room')}</button>`):'');
   h+=`<div class="tip">${mpL('친구는 타이틀 → 플레이 → 🌍 공개 방 목록이나 🌐 방 코드로 들어와요 · T: 채팅 · /: 명령어<br>블록 · 캐릭터 · 몹 · 상자 · 바닥 아이템 · 보트 · 탈것 · 표지판 · 요리 · 폭발 · 게임 모드 · 난이도 · 모드(Mods) · 시간이 모두 함께예요. 서버 모드는 들어오면 저절로 켜져요 (내 모드 목록은 그대로). PvP로 쓰러지면 가진 것을 모두 떨어뜨려요.','Friends enter the code under Title → Play → 🌐 Join · T: chat<br>Blocks, players, mobs, chests, dropped items and time are shared. Dying in PvP drops everything.')}</div>`;
   el.innerHTML=h;
-  if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;if($('mpDelSrv'))$('mpDelSrv').onclick=()=>mpDelServer(MP.code);
+  if($('mpHostBtn'))$('mpHostBtn').onclick=mpHost;if($('mpPvp'))$('mpPvp').onclick=()=>{MP.pvp=!MP.pvp;mpSend({t:'cfg',pvp:MP.pvp});renderMP();};if($('mpStopBtn'))$('mpStopBtn').onclick=mpStop;if($('mpDelSrv'))$('mpDelSrv').onclick=()=>mpOwn()[MP.code]?mpDelServer(MP.code):mpDelOfficial(MP.code);
   if($('srvNameOk'))$('srvNameOk').onclick=()=>{const n=$('srvName').value.trim().slice(0,30);if(!n)return;world.name=n;try{MP.ws&&MP.ws.send('!pub'+JSON.stringify({on:1,...mpPubInfo()}));}catch(e){}toast(mpL(`🖥 서버 이름을 <b>${mpEsc(n)}</b>(으)로 바꿨어요`,'🖥 Server renamed'));};
   if($('srvScript')){$('srvScript').onclick=()=>$('srvScriptF').click();$('srvScriptF').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(f.size>300000){toast('📜 300KB 보다 작은 파일만 넣을 수 있어요');return;}
     const code=await f.text();try{new Function('CB',code);}catch(err){toast('📜 스크립트에 문법 오류가 있어요: '+mpEsc(err.message));return;} // 넣기 전에 문법 검사

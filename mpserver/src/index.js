@@ -14,6 +14,10 @@ const MAX_GUESTS = 20;
 const KINDS = ['survival', 'pvp', 'build', 'rp']; // 🌐 CAVEBUILD ONLINE 서버 종류: 서바이벌 · PvP 아레나 · 빌드 · 조직 RP
 // ⭐ 공식 서버: POST /room/코드/official {name,kind,token} — 어드민 계정으로 로그인한 사람만 (계정 서버에 물어서 확인) · 목록 맨 위에 항상 남음
 const ACCOUNT_API = 'https://geulbeot-rho.vercel.app/api/cavebuild';
+async function accountOf(token) { // 로그인 열쇠로 계정 서버에 물어서 진짜 계정 확인 (닉네임을 믿지 않음)
+  if (typeof token !== 'string' || token.length < 32) return null;
+  try { const r = await fetch(ACCOUNT_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'me', token }) }); const d = await r.json(); return (d && d.user) || null; } catch (e) { return null; }
+}
 async function isAdminToken(token) {
   if (typeof token !== 'string' || token.length < 32) return false;
   try { const r = await fetch(ACCOUNT_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'me', token }) }); const d = await r.json(); return !!(d && d.user && d.user.admin); } catch (e) { return false; }
@@ -45,7 +49,7 @@ export class Room {
     if (!this.code) return;
     const L = this.env.LOBBY.get(this.env.LOBBY.idFromName('lobby'));
     const persist = !!(this.meta && this.meta.persist);
-    const body = del || !this.pub || (!this.host && !persist) ? { code: this.code, del: 1 } : { code: this.code, ...this.pub, n: this.host ? this.guests.size + 1 : 0, max: MAX_GUESTS + 1, persist: persist ? 1 : 0 };
+    const body = del || !this.pub || (!this.host && !persist) ? { code: this.code, del: 1 } : { code: this.code, ...this.pub, n: this.host ? this.guests.size + 1 : 0, max: MAX_GUESTS + 1, persist: persist ? 1 : 0, ops: (this.meta && this.meta.ops) || [] };
     this.lobbyT = Date.now();
     return L.fetch('https://lobby/set', { method: 'POST', body: JSON.stringify(body) }).catch(() => {});
   }
@@ -104,8 +108,23 @@ export class Room {
     if (url.pathname.endsWith('/del')) { // 🗑 만든 사람만 지움
       const b = await req.json().catch(() => ({}));
       if (!this.meta || !this.meta.persist) return new Response(JSON.stringify({ ok: true }), { headers: cors });
-      if (!b.key || b.key !== this.meta.key) return new Response(JSON.stringify({ error: '서버를 만든 사람만 지울 수 있어요' }), { status: 403, headers: cors });
+      let okDel = !!b.key && b.key === this.meta.key;
+      if (!okDel) { const u = await accountOf(b.token); okDel = !!u && (u.admin || (this.meta.ops || []).includes(String(u.nick).toLowerCase())); } // 🔑 어드민 · 이 서버의 OP (로그인 계정으로 확인)
+      if (!okDel) return new Response(JSON.stringify({ error: '서버를 만든 사람 · OP · 어드민만 지울 수 있어요' }), { status: 403, headers: cors });
       await this.wipe();
+      return new Response(JSON.stringify({ ok: true }), { headers: cors });
+    }
+    if (url.pathname.endsWith('/ops')) { // 🔑 서버 OP 명단: 만든 사람(열쇠 · 계정) · 어드민만 바꿈 → 게임이 아니라 여기 저장된 명단으로 삭제 권한을 확인
+      const b = await req.json().catch(() => ({}));
+      if (!this.meta || !this.meta.persist) return new Response(JSON.stringify({ error: '공개 서버가 아니에요' }), { status: 404, headers: cors });
+      let okOp = !!b.key && b.key === this.meta.key;
+      if (!okOp) { const u = await accountOf(b.token); okOp = !!u && (u.admin || (!!this.meta.pub && !this.meta.pub.off && String(u.nick) === this.meta.pub.nick)); }
+      if (!okOp) return new Response(JSON.stringify({ error: '만든 사람과 어드민만 OP를 정할 수 있어요' }), { status: 403, headers: cors });
+      const n = String(b.n || '').trim().toLowerCase().slice(0, 16);
+      if (!n) return new Response(JSON.stringify({ error: '닉네임을 넣어 주세요' }), { status: 400, headers: cors });
+      const ops = (this.meta.ops || []).filter((x) => x !== n);
+      if (b.on && ops.length < 30) ops.push(n);
+      this.meta.ops = ops; await this.saveMeta(); await this.lobby();
       return new Response(JSON.stringify({ ok: true }), { headers: cors });
     }
     if (req.headers.get('Upgrade') !== 'websocket') return new Response('websocket only', { status: 426 });
@@ -271,7 +290,7 @@ export class Lobby { // 공개 방 목록 (보통 방은 3분 동안 소식이 �
     const now = Date.now(), L = [];
     for (const [k, r] of this.rooms) {
       if (!r.persist && now - r.t > 180000) { this.rooms.delete(k); continue; }
-      L.push({ code: r.code, name: r.name, nick: r.nick, mode: r.mode, n: r.persist && now - r.t > 180000 ? 0 : r.n, max: r.max, persist: r.persist ? 1 : 0, kind: r.kind || 'survival', off: r.off ? 1 : 0 });
+      L.push({ code: r.code, name: r.name, nick: r.nick, mode: r.mode, n: r.persist && now - r.t > 180000 ? 0 : r.n, max: r.max, persist: r.persist ? 1 : 0, kind: r.kind || 'survival', off: r.off ? 1 : 0, ops: r.ops || [] });
     }
     L.sort((a, b) => b.off - a.off || b.n - a.n || b.persist - a.persist); // ⭐ 공식 서버가 맨 위
     return new Response(JSON.stringify(L.slice(0, 50)), { headers: cors });
@@ -290,7 +309,7 @@ export default {
       return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch(new Request('https://lobby/report-add', { method: 'POST', headers: { 'x-c': who }, body: await req.text() }));
     }
     if (path === '/reports') return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch('https://lobby/report-list' + new URL(req.url).search);
-    const m = path.match(/^\/room\/([A-Z0-9]{6})(\/del|\/official)?$/);
+    const m = path.match(/^\/room\/([A-Z0-9]{6})(\/del|\/official|\/ops)?$/);
     if (!m) return new Response('CAVEBUILD multiplayer relay', { headers: { 'access-control-allow-origin': '*' } });
     return env.ROOM.get(env.ROOM.idFromName(m[1])).fetch(req);
   },
