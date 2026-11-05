@@ -332,7 +332,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.226 — 🚫 공식 서버 무기 금지</h4>
+    <h4>🆕 v26.227 — 🎮 카테고리와 게임 모드 분리</h4>
+    <ul><li>🎮 서버를 만들 때 카테고리와 게임 모드(서바이벌 · 크리에이티브)를 따로 골라요. 예: 빌드 카테고리 + 서바이벌 (이미 있는 서버는 그대로예요)</li></ul>
+    <h4>v26.226 — 🚫 공식 서버 무기 금지</h4>
     <ul><li>🚫 새 공식 서버에서는 <b>스텔라 리모컨 · 폭탄 · 핵 · 미사일</b>을 쓸 수 없어요</li><li>🚫 방장은 /무기 끔 · /무기 켬 으로 다른 서버에서도 정할 수 있어요</li></ul>
     <h4>v26.225 — 🎬 CLKKY STUDIO 오프닝</h4>
     <ul><li>🎬 게임을 시작할 때 CLKKY STUDIO 오프닝이 나와요 (탭마다 한 번 · SKIP 으로 넘길 수 있어요)</li></ul>
@@ -1093,7 +1095,7 @@ body.mobile #toasts{top:72px}
   <div class="onlLogo">CAVEBUILD <span>ONLINE</span></div>
   <div class="onlSub">서버를 골라 바로 들어가요 · 공개 서버 전용 (서바이벌 · 공정한 규칙)</div>
   <div class="onlTop"><button class="btn onlBig" id="onlQuick">▶ 빠른 참가</button><button class="btn" id="onlNew">➕ 서버 만들기</button><button class="btn" id="onlWard">👕 탈의실 · 로그인</button><button class="btn" id="onlSet">⚙ 설정</button><button class="btn" id="onlHub">🏠 허브</button></div>
-  <div id="onlForm" class="onlForm" style="display:none"><input id="onlName" maxlength="24" placeholder="서버 이름"><div id="onlKinds" class="onlKinds"></div><label id="onlOffL" style="display:none"><input type="checkbox" id="onlOff"> ⭐ 공식 서버로 (어드민)</label><button class="btn" id="onlMake">🖥 만들기</button></div>
+  <div id="onlForm" class="onlForm" style="display:none"><input id="onlName" maxlength="24" placeholder="서버 이름"><div id="onlKinds" class="onlKinds"></div><div id="onlModes" class="onlKinds"></div><label id="onlOffL" style="display:none"><input type="checkbox" id="onlOff"> ⭐ 공식 서버로 (어드민)</label><button class="btn" id="onlMake">🖥 만들기</button></div>
   <div class="onlBar"><b>서버 목록</b> <span id="onlCount"></span> <button class="btn" id="onlRe" style="width:auto;display:inline-block;padding:2px 10px;margin:0 0 0 6px">🔄</button></div>
   <div id="onlList" class="onlGrid"></div>
   <div class="onlFoot">방 코드로 들어가기: <input id="onlCode" maxlength="6" placeholder="코드 6자리" style="width:110px;text-transform:uppercase"> <button class="btn" id="onlCodeGo" style="width:auto;display:inline-block">참가</button></div>
@@ -2175,7 +2177,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.226 — 🚫 Weapon ban on official servers</h4>
+    <h4>🆕 v26.227 — 🎮 Category and game mode are separate</h4>
+    <ul><li>🎮 When creating a server, pick the category and game mode (Survival or Creative) separately, e.g. Build + Survival (existing servers stay as they are)</li></ul>
+    <h4>v26.226 — 🚫 Weapon ban on official servers</h4>
     <ul><li>🚫 New official servers block the <b>Stellar Remote, bombs, nukes and missiles</b></li><li>🚫 Hosts can use /무기 끔 and /무기 켬 on other servers</li></ul>
     <h4>v26.225 — 🎬 CLKKY STUDIO opening</h4>
     <ul><li>🎬 A CLKKY STUDIO opening now plays when the game starts (once per tab · press SKIP to pass it)</li></ul>
@@ -8872,7 +8876,7 @@ function openPlay(m){audio();SFX.click();const P=$('playPanel');P.dataset.m=m; /
 $('btnPlay').onclick=()=>openPlay('solo');$('btnMulti').onclick=()=>openPlay('multi');
 $('btnGoMP').onclick=()=>{try{sessionStorage.setItem('cb-play','1');}catch(e){}location.href=new URL('멀티/?play=1',document.baseURI).href;};
 // 🌐 CAVEBUILD ONLINE 첫 화면: 서버 목록 · 빠른 참가 · 서버 만들기 (종류) · ⭐ 공식 서버 (어드민)
-let onlKind='survival',onlRooms=[];
+let onlKind='survival',onlMode='survival',onlRooms=[];
 function onlShow(){if(!MULTI)return;const T=$('title'),B=document.querySelector('.onlbox'); // 원래 타이틀(배경 · 로고 글씨체 그대로) 안에 서버 목록을 넣음
   if(B&&B.parentNode!==T){T.appendChild(B);const keep=new Set([$('titleBg'),$('logoImg'),T.querySelector('.en'),T.querySelector('.sub'),B]);for(const el of [...T.children])if(!keep.has(el))el.style.display='none';
     const en=T.querySelector('.en'),s=T.querySelector('.sub');if(en){en.textContent='O N L I N E';en.removeAttribute('data-t');}if(s)s.textContent='서버를 골라 바로 들어가요 · 공개 서버 전용 (서바이벌 · 공정한 규칙)';} // 배경 그림 · 로고는 그대로, 로고 밑 글자만 ONLINE
@@ -8882,11 +8886,13 @@ async function onlLoad(){const el=$('onlList');try{onlRooms=await (await fetch(M
   el.innerHTML=L.length?L.map(r=>{const K=KIND_INFO[r.kind]||KIND_INFO.survival;return `<div class="onlCard${r.off?' off':''}" style="--kc:${K[2]}"><b>${r.off?'⭐ ':''}${K[0]} ${mpEsc(r.name||'서버')}</b><small>${K[1]}${r.off?' · 공식 서버':''} · ${r.n?'👥 '+r.n+'/'+r.max:'💤 비어 있음 (들어가면 켜져요)'}</small><small>방장 ${mpEsc(r.nick||'?')} · 코드 ${mpEsc(r.code)}</small><div><button class="btn" data-oj="${mpEsc(r.code)}">▶ 참가</button>${own[r.code]?` <button class="btn" data-od="${mpEsc(r.code)}">🗑</button>`:''}</div></div>`;}).join('')
     :'<div>아직 서버가 없어요 · ➕ 서버 만들기로 첫 서버를 열어 보세요</div>';
   el.querySelectorAll('[data-oj]').forEach(b=>b.onclick=()=>mpJoin(b.dataset.oj));el.querySelectorAll('[data-od]').forEach(b=>b.onclick=()=>mpDelServer(b.dataset.od));}
-function onlKinds(){$('onlKinds').innerHTML=Object.entries(KIND_INFO).map(([k,v])=>`<button class="btn${k===onlKind?' on':''}" data-k="${k}" style="background:${v[2]};color:#111">${v[0]} ${v[1]}</button>`).join('');}
+function onlKinds(){$('onlKinds').innerHTML=Object.entries(KIND_INFO).map(([k,v])=>`<button class="btn${k===onlKind?' on':''}" data-k="${k}" style="background:${v[2]};color:#111">${v[0]} ${v[1]}</button>`).join('');
+  $('onlModes').innerHTML=['survival','creative'].map(m=>`<button class="btn${m===onlMode?' on':''}" data-gm="${m}">${MODE_INFO[m][0]}</button>`).join('');}
 $('onlKinds').onclick=e=>{const b=e.target.closest('[data-k]');if(b){onlKind=b.dataset.k;onlKinds();}};
+$('onlModes').onclick=e=>{const b=e.target.closest('[data-gm]');if(b){onlMode=b.dataset.gm;onlKinds();}}; // 카테고리와 따로 고르는 게임 모드
 $('onlNew').onclick=()=>{const f=$('onlForm');f.style.display=f.style.display==='none'?'':'none';onlKinds();$('onlOffL').style.display=cmdIsAdmin()?'':'none';if(!$('onlName').value)$('onlName').value=(nickNow()||'나')+'의 서버';};
 $('onlMake').onclick=()=>{if(!nickNow()){toast('🌐 서버를 만들려면 <b>로그인</b>해 주세요 (👕 탈의실 · 로그인)');return;}
-  $('worldName').value=($('onlName').value.trim()||(nickNow()+'의 서버')).slice(0,24);MP.newKind=onlKind;MP.wantOfficial=$('onlOff').checked&&cmdIsAdmin();wantMode=onlKind==='build'?'creative':'survival';MP.autoPub=true;$('btnNew').click();};
+  $('worldName').value=($('onlName').value.trim()||(nickNow()+'의 서버')).slice(0,24);MP.newKind=onlKind;MP.wantOfficial=$('onlOff').checked&&cmdIsAdmin();wantMode=onlMode;MP.newMode=onlMode;MP.autoPub=true;$('btnNew').click();};
 $('onlQuick').onclick=()=>{const L=onlRooms.filter(r=>r.n<r.max),pick=L.find(r=>r.off&&r.kind==='survival')||L.find(r=>r.off)||L.sort((a,b)=>b.n-a.n)[0];if(!pick){toast('🌐 들어갈 서버가 없어요 — ➕ 서버 만들기');return;}mpJoin(pick.code);};
 $('onlRe').onclick=onlLoad;const onlVia=b=>()=>$(b).click();
 $('onlWard').onclick=onlVia('btnWard');$('onlSet').onclick=onlVia('btnTSet');$('onlHub').onclick=()=>$('btnHub').click();
@@ -8900,7 +8906,7 @@ $('tMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;wantMode=
 $('tDiff').onclick=e=>{const b=e.target.closest('button');if(!b)return;wantDiff=b.dataset.d;saveWant();renderTSettings();};
 $('btnNew').onclick=()=>{audio();if(!saveChecked){toast('저장된 세계를 확인하는 중이에요. 잠시 뒤에 다시 눌러 주세요');return;}
   wantSeed=parseSeed($('seedIn').value);wantName=$('worldName').value.trim()||(LANG==='en'?'World ':'세계 ')+(WORLDS.length+1);const id=newWorldId();
-  $('playPanel').classList.remove('show');goFull();startWorld(null,()=>{CUR=id;saveGame();if(MP.autoPub){MP.autoPub=false;world.flags.kind=MP.newKind||'survival';setTimeout(()=>mpHost({persist:true}),800);}}); // ➕ 공개 서버 만들기에서 왔으면 바로 공개 서버로 (종류도)
+  $('playPanel').classList.remove('show');goFull();startWorld(null,()=>{CUR=id;saveGame();if(MP.autoPub){MP.autoPub=false;world.flags.kind=MP.newKind||'survival';world.flags.srvMode=MP.newMode||'survival';setTimeout(()=>mpHost({persist:true}),800);}}); // ➕ 공개 서버 만들기에서 왔으면 바로 공개 서버로 (종류도)
   if(wantSeed!==null)setTimeout(()=>toast(`🌱 세계 코드 <b>${seed}</b> 로 세계를 만들었습니다`),900);};
 $('worldList').onclick=e=>{const b=e.target.closest('button');if(!b)return;
   if(b.dataset.play){const id=b.dataset.play,ent=WORLDS.find(q=>q.id===id);audio();loadWorld(id).then(sv=>{if(!sv||!validSave(sv)){toast('이 세계를 불러오지 못했어요');return;}if(ent)sv.name=ent.name;$('playPanel').classList.remove('show');goFull();startWorld(sv,()=>{CUR=id;});});}
@@ -8922,7 +8928,7 @@ const isCreative=()=>world.mode==='creative',isHardcore=()=>world.diff==='hardco
 const DIFF_MUL={safe:.5,easy:.5,normal:1,hard:1.5,hardcore:1.5}; // 몹에게 맞는 피해 배율
 function setDiff(d){world.diff=d;if(d==='safe'){player.hp=20;player.food=20;for(const o of [...mobs])if(o.def.hostile&&!o.def.boss)o.remove();}lastStats='';renderStats();updModeBtn();} // 난이도 바꾸기
 function setMode(m){if(SPEEDRUN&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('⏱ 스피드런에서는 크리에이티브 · 관전 모드를 쓸 수 없어요');return;}
-  if(MULTI&&!MP.gmOk&&!cmdIsAdmin()&&!(m==='creative'&&world.flags&&world.flags.kind==='build')&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('🌐 공개 서버(멀티)는 <b>서바이벌</b>만 돼요 (공정한 규칙)');return;} // 하드코어로 쓰러진 뒤 관전은 그대로
+  if(MULTI&&!MP.gmOk&&!cmdIsAdmin()&&!(m==='creative'&&world.flags&&(world.flags.srvMode?world.flags.srvMode==='creative':world.flags.kind==='build'))&&(m==='creative'||(m==='spectator'&&!(world.flags&&world.flags.hcDead)))){toast('🌐 공개 서버(멀티)는 <b>서바이벌</b>만 돼요 (공정한 규칙)');return;} // 하드코어로 쓰러진 뒤 관전은 그대로
   const was=world.mode;world.mode=m;player.flying=false;player.gliding=false;
   if(m==='creative'||m==='spectator'){player.hp=20;player.food=20;player.air=10;}
   if(m==='spectator'){if(player.boat){player.boat.passenger=null;player.boat=null;}if(invOpen)closeInv(true);}
@@ -9479,8 +9485,8 @@ let kindT=0,kindWasDead=false,kindOrg=false;
 function kindKit(){const add=(id,n)=>{if(id&&IT[id]){const left=addItem(id,n);if(left>0)dropAtPlayer(id,left);}};let sw=null;IT.forEach((t,i)=>{if(t&&t.tool&&t.tool.type==='sword'&&/^철 /.test(t.name))sw=i;});
   add(sw,1);add(BOW,1);add(ARROW,32);add(COOKED_MEAT,16);for(let pi=0;pi<4;pi++){const id=armorId(1,pi);if(IT[id]&&!armor[pi])armor[pi]={id,count:1,dur:IT[id].maxDur};}invChanged();renderStats();lastStats='';toast('⚔ 아레나 장비를 받았어요');}
 function kindTick(dt){const k=world.flags&&world.flags.kind;if(!k||(kindT+=dt)<1)return;kindT=0;
-  if(k==='build'){if(world.mode!=='creative')setMode('creative');if(MP.host){world.flags.nospawn=true;if(MP.pvp){MP.pvp=false;mpSend({t:'cfg',pvp:false});}}}
-  if(k==='pvp'){if(MP.host){world.flags.nospawn=true;if(!MP.pvp){MP.pvp=true;mpSend({t:'cfg',pvp:true});}}if(world.mode!=='survival')setMode('survival');
+  if(k==='build'){if(!world.flags.srvMode&&world.mode!=='creative')setMode('creative');if(MP.host){world.flags.nospawn=true;if(MP.pvp){MP.pvp=false;mpSend({t:'cfg',pvp:false});}}}
+  if(k==='pvp'){if(MP.host){world.flags.nospawn=true;if(!MP.pvp){MP.pvp=true;mpSend({t:'cfg',pvp:true});}}if(!world.flags.srvMode&&world.mode!=='survival')setMode('survival');
     if(kindWasDead&&!player.dead)kindKit();else if(!world.flags.kitGot&&!player.dead&&!inv.some(Boolean)){kindKit();}kindWasDead=player.dead;
     const K=world.flags.kills||{},top=Object.entries(K).sort((a,b)=>b[1]-a[1]).slice(0,5);CB.hud('arena',top.length?'⚔ <b>킬 순위</b><br>'+top.map(([n,c],i)=>`${i+1}. ${mpEsc(n)} · ${c}`).join('<br>'):'⚔ 아레나 — 먼저 쓰러뜨려 보세요!');}
   else CB.hud('arena',null);
