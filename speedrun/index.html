@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.228 — 🏷 카테고리는 이름표로만</h4>
+    <h4>🆕 v26.229 — 🗑 어드민 공식 서버 삭제</h4>
+    <ul><li>🗑 어드민 계정은 어느 브라우저에서든 공식 서버를 지울 수 있어요 (코드를 입력해서 확인)</li></ul>
+    <h4>v26.228 — 🏷 카테고리는 이름표로만</h4>
     <ul><li>🏷 서버 카테고리는 이제 목록에 보이는 이름표예요. 게임 모드 · PvP · 몹 · 장비 · 조직 모드에 영향을 주지 않아요</li></ul>
     <h4>v26.227 — 🎮 카테고리와 게임 모드 분리</h4>
     <ul><li>🎮 서버를 만들 때 카테고리와 게임 모드(서바이벌 · 크리에이티브)를 따로 골라요. 예: 빌드 카테고리 + 서바이벌 (이미 있는 서버는 그대로예요)</li></ul>
@@ -2181,7 +2183,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.228 — 🏷 Categories are labels only</h4>
+    <h4>🆕 v26.229 — 🗑 Admins can delete official servers</h4>
+    <ul><li>🗑 Admin accounts can delete official servers from any browser (type the code to confirm)</li></ul>
+    <h4>v26.228 — 🏷 Categories are labels only</h4>
     <ul><li>🏷 Server categories are now just labels in the list. They no longer affect game mode, PvP, mobs, gear or the org mod</li></ul>
     <h4>v26.227 — 🎮 Category and game mode are separate</h4>
     <ul><li>🎮 When creating a server, pick the category and game mode (Survival or Creative) separately, e.g. Build + Survival (existing servers stay as they are)</li></ul>
@@ -8889,9 +8893,12 @@ function onlShow(){if(!MULTI)return;const T=$('title'),B=document.querySelector(
   $('onl').classList.remove('show');T.classList.add('show');onlLoad();}
 async function onlLoad(){const el=$('onlList');try{onlRooms=await (await fetch(MP_RELAY.replace(/^wss/,'https')+'/rooms',{cache:'no-store'})).json();}catch(e){el.innerHTML='<div>서버 목록을 불러오지 못했어요 · 잠시 뒤 🔄</div>';return;}
   const own=mpOwn(),L=onlRooms;$('onlCount').textContent=L.length?`· ${L.length}개`:'';
-  el.innerHTML=L.length?L.map(r=>{const K=KIND_INFO[r.kind]||KIND_INFO.survival;return `<div class="onlCard${r.off?' off':''}" style="--kc:${K[2]}"><b>${r.off?'⭐ ':''}${K[0]} ${mpEsc(r.name||'서버')}</b><small>${K[1]}${r.off?' · 공식 서버':''} · ${r.n?'👥 '+r.n+'/'+r.max:'💤 비어 있음 (들어가면 켜져요)'}</small><small>방장 ${mpEsc(r.nick||'?')} · 코드 ${mpEsc(r.code)}</small><div><button class="btn" data-oj="${mpEsc(r.code)}">▶ 참가</button>${own[r.code]?` <button class="btn" data-od="${mpEsc(r.code)}">🗑</button>`:''}</div></div>`;}).join('')
+  el.innerHTML=L.length?L.map(r=>{const K=KIND_INFO[r.kind]||KIND_INFO.survival;return `<div class="onlCard${r.off?' off':''}" style="--kc:${K[2]}"><b>${r.off?'⭐ ':''}${K[0]} ${mpEsc(r.name||'서버')}</b><small>${K[1]}${r.off?' · 공식 서버':''} · ${r.n?'👥 '+r.n+'/'+r.max:'💤 비어 있음 (들어가면 켜져요)'}</small><small>방장 ${mpEsc(r.nick||'?')} · 코드 ${mpEsc(r.code)}</small><div><button class="btn" data-oj="${mpEsc(r.code)}">▶ 참가</button>${own[r.code]?` <button class="btn" data-od="${mpEsc(r.code)}">🗑</button>`:r.off&&cmdIsAdmin()?` <button class="btn" data-oa="${mpEsc(r.code)}">🗑</button>`:''}</div></div>`;}).join('')
     :'<div>아직 서버가 없어요 · ➕ 서버 만들기로 첫 서버를 열어 보세요</div>';
-  el.querySelectorAll('[data-oj]').forEach(b=>b.onclick=()=>mpJoin(b.dataset.oj));el.querySelectorAll('[data-od]').forEach(b=>b.onclick=()=>mpDelServer(b.dataset.od));}
+  el.querySelectorAll('[data-oj]').forEach(b=>b.onclick=()=>mpJoin(b.dataset.oj));el.querySelectorAll('[data-od]').forEach(b=>b.onclick=()=>mpDelServer(b.dataset.od));el.querySelectorAll('[data-oa]').forEach(b=>b.onclick=()=>mpDelOfficial(b.dataset.oa));}
+// ⭐ 어드민: 다른 브라우저에서 만든 공식 서버도 지우기 (릴레이가 어드민 계정인지 확인 · 잘못 누르지 않게 코드를 직접 입력)
+function mpDelOfficial(code){const r=onlRooms.find(x=>x.code===code),t=prompt(mpL(`공식 서버 「${r?r.name:''}」를 지울까요? 세계가 영원히 사라져요. 지우려면 코드 ${code} 를 입력하세요`,`Delete official server "${r?r.name:''}"? The world will be gone forever. Type ${code} to confirm`));if(t===null)return;if(t.trim().toUpperCase()!==code){toast(mpL('🌐 코드가 달라서 지우지 않았어요','🌐 Code did not match, nothing deleted'));return;}
+  fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/official',{method:'POST',body:JSON.stringify({del:1,token:accToken()})}).then(x=>x.json()).then(d=>{if(d.error){toast('🌐 '+mpEsc(d.error));return;}toast(mpL('🗑 공식 서버를 지웠어요','🗑 Official server deleted'));onlLoad();}).catch(()=>toast(mpL('🌐 지우지 못했어요','🌐 Could not delete')));}
 function onlKinds(){$('onlKinds').innerHTML=Object.entries(KIND_INFO).map(([k,v])=>`<button class="btn${k===onlKind?' on':''}" data-k="${k}" style="background:${v[2]};color:#111">${v[0]} ${v[1]}</button>`).join('');
   $('onlModes').innerHTML=['survival','creative'].map(m=>`<button class="btn${m===onlMode?' on':''}" data-gm="${m}">${MODE_INFO[m][0]}</button>`).join('');}
 $('onlKinds').onclick=e=>{const b=e.target.closest('[data-k]');if(b){onlKind=b.dataset.k;onlKinds();}};
