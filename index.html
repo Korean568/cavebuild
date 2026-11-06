@@ -332,7 +332,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.230 — 🔑 OP도 서버 삭제</h4>
+    <h4>🆕 v26.231 — ♻ 지운 서버 되살리기</h4>
+    <ul><li>♻ 지운 공개 서버는 7일 동안 보관돼요. 멀티 화면의 ♻ 지운 서버에서 되살릴 수 있어요 (만든 사람 · 그 서버의 OP · 어드민)</li><li>♻ 되살리면 세계 · 이름 · OP 명단이 그대로 돌아와요. 7일이 지나면 완전히 사라져요</li></ul>
+    <h4>v26.230 — 🔑 OP도 서버 삭제</h4>
     <ul><li>🔑 공개 서버의 OP도 서버를 지울 수 있어요 (코드를 입력해서 확인). OP 명단은 서버에 저장돼서 만든 사람과 어드민만 바꿔요</li><li>🔑 이 업데이트 전에 준 OP는 /op 닉네임 을 한 번 더 해야 지우기 권한이 생겨요</li></ul>
     <h4>v26.229 — 🗑 어드민 공식 서버 삭제</h4>
     <ul><li>🗑 어드민 계정은 어느 브라우저에서든 공식 서버를 지울 수 있어요 (코드를 입력해서 확인)</li></ul>
@@ -1100,7 +1102,7 @@ body.mobile #toasts{top:72px}
 <div id="onl" class="overlay"><div class="onlbox">
   <div class="onlLogo">CAVEBUILD <span>ONLINE</span></div>
   <div class="onlSub">서버를 골라 바로 들어가요 · 공개 서버 전용 (서바이벌 · 공정한 규칙)</div>
-  <div class="onlTop"><button class="btn onlBig" id="onlQuick">▶ 빠른 참가</button><button class="btn" id="onlNew">➕ 서버 만들기</button><button class="btn" id="onlWard">👕 탈의실 · 로그인</button><button class="btn" id="onlSet">⚙ 설정</button><button class="btn" id="onlHub">🏠 허브</button></div>
+  <div class="onlTop"><button class="btn onlBig" id="onlQuick">▶ 빠른 참가</button><button class="btn" id="onlNew">➕ 서버 만들기</button><button class="btn" id="onlTrash">♻ 지운 서버</button><button class="btn" id="onlWard">👕 탈의실 · 로그인</button><button class="btn" id="onlSet">⚙ 설정</button><button class="btn" id="onlHub">🏠 허브</button></div>
   <div id="onlForm" class="onlForm" style="display:none"><input id="onlName" maxlength="24" placeholder="서버 이름"><div id="onlKinds" class="onlKinds"></div><div id="onlModes" class="onlKinds"></div><label id="onlOffL" style="display:none"><input type="checkbox" id="onlOff"> ⭐ 공식 서버로 (어드민)</label><button class="btn" id="onlMake">🖥 만들기</button></div>
   <div class="onlBar"><b>서버 목록</b> <span id="onlCount"></span> <button class="btn" id="onlRe" style="width:auto;display:inline-block;padding:2px 10px;margin:0 0 0 6px">🔄</button></div>
   <div id="onlList" class="onlGrid"></div>
@@ -2183,7 +2185,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.230 — 🔑 OPs can delete servers</h4>
+    <h4>🆕 v26.231 — ♻ Restore deleted servers</h4>
+    <ul><li>♻ Deleted public servers are kept for 7 days. Restore them from ♻ Deleted servers on the multiplayer screen (creator, that server's OPs, admins)</li><li>♻ Restoring brings back the world, name and OP list. After 7 days they are gone for good</li></ul>
+    <h4>v26.230 — 🔑 OPs can delete servers</h4>
     <ul><li>🔑 OPs of a public server can now delete it (type the code to confirm). The OP list is stored on the server and only the creator and admins can change it</li><li>🔑 OPs given before this update need /op again to get delete rights</li></ul>
     <h4>v26.229 — 🗑 Admins can delete official servers</h4>
     <ul><li>🗑 Admin accounts can delete official servers from any browser (type the code to confirm)</li></ul>
@@ -8899,8 +8903,17 @@ async function onlLoad(){const el=$('onlList');try{onlRooms=await (await fetch(M
     :'<div>아직 서버가 없어요 · ➕ 서버 만들기로 첫 서버를 열어 보세요</div>';
   el.querySelectorAll('[data-oj]').forEach(b=>b.onclick=()=>mpJoin(b.dataset.oj));el.querySelectorAll('[data-od]').forEach(b=>b.onclick=()=>mpDelServer(b.dataset.od));el.querySelectorAll('[data-oa]').forEach(b=>b.onclick=()=>mpDelOfficial(b.dataset.oa));}
 // 🔑 어드민 · 이 서버의 OP: 내가 만들지 않은 서버도 지우기 (릴레이가 로그인 계정과 OP 명단을 확인 · 잘못 누르지 않게 코드를 직접 입력)
-function mpDelOfficial(code){const r=onlRooms.find(x=>x.code===code),t=prompt(mpL(`서버 「${r?r.name:code}」를 지울까요? 세계가 영원히 사라져요. 지우려면 코드 ${code} 를 입력하세요`,`Delete server "${r?r.name:code}"? The world will be gone forever. Type ${code} to confirm`));if(t===null)return;if(t.trim().toUpperCase()!==code){toast(mpL('🌐 코드가 달라서 지우지 않았어요','🌐 Code did not match, nothing deleted'));return;}
+function mpDelOfficial(code){const r=onlRooms.find(x=>x.code===code),t=prompt(mpL(`서버 「${r?r.name:code}」를 지울까요? 7일 동안은 ♻ 지운 서버에서 되살릴 수 있어요. 지우려면 코드 ${code} 를 입력하세요`,`Delete server "${r?r.name:code}"? You can restore it from ♻ Deleted servers for 7 days. Type ${code} to confirm`));if(t===null)return;if(t.trim().toUpperCase()!==code){toast(mpL('🌐 코드가 달라서 지우지 않았어요','🌐 Code did not match, nothing deleted'));return;}
   fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/del',{method:'POST',body:JSON.stringify({token:accToken()})}).then(x=>x.json()).then(d=>{if(d.error){toast('🌐 '+mpEsc(d.error));return;}toast(mpL('🗑 서버를 지웠어요','🗑 Server deleted'));if(MP.on&&MP.code===code){MP.leaving=true;mpStop();}onlLoad();}).catch(()=>toast(mpL('🌐 지우지 못했어요','🌐 Could not delete')));}
+// ♻ 지운 서버 (7일): 만든 사람 · 그 서버의 OP · 어드민에게만 보이고, 되살리면 세계 · 이름 · OP 명단이 그대로 돌아옴
+async function onlTrashShow(){const el=$('onlList'),me=(nickNow()||'').toLowerCase(),own=mpOwn();let L=[];
+  try{L=await (await fetch(MP_RELAY.replace(/^wss/,'https')+'/trash',{cache:'no-store'})).json();}catch(e){el.innerHTML='<div>지운 서버 목록을 불러오지 못했어요</div>';return;}
+  L=L.filter(r=>cmdIsAdmin()||own[r.code]||(r.ops||[]).includes(me));
+  const left=t=>Math.max(0,Math.ceil((t+7*86400000-Date.now())/86400000));
+  el.innerHTML=`<div><button class="btn" id="onlTrashBack">← ${mpL('서버 목록','Server list')}</button></div>`+(L.length?L.map(r=>`<div class="onlCard${r.off?' off':''}"><b>${r.off?'⭐ ':''}🗑 ${mpEsc(r.name||r.code)}</b><small>${mpL('코드','Code')} ${mpEsc(r.code)} · ${mpL(`${left(r.t)}일 뒤 완전히 사라져요`,`gone for good in ${left(r.t)} day(s)`)}</small><div><button class="btn" data-or="${mpEsc(r.code)}">♻ ${mpL('되살리기','Restore')}</button></div></div>`).join(''):`<div>${mpL('되살릴 수 있는 서버가 없어요 · 지운 지 7일이 지나면 사라져요','No deleted servers you can restore (they are gone after 7 days)')}</div>`);
+  $('onlTrashBack').onclick=onlLoad;
+  el.querySelectorAll('[data-or]').forEach(b=>b.onclick=()=>{const code=b.dataset.or;fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/restore',{method:'POST',body:JSON.stringify({token:accToken(),key:own[code]||''})}).then(x=>x.json()).then(d=>{if(d.error){toast('🌐 '+mpEsc(d.error));return;}toast(mpL('♻ 서버를 되살렸어요','♻ Server restored'));onlLoad();}).catch(()=>toast(mpL('🌐 되살리지 못했어요','🌐 Could not restore')));});}
+$('onlTrash').onclick=onlTrashShow;
 // /op · /deop 를 릴레이의 OP 명단에도 적음 (명단은 만든 사람 · 어드민만 바꿀 수 있고, 지우기 권한은 이 명단으로 확인)
 function mpOpsSync(nk,on){if(!MP.persist&&!MP.gPersist)return;fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+MP.code+'/ops',{method:'POST',body:JSON.stringify({token:accToken(),key:mpOwn()[MP.code]||'',n:nk,on:on?1:0})}).then(x=>x.json()).then(d=>{if(d.error)cmdOut('🔑 서버 지우기 권한은 바꾸지 못했어요: '+mpEsc(d.error),1);}).catch(()=>{});}
 function onlKinds(){$('onlKinds').innerHTML=Object.entries(KIND_INFO).map(([k,v])=>`<button class="btn${k===onlKind?' on':''}" data-k="${k}" style="background:${v[2]};color:#111">${v[0]} ${v[1]}</button>`).join('');
@@ -9358,7 +9371,7 @@ function mpSetServerMods(L){MP.modOverride=L; // 새 서버 모드로 세계를 
     const code=MP.code,st=mpState();try{sessionStorage.setItem('cb-handoff',JSON.stringify({code,promote:0,st:{inv:st.inv,armor:st.armor,p:st.p,dim:st.dim}}));sessionStorage.removeItem('cb-mpmods');sessionStorage.setItem('cb-play','1');}catch(e){}
     setTimeout(()=>{MP.leaving=true;clearInterval(MP.svT);const w=MP.ws;MP.ws=null;MP.on=false;try{w&&w.close();}catch(e){}setTimeout(()=>{location.href=location.origin+location.pathname+'?play=1';},600);},400);};
   toast(mpL('🧩 서버 모드를 바꾸는 중… (세계 저장)','🧩 Changing server mods…'));mpSaveUp();}
-function mpDelServer(code){const key=mpOwn()[code];if(!key)return;if(!confirm(mpL('이 공개 서버를 지울까요? 세계가 영원히 사라져요','Delete this public server? The world will be gone forever')))return;
+function mpDelServer(code){const key=mpOwn()[code];if(!key)return;if(!confirm(mpL('이 공개 서버를 지울까요? 7일 동안은 ♻ 지운 서버에서 되살릴 수 있어요','Delete this public server? You can restore it from ♻ Deleted servers for 7 days')))return;
   fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/del',{method:'POST',body:JSON.stringify({key})}).then(r=>r.json()).then(d=>{if(d.error){toast('🌐 '+mpEsc(d.error));return;}mpOwnSet(code,null);toast(mpL('🗑 공개 서버를 지웠어요','🗑 Server deleted'));if(MP.on&&MP.code===code){MP.leaving=true;mpStop();}mpRoomsLoad();}).catch(()=>toast(mpL('🌐 지우지 못했어요','🌐 Could not delete')));}
 function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
   if(!MP.on||!running){if(d.t==='hi')c.send({t:'_err',m:'wait'});return;} // 세계를 여는 중: 친구에게 잠시 뒤 다시 오라고 알림 (아무 말 안 하면 친구는 끝까지 기다림)

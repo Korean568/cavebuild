@@ -24,6 +24,7 @@ async function isAdminToken(token) {
 }
 const CHUNK = 32000;      // 저장소 한 칸에 넣는 글자 수
 const SEND_CHUNK = 250000; // 저장된 세계를 보낼 때 한 번에 보내는 글자 수
+const TRASH_MS = 7 * 86400000; // 지운 서버를 되살릴 수 있는 기간
 const HOST_ANSWER_MS = 20000; // 친구가 말을 걸었는데 방장이 이만큼 답이 없으면 방장을 내보냄
 const cors = { 'access-control-allow-origin': '*', 'content-type': 'application/json; charset=utf-8' };
 
@@ -54,9 +55,15 @@ export class Room {
     return L.fetch('https://lobby/set', { method: 'POST', body: JSON.stringify(body) }).catch(() => {});
   }
   async saveMeta() { if (this.meta) await this.state.storage.put('meta', this.meta); }
-  async wipe() { // 🗑 공개 서버 지우기
+  trashLobby(body) { return this.env.LOBBY.get(this.env.LOBBY.idFromName('lobby')).fetch('https://lobby/trash-set', { method: 'POST', body: JSON.stringify(body) }).catch(() => {}); }
+  async wipe() { // 🗑 공개 서버 지우기: 7일 동안 휴지통에 (세계 조각은 그대로 · 정보만 옮김) → /restore 로 되살림
+    if (this.meta && this.meta.persist) {
+      const t = Date.now(), p = this.meta.pub || {};
+      await this.state.storage.put('trash', { meta: this.meta, t });
+      await this.state.storage.delete('meta');
+      await this.trashLobby({ code: this.code, name: p.name || '', off: p.off ? 1 : 0, ops: this.meta.ops || [], t });
+    } else await this.state.storage.deleteAll();
     this.meta = null; this.pub = null;
-    await this.state.storage.deleteAll();
     await this.lobby(true);
     for (const g of this.guests.values()) try { g.send('{"t":"bye"}'); g.close(1000, 'deleted'); } catch (e) {}
     this.guests.clear();
@@ -104,6 +111,25 @@ export class Room {
       this.meta.pub = { name: String(b.name || '공식 서버').slice(0, 30), nick: 'CAVEBUILD', mode: 'CAVEBUILD ONLINE', kind: KINDS.includes(b.kind) ? b.kind : 'survival', off: 1 };
       this.meta.persist = true; this.pub = this.meta.pub; await this.saveMeta(); await this.lobby();
       return new Response(JSON.stringify({ ok: true, key: this.meta.key }), { headers: cors });
+    }
+    if (!this.meta && !url.pathname.endsWith('/restore')) { // 휴지통에서 7일이 지나면 그때 완전히 지움
+      const tr = await this.state.storage.get('trash');
+      if (tr && Date.now() - tr.t > TRASH_MS) { await this.state.storage.deleteAll(); await this.trashLobby({ code: this.code, del: 1 }); }
+    }
+    if (url.pathname.endsWith('/restore')) { // ♻ 지운 서버 되살리기: 만든 사람(열쇠) · 그 서버의 OP · 어드민
+      const b = await req.json().catch(() => ({}));
+      const tr = await this.state.storage.get('trash');
+      const no = (m, s) => new Response(JSON.stringify({ error: m }), { status: s, headers: cors });
+      if (!tr || Date.now() - tr.t > TRASH_MS) return no('되살릴 수 있는 서버가 없어요 (지운 지 7일이 지났거나 없는 코드예요)', 404);
+      if (this.meta) return no('같은 코드의 서버가 이미 있어요', 409);
+      let ok = !!b.key && b.key === tr.meta.key;
+      if (!ok) { const u = await accountOf(b.token); ok = !!u && (u.admin || (tr.meta.ops || []).includes(String(u.nick).toLowerCase())); }
+      if (!ok) return no('서버를 만든 사람 · 그 서버의 OP · 어드민만 되살릴 수 있어요', 403);
+      if (b.purge && b.key === tr.meta.key) { await this.state.storage.deleteAll(); await this.trashLobby({ code: this.code, del: 1 }); return new Response(JSON.stringify({ ok: true, purged: 1 }), { headers: cors }); } // 만든 사람만: 휴지통에서도 지움 (시험용)
+      this.meta = tr.meta; this.pub = this.meta.pub;
+      await this.saveMeta(); await this.state.storage.delete('trash');
+      await this.trashLobby({ code: this.code, del: 1 }); await this.lobby();
+      return new Response(JSON.stringify({ ok: true }), { headers: cors });
     }
     if (url.pathname.endsWith('/del')) { // 🗑 만든 사람만 지움
       const b = await req.json().catch(() => ({}));
@@ -236,7 +262,8 @@ export class Lobby { // 공개 방 목록 (보통 방은 3분 동안 소식이 �
   constructor(state, env) {
     this.state = state;
     this.rooms = new Map();
-    this.ready = state.blockConcurrencyWhile(async () => { const m = (await state.storage.get('persist')) || {}; for (const k in m) this.rooms.set(k, m[k]); });
+    this.trash = new Map(); // 🗑 지운 서버 (7일): 코드 → { code, name, off, ops, t }
+    this.ready = state.blockConcurrencyWhile(async () => { const m = (await state.storage.get('persist')) || {}; for (const k in m) this.rooms.set(k, m[k]); const t = (await state.storage.get('trash')) || {}; for (const k in t) this.trash.set(k, t[k]); });
   }
   async keep() { const o = {}; for (const [k, r] of this.rooms) if (r.persist) o[k] = r; await this.state.storage.put('persist', o); }
   // 👁 감시 기능 보고 (이 클래스의 'reports' 인스턴스에만 쌓임): 같은 문제는 한 줄에 횟수만 올림 · 닉네임 · IP는 저장 안 함
@@ -278,6 +305,19 @@ export class Lobby { // 공개 방 목록 (보통 방은 3분 동안 소식이 �
     const url = new URL(req.url);
     if (url.pathname === '/report-add') return this.reportAdd(req);
     if (url.pathname === '/report-list') return this.reportList(url);
+    if (req.method === 'POST' && url.pathname === '/trash-set') {
+      const o = await req.json().catch(() => null);
+      if (o && /^[A-Z0-9]{6}$/.test(o.code)) {
+        if (o.del) this.trash.delete(o.code);
+        else this.trash.set(o.code, { code: o.code, name: String(o.name || '').slice(0, 30), off: o.off ? 1 : 0, ops: Array.isArray(o.ops) ? o.ops.slice(0, 30) : [], t: +o.t || Date.now() });
+        await this.state.storage.put('trash', Object.fromEntries(this.trash));
+      }
+      return new Response('ok');
+    }
+    if (url.pathname === '/trash-list') {
+      const now = Date.now();
+      return new Response(JSON.stringify([...this.trash.values()].filter((r) => now - r.t < TRASH_MS).sort((a, b) => b.t - a.t).slice(0, 50)), { headers: cors });
+    }
     if (req.method === 'POST' && url.pathname === '/set') {
       const o = await req.json().catch(() => null);
       if (o && /^[A-Z0-9]{6}$/.test(o.code)) {
@@ -302,6 +342,7 @@ export default {
     const path = new URL(req.url).pathname;
     if (req.method === 'OPTIONS') return new Response(null, { headers: { ...cors, 'access-control-allow-methods': 'GET, POST', 'access-control-allow-headers': 'content-type' } });
     if (path === '/rooms') return env.LOBBY.get(env.LOBBY.idFromName('lobby')).fetch('https://lobby/list');
+    if (path === '/trash') return env.LOBBY.get(env.LOBBY.idFromName('lobby')).fetch('https://lobby/trash-list');
     if (path === '/report' && req.method === 'POST') {
       const ip = req.headers.get('cf-connecting-ip') || '?';
       const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('cb-report|' + Math.floor(Date.now() / 86400000) + '|' + ip));
@@ -309,7 +350,7 @@ export default {
       return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch(new Request('https://lobby/report-add', { method: 'POST', headers: { 'x-c': who }, body: await req.text() }));
     }
     if (path === '/reports') return env.LOBBY.get(env.LOBBY.idFromName('reports')).fetch('https://lobby/report-list' + new URL(req.url).search);
-    const m = path.match(/^\/room\/([A-Z0-9]{6})(\/del|\/official|\/ops)?$/);
+    const m = path.match(/^\/room\/([A-Z0-9]{6})(\/del|\/official|\/ops|\/restore)?$/);
     if (!m) return new Response('CAVEBUILD multiplayer relay', { headers: { 'access-control-allow-origin': '*' } });
     return env.ROOM.get(env.ROOM.idFromName(m[1])).fetch(req);
   },
