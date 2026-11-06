@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.235 — 🎯 조준 · 💻 / 명령어 고침</h4>
+    <h4>🆕 v26.236 — 🎖 CLKKY ARMY 군사계급 · 🔁 내 팀 바꾸기 · 🔨 밴 고침</h4>
+    <ul><li>🎖 조직 모드 군대 팀원마다 <b>군사계급</b>이 붙어요 (부서와 따로): 이등병 · 일등병 · 상등병 · 병장 · 하사 · 중사 · 상사 · 원사 · 소위 · 중위 · 대위 · 소령 · 중령 · 대령 · 대장(총사령관만)</li><li>🎖 /진급 · /강등 @닉 은 이제 군사계급을 바꿔요 (대령까지) · /계급 으로 계급표</li><li>🎖 군대가 아닌 사람: 멤버(디스코드 서버 가입) · 게스트 · 수감자(감옥) · 탈옥수 · 사형수 — OP는 /계급 @닉 상태</li><li>🔁 소령 이상 · 장교(Officer) 부서 이상 · Owner는 <b>/team 팀</b> 으로 내 팀을 마음대로 바꿔요 (Owner는 /team 총사령관 으로 돌아와요)</li><li>🔨 방장인 사람도 /ban · 밴 해머로 밴돼요 (방을 나가고 다시 방장으로도 못 들어와요) · 어드민은 밴할 수 없다고 알려 줘요</li></ul>
+    <h4>v26.235 — 🎯 조준 · 💻 / 명령어 고침</h4>
     <ul><li>🎯 총으로 조준할 때 총이 조준점 아래로 내려가서 목표가 가려지지 않아요</li><li>💻 / 키로 채팅창을 열고 한글로 명령어를 치면 / 가 사라져서 채팅으로 나가던 문제를 고쳤어요 (예: /크리에이티브 @닉)</li></ul>
     <h4>v26.234 — ⛑ 메디킷</h4>
     <ul><li>⛑ <b>메디킷</b> (작업대: 사과 2 + 철 주괴 1): 들고 사람을 치면 그 사람 체력 +8, 우클릭하면 내 체력 +6 (4초마다)</li><li>⛑ 조직 모드의 의무병(Medic)은 메디킷을 기본 장비로 받고, 메디킷으로 치료해요</li></ul>
@@ -2195,7 +2197,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.235 — 🎯 Aiming · 💻 Slash commands</h4>
+    <h4>🆕 v26.236 — 🎖 CLKKY ARMY military ranks · 🔁 Switch your own team · 🔨 Ban fix</h4>
+    <ul><li>🎖 Every army member in the org mod now has a <b>military rank</b>, separate from their department: Private up to Colonel, plus General for the Owner only</li><li>🎖 /진급 and /강등 @name now change the military rank (up to Colonel) · /계급 shows the rank list</li><li>🎖 Non-army players: Member (joined the Discord server), Guest, Prisoner, Escaped Prisoner, Death row inmate — OPs set these with /계급 @name status</li><li>🔁 Majors and above, Officers and above, and the Owner can switch their own team with <b>/team team</b> (the Owner returns with /team 총사령관)</li><li>🔨 /ban and the ban hammer now work on the room host too (they leave and can't host it again) · Admins can't be banned, and you're told so</li></ul>
+    <h4>v26.235 — 🎯 Aiming · 💻 Slash commands</h4>
     <ul><li>🎯 Aiming a gun now holds it below the crosshair so it no longer hides the target</li><li>💻 Fixed Korean commands typed after opening chat with / losing the slash and going out as chat (e.g. /크리에이티브 @name)</li></ul>
     <h4>v26.234 — ⛑ Medkit</h4>
     <ul><li>⛑ <b>Medkit</b> (bench: 2 apples + 1 iron ingot): hit a player to heal them +8, or right-click to heal yourself +6 (every 4 seconds)</li><li>⛑ Medics in the org mod get a medkit in their kit and heal with it</li></ul>
@@ -9371,7 +9375,8 @@ function mpResumeStart(text,code){let sn=null;try{sn=text?JSON.parse(text):null;
     delete M[me];sn.items=[];sn.sr=null;}
   $('playPanel').classList.remove('show');goFull();
   startWorld(sn,()=>{CUR=null;MP.on=MP.host=true;MP.myId='H';const sp=MP.srvPub||{};if(sp.off)world.flags.noweapon=true; // ⭐ 공식 서버는 켤 때마다 무기 금지
-    if(world.flags.srvMode&&world.mode!==world.flags.srvMode&&world.mode!=='spectator'){MP.gmOk=1;try{setMode(world.flags.srvMode);}finally{MP.gmOk=0;}} // 이어서 켠 방장도 방 전체 게임 모드로if(!world.flags.kind)world.flags.kind=sp.kind||'survival';if(sp.off&&!world.flags.owner)world.flags.owner='운영자'; // 처음 켜지는 서버: 종류 · (공식이면) 운영자 소유
+    if((world.flags.bans||[]).some(x=>x.toLowerCase()===String(MP.me.nick).toLowerCase())&&!cmdIsAdmin()){mpEnd(mpL('🔨 이 방에서 밴당했어요','🔨 You are banned from this room'));return;} // 🔨 밴당한 사람은 방장으로도 못 들어옴
+    if(world.flags.srvMode&&world.mode!==world.flags.srvMode&&world.mode!=='spectator'){MP.gmOk=1;try{setMode(world.flags.srvMode);}finally{MP.gmOk=0;}}/* 이어서 켠 방장도 방 전체 게임 모드로 */if(!world.flags.kind)world.flags.kind=sp.kind||'survival';if(sp.off&&!world.flags.owner)world.flags.owner='운영자'; // 처음 켜지는 서버: 종류 · (공식이면) 운영자 소유
     mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();mpSaveLoop();
     if(world.flags.owner&&!sp.off)try{MP.ws&&MP.ws.send('!pub'+JSON.stringify({on:1,...mpPubInfo()}));}catch(e){} // 목록의 방장 = 서버를 만든 사람
     toast(mpL(`🌍 공개 서버에 들어왔어요 · 코드 <b>${code}</b>`,`🌍 Joined the public server · Code <b>${code}</b>`));});}
@@ -9442,7 +9447,9 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
   else if(d.t==='gm'){if(!mpConnOp(c))return;mpModeIn(d);mpSend(d,c);}
   else if(d.t==='df'){if(!mpConnOp(c)||!DIFF_INFO[d.d])return;setDiff(d.d);try{renderSettings();}catch(e){}toast(mpL('🌐 OP가 난이도를 바꿨어요: ','🌐 An OP changed difficulty: ')+DIFF_INFO[d.d][0]);}
   else if(d.t==='lang'){if(!mpConnOp(c)||typeof d.l!=='string')return;setLang(d.l,1);mpSend(d,c);}
-  else if(d.t==='banreq'){if(mpConnOp(c))mpBanNick(d.n);}
+  else if(d.t==='banreq'){if(!mpConnOp(c))return;const nk=String(d.n||'').slice(0,16);
+    if(nk.toLowerCase()===String(MP.me.nick).toLowerCase()){if(cmdIsAdmin())c.send({t:'c',n:'🔨 서버',m:nk+' 님은 어드민이라 밴할 수 없어요'});else mpBanMe(c.P.nick);return;}
+    if(!mpBanNick(nk))c.send({t:'c',n:'🔨 서버',m:nk+' 님은 밴할 수 없어요 (운영자 · 어드민)'});}
   else if(d.t==='opreq'){if(c.P.nick==='운영자'||c.P.adm||mpConnBoss(c))mpSetOp(String(d.n||'').slice(0,16),!!d.on);} // 🔑 OP 주기 · 빼기는 방장(만든 사람) · 어드민만 (서버가 확인)
   else if(d.t==='cuff'||d.t==='tase'||d.t==='heal'){d.by=c.P.nick;mpRoute(d);}
   else if(d.t==='give'||d.t==='gmp'){if((!MULTI||c.P.adm||c.P.nick==='운영자')&&mpConnOp(c)){d.by=c.P.nick;mpRoute(d);}} // 🎁 /give @닉 · 🎮 /모드이름 @닉: OP만 (공개 서버는 어드민만 · 서버가 확인)
@@ -9611,7 +9618,7 @@ function mpWithDummies(L){if(!MP.on)return L;const R=L.slice(); // 친구 캐릭
     if(!P.dm)P.dm={pvp:true,id:P.id,kind:'player',def:{name:P.nick},w:.6,h:1.8,dead:false,pos:P.A.g.position,hurt(dmg,kx,kz){mpPvp(P,dmg,kx,kz);}};R.push(P.dm);}
   return R;}
 function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x,M.pos.y+M.h/2,M.pos.z,new THREE.Color(0xff2020),24,.6,4); // 🔨 밴 해머
-  if(M.pvp){if(!cmdIsOp()){NOOP_T();return;}const nk=M.def.name;if(MP.host)mpBanNick(nk);else mpSend({t:'banreq',n:nk});toast(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요`);return;}
+  if(M.pvp){if(!cmdIsOp()){NOOP_T();return;}const nk=M.def.name;if(MP.host&&!mpBanNick(nk)){toast('🔨 그 사람은 어드민이라 밴할 수 없어요');return;}if(!MP.host)mpSend({t:'banreq',n:nk});toast(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요`);return;}
   if(M.def.boss&&!cmdIsOp()){NOOP_T();return;}M.hurt(1e6,0,0);toast('🔨 쾅! <b>'+(M.def.name||'몹')+'</b>을(를) 없앴어요');}
 // ⛓ 수갑: 플레이어를 치면 묶고 다시 치면 풀어요 (2분 뒤 저절로 풀림) · 몹은 30초 동안 멈춤
 function medkitHit(M){if(!M.pvp){toast('⛑ 메디킷으로 사람을 치면 치료해요 (우클릭하면 나를 치료)');return;}if(performance.now()<(player.medCD||0))return;player.medCD=performance.now()+4000;swing=1;tone(660,990,.12,.05,'sine');
@@ -9637,6 +9644,8 @@ function NOOP_T(){toast(mpL('🔑 이 서버에서는 <b>OP</b>(또는 어드민
 // 🔨 밴: 방장이 명단에 넣고 내보냄 · 다시 들어오려 해도 막힘
 function mpConnOp(c){const n=c&&c.P?c.P.nick:'';return n==='운영자'||!!(c&&c.P&&c.P.adm)||mpConnBoss(c)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
 function mpConnBoss(c){const n=c&&c.P?c.P.nick:'';return !!(MP.persist&&world.flags&&world.flags.owner&&n===world.flags.owner);} // 공개 서버를 만든 사람이 손님으로 들어와 있어도 방장
+function mpBanMe(by){const nk=MP.me.nick,B=world.flags.bans||(world.flags.bans=[]);if(!B.some(x=>x.toLowerCase()===nk.toLowerCase()))B.push(nk); // 🔨 방장이 밴당함: 밴 명단을 세계에 저장하고 방을 나감 (다시 방장으로 들어와도 막힘)
+  mpSend({t:'c',n:'🔨 서버',m:nk+' 님이 밴당했어요'});try{mpSaveUp();}catch(e){}setTimeout(()=>mpEnd(mpL('🔨 이 방에서 밴당했어요','🔨 You were banned from this room')),1500);}
 function mpBanNick(nk){nk=String(nk||'').slice(0,16);if(!nk||nk==='운영자'||nk===MP.me.nick||[...MP.conns].some(q=>q.P&&q.P.adm&&q.P.nick.toLowerCase()===nk.toLowerCase()))return false;const B=world.flags.bans||(world.flags.bans=[]);if(!B.some(x=>x.toLowerCase()===nk.toLowerCase()))B.push(nk);
   const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'kick',ban:1});mpSend({t:'c',n:'🔨 서버',m:nk+' 님이 밴당했어요'});return true;}
 function mpPvp(P,dmg,kx,kz){if(!MP.pvp){toast(mpL('⚔ 이 방은 PvP가 꺼져 있어요','⚔ PvP is off in this room'));return;}
@@ -10028,7 +10037,7 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
     case 'magnet':case '자석':{let n=0;for(const g of groundItems){if(Math.hypot(g.pos.x-P.x,g.pos.z-P.z)<32){g.pos.set(P.x,P.y+.5,P.z);if(g.vel)g.vel.set(0,0,0);n++;}}cmdOut(`🧲 바닥 아이템 ${n}개를 끌어왔어요`);break;}
     case 'clearitems':case '아이템청소':{let n=0;for(let i=groundItems.length-1;i>=0;i--){const g=groundItems[i];if(Math.hypot(g.pos.x-P.x,g.pos.z-P.z)<48){removeGroundItem(i);n++;}}cmdOut(`🧹 바닥 아이템 ${n}개를 지웠어요`);break;}
     case 'ban':case '밴':{if(!MP.on){cmdOut('멀티플레이 방에서만 쓸 수 있어요',1);break;}const nk=a[0]||'';if(!nk){cmdOut('/ban 닉네임',1);break;}if(nk==='운영자'||nk===MP.me.nick){cmdOut('그 사람은 밴할 수 없어요',1);break;}
-      if(MP.host)mpBanNick(nk);else mpSend({t:'banreq',n:nk});MP.lastBan=nk;cmdOut(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요 (/unban 으로 풀기)`);break;}
+      if(MP.host&&!mpBanNick(nk)){cmdOut('그 사람은 어드민이라 밴할 수 없어요',1);break;}if(!MP.host)mpSend({t:'banreq',n:nk});MP.lastBan=nk;cmdOut(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요 (/unban 으로 풀기)`);break;}
     case 'unban':case 'unben':case '밴해제':{if(MP.on&&!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const nk=(a[0]||'').toLowerCase(),B=world.flags.bans||[],i=B.findIndex(x=>x.toLowerCase()===nk);if(i<0){cmdOut('밴 명단에 없어요 · /banlist',1);break;}cmdOut(`🔓 <b>${mpEsc(B[i])}</b> 님의 밴을 풀었어요`);B.splice(i,1);break;}
     case 'banlist':case '밴목록':cmdOut('🔨 밴 명단: '+((world.flags.bans||[]).map(mpEsc).join(' · ')||'없어요'));break;
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
