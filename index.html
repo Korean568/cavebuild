@@ -5332,7 +5332,7 @@ function updateHand(dt){
   else{if(leftArm&&leftArm.userData.reload){leftArm.userData.reload=0;if(!player.dine)leftArm.visible=false;if(magL)magL.visible=false;}if(magDrop)magDrop.visible=false;if(shellsL)shellsL.forEach(c=>c.visible=false);}
   player.aimK=(player.aimK||0)+((gunAim()?1:0)-(player.aimK||0))*Math.min(1,dt*14);
   if(player.aimK>.01&&isGun(hs)){const k=player.aimK,A=handArm.position,R=handArm.rotation; // 🎯 조준: 총을 화면 가운데로 올려 눈높이에 맞춤
-    A.set(lerp(A.x,.17,k),lerp(A.y,-.29,k),lerp(A.z,-.5,k));R.set(lerp(R.x,.04,k),lerp(R.y,.1,k),lerp(R.z,0,k));} // 총은 조준점 아래로 (목표가 가려지지 않게)
+    A.set(lerp(A.x,.19,k),lerp(A.y,-.34,k),lerp(A.z,-.5,k));R.set(lerp(R.x,.04,k),lerp(R.y,.1,k),lerp(R.z,0,k));} // 총은 조준점 아래로 (목표가 가려지지 않게)
   if(player.saluteT>0)player.saluteT-=dt;player.saluteK=(player.saluteK||0)+((player.saluteT>0?1:0)-(player.saluteK||0))*Math.min(1,dt*10);
   if(player.saluteK>.01){const k=ease(player.saluteK),A=handArm.position,R=handArm.rotation; // 🫡 경례: 오른손을 이마 옆으로 (손바닥이 아래 · 들고 있던 건 잠깐 숨김)
     const P=SALUTE_P,Q=SALUTE_R;A.set(lerp(A.x,P[0],k),lerp(A.y,P[1],k),lerp(A.z,P[2],k));R.set(lerp(R.x,Q[0],k),lerp(R.y,Q[1],k),lerp(R.z,Q[2],k));if(heldModel)heldModel.visible=k<.4;}
