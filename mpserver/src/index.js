@@ -27,6 +27,8 @@ const SEND_CHUNK = 250000; // 저장된 세계를 보낼 때 한 번에 보내�
 const TRASH_MS = 7 * 86400000; // 지운 서버를 되살릴 수 있는 기간
 const HOST_ANSWER_MS = 20000; // 친구가 말을 걸었는데 방장이 이만큼 답이 없으면 방장을 내보냄
 const cors = { 'access-control-allow-origin': '*', 'content-type': 'application/json; charset=utf-8' };
+// 공식 서버 이름의 CAVE (낱말) → CLKKY (CAVE CITY → CLKKY CITY · 게임 이름 CAVEBUILD 는 그대로) · 바뀌면 true
+function clkky(p) { if (!p || !p.off || typeof p.name !== 'string' || !/\bCAVE\b/.test(p.name)) return false; p.name = p.name.replace(/\bCAVE\b/g, 'CLKKY'); return true; }
 
 export class Room {
   constructor(state, env) {
@@ -44,7 +46,7 @@ export class Room {
     this.hostTok = '';
     this.answered = new Set(); // 방장이 답한 적 있는 친구 번호
     this.dropHost = null;
-    this.ready =state.blockConcurrencyWhile(async () => { this.meta = (await state.storage.get('meta')) || null; if (this.meta) this.pub = this.meta.pub; });
+    this.ready =state.blockConcurrencyWhile(async () => { this.meta = (await state.storage.get('meta')) || null; if (this.meta) { this.pub = this.meta.pub; if (clkky(this.pub)) await state.storage.put('meta', this.meta); } });
   }
   lobby(del) { // 로비에 이 방을 올리거나 내림
     if (!this.code) return;
@@ -263,7 +265,7 @@ export class Lobby { // 공개 방 목록 (보통 방은 3분 동안 소식이 �
     this.state = state;
     this.rooms = new Map();
     this.trash = new Map(); // 🗑 지운 서버 (7일): 코드 → { code, name, off, ops, t }
-    this.ready = state.blockConcurrencyWhile(async () => { const m = (await state.storage.get('persist')) || {}; for (const k in m) this.rooms.set(k, m[k]); const t = (await state.storage.get('trash')) || {}; for (const k in t) this.trash.set(k, t[k]); });
+    this.ready = state.blockConcurrencyWhile(async () => { const m = (await state.storage.get('persist')) || {}; for (const k in m) { clkky(m[k]); this.rooms.set(k, m[k]); } const t = (await state.storage.get('trash')) || {}; for (const k in t) this.trash.set(k, t[k]); });
   }
   async keep() { const o = {}; for (const [k, r] of this.rooms) if (r.persist) o[k] = r; await this.state.storage.put('persist', o); }
   // 👁 감시 기능 보고 (이 클래스의 'reports' 인스턴스에만 쌓임): 같은 문제는 한 줄에 횟수만 올림 · 닉네임 · IP는 저장 안 함

@@ -1,25 +1,26 @@
 // 🪖 조직 (팀 계급) 모드 — CAVEBUILD 서버용 .js 모드
-// 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 군사(CM) · 군사경찰(CMP) · 장교(CMO) · 교육부(TMC) · MP사령부(CMP 사령부) · 교육사령부(TMC 사령부) · 총사령부(Owner)
-//   처음엔 누구나 시민 · 위 계급이 아래 계급 사람을 배정 · 진급 · 강등해요 (내 계급보다 아래로만) · 총사령부는 서버를 만든 사람(Owner)
+// 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 육군(Soldier) · 의무병(Medic) · 군사경찰(CMP) · 특수임무대(SWAT) · 장교(Officer) · 교육사(TMC) · MP사령관(CMPO) · 교육사령관(TMCO) · 부사령관(Staff) · 총사령관(Owner)
+//   CLKKY ARMY 조직 구성: 의무병은 치료 (/치료 @닉) · 특수임무대는 ★★★ 진압 (수갑 · 체포 가능) · 장교는 육군 · 의무병 관리 · 군사경찰은 MP사령관 지휘
+//   처음엔 누구나 시민 · 위 계급이 아래 계급 사람을 배정 · 진급 · 강등해요 (내 계급보다 아래로만) · 총사령관은 서버를 만든 사람(Owner)
 //   머리 위 닉네임에 [팀] + 팀 색, 기지 · 집합, 훈련 · 임무, 같은 팀끼리도 때릴 수 있음
 // 멀티플레이에서는 방장 게임이 조직 정보를 저장하고(세계에 저장됨), 친구들의 명령은 방장에게 신호로 보내요.
 //
-// 🎒 팀이 되면 기본 장비를 받아요 (KITS) · 총사령부(Owner)는 OP · 고소 · 수배 안 됨
+// 🎒 팀이 되면 기본 장비를 받아요 (KITS) · 총사령관(Owner)은OP · 고소 · 수배 안 됨
 // 🏴 불법 거래 상인 (NPC): 밤에만 나와서 시민 · 무법자에게 동전으로 무기를 팔아요 · 쓰러지면 다음 날 밤에 (/상인 · /상인 설정)
 // 🌙 생활규칙: 밤에는 경찰은 경찰서 구역, 군대는 군부대 안 (군대는 /외출 허가면 예외) · 밖에 60초 넘게 있으면 수갑대상
 // 🏙 모드를 깔면 부활 자리 근처 빈 땅에 도시 · 🚓 경찰서 · 🪖 군부대가 저절로 생겨요 (/도시 · OP는 /도시 짓기)
 // 🪖 전역: 군대 팀에서 /조직 탈퇴 · 무단탈영: 군부대 정문의 빨간 선을 넘어 걸어 나가거나 군부대 안에서 /집 가기 (★★★ · 무법자)
-// 🪪 외출: 장교(CMO) 이상이 /외출 @닉 [분] 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · 시간을 넘기면 무단탈영 · /외출 취소 @닉
+// 🪪 외출: 장교(Officer) 이상이 /외출 @닉 [분] 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · 시간을 넘기면 무단탈영 · /외출 취소 @닉
 // 🏰 도시 둘레에 성벽 (동 · 남 · 북 성문 · 성문 밖 길)
 // 🪖 입대: 시민이 입대소 · 경찰서의 상담원에게 우클릭 → 「네」 · 시민이 입대 없이 군부대에 들어가면 🏴 무법자 · 경찰 · 군대는 무법자가 안 되고 지명수배만
 // 📝 진급: 군대 팀은 /시험 사격 · /시험 점프 를 둘 다 통과해야 /진급 (진급마다 다시 · OP는 시험 없이)
 // 명령어 (누구나):  /조직 (내 팀) · /조직 목록 · /조직 탈퇴 (시민으로 · 군대는 전역) · /기지 · /장비 · /상인
-// 명령어 (장교(CMO) 이상 · OP): /team 팀 @닉 (순서 상관없음, = /조직 배정) · /진급 @닉 · /강등 @닉 · /조직 추방 @닉 (시민으로) · /석방 @닉
-// 명령어 (장교(CMO) 이상 · OP): /기지 설정 · /집합 (내 계급 이하 모두) · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
+// 명령어 (장교(Officer) 이상 · OP): /team 팀 @닉 (순서 상관없음, = /조직 배정) · /진급 @닉 · /강등 @닉 · /조직 추방 @닉 (시민으로) · /석방 @닉
+// 명령어 (장교(Officer) 이상 · OP): /기지 설정 · /집합 (내 계급 이하 모두) · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
 // 📝 고소:           범죄를 당하면 피해자 이름으로 자동 고소 → 지명수배 · /고소 (목록) · /고소 취소 [@닉] · /고소 @닉 [1|2] 사유
 // 👮 팀은 복장과 머리 위 닉네임 색으로 알아봐요 · 머리 위: 닉네임 → 계급 → 지명수배 (수갑대상 · ★★ · ★★★)
 // 🚨 지명수배:       /수배 (목록) · /감옥 (수감자) — 누구나 · 수배 중인 사람에게만 수배 음악 「추격」 (가장 긴장되는 곡 하나)
-//   🔗 체포는 수갑으로: 경찰 쪽 팀 (경찰 · 군사경찰 · 장교 · MP사령부 · 총사령부)이 수배자 · 무법자를 수갑으로 치면 체포 (벌금 · 징역)
+//   🔗 체포는 수갑으로: 경찰 쪽 팀 (경찰 · 군사경찰 · 장교 · MP사령관 · 총사령관)이 수배자 · 무법자를 수갑으로 치면 체포 (벌금 · 징역)
 //   경찰 쪽 장교 이상 · OP:  /수배 @닉 등급 사유 · /수배 해제 @닉 · /감옥 설정 · /석방 @닉
 // 🏴 무법자: 시민이 지명수배 3등급 범죄를 저지르면 (무단사살 · 무기로 협박 · 군부대 침입 등) 무법자 팀이 돼요 · 수갑대상 · ★★는 시민 그대로 · 수갑으로 잡히기 전엔 팀을 못 바꿔요
 // ⛓ 죄수: 감옥에 있는 동안은 죄수 팀 · 형기를 마치거나 벌금을 내면 시민으로 돌아가요
@@ -29,25 +30,28 @@
 const TEAMS = [ // 아래 → 위 (계급 순서)
   { key: '시민', short: '시민', ico: '🙂', color: '#e0e0e0' },
   { key: '경찰', short: 'CP', ico: '🚓', color: '#4aa8ff' },
-  { key: '군사', short: 'CM', ico: '🪖', color: '#7ec850' },
+  { key: '육군', short: 'Soldier', ico: '🪖', color: '#7ec850' },
+  { key: '의무병', short: 'Medic', ico: '⛑', color: '#ff7a8a' },
   { key: '군사경찰', short: 'CMP', ico: '🛡', color: '#fbbf24' },
-  { key: '장교', short: 'CMO', ico: '🎖', color: '#c084fc' },
-  { key: '교육부', short: 'TMC', ico: '📘', color: '#4ade80' },
-  { key: 'MP사령부', short: 'CMP 사령부', ico: '⚜', color: '#f59e0b' },
-  { key: '교육사령부', short: 'TMC 사령부', ico: '⭐', color: '#22c55e' },
-  { key: '총사령부', short: 'Owner', ico: '👑', color: '#ff5a5a' },
+  { key: '특수임무대', short: 'SWAT', ico: '🎯', color: '#9ca3af' },
+  { key: '장교', short: 'Officer', ico: '🎖', color: '#c084fc' },
+  { key: '교육사', short: 'TMC', ico: '📘', color: '#4ade80' },
+  { key: 'MP사령관', short: 'CMPO', ico: '⚜', color: '#f59e0b' },
+  { key: '교육사령관', short: 'TMCO', ico: '⭐', color: '#22c55e' },
+  { key: '부사령관', short: 'Staff', ico: '🎗', color: '#e5e7eb' },
+  { key: '총사령관', short: 'Owner', ico: '👑', color: '#ff5a5a' },
 ];
 const ORGS = Object.fromEntries(TEAMS.map((t, i) => [t.key, { ...t, lv: i, full: t.short }]));
 const OUTLAW = '무법자', PRISONER = '죄수'; // 계급표 밖의 팀 (배정 · 진급 안 됨)
 ORGS[OUTLAW] = { key: OUTLAW, short: OUTLAW, ico: '🏴', color: '#ff4040', lv: 0, full: OUTLAW, special: 1 };
 ORGS[PRISONER] = { key: PRISONER, short: PRISONER, ico: '⛓', color: '#ff9a3a', lv: 0, full: PRISONER, special: 1 };
-const TOP = TEAMS.length - 1, OFFICER_LV = 4; // 총사령부 · 장교(CMO)부터 지휘
-const OLDTEAM = { 'CP': '경찰', 'TMC': '교육부', 'CMP': '군사경찰', 'CP 사령부': 'MP사령부', 'TMC 사령부': '교육사령부', 'CMP 사령부': 'MP사령부' }; // 예전 조직 이름 → 새 팀
+const TOP = TEAMS.length - 1, OFFICER_LV = TEAMS.findIndex((t) => t.key === '장교'); // 총사령관 · 장교(Officer)부터 지휘
+const OLDTEAM = { 'CP': '경찰', 'TMC': '교육사', 'CMP': '군사경찰', 'CP 사령부': 'MP사령관', 'TMC 사령부': '교육사령관', 'CMP 사령부': 'MP사령관', '군사': '육군', 'CM': '육군', 'CMO': '장교', '교육부': '교육사', 'MP사령부': 'MP사령관', '교육사령부': '교육사령관', '총사령부': '총사령관' }; // 예전 조직 이름 → 새 팀
 const norm = (s) => String(s || '').replace(/[\s()]/g, '').toLowerCase();
 const findOrg = (s) => { const k = norm(s); const t = TEAMS.find((t) => norm(t.key) === k || norm(t.short) === k || norm(t.key + t.short) === k); return t ? t.key : null; };
 const ownerNick = () => (CB.owner && CB.owner()) || '';
-function teamOf(nick) { // 그 사람의 팀 (서버를 만든 사람 · 운영자 = 총사령부 · 없으면 시민)
-  if (nick && (nick === ownerNick() || nick === '운영자')) return '총사령부';
+function teamOf(nick) { // 그 사람의 팀 (서버를 만든 사람 · 운영자 = 총사령관 · 없으면 시민)
+  if (nick && (nick === ownerNick() || nick === '운영자')) return '총사령관';
   if (S.jail && S.jail[nick] > 0) return PRISONER; // ⛓ 감옥에 있는 동안은 죄수
   const x = S.m[nick]; if (!x) return '시민';
   return ORGS[x.o] ? x.o : (OLDTEAM[x.o] || '시민');
@@ -58,29 +62,35 @@ const GUNS = ['권총', '돌격소총', '저격소총'];
 // 🎒 팀 기본 장비: 그 팀이 되면 받아요 (없는 것만) · /장비 로 잃어버린 것 다시 받기 (5분에 한 번)
 const KITS = {
   '경찰': ['권총', '테이저건'],
-  '군사': ['권총', '돌격소총'],
+  '육군': ['권총', '돌격소총'],
+  '의무병': ['권총'],
   '군사경찰': ['권총', '돌격소총', '수갑', '테이저건'],
+  '특수임무대': ['돌격소총', '권총', '수갑', '테이저건'],
   '장교': ['권총', '블랙 다이아몬드 검', '수갑'],
-  '교육부': ['권총', '돌격소총', '수갑'],
-  'MP사령부': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
-  '교육사령부': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검'],
+  '교육사': ['권총', '돌격소총', '수갑'],
+  'MP사령관': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
+  '교육사령관': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검'],
+  '부사령관': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
 };
 // 👮 팀 복장 (팀은 복장과 머리 위 닉네임 색으로 알아봐요): top 웃옷 · bottom 바지 · hat 모자 · badge 배지 색
 const OUTFITS = {
   '경찰': { top: 0x1f3a7a, bottom: 0x161c2c, hat: 'cap', hatC: 0x1f3a7a, badge: 0xf2c418 },
-  '군사': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x4f5a34 },
+  '육군': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x4f5a34 },
+  '의무병': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0xeeeeee, badge: 0xe02828 },
   '군사경찰': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x1a1a1a, badge: 0xfbbf24 },
+  '특수임무대': { top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0x9ca3af },
   '장교': { top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 },
-  '교육부': { top: 0x2f6a3a, bottom: 0x2a3a26, hat: 'beret', hatC: 0x1f4a2a, badge: 0x4ade80 },
-  'MP사령부': { top: 0x2a2f22, bottom: 0x1e2219, hat: 'beret', hatC: 0x9a1a1a, badge: 0xf59e0b },
-  '교육사령부': { top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 },
-  '총사령부': { top: 0x1c2030, bottom: 0x14161f, hat: 'cap', hatC: 0x1c2030, badge: 0xffd040 },
+  '교육사': { top: 0x2f6a3a, bottom: 0x2a3a26, hat: 'beret', hatC: 0x1f4a2a, badge: 0x4ade80 },
+  'MP사령관': { top: 0x2a2f22, bottom: 0x1e2219, hat: 'beret', hatC: 0x9a1a1a, badge: 0xf59e0b },
+  '교육사령관': { top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 },
+  '부사령관': { top: 0x22263a, bottom: 0x181a26, hat: 'cap', hatC: 0x22263a, badge: 0xc0c6d0 },
+  '총사령관': { top: 0x1c2030, bottom: 0x14161f, hat: 'cap', hatC: 0x1c2030, badge: 0xffd040 },
   '무법자': { top: 0x262626, bottom: 0x3a2e24, hat: 'bandana', hatC: 0xb02020 },
   '죄수': { top: 0xe06a1a, bottom: 0xe06a1a },
 };
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
 const tagOf = (o) => (ORGS[o].key === ORGS[o].short ? o : `${o}(${ORGS[o].short})`); // 경찰(CP)
-const CITY_NAME = 'CAVE CITY', ARMY_NAME = 'CAVE ARMY', POLICE_NAME = 'CLKKY POLICE';
+const CITY_NAME = 'CLKKY CITY', ARMY_NAME = 'CLKKY ARMY', POLICE_NAME = 'CLKKY POLICE';
 const orgNameOf = (o) => (ARMY.includes(o) ? ARMY_NAME : o === '경찰' ? POLICE_NAME : ''); // 그 팀이 속한 조직 이름
 
 // ── 🏦 화폐 · 💼 직업 ──
@@ -109,8 +119,8 @@ const SELL = { // 납품 값 (한 개당 동전)
 //   1등급 「수갑대상」     경범죄   — 부적절한 말 (아래 BADWORDS) · 폭행 (먼저 맞지 않았는데 때림) · 도둑질 (남의 상자를 부숨) → 벌금 동전 10개 (가방 → 통장 순서로 · 못 내면 징역 10분)
 //   2등급 「지명수배 ★★」  중범죄   — 경찰 쪽 팀원 폭행 · 불법 무기 소지 (시민이 총을 가짐)                                  → 징역 15분
 //   3등급 「지명수배 ★★★」 중대범죄 — 무단사살 (정당방위 · 경찰이 수배자를 쓰러뜨린 건 빼고) · 대학살 · 무단탈영 (군대) · 무기로 협박 → 징역 30분
-const LAW = ['경찰', '군사경찰', '장교', 'MP사령부', '총사령부'];
-const ARMY = ['군사', '군사경찰', '장교', '교육부', 'MP사령부', '교육사령부']; // 군대 (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
+const LAW = ['경찰', '군사경찰', '특수임무대', '장교', 'MP사령관', '부사령관', '총사령관'];
+const ARMY = ['육군', '의무병', '군사경찰', '특수임무대', '장교', '교육사', 'MP사령관', '교육사령관', '부사령관']; // 군대 (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
 const GRADE = { 1: '경범죄', 2: '중범죄', 3: '중대범죄' }, WMAX = 3;
 const BADWORDS = ['시발', '씨발', 'ㅅㅂ', 'ㅆㅂ', '병신', 'ㅂㅅ', '개새', '좆', '지랄', '꺼져', '닥쳐', 'fuck', 'shit', 'bitch'];
 const stars = (n) => (n >= 3 ? '지명수배 ★★★' : n === 2 ? '지명수배 ★★' : '수갑대상'); // 머리 위 · 안내판에 뜨는 말
@@ -146,7 +156,7 @@ let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
 const mine = () => ({ o: teamOf(me()), p: (S.m[me()] || {}).p || 0 }); // 누구나 팀이 있어요 (처음엔 시민)
-const isOfficer = (nick) => lvOf(nick) >= OFFICER_LV; // 장교(CMO) 이상
+const isOfficer = (nick) => lvOf(nick) >= OFFICER_LV; // 장교(Officer) 이상
 // 지휘할 수 있나: 내 계급이 그 사람보다 높아야 (OP는 언제나)
 const commands = (from, who, op) => op || lvOf(from) > lvOf(who);
 
@@ -173,7 +183,7 @@ function rewanted(nick) {
   S.w[nick] = { lv: teamOf(nick) === OUTLAW ? WMAX : Math.min(WMAX, top.lv), why: `${top.why} · 고소: ${[...new Set(L.map((c) => c.by))].join(', ')}`, t: top.t };
 }
 function crime(nick, lv, why, victim) {
-  if (!nick || nick === ownerNick()) return; // 총사령부(Owner)는 고소 · 수배 안 됨
+  if (!nick || nick === ownerNick()) return; // 총사령관(Owner)은고소 · 수배 안 됨
   lv = Math.max(1, Math.min(WMAX, lv | 0));
   const by = victim || '서버', before = (S.w[nick] || {}).lv || 0;
   const old = S.suit.find((c) => c.who === nick && c.by === by);
@@ -231,8 +241,8 @@ function giveKit(o) {
 function sendKit(n) { const o = teamOf(n); if (!KITS[o]) return; if (n === me()) giveKit(o); else CB.send('org-kit', { to: n, o }); }
 function apply(op, a, from, fromOp, fromDiscord) {
   a = a || {};
-  fromOp = fromOp || (!!from && from === ownerNick()); // 총사령부(Owner)는 OP
-  const Fo = teamOf(from), off = fromOp || isOfficer(from); // 내 팀 · 장교(CMO) 이상이나 OP
+  fromOp = fromOp || (!!from && from === ownerNick()); // 총사령관(Owner)은OP
+  const Fo = teamOf(from), off = fromOp || isOfficer(from); // 내 팀 · 장교(Officer) 이상이나 OP
   const who = String(a.who || '').replace(/^@/, '');
   switch (op) {
     case 'own': S.owner[a.key] = from; return save();
@@ -244,23 +254,23 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return crime(from, 1, `${o} 님의 상자를 부숨 · 도둑질`, o);
     }
     case 'wanted': {
-      if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '수배는 장교(CMO) · MP사령부 · 총사령부나 OP만 내릴 수 있어요');
+      if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '수배는 장교(Officer) · MP사령관 · 총사령관나 OP만 내릴 수 있어요');
       const lv = Math.max(1, Math.min(WMAX, Math.floor(+a.lv) || 1));
       if (!who) return tell(from, '/수배 @닉 등급(1 수갑대상 · 2 ★★ · 3 ★★★) 사유');
-      if (who === ownerNick()) return tell(from, '총사령부(Owner)는 수배할 수 없어요');
+      if (who === ownerNick()) return tell(from, '총사령관(Owner)은수배할 수 없어요');
       const W = S.w[who];
       if (W && W.lv >= lv) return tell(from, '이미 그보다 높은 등급으로 수배 중이에요');
       return crime(who, lv, String(a.why || '부적절한 행동').slice(0, 40), from);
     }
     case 'unwanted': {
-      if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '수배 해제는 장교(CMO) · MP사령부 · 총사령부나 OP만 할 수 있어요');
+      if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '수배 해제는 장교(Officer) · MP사령관 · 총사령관나 OP만 할 수 있어요');
       if (!S.w[who]) return tell(from, '그 사람은 수배 중이 아니에요');
       clearSuits(who); save(); return CB.say(`${who} 님의 지명수배 · 고소가 모두 풀렸어요 (${from})`);
     }
     case 'sue': {
       // 📝 직접 고소: 부적절한 행동 등 (1 · 2등급까지)
       if (!who || who === from) return tell(from, '/고소 @닉 [1|2] 사유');
-      if (who === ownerNick()) return tell(from, '총사령부(Owner)는 고소할 수 없어요');
+      if (who === ownerNick()) return tell(from, '총사령관(Owner)은고소할 수 없어요');
       const lv = Math.max(1, Math.min(2, Math.floor(+a.lv) || 1));
       return crime(who, lv, String(a.why || '부적절한 행동').slice(0, 40), from);
     }
@@ -330,7 +340,8 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return tell(from, `📦 납품 완료 · 동전 +${n} · 통장 ${bal(from)}개`);
     }
     case 'job-heal': {
-      if (jobOf(from) !== '의사') return tell(from, '🩺 치료는 의사만 할 수 있어요 · /직업');
+      const medic = teamOf(from) === '의무병'; // ⛑ 의무병 (CLKKY ARMY) 도 치료 · 돈은 팀 월급으로
+      if (!medic && jobOf(from) !== '의사') return tell(from, '🩺 치료는 의사(직업) · 의무병(Medic)만 할 수 있어요 · /직업');
       if (!who || who === from || !CB.players().includes(who)) return tell(from, '/치료 @닉 (접속 중인 다른 사람)');
       const A = CB.playerPos(from), B = CB.playerPos(who);
       if (!A || !B || Math.hypot(A.x - B.x, A.z - B.z) > 6) return tell(from, `🩺 ${who} 님 곁으로 가야 해요`);
@@ -338,6 +349,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (left > 0) return tell(from, `🩺 ${Math.ceil(left)}초 뒤에 다시 치료할 수 있어요`);
       healT[from] = Date.now();
       if (who === me()) healMe(from); else CB.send('org-heal', { to: who, by: from });
+      if (medic) return tell(from, `⛑ ${who} 님을 치료했어요`);
       return jobEarn(from, 2);
     }
     case 'job-news': {
@@ -351,13 +363,13 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return jobEarn(from, 2);
     }
     case 'jailpos': {
-      if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '감옥은 장교(CMO) · MP사령부 · 총사령부나 OP만 정할 수 있어요');
+      if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '감옥은 장교(Officer) · MP사령관 · 총사령관나 OP만 정할 수 있어요');
       if (a.reset) { S.jailPos = null; save(); return CB.say('⛓ 감옥 자리를 「감옥 차원의 감방」으로 되돌렸어요'); }
       S.jailPos = { x: +a.x, y: +a.y, z: +a.z, dim: String(a.dim || 'over') }; save();
       return CB.say(`⛓ 감옥 자리를 정했어요 (${a.dim === '감옥' ? '감옥 차원' : '이 자리'})`);
     }
     case 'release': {
-      if (!off) return tell(from, '석방은 장교(CMO) 이상이나 OP만 할 수 있어요');
+      if (!off) return tell(from, '석방은 장교(Officer) 이상이나 OP만 할 수 있어요');
       if (!S.jail[who]) return tell(from, '그 사람은 수감 중이 아니에요');
       delete S.jail[who]; save(); return CB.say(`🔓 ${who} 님 석방 (${from})`);
     }
@@ -366,25 +378,25 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!o) return tell(from, '그런 팀이 없어요 · /조직 목록');
       if (locked(from) && !fromOp) return tell(from, `${tagOf(teamOf(from))}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
       if (o !== '시민' && !fromOp) return tell(from, `${tagOf(o)}은(는) 더 높은 계급이 /team ${o} @${from} 로 배정해 줘야 들어가요`);
-      if (o === '총사령부') return tell(from, '총사령부(Owner)는 서버를 만든 사람이에요');
+      if (o === '총사령관') return tell(from, '총사령관(Owner)은서버를 만든 사람이에요');
       setTeam(from, o); save();
       return CB.say(`${ORGS[o].ico} ${from} 님 → ${tagOf(o)}`);
     }
     case 'leave': {
       if (Fo === '시민') return tell(from, '이미 시민이에요');
       if (locked(from) && !fromOp) return tell(from, `${tagOf(Fo)}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
-      if (Fo === '총사령부') return tell(from, '총사령부(Owner)는 서버를 만든 사람이라 나갈 수 없어요');
+      if (Fo === '총사령관') return tell(from, '총사령관(Owner)은서버를 만든 사람이라 나갈 수 없어요');
       setTeam(from, '시민'); save();
       return CB.say(ARMY.includes(Fo) ? `🎖 ${from} 님이 ${tagOf(Fo)}에서 전역해 시민이 됐어요` : `${from} 님이 ${tagOf(Fo)}에서 나와 시민이 됐어요`);
     }
     case 'assign': {
       const o = findOrg(a.o);
       if (!o || !who) return tell(from, '/team 팀 @닉 · 팀: ' + TEAMS.map((t) => t.key).join(' · '));
-      if (o === '총사령부') return tell(from, '총사령부(Owner)는 서버를 만든 사람이라 배정할 수 없어요');
-      if (who === ownerNick()) return tell(from, `${who} 님은 총사령부(Owner)예요`);
+      if (o === '총사령관') return tell(from, '총사령관(Owner)은서버를 만든 사람이라 배정할 수 없어요');
+      if (who === ownerNick()) return tell(from, `${who} 님은 총사령관(Owner)이에요`);
       if (locked(who) && !fromOp) return tell(from, `${who} 님은 ${tagOf(teamOf(who))}라서 팀을 바꿀 수 없어요 (수갑으로 잡아야 해요)`);
       const myLv = lvOf(from);
-      if (!off) return tell(from, '배정(임용)은 장교(CMO) 이상이나 OP만 할 수 있어요');
+      if (!off) return tell(from, '배정(임용)은 장교(Officer) 이상이나 OP만 할 수 있어요');
       if (!fromOp && teamOf(who) === '시민') return tell(from, `${who} 님은 시민이에요 · 입대소나 경찰서의 상담원에게 직접 가야 해요`);
       if (!fromOp && ARMY.includes(o) && ORGS[o].lv > lvOf(who)) return tell(from, `군대 계급을 올리려면 시험에 합격한 뒤 /진급 @${who} 해야 해요`);
       if (!fromOp && !(myLv > ORGS[o].lv && myLv > lvOf(who))) return tell(from, `배정할 권한이 없어요 (내 계급 ${tagOf(Fo)}보다 아래 팀으로, 나보다 아래 계급인 사람만)`);
@@ -395,17 +407,17 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const To = teamOf(who);
       if (!who || To === '시민') return tell(from, '그 사람은 이미 시민이에요');
       if (locked(who) && !fromOp) return tell(from, `${who} 님은 ${tagOf(To)}라서 팀을 바꿀 수 없어요 (수갑으로 잡아야 해요)`);
-      if (!off || !commands(from, who, fromOp) || who === ownerNick()) return tell(from, '그 사람을 추방할 권한이 없어요 (장교(CMO) 이상 · 나보다 아래 계급만)');
+      if (!off || !commands(from, who, fromOp) || who === ownerNick()) return tell(from, '그 사람을 추방할 권한이 없어요 (장교(Officer) 이상 · 나보다 아래 계급만)');
       setTeam(who, '시민'); save(); return CB.say(`${who} 님이 ${tagOf(To)}에서 추방돼 시민이 됐어요`);
     }
     case 'promote': case 'demote': {
       if (!who) return tell(from, `/${op === 'promote' ? '진급' : '강등'} @닉`);
-      if (who === ownerNick()) return tell(from, `${who} 님은 총사령부(Owner)예요`);
+      if (who === ownerNick()) return tell(from, `${who} 님은 총사령관(Owner)이에요`);
       if (locked(who)) return tell(from, `${who} 님은 ${tagOf(teamOf(who))}라서 진급 · 강등할 수 없어요`);
       const cur = lvOf(who), nl = cur + (op === 'promote' ? 1 : -1);
       if (nl < 0) return tell(from, '이미 가장 낮은 계급(시민)이에요');
-      if (nl >= TOP) return tell(from, '총사령부(Owner)로는 진급할 수 없어요 · 교육사령부가 가장 높아요');
-      if (!off) return tell(from, `${op === 'promote' ? '진급' : '강등'}은 장교(CMO) 이상이나 OP만 할 수 있어요`);
+      if (nl >= TOP) return tell(from, '총사령관(Owner)으로는 진급할 수 없어요 · 부사령관(Staff)이 가장 높아요');
+      if (!off) return tell(from, `${op === 'promote' ? '진급' : '강등'}은 장교(Officer) 이상이나 OP만 할 수 있어요`);
       const ok = fromOp || (lvOf(from) > cur && lvOf(from) > nl);
       if (!ok) return tell(from, '그 계급으로 바꿀 권한이 없어요 (나보다 아래 계급만, 내 계급보다 높게는 못 올려요)');
       if (op === 'promote' && !fromOp) {
@@ -418,20 +430,20 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return CB.say(`${op === 'promote' ? '⬆ 진급' : '⬇ 강등'}: ${who} 님 → ${ORGS[no].ico} ${tagOf(no)}`);
     }
     case 'base': { // 내 팀 기지 (/기지 설정 팀이름 → 내 아래 팀 기지)
-      if (!off) return tell(from, '기지는 장교(CMO) 이상이나 OP만 정할 수 있어요');
+      if (!off) return tell(from, '기지는 장교(Officer) 이상이나 OP만 정할 수 있어요');
       const o = (a.o && findOrg(a.o)) || Fo;
       if (!fromOp && ORGS[o].lv > ORGS[Fo].lv) return tell(from, '내 계급보다 위 팀의 기지는 못 정해요');
       S.base[o] = { x: +a.x, y: +a.y, z: +a.z }; save();
       return CB.say(`🏕 ${tagOf(o)} 기지가 정해졌어요 · ${o}은(는) 죽으면 기지에서 부활해요`);
     }
     case 'gather': {
-      if (!off) return tell(from, '집합은 장교(CMO) 이상이나 OP만 할 수 있어요');
+      if (!off) return tell(from, '집합은 장교(Officer) 이상이나 OP만 할 수 있어요');
       const g = { lv: fromOp ? TOP : lvOf(from), x: +a.x, y: +a.y, z: +a.z, by: from };
       CB.send('org-go', g); goIfMine(g);
       return CB.say(`📯 ${from} ${tagOf(Fo)}: ${fromOp ? '모든 팀' : '경찰(CP) ~ ' + tagOf(Fo)} 집합!`);
     }
     case 'train': {
-      if (!off) return tell(from, '훈련은 장교(CMO) 이상이나 OP만 열 수 있어요');
+      if (!off) return tell(from, '훈련은 장교(Officer) 이상이나 OP만 열 수 있어요');
       const kind = a.kind === '체력' ? '체력' : '사격';
       S.train = { o: Fo, lv: fromOp ? TOP : lvOf(from), kind, until: Date.now() + 90000, done: [] }; save();
       if (kind === '사격') for (let i = 0; i < 8; i++) { const ang = i / 8 * Math.PI * 2; const t = CB.spawn('org_target', +a.x + Math.cos(ang) * 7, +a.y + 1, +a.z + Math.sin(ang) * 7); if (t) t.orgTarget = Fo; }
@@ -444,12 +456,12 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return CB.say(`🏃 ${from} 님 체력 훈련 완주! +5점`);
     }
     case 'mission': {
-      if (!off) return tell(from, '임무는 장교(CMO) 이상이나 OP만 줄 수 있어요');
+      if (!off) return tell(from, '임무는 장교(Officer) 이상이나 OP만 줄 수 있어요');
       S.mission[Fo] = String(a.text || '').slice(0, 80); save();
       return CB.say(`📋 ${tagOf(Fo)} 임무 (경찰(CP) ~ ${tagOf(Fo)}): ${S.mission[Fo]}`);
     }
     case 'mission-done': {
-      if (!off || !who) return tell(from, '/임무 완료 @닉 (장교(CMO) 이상 · OP)');
+      if (!off || !who) return tell(from, '/임무 완료 @닉 (장교(Officer) 이상 · OP)');
       if (!fromOp && lvOf(who) > lvOf(from)) return tell(from, '나보다 높은 계급의 임무는 완료 처리할 수 없어요');
       addPts(who, 10); delete S.mission[Fo]; save();
       return CB.say(`✅ ${who} 님 임무 완료! +10점`);
@@ -470,8 +482,8 @@ function apply(op, a, from, fromOp, fromDiscord) {
       }
       return desert(from, `무단탈영 (${tagOf(Fo)})`);
     }
-    case 'pass': case 'pass-cancel': { // 🪪 외출 허가 · 취소: 장교(CMO) 이상이 나보다 아래 계급에게 (OP는 누구나)
-      if (!off) return tell(from, '외출 허가는 장교(CMO) 이상이나 OP만 할 수 있어요');
+    case 'pass': case 'pass-cancel': { // 🪪 외출 허가 · 취소: 장교(Officer) 이상이 나보다 아래 계급에게 (OP는 누구나)
+      if (!off) return tell(from, '외출 허가는 장교(Officer) 이상이나 OP만 할 수 있어요');
       if (!who) return tell(from, op === 'pass' ? '/외출 @닉' : '/외출 취소 @닉');
       if (!ARMY.includes(teamOf(who))) return tell(from, `${who} 님은 군대 쪽 팀이 아니에요`);
       if (!fromOp && lvOf(from) <= lvOf(who)) return tell(from, '나보다 아래 계급만 허가하거나 취소할 수 있어요');
@@ -499,7 +511,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return tell(from, '🪖 군부대로 복귀했어요 · 외출이 끝났어요');
     }
     case 'enlist': { // 🪖 상담원에게 「네」: 시민 → 군사 · 경찰
-      const o = a.o === '경찰' ? '경찰' : '군사';
+      const o = a.o === '경찰' ? '경찰' : '육군';
       if (Fo !== '시민') return tell(from, `이미 ${tagOf(Fo)}이에요`);
       if (S.w[from]) return tell(from, '지명수배 중에는 입대할 수 없어요');
       setTeam(from, o); delete S.job[from]; save(); sendKit(from);
@@ -513,7 +525,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!ARMY.includes(Fo) || (a.kind !== 'shoot' && a.kind !== 'jump')) return;
       const E = S.exam[from] || (S.exam[from] = {});
       E[a.kind] = 1; save();
-      tell(from, `📝 ${a.kind === 'shoot' ? '사격' : '점프'} 시험 합격!${E.shoot && E.jump ? ' · 이제 장교(CMO) 이상이 /진급 시켜 줄 수 있어요' : ` · ${a.kind === 'shoot' ? '/시험 점프' : '/시험 사격'} 도 통과해야 해요`}`);
+      tell(from, `📝 ${a.kind === 'shoot' ? '사격' : '점프'} 시험 합격!${E.shoot && E.jump ? ' · 이제 장교(Officer) 이상이 /진급 시켜 줄 수 있어요' : ` · ${a.kind === 'shoot' ? '/시험 점프' : '/시험 사격'} 도 통과해야 해요`}`);
       if (E.shoot && E.jump) CB.say(`📝 ${from} 님이 진급 시험을 통과했어요!`);
       return;
     }
@@ -526,13 +538,13 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return crime(from, 2, '불법 무기 소지');
     }
     case 'rekit': { // 🎒 /장비: 잃어버린 장비 다시 받기 (5분에 한 번)
-      if (!KITS[Fo]) return tell(from, Fo === '총사령부' ? '총사령부(Owner)는 OP라서 /give 로 받으면 돼요' : '시민은 기본 장비가 없어요 · 🕶 불법 거래 상인에게 사요');
+      if (!KITS[Fo]) return tell(from, Fo === '총사령관' ? '총사령관(Owner)은OP라서 /give 로 받으면 돼요' : '시민은 기본 장비가 없어요 · 🕶 불법 거래 상인에게 사요');
       const t = S.kitT[from] || 0, left = 300 - (Date.now() - t) / 1000;
       if (left > 0 && !fromOp) return tell(from, `🎒 장비는 5분에 한 번 받을 수 있어요 (${Math.ceil(left)}초 남음)`);
       S.kitT[from] = Date.now(); save(); return sendKit(from);
     }
     case 'dealer': { // 🕶 불법 거래 상인 자리 정하기 (OP)
-      if (!fromOp) return tell(from, '상인 자리는 OP(총사령부)만 정할 수 있어요');
+      if (!fromOp) return tell(from, '상인 자리는 OP(총사령관)만 정할 수 있어요');
       S.dealer = { x: +a.x, y: +a.y, z: +a.z, dim: String(a.dim || 'over') }; S.dealerSet = true; save();
       return CB.say('🕶 불법 거래 상인이 자리를 옮겼어요… 어딘가로');
     }
@@ -550,7 +562,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return CB.say(`🏠 ${h.n}번 집이 다시 매물로 나왔어요${was === from ? ` (${from} 님이 팔았어요 · 동전 ${HOUSE_PRICE / 2}개 돌려받음)` : ` (OP가 ${was} 님의 집을 비웠어요)`}`);
     }
     case 'town': { // 🏙 /도시 짓기: 지금 자리에 도시 · 경찰서 · 군부대 (OP)
-      if (!fromOp) return tell(from, '도시는 OP(총사령부)만 지을 수 있어요');
+      if (!fromOp) return tell(from, '도시는 OP(총사령관)만 지을 수 있어요');
       const err = buildTown({ x: Math.floor(+a.x), z: Math.floor(+a.z) }, Math.floor(+a.y));
       if (err) return tell(from, '🏙 ' + err);
       return;
@@ -678,7 +690,7 @@ CB.mob(DEALER, {
 });
 // ── 🪖 입대 상담원 · 🚓 경찰 상담원: 우클릭 → 「입대하시겠어요?」 → 네 ──
 const RECRUITERS = {
-  org_rec_army: { o: '군사', name: '🪖 입대 상담원', dx: -20, dz: 11, color: 0x55663a, q: `🪖 <b>${ARMY_NAME} 입대 상담원</b><br><br>입대하시겠어요?`, tag: '#7ec850' },
+  org_rec_army: { o: '육군', name: '🪖 입대 상담원', dx: -20, dz: 11, color: 0x55663a, q: `🪖 <b>${ARMY_NAME} 입대 상담원</b><br><br>입대하시겠어요?`, tag: '#7ec850' },
   org_rec_police: { o: '경찰', name: '🚓 경찰 상담원', dx: 25, dz: 10, color: 0x1f3a7a, q: `🚓 <b>${POLICE_NAME} 상담원</b><br><br>경찰에 지원하시겠어요?`, tag: '#4aa8ff' },
   org_banker: { name: '🏦 은행원', dx: 41, dz: -10, color: 0x2a2f45, tag: '#ffd040', talk: () => bankDialog() },
   org_jobs: { name: '💼 직업 상담원', dx: 41, dz: 18, color: 0x2a6a7a, tag: '#7ad0e0', talk: () => jobDialog() },
@@ -1174,7 +1186,7 @@ function buildTown(C, G) {
   S.town = { x: C.x, y: G, z: C.z }; S.townV = TOWN_V;
   CB.setSpawn(C.x + 0.5, G + 0.1, C.z + 0.5); // 🏙 스폰 = 도시 한가운데
   const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
-  const B = { '경찰': at(28, 7), '군사': at(-30, 0), '군사경찰': at(-30, 0), '장교': at(-39, -10), '교육부': at(-39, -10), 'MP사령부': at(-39, -10), '교육사령부': at(-39, -10), '총사령부': at(-39, -10) };
+  const B = { '경찰': at(28, 7), '육군': at(-30, 0), '의무병': at(-30, 0), '군사경찰': at(-30, 0), '특수임무대': at(-30, 0), '장교': at(-39, -10), '교육사': at(-39, -10), 'MP사령관': at(-39, -10), '교육사령관': at(-39, -10), '부사령관': at(-39, -10), '총사령관': at(-39, -10) };
   for (const o in B) if (!S.base[o]) S.base[o] = B[o];
   if (!S.dealerSet) S.dealer = { ...at(-16, -20), dim: 'over' };
   save();
@@ -1221,8 +1233,8 @@ function parseTeam(a) {
   if (o) return { o, who: a[0] };
   return null;
 }
-// 팀 사람들: 서버를 만든 사람(총사령부) + 저장된 사람들
-const teamMembers = (o) => { const L = Object.keys(S.m).filter((n) => teamOf(n) === o); const ow = ownerNick(); if (o === '총사령부' && ow && !L.includes(ow)) L.unshift(ow); return L; };
+// 팀 사람들: 서버를 만든 사람(총사령관) + 저장된 사람들
+const teamMembers = (o) => { const L = Object.keys(S.m).filter((n) => teamOf(n) === o); const ow = ownerNick(); if (o === '총사령관' && ow && !L.includes(ow)) L.unshift(ow); return L; };
 CB.command('team', '/team 팀 @닉 (또는 /team @닉 팀) — 그 사람을 그 팀으로 (나보다 아래 계급 · OP) · /team — 팀 계급표', (a, c) => {
   if (!a.length) return CB.run('/조직 목록');
   const p = parseTeam(a);
@@ -1276,7 +1288,7 @@ CB.command('직업', '/직업 — 💼 내 직업 · /직업 목록 · /직업 �
   if (sub === '납품') return nearSpot(41.5, 17.5) ? jobSell() : c.say('📦 납품은 직업소개소에서 해요 (/도시)');
   c.say(j ? `💼 내 직업: ${JOBS[j].ico} ${j} · ${JOBS[j].d}` : '💼 지금 직업이 없어요 · 직업소개소 상담원에게 우클릭하거나 /직업 선택 이름 · /직업 목록');
 }, { everyone: true });
-CB.command('치료', '/치료 @닉 — 🩺 의사: 곁에 있는 사람 치료', (a) => req('job-heal', { who: a[0] }), { everyone: true });
+CB.command('치료', '/치료 @닉 — 🩺 의사 · ⛑ 의무병: 곁에 있는 사람 치료', (a) => req('job-heal', { who: a[0] }), { everyone: true });
 CB.command('뉴스', '/뉴스 내용 — 📰 기자: 모두에게 소식 전하기', (a) => req('job-news', { text: a.join(' ') }), { everyone: true });
 CB.command('집', `/집 — 🏠 집 목록 · /집 사기 [번호] (동전 ${HOUSE_PRICE}개) · /집 팔기 (동전 ${HOUSE_PRICE / 2}개 돌려받음) · /집 가기 · /집 비우기 번호 (OP)`, (a, c) => {
   const L = S.houses || [], mine0 = myHouse(me());
@@ -1297,11 +1309,11 @@ CB.command('집', `/집 — 🏠 집 목록 · /집 사기 [번호] (동전 ${HO
   for (const h of L) c.say(`🏠 ${h.n}번 집 (${h.x1}, ${h.z1}) · ${h.owner ? '주인: ' + h.owner : `매물 · 동전 ${HOUSE_PRICE}개`}`);
   c.say(mine0 ? `내 집: ${mine0.n}번 · /집 가기` : '집 앞에서 /집 사기 (또는 /집 사기 번호) · 문 위 초록 표시가 매물이에요');
 }, { everyone: true });
-CB.command('외출', '/외출 — 외출 허가 목록 · /외출 @닉 [분] (허가 · 기본 10분 · 최대 60분) · /외출 취소 @닉 (장교(CMO) 이상 · 나보다 아래 계급 · OP)', (a, c) => {
+CB.command('외출', '/외출 — 외출 허가 목록 · /외출 @닉 [분] (허가 · 기본 10분 · 최대 60분) · /외출 취소 @닉 (장교(Officer) 이상 · 나보다 아래 계급 · OP)', (a, c) => {
   if (a[0] === '취소') return req('pass-cancel', { who: a[1] });
   if (a[0]) return req('pass', { who: a[0], min: a[1] });
   const L = Object.entries(S.leave);
-  if (!L.length) return c.say('🪪 지금 외출 허가를 받은 사람이 없어요 · 장교(CMO) 이상이 /외출 @닉 으로 허가해요');
+  if (!L.length) return c.say('🪪 지금 외출 허가를 받은 사람이 없어요 · 장교(Officer) 이상이 /외출 @닉 으로 허가해요');
   for (const [n, v] of L) c.say(`🪪 ${n} · ${v.out ? '외출 중' : '허가됨'} · 남은 시간 ${mmss(v.sec || 0)} (${v.by})`);
 }, { everyone: true });
 CB.command('장비','/장비 — 내 팀 기본 장비 중 없는 것 다시 받기 (5분에 한 번)', () => req('rekit'), { everyone: true });
@@ -1311,17 +1323,17 @@ CB.command('상인', '/상인 — 🕶 불법 거래 상인 위치 · /상인 �
   if (!D) return c.say('🕶 상인이 어디 있는지 아무도 몰라요…');
   c.say(`🏴 불법 거래 상인: ${Math.round(D.x)}, ${Math.round(D.y)}, ${Math.round(D.z)} 근처 · 🌙 밤에만 나와요 · 시민 · 무법자에게 무기를 팔아요 (동전) · 우클릭으로 거래`);
 }, { everyone: true });
-CB.command('진급', '/진급 @닉 — 한 계급 위 팀으로 (장교(CMO) 이상 · OP)', (a) => req('promote', { who: a[0] }), { everyone: true });
-CB.command('강등', '/강등 @닉 — 한 계급 아래 팀으로 (장교(CMO) 이상 · OP)', (a) => req('demote', { who: a[0] }), { everyone: true });
-CB.command('기지', '팀 기지로 이동 · /기지 설정 [팀] (장교(CMO) 이상)', (a, c) => {
+CB.command('진급', '/진급 @닉 — 한 계급 위 팀으로 (장교(Officer) 이상 · OP)', (a) => req('promote', { who: a[0] }), { everyone: true });
+CB.command('강등', '/강등 @닉 — 한 계급 아래 팀으로 (장교(Officer) 이상 · OP)', (a) => req('demote', { who: a[0] }), { everyone: true });
+CB.command('기지', '팀 기지로 이동 · /기지 설정 [팀] (장교(Officer) 이상)', (a, c) => {
   if (a[0] === '설정') return req('base', { ...pos(), o: a.slice(1).join(' ') });
   const x = mine(), b = S.base[x.o];
-  if (!b) return c.say('아직 우리 팀 기지가 없어요 (장교(CMO) 이상이 /기지 설정)');
+  if (!b) return c.say('아직 우리 팀 기지가 없어요 (장교(Officer) 이상이 /기지 설정)');
   inBaseP = null; CB.tp(b.x, b.y + 0.2, b.z); c.say('🏕 기지로 이동했어요');
 }, { everyone: true });
-CB.command('집합', '내 계급 이하 팀(경찰부터) 모두 내 자리로 (장교(CMO) 이상)', () => req('gather', pos()), { everyone: true });
-CB.command('훈련', '훈련 열기: /훈련 사격 · /훈련 체력 (장교(CMO) 이상)', (a) => req('train', { kind: a[0], ...pos() }), { everyone: true });
-CB.command('임무', '/임무 내용 · /임무 완료 @닉 · /임무 취소 (장교(CMO) 이상)', (a) => {
+CB.command('집합', '내 계급 이하 팀(경찰부터) 모두 내 자리로 (장교(Officer) 이상)', () => req('gather', pos()), { everyone: true });
+CB.command('훈련', '훈련 열기: /훈련 사격 · /훈련 체력 (장교(Officer) 이상)', (a) => req('train', { kind: a[0], ...pos() }), { everyone: true });
+CB.command('임무', '/임무 내용 · /임무 완료 @닉 · /임무 취소 (장교(Officer) 이상)', (a) => {
   if (a[0] === '완료') return req('mission-done', { who: a[1] });
   if (a[0] === '취소') return req('mission-cancel');
   req('mission', { text: a.join(' ') });
@@ -1343,12 +1355,12 @@ CB.command('고소', '/고소 — 내 고소 목록 · /고소 취소 [@닉] · 
   for (const x of mineL) c.say(`📝 내가 고소: ${x.who} · ${stars(x.lv)} · ${GRADE[Math.min(WMAX, x.lv)]} · ${x.why}  (/고소 취소 @${x.who})`);
   for (const x of onMe) c.say(`⚠ 나를 고소: ${x.by} · ${stars(x.lv)} · ${GRADE[Math.min(WMAX, x.lv)]} · ${x.why}`);
 }, { everyone: true });
-CB.command('체포', '🔗 체포는 수갑으로 — 경찰 쪽 팀이 수배자 · 무법자를 수갑으로 치면 체포돼요', (a, c) => c.say('🔗 이제 체포는 수갑으로 해요 — 경찰 쪽 팀(경찰 · 군사경찰 · 장교 · MP사령부 · 총사령부)이 수배자나 🏴 무법자를 수갑으로 치면 바로 체포돼요 (벌금 · 징역)'), { everyone: true });
+CB.command('체포', '🔗 체포는 수갑으로 — 경찰 쪽 팀이 수배자 · 무법자를 수갑으로 치면 체포돼요', (a, c) => c.say('🔗 이제 체포는 수갑으로 해요 — 경찰 쪽 팀(경찰 · 군사경찰 · 장교 · MP사령관 · 총사령관)이 수배자나 🏴 무법자를 수갑으로 치면 바로 체포돼요 (벌금 · 징역)'), { everyone: true });
 CB.on('cuffed', (by, on) => { if (on) req('cuffed', { by }); }); // 🔗 내가 수갑에 채워짐 → 방장에게 (체포인지 방장이 판단)
 CB.command('감옥', '/감옥 — 수감자 목록 · /감옥 설정 (지금 자리를 감옥으로) · /감옥 설정 초기화 · /감옥 가기 · /감옥 나가기', (a, c) => {
   if (a[0] === '설정') return req('jailpos', a[1] === '초기화' ? { reset: 1 } : { ...pos(), dim: CB.dimNow() });
   if (a[0] === '가기' || a[0] === '나가기') {
-    if (!(CB.isOp() || isLaw(me()))) return c.say('감옥 차원은 경찰(CP) · 군사경찰(CMP) · 장교(CMO) · MP사령부 · 총사령부나 OP만 드나들 수 있어요');
+    if (!(CB.isOp() || isLaw(me()))) return c.say('감옥 차원은 경찰(CP) · 군사경찰(CMP) · 장교(Officer) · MP사령관 · 총사령관나 OP만 드나들 수 있어요');
     if (S.jail[me()]) return c.say('수감 중에는 나갈 수 없어요');
     if (a[0] === '가기') { CB.goDim('감옥'); return c.say('⛓ 감옥 차원으로 가요'); }
     if (CB.dimNow() !== '감옥') return c.say('지금 감옥 차원에 있지 않아요');
@@ -1358,7 +1370,7 @@ CB.command('감옥', '/감옥 — 수감자 목록 · /감옥 설정 (지금 자
   if (!L.length) return c.say('지금 수감 중인 사람이 없어요');
   for (const [n, s] of L) c.say(`⛓ ${n} · 남은 시간 ${Math.ceil(s / 60)}분`);
 }, { everyone: true });
-CB.command('석방', '/석방 @닉 (장교(CMO) 이상 · OP)', (a) => req('release', { who: a[0] }), { everyone: true });
+CB.command('석방', '/석방 @닉 (장교(Officer) 이상 · OP)', (a) => req('release', { who: a[0] }), { everyone: true });
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
