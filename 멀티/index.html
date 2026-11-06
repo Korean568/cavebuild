@@ -335,7 +335,7 @@ body.mobile #toasts{top:72px}
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
     <h4>🆕 v26.237 — 🪲 조직 모드 버그 고침</h4>
-    <ul><li>🎒 /team 으로 내 팀을 바꿀 때 받는 장비도 /장비 처럼 5분에 한 번만 (팀을 오가며 총을 계속 받던 문제)</li><li>👑 Owner가 다른 팀이었다가 /조직 탈퇴 하면 「총사령관으로 돌아왔어요」라고 알려 줘요</li></ul>
+    <ul><li>🎒 /team 으로 내 팀을 바꿀 때 받는 장비도 /장비 처럼 5분에 한 번만 (팀을 오가며 총을 계속 받던 문제)</li><li>👑 Owner가 다른 팀이었다가 /조직 탈퇴 하면 「총사령관으로 돌아왔어요」라고 알려 줘요</li><li>🗂 계급 이름이 바뀌기 전(군사 · 교육부 · MP사령부 …)에 저장된 팀 점수 · 팀 기지 · 임무를 새 이름으로 옮겨요</li></ul>
     <h4>v26.236 — 🎖 CLKKY ARMY 군사계급 · 🔁 내 팀 바꾸기 · 🔨 밴 고침</h4>
     <ul><li>🎖 조직 모드 군대 팀원마다 <b>군사계급</b>이 붙어요 (부서와 따로): 이등병 · 일등병 · 상등병 · 병장 · 하사 · 중사 · 상사 · 원사 · 소위 · 중위 · 대위 · 소령 · 중령 · 대령 · 대장(총사령관만)</li><li>🎖 /진급 · /강등 @닉 은 이제 군사계급을 바꿔요 (대령까지) · /계급 으로 계급표</li><li>🎖 군대가 아닌 사람: 멤버(디스코드 서버 가입) · 게스트 · 수감자(감옥) · 탈옥수 · 사형수 — OP는 /계급 @닉 상태</li><li>🔁 소령 이상 · 장교(Officer) 부서 이상 · Owner는 <b>/team 팀</b> 으로 내 팀을 마음대로 바꿔요 (Owner는 /team 총사령관 으로 돌아와요)</li><li>🔨 방장인 사람도 /ban · 밴 해머로 밴돼요 (방을 나가고 다시 방장으로도 못 들어와요) · 어드민은 밴할 수 없다고 알려 줘요</li></ul>
     <h4>v26.235 — 🎯 조준 · 💻 / 명령어 고침</h4>
@@ -2200,7 +2200,7 @@ const HELP_EN=`
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
     <h4>🆕 v26.237 — 🪲 Org mod fixes</h4>
-    <ul><li>🎒 Switching your own team with /team now gives the kit only once every 5 minutes, like /장비 (no more farming guns by hopping teams)</li><li>👑 When the Owner leaves another team with /조직 탈퇴, the message now says they're back to 총사령관</li></ul>
+    <ul><li>🎒 Switching your own team with /team now gives the kit only once every 5 minutes, like /장비 (no more farming guns by hopping teams)</li><li>👑 When the Owner leaves another team with /조직 탈퇴, the message now says they're back to 총사령관</li><li>🗂 Team points, team bases and missions saved under the old team names now carry over to the new names</li></ul>
     <h4>v26.236 — 🎖 CLKKY ARMY military ranks · 🔁 Switch your own team · 🔨 Ban fix</h4>
     <ul><li>🎖 Every army member in the org mod now has a <b>military rank</b>, separate from their department: Private up to Colonel, plus General for the Owner only</li><li>🎖 /진급 and /강등 @name now change the military rank (up to Colonel) · /계급 shows the rank list</li><li>🎖 Non-army players: Member (joined the Discord server), Guest, Prisoner, Escaped Prisoner, Death row inmate — OPs set these with /계급 @name status</li><li>🔁 Majors and above, Officers and above, and the Owner can switch their own team with <b>/team team</b> (the Owner returns with /team 총사령관)</li><li>🔨 /ban and the ban hammer now work on the room host too (they leave and can't host it again) · Admins can't be banned, and you're told so</li></ul>
     <h4>v26.235 — 🎯 Aiming · 💻 Slash commands</h4>
