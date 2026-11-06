@@ -332,7 +332,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.233 — 🎖 CLKKY ARMY 계급 개편 · 🏙 CLKKY CITY</h4>
+    <h4>🆕 v26.234 — ⛑ 메디킷</h4>
+    <ul><li>⛑ <b>메디킷</b> (작업대: 사과 2 + 철 주괴 1): 들고 사람을 치면 그 사람 체력 +8, 우클릭하면 내 체력 +6 (4초마다)</li><li>⛑ 조직 모드의 의무병(Medic)은 메디킷을 기본 장비로 받고, 메디킷으로 치료해요</li></ul>
+    <h4>v26.233 — 🎖 CLKKY ARMY 계급 개편 · 🏙 CLKKY CITY</h4>
     <ul><li>🎖 조직 모드 계급 (위 → 아래): 총사령관(Owner) · 부사령관(Staff) · 교육사령관(TMCO) · MP사령관(CMPO) · 교육사(TMC) · 장교(Officer) · 특수임무대(SWAT) · 군사경찰(CMP) · 의무병(Medic) · 육군(Soldier)</li><li>⛑ 의무병은 /치료 @닉 으로 곁의 사람을 치료해요 · 🎯 특수임무대는 수갑 · 테이저건으로 ★★★ 수배자를 진압해요 · 예전 계급 이름은 새 이름으로 자동으로 바뀌어요</li><li>🏙 공식 서버의 CAVE 이름이 CLKKY 로 바뀌었어요 (CLKKY CITY · CLKKY ARMY · CLKKY POLICE)</li></ul>
     <h4>v26.232 — 🚫 공식 서버 무기 금지 강화 · 🎮 게임 모드 정리</h4>
     <ul><li>🚫 공식 서버는 켤 때마다 스텔라 리모컨 · 폭탄 · 핵 · 미사일이 금지되고, 크리에이티브 목록에서도 안 보여요</li><li>🎮 설정 화면 · /서바이벌 · /크리에이티브 는 나만 바뀌어요. 방 전체를 바꾸려면 /gamemode 를 써요 (새로 들어오는 사람도 그 모드로 시작해요)</li></ul>
@@ -2189,7 +2191,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.233 — 🎖 CLKKY ARMY ranks · 🏙 CLKKY CITY</h4>
+    <h4>🆕 v26.234 — ⛑ Medkit</h4>
+    <ul><li>⛑ <b>Medkit</b> (bench: 2 apples + 1 iron ingot): hit a player to heal them +8, or right-click to heal yourself +6 (every 4 seconds)</li><li>⛑ Medics in the org mod get a medkit in their kit and heal with it</li></ul>
+    <h4>v26.233 — 🎖 CLKKY ARMY ranks · 🏙 CLKKY CITY</h4>
     <ul><li>🎖 Org-mod ranks (top → bottom): Owner, Staff, TMCO, CMPO, TMC, Officer, SWAT, CMP, Medic, Soldier</li><li>⛑ Medics heal nearby players with /치료 @name · 🎯 SWAT carry handcuffs and a taser to take down ★★★ wanted players · Old rank names convert automatically</li><li>🏙 Official server names now say CLKKY instead of CAVE (CLKKY CITY, CLKKY ARMY, CLKKY POLICE)</li></ul>
     <h4>v26.232 — 🚫 Stronger weapon ban · 🎮 Game mode fix</h4>
     <ul><li>🚫 Official servers always block the Stellar Remote, bombs, nukes and missiles, and hide them from the Creative list</li><li>🎮 The settings screen, /서바이벌 and /크리에이티브 change only your own mode. /gamemode changes the whole room, including people who join later</li></ul>
@@ -3172,6 +3176,7 @@ IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
 const COLA=352,OPEN_COLA=353;IT[COLA]={name:'콜라',stack:16};IT[OPEN_COLA]={name:'딴 콜라',stack:1,food:3,drink:true}; // 🥤 콜라: 우클릭으로 따고 (따개를 들었다 눌러 닫음) 꾹 눌러 마심
+const MEDKIT=377;IT[MEDKIT]={name:'메디킷',stack:1,use:true}; // ⛑ 메디킷: 플레이어를 치면 그 사람 체력 +8 · 우클릭하면 내 체력 +6 (4초마다)
 const TASER=376;IT[TASER]={name:'테이저건',stack:1}; // ⚡ 테이저건: 클릭하면 전극 발사 (12칸) · 맞은 플레이어 · 몹은 5초 동안 감전돼 못 움직임 · 3초마다
 const SNIPER=375;IT[SNIPER]={name:'저격소총',stack:1,use:true}; // 🎯 저격소총 (AWM): 한 발씩 · 아주 셈 · 우클릭 조준경
 const CUFFS=374;IT[CUFFS]={name:'수갑',stack:1}; // ⛓ 수갑: 플레이어를 치면 묶임 (못 움직이고 못 공격 · 다시 치면 풀림 · 2분 뒤 저절로) · 몹은 30초 멈춤
@@ -3342,7 +3347,7 @@ RECIPES.push(
   {out:REDDIA_BLOCK,n:1,in:[[RED_DIAMOND,9]],st:'bench'},{out:RED_DIAMOND,n:9,in:[[REDDIA_BLOCK,1]]},
   {out:BLACKDIA_BLOCK,n:1,in:[[BLACK_DIAMOND,9]],st:'bench'},{out:GOLD_BLOCK,n:1,in:[[GOLD_INGOT,9]],st:'bench'},{out:GOLD_INGOT,n:9,in:[[GOLD_BLOCK,1]]},
   {out:STEEL,n:1,in:[[IRON_INGOT,1],[STONE,1]],st:'bench'},{out:STEEL_ALLOY,n:1,in:[[STEEL,1],[STONE,1]],st:'bench'},
-  {out:BULLET,n:4,in:[[COPPER_INGOT,1]],st:'bench'},{out:MAG,n:1,in:[[IRON_INGOT,1],[BULLET,8]],st:'bench'},{out:CUFFS,n:1,in:[[IRON_INGOT,3]],st:'bench'},{out:TASER,n:1,in:[[IRON_INGOT,2],[COPPER_INGOT,2],[ESTONE,1]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
+  {out:BULLET,n:4,in:[[COPPER_INGOT,1]],st:'bench'},{out:MAG,n:1,in:[[IRON_INGOT,1],[BULLET,8]],st:'bench'},{out:CUFFS,n:1,in:[[IRON_INGOT,3]],st:'bench'},{out:MEDKIT,n:1,in:[[APPLE,2],[IRON_INGOT,1]],st:'bench'},{out:TASER,n:1,in:[[IRON_INGOT,2],[COPPER_INGOT,2],[ESTONE,1]],st:'bench'},{out:PISTOL,n:1,in:[[STEEL,3],[IRON_INGOT,2],[STICK,1]],st:'bench'},{out:RIFLE,n:1,in:[[STEEL_ALLOY,3],[STEEL,2],[IRON_INGOT,2]],st:'bench'},
   {out:SUPER_ALLOY,n:1,in:[[STEEL,1],[STEEL_ALLOY,1],[IRON_INGOT,1]],st:'bench'},{out:NUKE,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[SUPER_ALLOY,1]],st:'bench'},
   {out:ICBM,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1]],st:'bench'},{out:MISSILE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[CRYSTAL,1]],st:'bench'},
   {out:NUKE_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[URANIUM,1]],st:'bench'},{out:ATOM_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[RADIUM,1]],st:'bench'},{out:TSAR_REMOTE,n:1,in:[[ESTONE,2],[IRON_INGOT,3],[POLONIUM,1]],st:'bench'},{out:ATOM_BOMB,n:1,in:[[URANIUM,1],[PLUTONIUM,1],[RADIUM,1],[POLONIUM,1]],st:'bench'},
@@ -3461,6 +3466,7 @@ function itemIcon(id){
     case SNIPER:return pixelIcon((X,Y,x0,y)=>{const x=15-x0;if(y===6&&x>=0&&x<=15)return x<4?'#2a2a30':'#1a1a20';if(y===7&&x>=5&&x<=15)return '#1a1a20';if(y===4&&x>=6&&x<=10)return x===6||x===10?'#b0b4bc':'#202024';if(y===5&&(x===7||x===9))return '#202024';if(y>=8&&y<=10&&x>=11&&x<=12)return '#1a1a20';if(y>=7&&y<=10&&x>=13&&x<=15)return '#b0b4bc';return null;});
     case RIFLE:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=7&&x>=1&&x<=15)return y===5?'#8a909c':x<5?'#5a3e26':'#3a3e48';if(y>=8&&y<=11&&x>=7&&x<=8)return '#2a2e36';if(y>=8&&y<=10&&x>=1&&x<=3)return '#5a3e26';if(y===4&&x>=8&&x<=11)return '#22252c';return null;});
     case BULLET:return pixelIcon((X,Y,x,y)=>{const c=[[5,'#d8a040'],[8,'#e8c060'],[11,'#d8a040']];for(const [bx,col] of c){if(x>=bx&&x<=bx+1&&y>=7&&y<=12)return col;if(x>=bx&&x<=bx+1&&y>=4&&y<=6)return y===4?'#9a6a3a':'#b88050';}return null;});
+    case MEDKIT:return pixelIcon((X,Y,x,y)=>{if((y===3&&x>=6&&x<=9)||(y===4&&(x===6||x===9)))return '#9aa0aa';if(x<2||x>13||y<5||y>13)return null;if((x>=7&&x<=8&&y>=6&&y<=12)||(y>=8&&y<=10&&x>=4&&x<=11))return '#e02828';return y===5||y===13||x===2||x===13?'#c8ccd4':'#f4f4f6';});
     case TASER:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=8&&x>=3&&x<=10)return y===5?'#ffe060':'#f2c418';if(y>=5&&y<=8&&x>=11&&x<=13)return '#1a1a1e';if(y===6&&x===14)return '#40a0ff';if(y===8&&x===14)return '#40a0ff';if(y>=9&&y<=13&&x>=3&&x<=5)return '#1a1a1e';return null;});
     case LASER:return pixelIcon((X,Y,x,y)=>{if(x>=13&&x<=14&&y>=6&&y<=9)return '#ff3050';if(y===7&&x>=6&&x<=9)return '#ff6080';if(y>=6&&y<=9&&x>=2&&x<=12)return y===6?'#8a8a9a':'#4a4a58';if(y>=10&&y<=13&&x>=3&&x<=5)return '#3a3a44';return null;});
     case ESTONE:return pixelIcon((X,Y,x,y)=>{const d=Math.abs(X-8)*.9+Math.abs(Y-8);if(d>6.5)return null;if((x===7&&y>=3&&y<=7)||(x===8&&y>=7&&y<=8)||(x===9&&y>=8&&y<=12))return '#fffbd0';return d<3?'#ffe44a':d<5?'#f2c21a':'#5ab8ff';});
@@ -5795,6 +5801,9 @@ function buildItemModel0(id){
       const bt=new THREE.Mesh(new THREE.CircleGeometry(.07,16),W);bt.rotation.x=-Math.PI/2;bt.position.y=.012;g.add(bt);}else{const m=plateModel({id,bites:0});m.scale.setScalar(.46);g.add(m);}break;} // 그릇 (수프는 건더기까지)
     case SPATULA:{const M=imat('spatM',0xc8ccd4,'metal',.3,.7),H=imat('spatH',0x5a3a22,'wood',.8);iBox(g,.11,.01,.12,M,0,.27,0);iBox(g,.015,.18,.015,M,0,.15,.02);iBox(g,.03,.09,.03,H,0,.04,.02);break;}
     case 331:case 332:case 333:case 334:case 335:case 336:{const m=plateModel({id,bites:0});m.scale.setScalar(.36);g.add(m);break;} // 접시째 (요리마다 다른 모양)
+    case MEDKIT:{const w=imat('mkW',0xf2f2f4,'rough',.5),r=imat('mkR',0xe02828,'rough',.5),k=imat('mkK',0x5a5e68,'metal',.35,.8); // ⛑ 메디킷 3D: 흰 상자 · 양쪽 빨간 십자 · 손잡이
+      iBox(g,.2,.14,.08,w,0,.08,0);for(const s of [-1,1]){iBox(g,.03,.09,.006,r,0,.08,s*.042);iBox(g,.09,.03,.006,r,0,.08,s*.042);}
+      iBox(g,.012,.04,.012,k,-.04,.17,0);iBox(g,.012,.04,.012,k,.04,.17,0);iBox(g,.092,.012,.012,k,0,.19,0);break;}
     case CUFFS:{const st=imat('cuffS',0xc8ccd6,'metal',.25,.9),dk=imat('cuffD',0x5a5e68,'metal',.35,.8); // ⛓ 수갑 3D: 쇠고리 두 개 · 잠금쇠 · 사슬 고리 세 개
       for(const s of [-1,1]){iMesh(g,IGEO.torus,st,s*.07,.06,0,Math.PI/2,0,0,.05,.05,.05);iBox(g,.03,.03,.022,dk,s*.07,.012,0);}
       for(let k=0;k<3;k++)iMesh(g,IGEO.torus,dk,(k-1)*.022,.115,0,0,k%2?Math.PI/2:0,0,.012,.012,.012);break;}
@@ -8243,6 +8252,7 @@ function useItem(){
   if(s&&s.id===HW_KEY){hwUseKey();return;} // 🎃 할로윈 열쇠
   if(EVENT&&!HALLOWEEN&&evUse(s))return; // 🗓 이달의 모드: 선물 · 떡국 · 왕의 홀 · 의사봉 · 윷 · 괭이 · 볍씨 · 선생님
   if(s&&s.id===BOMB){if(performance.now()<(player.bombCD||0))return;player.bombCD=performance.now()+450;throwBomb();if(!isCreative()){s.count--;if(!s.count)inv[sel]=null;invChanged();}return;} // 💣 폭탄 던지기
+  if(s&&s.id===MEDKIT){if(performance.now()<(player.medCD||0))return;if(player.hp>=maxHp()){toast('⛑ 체력이 가득 차 있어요');return;}player.medCD=performance.now()+4000;player.hp=Math.min(maxHp(),player.hp+6);renderStats();swing=1;tone(660,990,.12,.05,'sine');toast('⛑ 메디킷으로 나를 치료했어요 (체력 +6)');return;} // ⛑ 나 치료
   if(s&&s.id===COLA){if(!player.colaOpen){player.colaOpen={t:0,sel,fz:false};swing=0;}return;} // 🥤 콜라 따기
   if(s&&s.id===CAPE){toast('👕 망토는 타이틀 화면의 <b>탈의실</b>에서 입을 수 있어요');return;}
   if(player.veh&&player.veh.btn){vehBoost(player.veh);return;} // 탄 채로 우클릭 = 버튼
@@ -8390,6 +8400,7 @@ function attack(){
   const mace=heldTool()&&heldTool().type==='mace';
   if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?2.5:.4;
   if(held()&&held().id===BANHAMMER){banHammerHit(mobTarget);return;}
+  if(held()&&held().id===MEDKIT){medkitHit(mobTarget);return;}
   if(held()&&held().id===CUFFS){cuffHit(mobTarget);return;} // 철퇴는 무거워서 2.5초마다 휘두름
   const t=heldTool();let dmg=t?t.dmg:HAND_DMG;const spp=held()&&held().id===SPIDER_PUNCH&&spiderOn();if(spp){dmg=18;SFX.smash();} // 스파이더맨 펀치
   if(mace){ // 철퇴: 높은 곳에서 떨어지며 칠수록 더 셈 (처음 3칸은 칸당 +4, 다음 5칸은 +2, 그 뒤로 +1) · 달리면서 머리를 치면 1.5배
@@ -9427,7 +9438,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
   else if(d.t==='lang'){if(!mpConnOp(c)||typeof d.l!=='string')return;setLang(d.l,1);mpSend(d,c);}
   else if(d.t==='banreq'){if(mpConnOp(c))mpBanNick(d.n);}
   else if(d.t==='opreq'){if(c.P.nick==='운영자'||c.P.adm||mpConnBoss(c))mpSetOp(String(d.n||'').slice(0,16),!!d.on);} // 🔑 OP 주기 · 빼기는 방장(만든 사람) · 어드민만 (서버가 확인)
-  else if(d.t==='cuff'||d.t==='tase'){d.by=c.P.nick;mpRoute(d);}
+  else if(d.t==='cuff'||d.t==='tase'||d.t==='heal'){d.by=c.P.nick;mpRoute(d);}
   else if(d.t==='give'||d.t==='gmp'){if((!MULTI||c.P.adm||c.P.nick==='운영자')&&mpConnOp(c)){d.by=c.P.nick;mpRoute(d);}} // 🎁 /give @닉 · 🎮 /모드이름 @닉: OP만 (공개 서버는 어드민만 · 서버가 확인)
   else if(d.t==='mod'){d.n=c.P.nick;mpSend(d,c);modEmit('msg',d.k,d.v,d.n);}
   else if(d.t==='smods'){if(!mpConnOp(c)||!Array.isArray(d.mods))return;const L=d.mods.filter(m=>m&&typeof m.name==='string'&&(typeof m.code==='string'||typeof m.url==='string')).slice(0,40).map(m=>({name:m.name.slice(0,60),code:m.code||'',url:m.url||undefined,on:true}));
@@ -9507,6 +9518,7 @@ function mpGuestRecv(d){
   else if(d.t==='kick')mpEnd(d.ban?mpL('🔨 이 방에서 밴당했어요','🔨 You were banned from this room'):mpL('방에서 내보내졌어요','You were removed from the room'));
   else if(d.t==='lang'){if(typeof d.l==='string')setLang(d.l,1);}
   else if(d.t==='cuff')cuffIn(d); // ⛓ 수갑
+  else if(d.t==='heal')healIn(d); // ⛑ 메디킷
   else if(d.t==='tase')taseIn(d); // ⚡ 테이저건
   else if(d.t==='give')giveIn(d); // 🎁 /give @닉
   else if(d.t==='gmp')gmIn(d); // 🎮 /모드이름 @닉
@@ -9596,10 +9608,13 @@ function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x
   if(M.pvp){if(!cmdIsOp()){NOOP_T();return;}const nk=M.def.name;if(MP.host)mpBanNick(nk);else mpSend({t:'banreq',n:nk});toast(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요`);return;}
   if(M.def.boss&&!cmdIsOp()){NOOP_T();return;}M.hurt(1e6,0,0);toast('🔨 쾅! <b>'+(M.def.name||'몹')+'</b>을(를) 없앴어요');}
 // ⛓ 수갑: 플레이어를 치면 묶고 다시 치면 풀어요 (2분 뒤 저절로 풀림) · 몹은 30초 동안 멈춤
+function medkitHit(M){if(!M.pvp){toast('⛑ 메디킷으로 사람을 치면 치료해요 (우클릭하면 나를 치료)');return;}if(performance.now()<(player.medCD||0))return;player.medCD=performance.now()+4000;swing=1;tone(660,990,.12,.05,'sine');
+  mpRoute({t:'heal',to:M.id,by:MP.me.nick});toast(`⛑ <b>${mpEsc(M.def.name)}</b> 님을 메디킷으로 치료했어요 (체력 +8)`);modEmit('medkit',M.def.name);} // 🧩 모드 이벤트: 'medkit'(치료한 사람 닉)
+function healIn(d){if(player.dead)return;const by=String(d.by||'?').slice(0,16);player.hp=Math.min(maxHp(),player.hp+8);renderStats();tone(660,990,.12,.05,'sine');toast(`⛑ <b>${mpEsc(by)}</b> 님이 메디킷으로 치료해 줬어요 (체력 +8)`);}
 function cuffHit(M){swing=1;tone(1800,1200,.06,.06,'square');tone(900,700,.08,.05,'square',.06);
   if(M.pvp){mpRoute({t:'cuff',to:M.id,by:MP.me.nick});toast(`⛓ <b>${mpEsc(M.def.name)}</b> 님에게 수갑을 채우거나 풀었어요`);return;}
   M.cuffT=M.cuffT>0?0:30;toast(M.cuffT>0?`⛓ <b>${M.def.name||'몹'}</b>을(를) 30초 동안 묶었어요`:'🔓 몹을 풀어 줬어요');}
-function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);else if(d.t==='tase')taseIn(d);else if(d.t==='give')giveIn(d);else if(d.t==='gmp')gmIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
+function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);else if(d.t==='heal')healIn(d);else if(d.t==='tase')taseIn(d);else if(d.t==='give')giveIn(d);else if(d.t==='gmp')gmIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
 const GM_NAMES={survival:'survival','서바이벌':'survival',creative:'creative','크리에이티브':'creative',spectator:'spectator','관전':'spectator'},GM_KO={survival:'서바이벌',creative:'크리에이티브',spectator:'관전'};
 function gmIn(d){if(!GM_KO[d.m]||world.mode===d.m||(world.flags&&world.flags.hcDead))return;MP.rx=1;MP.gmOk=1;try{setMode(d.m);}finally{MP.rx=0;MP.gmOk=0;}try{renderSettings();}catch(e){}toast(`🎮 <b>${mpEsc(String(d.by||'?').slice(0,16))}</b> 님이 내 게임 모드를 <b>${GM_KO[d.m]}</b>(으)로 바꿨어요`);} // /모드이름 @닉: 그 사람만 바뀜
 function giveIn(d){const id=d.id|0,n=Math.max(1,Math.min(999,d.n|0));if(!BL[id]&&!IT[id])return;const left=addItem(id,n);if(left>0)dropAtPlayer(id,left);invChanged();toast(`🎁 <b>${mpEsc(String(d.by||'?').slice(0,16))}</b> 님이 <b>${info(id).name}</b> ${n}개를 줬어요`);}

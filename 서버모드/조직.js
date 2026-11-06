@@ -1,11 +1,11 @@
 // 🪖 조직 (팀 계급) 모드 — CAVEBUILD 서버용 .js 모드
 // 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 육군(Soldier) · 의무병(Medic) · 군사경찰(CMP) · 특수임무대(SWAT) · 장교(Officer) · 교육사(TMC) · MP사령관(CMPO) · 교육사령관(TMCO) · 부사령관(Staff) · 총사령관(Owner)
-//   CLKKY ARMY 조직 구성: 의무병은 치료 (/치료 @닉) · 특수임무대는 ★★★ 진압 (수갑 · 체포 가능) · 장교는 육군 · 의무병 관리 · 군사경찰은 MP사령관 지휘
+//   CLKKY ARMY 조직 구성: 의무병은 메디킷으로 치료 (사람을 치면 +8 · 우클릭하면 나 +6) · 특수임무대는 ★★★ 진압 (수갑 · 체포 가능) · 장교는 육군 · 의무병 관리 · 군사경찰은 MP사령관 지휘
 //   처음엔 누구나 시민 · 위 계급이 아래 계급 사람을 배정 · 진급 · 강등해요 (내 계급보다 아래로만) · 총사령관은 서버를 만든 사람(Owner)
 //   머리 위 닉네임에 [팀] + 팀 색, 기지 · 집합, 훈련 · 임무, 같은 팀끼리도 때릴 수 있음
 // 멀티플레이에서는 방장 게임이 조직 정보를 저장하고(세계에 저장됨), 친구들의 명령은 방장에게 신호로 보내요.
 //
-// 🎒 팀이 되면 기본 장비를 받아요 (KITS) · 총사령관(Owner)은OP · 고소 · 수배 안 됨
+// 🎒 팀이 되면 기본 장비를 받아요 (KITS) · 총사령관(Owner)은 OP · 고소 · 수배 안 됨
 // 🏴 불법 거래 상인 (NPC): 밤에만 나와서 시민 · 무법자에게 동전으로 무기를 팔아요 · 쓰러지면 다음 날 밤에 (/상인 · /상인 설정)
 // 🌙 생활규칙: 밤에는 경찰은 경찰서 구역, 군대는 군부대 안 (군대는 /외출 허가면 예외) · 밖에 60초 넘게 있으면 수갑대상
 // 🏙 모드를 깔면 부활 자리 근처 빈 땅에 도시 · 🚓 경찰서 · 🪖 군부대가 저절로 생겨요 (/도시 · OP는 /도시 짓기)
@@ -63,7 +63,7 @@ const GUNS = ['권총', '돌격소총', '저격소총'];
 const KITS = {
   '경찰': ['권총', '테이저건'],
   '육군': ['권총', '돌격소총'],
-  '의무병': ['권총'],
+  '의무병': ['메디킷', '권총'],
   '군사경찰': ['권총', '돌격소총', '수갑', '테이저건'],
   '특수임무대': ['돌격소총', '권총', '수갑', '테이저건'],
   '장교': ['권총', '블랙 다이아몬드 검', '수갑'],
@@ -183,7 +183,7 @@ function rewanted(nick) {
   S.w[nick] = { lv: teamOf(nick) === OUTLAW ? WMAX : Math.min(WMAX, top.lv), why: `${top.why} · 고소: ${[...new Set(L.map((c) => c.by))].join(', ')}`, t: top.t };
 }
 function crime(nick, lv, why, victim) {
-  if (!nick || nick === ownerNick()) return; // 총사령관(Owner)은고소 · 수배 안 됨
+  if (!nick || nick === ownerNick()) return; // 총사령관(Owner)은 고소 · 수배 안 됨
   lv = Math.max(1, Math.min(WMAX, lv | 0));
   const by = victim || '서버', before = (S.w[nick] || {}).lv || 0;
   const old = S.suit.find((c) => c.who === nick && c.by === by);
@@ -241,7 +241,7 @@ function giveKit(o) {
 function sendKit(n) { const o = teamOf(n); if (!KITS[o]) return; if (n === me()) giveKit(o); else CB.send('org-kit', { to: n, o }); }
 function apply(op, a, from, fromOp, fromDiscord) {
   a = a || {};
-  fromOp = fromOp || (!!from && from === ownerNick()); // 총사령관(Owner)은OP
+  fromOp = fromOp || (!!from && from === ownerNick()); // 총사령관(Owner)은 OP
   const Fo = teamOf(from), off = fromOp || isOfficer(from); // 내 팀 · 장교(Officer) 이상이나 OP
   const who = String(a.who || '').replace(/^@/, '');
   switch (op) {
@@ -257,7 +257,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '수배는 장교(Officer) · MP사령관 · 총사령관나 OP만 내릴 수 있어요');
       const lv = Math.max(1, Math.min(WMAX, Math.floor(+a.lv) || 1));
       if (!who) return tell(from, '/수배 @닉 등급(1 수갑대상 · 2 ★★ · 3 ★★★) 사유');
-      if (who === ownerNick()) return tell(from, '총사령관(Owner)은수배할 수 없어요');
+      if (who === ownerNick()) return tell(from, '총사령관(Owner)은 수배할 수 없어요');
       const W = S.w[who];
       if (W && W.lv >= lv) return tell(from, '이미 그보다 높은 등급으로 수배 중이에요');
       return crime(who, lv, String(a.why || '부적절한 행동').slice(0, 40), from);
@@ -270,7 +270,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
     case 'sue': {
       // 📝 직접 고소: 부적절한 행동 등 (1 · 2등급까지)
       if (!who || who === from) return tell(from, '/고소 @닉 [1|2] 사유');
-      if (who === ownerNick()) return tell(from, '총사령관(Owner)은고소할 수 없어요');
+      if (who === ownerNick()) return tell(from, '총사령관(Owner)은 고소할 수 없어요');
       const lv = Math.max(1, Math.min(2, Math.floor(+a.lv) || 1));
       return crime(who, lv, String(a.why || '부적절한 행동').slice(0, 40), from);
     }
@@ -340,8 +340,8 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return tell(from, `📦 납품 완료 · 동전 +${n} · 통장 ${bal(from)}개`);
     }
     case 'job-heal': {
-      const medic = teamOf(from) === '의무병'; // ⛑ 의무병 (CLKKY ARMY) 도 치료 · 돈은 팀 월급으로
-      if (!medic && jobOf(from) !== '의사') return tell(from, '🩺 치료는 의사(직업) · 의무병(Medic)만 할 수 있어요 · /직업');
+      if (teamOf(from) === '의무병') return tell(from, '⛑ 의무병은 메디킷을 들고 치료할 사람을 치세요 (우클릭하면 나를 치료 · 메디킷이 없으면 /장비)');
+      if (jobOf(from) !== '의사') return tell(from, '🩺 /치료 는 의사(직업)만 할 수 있어요 · /직업');
       if (!who || who === from || !CB.players().includes(who)) return tell(from, '/치료 @닉 (접속 중인 다른 사람)');
       const A = CB.playerPos(from), B = CB.playerPos(who);
       if (!A || !B || Math.hypot(A.x - B.x, A.z - B.z) > 6) return tell(from, `🩺 ${who} 님 곁으로 가야 해요`);
@@ -349,7 +349,6 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (left > 0) return tell(from, `🩺 ${Math.ceil(left)}초 뒤에 다시 치료할 수 있어요`);
       healT[from] = Date.now();
       if (who === me()) healMe(from); else CB.send('org-heal', { to: who, by: from });
-      if (medic) return tell(from, `⛑ ${who} 님을 치료했어요`);
       return jobEarn(from, 2);
     }
     case 'job-news': {
@@ -378,21 +377,21 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!o) return tell(from, '그런 팀이 없어요 · /조직 목록');
       if (locked(from) && !fromOp) return tell(from, `${tagOf(teamOf(from))}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
       if (o !== '시민' && !fromOp) return tell(from, `${tagOf(o)}은(는) 더 높은 계급이 /team ${o} @${from} 로 배정해 줘야 들어가요`);
-      if (o === '총사령관') return tell(from, '총사령관(Owner)은서버를 만든 사람이에요');
+      if (o === '총사령관') return tell(from, '총사령관(Owner)은 서버를 만든 사람이에요');
       setTeam(from, o); save();
       return CB.say(`${ORGS[o].ico} ${from} 님 → ${tagOf(o)}`);
     }
     case 'leave': {
       if (Fo === '시민') return tell(from, '이미 시민이에요');
       if (locked(from) && !fromOp) return tell(from, `${tagOf(Fo)}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
-      if (Fo === '총사령관') return tell(from, '총사령관(Owner)은서버를 만든 사람이라 나갈 수 없어요');
+      if (Fo === '총사령관') return tell(from, '총사령관(Owner)은 서버를 만든 사람이라 나갈 수 없어요');
       setTeam(from, '시민'); save();
       return CB.say(ARMY.includes(Fo) ? `🎖 ${from} 님이 ${tagOf(Fo)}에서 전역해 시민이 됐어요` : `${from} 님이 ${tagOf(Fo)}에서 나와 시민이 됐어요`);
     }
     case 'assign': {
       const o = findOrg(a.o);
       if (!o || !who) return tell(from, '/team 팀 @닉 · 팀: ' + TEAMS.map((t) => t.key).join(' · '));
-      if (o === '총사령관') return tell(from, '총사령관(Owner)은서버를 만든 사람이라 배정할 수 없어요');
+      if (o === '총사령관') return tell(from, '총사령관(Owner)은 서버를 만든 사람이라 배정할 수 없어요');
       if (who === ownerNick()) return tell(from, `${who} 님은 총사령관(Owner)이에요`);
       if (locked(who) && !fromOp) return tell(from, `${who} 님은 ${tagOf(teamOf(who))}라서 팀을 바꿀 수 없어요 (수갑으로 잡아야 해요)`);
       const myLv = lvOf(from);
@@ -538,7 +537,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return crime(from, 2, '불법 무기 소지');
     }
     case 'rekit': { // 🎒 /장비: 잃어버린 장비 다시 받기 (5분에 한 번)
-      if (!KITS[Fo]) return tell(from, Fo === '총사령관' ? '총사령관(Owner)은OP라서 /give 로 받으면 돼요' : '시민은 기본 장비가 없어요 · 🕶 불법 거래 상인에게 사요');
+      if (!KITS[Fo]) return tell(from, Fo === '총사령관' ? '총사령관(Owner)은 OP라서 /give 로 받으면 돼요' : '시민은 기본 장비가 없어요 · 🕶 불법 거래 상인에게 사요');
       const t = S.kitT[from] || 0, left = 300 - (Date.now() - t) / 1000;
       if (left > 0 && !fromOp) return tell(from, `🎒 장비는 5분에 한 번 받을 수 있어요 (${Math.ceil(left)}초 남음)`);
       S.kitT[from] = Date.now(); save(); return sendKit(from);
@@ -1288,7 +1287,7 @@ CB.command('직업', '/직업 — 💼 내 직업 · /직업 목록 · /직업 �
   if (sub === '납품') return nearSpot(41.5, 17.5) ? jobSell() : c.say('📦 납품은 직업소개소에서 해요 (/도시)');
   c.say(j ? `💼 내 직업: ${JOBS[j].ico} ${j} · ${JOBS[j].d}` : '💼 지금 직업이 없어요 · 직업소개소 상담원에게 우클릭하거나 /직업 선택 이름 · /직업 목록');
 }, { everyone: true });
-CB.command('치료', '/치료 @닉 — 🩺 의사 · ⛑ 의무병: 곁에 있는 사람 치료', (a) => req('job-heal', { who: a[0] }), { everyone: true });
+CB.command('치료', '/치료 @닉 — 🩺 의사: 곁에 있는 사람 치료 (⛑ 의무병은 메디킷으로)', (a) => req('job-heal', { who: a[0] }), { everyone: true });
 CB.command('뉴스', '/뉴스 내용 — 📰 기자: 모두에게 소식 전하기', (a) => req('job-news', { text: a.join(' ') }), { everyone: true });
 CB.command('집', `/집 — 🏠 집 목록 · /집 사기 [번호] (동전 ${HOUSE_PRICE}개) · /집 팔기 (동전 ${HOUSE_PRICE / 2}개 돌려받음) · /집 가기 · /집 비우기 번호 (OP)`, (a, c) => {
   const L = S.houses || [], mine0 = myHouse(me());
