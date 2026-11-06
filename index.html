@@ -332,7 +332,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.234 — ⛑ 메디킷</h4>
+    <h4>🆕 v26.235 — 🎯 조준 · 💻 / 명령어 고침</h4>
+    <ul><li>🎯 총으로 조준할 때 총이 조준점 아래로 내려가서 목표가 가려지지 않아요</li><li>💻 / 키로 채팅창을 열고 한글로 명령어를 치면 / 가 사라져서 채팅으로 나가던 문제를 고쳤어요 (예: /크리에이티브 @닉)</li></ul>
+    <h4>v26.234 — ⛑ 메디킷</h4>
     <ul><li>⛑ <b>메디킷</b> (작업대: 사과 2 + 철 주괴 1): 들고 사람을 치면 그 사람 체력 +8, 우클릭하면 내 체력 +6 (4초마다)</li><li>⛑ 조직 모드의 의무병(Medic)은 메디킷을 기본 장비로 받고, 메디킷으로 치료해요</li></ul>
     <h4>v26.233 — 🎖 CLKKY ARMY 계급 개편 · 🏙 CLKKY CITY</h4>
     <ul><li>🎖 조직 모드 계급 (위 → 아래): 총사령관(Owner) · 부사령관(Staff) · 교육사령관(TMCO) · MP사령관(CMPO) · 교육사(TMC) · 장교(Officer) · 특수임무대(SWAT) · 군사경찰(CMP) · 의무병(Medic) · 육군(Soldier)</li><li>⛑ 의무병은 /치료 @닉 으로 곁의 사람을 치료해요 · 🎯 특수임무대는 수갑 · 테이저건으로 ★★★ 수배자를 진압해요 · 예전 계급 이름은 새 이름으로 자동으로 바뀌어요</li><li>🏙 공식 서버의 CAVE 이름이 CLKKY 로 바뀌었어요 (CLKKY CITY · CLKKY ARMY · CLKKY POLICE)</li></ul>
@@ -2191,7 +2193,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.234 — ⛑ Medkit</h4>
+    <h4>🆕 v26.235 — 🎯 Aiming · 💻 Slash commands</h4>
+    <ul><li>🎯 Aiming a gun now holds it below the crosshair so it no longer hides the target</li><li>💻 Fixed Korean commands typed after opening chat with / losing the slash and going out as chat (e.g. /크리에이티브 @name)</li></ul>
+    <h4>v26.234 — ⛑ Medkit</h4>
     <ul><li>⛑ <b>Medkit</b> (bench: 2 apples + 1 iron ingot): hit a player to heal them +8, or right-click to heal yourself +6 (every 4 seconds)</li><li>⛑ Medics in the org mod get a medkit in their kit and heal with it</li></ul>
     <h4>v26.233 — 🎖 CLKKY ARMY ranks · 🏙 CLKKY CITY</h4>
     <ul><li>🎖 Org-mod ranks (top → bottom): Owner, Staff, TMCO, CMPO, TMC, Officer, SWAT, CMP, Medic, Soldier</li><li>⛑ Medics heal nearby players with /치료 @name · 🎯 SWAT carry handcuffs and a taser to take down ★★★ wanted players · Old rank names convert automatically</li><li>🏙 Official server names now say CLKKY instead of CAVE (CLKKY CITY, CLKKY ARMY, CLKKY POLICE)</li></ul>
@@ -5324,7 +5328,7 @@ function updateHand(dt){
   else{if(leftArm&&leftArm.userData.reload){leftArm.userData.reload=0;if(!player.dine)leftArm.visible=false;if(magL)magL.visible=false;}if(magDrop)magDrop.visible=false;if(shellsL)shellsL.forEach(c=>c.visible=false);}
   player.aimK=(player.aimK||0)+((gunAim()?1:0)-(player.aimK||0))*Math.min(1,dt*14);
   if(player.aimK>.01&&isGun(hs)){const k=player.aimK,A=handArm.position,R=handArm.rotation; // 🎯 조준: 총을 화면 가운데로 올려 눈높이에 맞춤
-    A.set(lerp(A.x,.2,k),lerp(A.y,-.2,k),lerp(A.z,-.42,k));R.set(lerp(R.x,0,k),lerp(R.y,.3,k),lerp(R.z,0,k));}
+    A.set(lerp(A.x,.17,k),lerp(A.y,-.29,k),lerp(A.z,-.5,k));R.set(lerp(R.x,.04,k),lerp(R.y,.1,k),lerp(R.z,0,k));} // 총은 조준점 아래로 (목표가 가려지지 않게)
   if(player.saluteT>0)player.saluteT-=dt;player.saluteK=(player.saluteK||0)+((player.saluteT>0?1:0)-(player.saluteK||0))*Math.min(1,dt*10);
   if(player.saluteK>.01){const k=ease(player.saluteK),A=handArm.position,R=handArm.rotation; // 🫡 경례: 오른손을 이마 옆으로 (손바닥이 아래 · 들고 있던 건 잠깐 숨김)
     const P=SALUTE_P,Q=SALUTE_R;A.set(lerp(A.x,P[0],k),lerp(A.y,P[1],k),lerp(A.z,P[2],k));R.set(lerp(R.x,Q[0],k),lerp(R.y,Q[1],k),lerp(R.z,Q[2],k));if(heldModel)heldModel.visible=k<.4;}
@@ -9709,7 +9713,7 @@ if(MP_SMODS&&MP_SMODS.code&&!MP_SMODS.resume)setTimeout(()=>{toast(mpL(`🧩 서
 function mpModeIn(d){if(!d.all||!MODE_INFO[d.m]||world.flags&&world.flags.hcDead)return;if(MP.host&&d.m!=='spectator')world.flags.srvMode=d.m;if(world.mode===d.m)return;MP.rx=1;MP.gmOk=1;try{setMode(d.m);}finally{MP.rx=0;MP.gmOk=0;}try{renderSettings();}catch(e){}toast(mpL('🌐 게임 모드가 바뀌었어요: ','🌐 Game mode changed: ')+MODE_INFO[world.mode][0]);}
 // 채팅 (T · 모바일 💬)
 function mpChatOpen(pre){if(MP.chat||!running)return;MP.chat=true;for(const k in keys)keys[k]=false;mouseL=mouseR=false;const el=$('mpChat');el.value=pre||'';el.placeholder=MP.on?'채팅 · /명령어 (/help) · Enter 보내기 · Esc 닫기':'명령어 (/help) · Enter 실행 · Esc 닫기';el.style.display='block';
-  try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>el.focus(),30);}
+  MP.chatSlash=pre==='/';try{document.exitPointerLock&&document.exitPointerLock();}catch(e){}setTimeout(()=>{el.focus();const n=el.value.length;try{el.setSelectionRange(n,n);}catch(e){}},30);} // 커서를 / 뒤로 (한글 입력기가 / 앞에 쓰거나 / 를 먹지 않게)
 const CMD_HELP=[['/help','명령어 목록'],['/gamemode 서바이벌|크리에이티브|관전','게임 모드 (멀티에서는 방 전체 · 나만 바꾸려면 /서바이벌 · /크리에이티브)'],['/time set 낮|정오|밤|자정|0~24000','시간'],['/tp x y z · /tp 닉네임','순간이동 (~ 는 지금 위치 기준)'],
   ['/서버이름 새 이름','세계 · 서버 이름 바꾸기'],['/몬스터 끔 · 켬','몬스터 안 나오게 (동물 · 주민은 그대로)'],['/무기 끔 · 켬','스텔라 리모컨 · 폭탄 · 핵 · 미사일 금지 (새 공식 서버는 처음부터 금지)'],['/포탈 끔 · 켬','차원문 이동 막기'],['/give [@닉] 아이템이름 [개수]','아이템 받기 · 다른 사람에게 주기'],['/서바이벌 · /크리에이티브 · /관전 [@닉]','그 사람만 게임 모드 바꾸기'],['/summon 몹이름 [마리]','몹 소환'],['/heal','체력 · 배고픔 가득'],['/kill','쓰러지기'],['/clear','인벤토리 비우기'],['/fly','날기 켜고 끄기'],
   ['/spawnpoint','여기를 스폰 지점으로'],['/difficulty 세이프|쉬움|보통|어려움|하드코어','난이도'],['/seed','세계 시드'],['/list','같이 있는 사람'],['/me 할 말','행동 말하기'],
@@ -10083,7 +10087,7 @@ $('mpChat').addEventListener('keydown',e=>{if(!AT.on||e.isComposing)return;
   else if(e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();atHide();}});
 $('mpChat').addEventListener('keydown',e=>{e.stopPropagation();if(e.isComposing)return;
   if(e.code==='Escape'){e.preventDefault();mpChatClose();}
-  else if(e.key==='Enter'){e.preventDefault();const m=$('mpChat').value.trim().slice(0,80);$('mpChat').style.display='none';if(m[0]==='/')runCmd(m);else if(m&&MP.on){mpSend({t:'c',n:MP.me.nick,m});mpChatShow(MP.me.nick,m);}else if(m)toast('💻 명령어는 <b>/</b> 로 시작해요 · <b>/help</b>');mpChatClose();}}); // 명령어를 먼저 실행 → 창이 열렸으면 마우스를 안 잠금
+  else if(e.key==='Enter'){e.preventDefault();let m=$('mpChat').value.trim().slice(0,80);if(MP.chatSlash&&m&&m[0]!=='/')m='/'+m.replace(/\/$/,'');/* / 로 연 창인데 / 가 사라졌으면 (한글 입력기) 명령어로 */$('mpChat').style.display='none';if(m[0]==='/')runCmd(m);else if(m&&MP.on){mpSend({t:'c',n:MP.me.nick,m});mpChatShow(MP.me.nick,m);}else if(m)toast('💻 명령어는 <b>/</b> 로 시작해요 · <b>/help</b>');mpChatClose();}}); // 명령어를 먼저 실행 → 창이 열렸으면 마우스를 안 잠금
 $('mpChat').addEventListener('keyup',e=>e.stopPropagation());
 $('mpChatBtn').onclick=e=>{e.preventDefault();mpChatOpen();};
 // 일시정지 → 🌐 멀티플레이 창
