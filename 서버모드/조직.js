@@ -13,7 +13,8 @@
 // 🪪 외출: 장교(Officer) 이상이 /외출 @닉 [분] 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · 시간을 넘기면 무단탈영 · /외출 취소 @닉
 // 🏰 도시 둘레에 성벽 (동 · 남 · 북 성문 · 성문 밖 길)
 // 🪖 입대: 시민이 입대소 · 경찰서의 상담원에게 우클릭 → 「네」 · 시민이 입대 없이 군부대에 들어가면 🏴 무법자 · 경찰 · 군대는 무법자가 안 되고 지명수배만
-// 📝 진급: 군대 팀은 /시험 사격 · /시험 점프 를 둘 다 통과해야 /진급 (진급마다 다시 · OP는 시험 없이)
+// 📝 진급: 교육사(TMC) 이상이 /시험 열기 @닉 (10분) → 군대 팀은 /시험 사격 · /시험 점프 를 둘 다 통과해야 /진급 (진급마다 다시 · OP는 시험 없이)
+// 🚨 무단 팀 변경: 허락 없이 내 팀을 바꾸려 하면 (/team 팀 · /조직 가입) 수갑대상
 // 명령어 (누구나):  /조직 (내 팀) · /조직 목록 · /조직 탈퇴 (시민으로 · 군대는 전역) · /기지 · /장비 · /상인
 // 명령어 (장교(Officer) 이상 · OP): /team 팀 @닉 (순서 상관없음, = /조직 배정) · /진급 @닉 · /강등 @닉 · /조직 추방 @닉 (시민으로) · /석방 @닉
 // 명령어 (장교(Officer) 이상 · OP): /기지 설정 · /집합 (내 계급 이하 모두) · /훈련 사격 · /훈련 체력 · /임무 내용 · /임무 완료 @닉 · /임무 취소
@@ -159,7 +160,7 @@ function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, st: s.st || {}, dc: s.dc || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, st: s.st || {}, dc: s.dc || {}, exo: s.exo || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -182,7 +183,8 @@ function addPts(nick, n) { // 점수 (팀 점수에도 더해짐)
 const isLaw = (nick) => LAW.includes(teamOf(nick));
 const inTrain = (nick, T) => { const l = lvOf(nick); return l > 0 && l <= (T.lv != null ? T.lv : (ORGS[T.o] || { lv: 0 }).lv); }; // 훈련 · 집합: 경찰(CP)부터 연 사람 계급까지
 const hasRank = (o) => ARMY.includes(o) || o === '총사령관';
-const MAJOR = RANKS.indexOf('소령');
+const MAJOR = RANKS.indexOf('소령'), TMC_LV = TEAMS.findIndex((t) => t.key === '교육사');
+const examOpen = (nick) => { const O = S.exo[nick]; return O && O.t > Date.now() ? O : null; }; // 📝 교육사(TMC) 이상이 열어 준 진급 시험 (10분)
 const canSelf = (nick) => nick === ownerNick() || nick === '운영자' || lvOf(nick) >= OFFICER_LV || mrOf(nick) >= MAJOR || !!(S.m[nick] && S.m[nick].sw);
 function mrOf(nick) { const o = teamOf(nick); if (nick && (nick === ownerNick() || nick === '운영자') && (o === '총사령관' || ARMY.includes(o))) return RANKS.length - 1; if (!hasRank(o)) return -1; const x = S.m[nick]; return Math.max(0, Math.min(RANK_MAX, (x && x.mr) | 0)); } // 군사계급 번호 (-1 = 없음)
 function rankOf(nick) { // 머리 위 · 안내판에 뜨는 계급: 수감자 → 사형수 · 탈옥수 → 군사계급 → 멤버 · 게스트
@@ -388,7 +390,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
     case 'self': { // 🔁 내 팀 마음대로 바꾸기: 소령 이상 · 장교(Officer) 부서 이상 · Owner (한 번 바꾼 사람은 다시 바꿀 수 있어요)
       const o = findOrg(a.o);
       if (!o) return tell(from, '그런 팀이 없어요 · ' + TEAMS.map((t) => t.key).join(' · '));
-      if (!canSelf(from)) return tell(from, `내 팀을 직접 바꾸는 건 ${RANKS[MAJOR]} 이상 · 장교(Officer) 이상 · Owner만 할 수 있어요`);
+      if (!canSelf(from)) { crime(from, 1, '무단 팀 변경'); save(); return tell(from, `🚨 무단 팀 변경 → 수갑대상 · 내 팀을 직접 바꾸는 건 ${RANKS[MAJOR]} 이상 · 장교(Officer) 이상 · Owner만 할 수 있어요`); }
       if (locked(from) && !fromOp) return tell(from, `${tagOf(teamOf(from))}는 팀을 바꿀 수 없어요`);
       const isOwner = from === ownerNick() || from === '운영자';
       if (o === '총사령관' && !isOwner) return tell(from, '총사령관(Owner)은 서버를 만든 사람만 될 수 있어요');
@@ -421,7 +423,8 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const o = findOrg(a.o);
       if (!o) return tell(from, '그런 팀이 없어요 · /조직 목록');
       if (locked(from) && !fromOp) return tell(from, `${tagOf(teamOf(from))}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
-      if (o !== '시민' && !fromOp) return tell(from, `${tagOf(o)}은(는) 더 높은 계급이 /team ${o} @${from} 로 배정해 줘야 들어가요`);
+      if (o !== '시민' && !fromOp && canSelf(from)) return apply('self', { o }, from, fromOp, fromDiscord); // 소령 · 장교 이상 · Owner 는 마음대로
+      if (o !== '시민' && !fromOp) { crime(from, 1, '무단 팀 변경'); save(); return tell(from, `🚨 무단 팀 변경 → 수갑대상 · ${tagOf(o)}은(는) 더 높은 계급이 /team ${o} @${from} 로 배정해 줘야 들어가요`); }
       if (o === '총사령관') return tell(from, '총사령관(Owner)은 서버를 만든 사람이에요');
       setTeam(from, o); save();
       return CB.say(`${ORGS[o].ico} ${from} 님 → ${tagOf(o)}`);
@@ -470,7 +473,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
         const E = S.exam[who];
         if (ARMY.includes(teamOf(who)) && !(E && E.shoot && E.jump)) { tell(who, '📝 진급하려면 /시험 사격 · /시험 점프 를 통과해야 해요'); return tell(from, `${who} 님은 아직 진급 시험을 통과하지 못했어요 (${E && E.shoot ? '사격 ✅' : '사격 ❌'} · ${E && E.jump ? '점프 ✅' : '점프 ❌'})`); }
       }
-      if (op === 'promote') delete S.exam[who]; // 시험은 진급마다 다시
+      if (op === 'promote') { delete S.exam[who]; delete S.exo[who]; } // 시험은 진급마다 다시 (다시 열어 줘야)
       (S.m[who] || (S.m[who] = { o: To, r: 0, p: 0 })).mr = nl; save();
       return CB.say(`${op === 'promote' ? '⬆ 진급' : '⬇ 강등'}: ${who} 님 → 🎖 ${RANKS[nl]} (${ORGS[To].ico} ${tagOf(To)})`);
     }
@@ -566,8 +569,18 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (Fo !== '시민' || fromOp) return;
       return crime(from, 3, '군부대 무단 침입');
     }
-    case 'exam': { // 📝 진급 시험 통과 (사격 · 점프)
+    case 'examopen': { // 📝 진급 시험 열기 · 닫기: 교육사(TMC) 이상 · OP
+      if (!fromOp && lvOf(from) < TMC_LV) return tell(from, '📝 진급 시험은 교육사(TMC) 이상이나 OP만 열 수 있어요');
+      if (!who) return tell(from, '/시험 열기 @닉 · /시험 닫기 @닉');
+      if (a.close) { delete S.exo[who]; save(); return tell(from, `📝 ${who} 님의 진급 시험을 닫았어요`); }
+      if (!ARMY.includes(teamOf(who))) return tell(from, `📝 ${who} 님은 군대 쪽 팀이 아니라서 진급 시험을 볼 수 없어요`);
+      S.exo[who] = { by: from, t: Date.now() + 600000 }; save();
+      tell(who, `📝 ${from} 님이 진급 시험을 열었어요 · 10분 안에 군부대에서 /시험 사격 · /시험 점프`);
+      return tell(from, `📝 ${who} 님의 진급 시험을 열었어요 (10분)`);
+    }
+    case 'exam': { // 📝 진급 시험 통과 (사격 · 점프) · 교육사(TMC) 이상이 열어 준 시험만
       if (!ARMY.includes(Fo) || (a.kind !== 'shoot' && a.kind !== 'jump')) return;
+      if (!examOpen(from)) return tell(from, '📝 시험이 닫혀 있어요 · 교육사(TMC) 이상이 /시험 열기 @닉 으로 열어 줘야 해요');
       const E = S.exam[from] || (S.exam[from] = {});
       E[a.kind] = 1; save();
       tell(from, `📝 ${a.kind === 'shoot' ? '사격' : '점프'} 시험 합격!${E.shoot && E.jump ? ' · 이제 장교(Officer) 이상이 /진급 시켜 줄 수 있어요' : ` · ${a.kind === 'shoot' ? '/시험 점프' : '/시험 사격'} 도 통과해야 해요`}`);
@@ -842,6 +855,7 @@ function examStart(kind, c) {
   const T = S.town, t = teamOf(me());
   if (!T) return c.say('📝 아직 군부대가 없어요');
   if (!ARMY.includes(t)) return c.say('📝 진급 시험은 군대 쪽 팀만 볼 수 있어요');
+  if (!examOpen(me())) return c.say('📝 진급 시험은 교육사(TMC) 이상이 /시험 열기 @닉 으로 열어 줘야 볼 수 있어요 (10분 동안)');
   if (EX) return c.say('📝 이미 시험 중이에요');
   const p = pos(), dx = Math.floor(p.x) - T.x, dz = Math.floor(p.z) - T.z;
   if (!(dx >= -46 && dx <= -22 && Math.abs(dz) <= 22)) return c.say('📝 시험은 군부대 안에서만 볼 수 있어요');
@@ -874,11 +888,12 @@ CB.on('shot', (x, y, z, id) => {
   if (++EX.hits >= 5) return examEnd(true, '🎯 사격 시험 통과!');
   EX.t = (EX.t + 1 + Math.floor(Math.random() * 2)) % 3;
 });
-CB.command('시험', '/시험 — 내 진급 시험 결과 · /시험 사격 · /시험 점프 (군부대 안)', (a, c) => {
+CB.command('시험', '/시험 — 내 진급 시험 결과 · /시험 사격 · /시험 점프 (군부대 안 · 시험이 열려 있을 때) · /시험 열기 @닉 (교육사(TMC) 이상 · OP)', (a, c) => {
+  if (a[0] === '열기' || a[0] === '닫기') return req('examopen', { who: a[1], close: a[0] === '닫기' ? 1 : 0 });
   if (a[0] === '사격') return examStart('shoot', c);
   if (a[0] === '점프') return examStart('jump', c);
-  const E = S.exam[me()] || {};
-  c.say(`📝 진급 시험: 사격 ${E.shoot ? '✅' : '❌'} · 점프 ${E.jump ? '✅' : '❌'} · /시험 사격 · /시험 점프`);
+  const E = S.exam[me()] || {}, O = examOpen(me());
+  c.say(`📝 진급 시험: 사격 ${E.shoot ? '✅' : '❌'} · 점프 ${E.jump ? '✅' : '❌'} · ${O ? `${O.by} 님이 열어 줌 (${Math.ceil((O.t - Date.now()) / 60000)}분 남음) · /시험 사격 · /시험 점프` : '시험이 닫혀 있어요 (교육사(TMC) 이상이 /시험 열기 @닉)'}`);
 }, { everyone: true });
 function dealerSpot() {
   if (S.dealer) return S.dealer;
