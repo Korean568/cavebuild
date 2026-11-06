@@ -394,7 +394,8 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const x = S.m[from] || (S.m[from] = { o: '시민', r: 0, p: 0 });
       if (o === '총사령관') delete x.self; else { x.o = o; x.self = 1; } // 군사계급(mr)은 그대로 둠 (군대로 돌아오면 다시 보임)
       x.sw = 1; if (!ARMY.includes(o)) delete S.leave[from];
-      save(); sendKit(from);
+      if (KITS[o] && Date.now() - (S.kitT[from] || 0) >= 300000) { S.kitT[from] = Date.now(); sendKit(from); } // 팀을 오가며 장비를 계속 받지 않게 (/장비 와 같은 5분)
+      save();
       return CB.say(`🔁 ${from} 님이 팀을 바꿨어요 → ${ORGS[o].ico} ${tagOf(o)}`);
     }
     case 'dc': { // 🎖 디스코드 서버 가입 여부 (내 게임이 알려 줌) → 멤버 · 게스트
@@ -428,6 +429,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (Fo === '시민') return tell(from, '이미 시민이에요');
       if (locked(from) && !fromOp) return tell(from, `${tagOf(Fo)}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
       if (Fo === '총사령관') return tell(from, '총사령관(Owner)은 서버를 만든 사람이라 나갈 수 없어요');
+      if (from === ownerNick() || from === '운영자') { setTeam(from, '시민'); save(); return CB.say(`👑 ${from} 님이 ${tagOf(Fo)}에서 나와 총사령관으로 돌아왔어요`); } // Owner가 /team 으로 잠깐 다른 팀이었음
       setTeam(from, '시민'); save();
       return CB.say(ARMY.includes(Fo) ? `🎖 ${from} 님이 ${tagOf(Fo)}에서 전역해 시민이 됐어요` : `${from} 님이 ${tagOf(Fo)}에서 나와 시민이 됐어요`);
     }
