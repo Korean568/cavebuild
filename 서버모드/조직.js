@@ -124,7 +124,7 @@ const LAW = ['경찰', '군사경찰', '특수임무대', '장교', 'MP사령관
 const ARMY = ['육군', '의무병', '군사경찰', '특수임무대', '장교', '교육사', 'MP사령관', '교육사령관', '부사령관']; // 군대 (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
 // 🎖 군사계급 (CLKKY ARMY 계급 구성 · 부서와 따로): 군대 팀원마다 하나 · /진급 · /강등 으로 올리고 내림 · 부서 이동은 /team · 전역하면 처음부터
 //   대장(General)은 총사령관(Owner)만 · 진급으로는 대령(Colonel)까지
-//   군대가 아닌 사람: 멤버(디코 VIP 서버 가입) · 게스트(미가입) · 수감자(감옥) · 탈옥수 · 사형수(밴 예정) — /계급 @닉 상태 (OP)
+//   군대가 아닌 사람: 이등병(디스코드 서버 가입자는 무조건) · 멤버(겜벗 공식 커뮤니티 CLKKY CITY 가입) · 게스트(미가입) · 수감자(감옥) · 탈옥수 · 사형수(밴 예정) — /계급 @닉 상태 (OP)
 const RANKS = ['이등병', '일등병', '상등병', '병장', '하사', '중사', '상사', '원사', '소위', '중위', '대위', '소령', '중령', '대령', '대장'];
 const RANK_EN = { 이등병: 'Private', 일등병: 'Private First Class', 상등병: 'Corporal', 병장: 'Sergeant', 하사: 'Staff Sergeant', 중사: 'Sergeant First Class', 상사: 'Master Sergeant', 원사: 'Sergeant Major', 소위: 'Second Lieutenant', 중위: 'First Lieutenant', 대위: 'Captain', 소령: 'Major', 중령: 'Lieutenant Colonel', 대령: 'Colonel', 대장: 'General', 멤버: 'Member', 게스트: 'Guest', 수감자: 'Prisoner', 탈옥수: 'Escaped Prisoner', 사형수: 'Death row inmate' };
 const STATUS = ['멤버', '게스트', '탈옥수', '사형수']; // OP가 정하는 상태 (수감자는 감옥에 있으면 저절로)
@@ -160,7 +160,7 @@ function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, st: s.st || {}, dc: s.dc || {}, exo: s.exo || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, exo: s.exo || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -191,7 +191,8 @@ function rankOf(nick) { // 머리 위 · 안내판에 뜨는 계급: 수감자 �
   if (S.jail && S.jail[nick] > 0) return '수감자';
   const st = S.st[nick]; if (st === '사형수' || st === '탈옥수') return st;
   const i = mrOf(nick); if (i >= 0) return RANKS[i];
-  return st === '멤버' || S.dc[nick] ? '멤버' : '게스트';
+  if (S.dc[nick]) return RANKS[0]; // 💬 디스코드 서버 가입자는 무조건 이등병 (군대가 아니어도)
+  return st === '멤버' || S.cm[nick] ? '멤버' : '게스트'; // 🏙 겜벗 공식 커뮤니티 가입 → 멤버 · 아니면 게스트
 }
 function setTeam(nick, o) { if (!ARMY.includes(o)) { delete S.leave[nick]; if (S.m[nick]) delete S.m[nick].mr; } if (S.m[nick]) { delete S.m[nick].sw; delete S.m[nick].self; } const x = S.m[nick]; if (o === '시민') { if (x) { x.o = '시민'; } else return; } else if (x) x.o = o; else S.m[nick] = { o, r: 0, p: 0 }; }
 // 📝 고소: 범죄를 당한 사람 이름으로 고소가 자동으로 들어가요 → 고소 중 가장 높은 등급이 지명수배 등급
@@ -401,9 +402,10 @@ function apply(op, a, from, fromOp, fromDiscord) {
       save();
       return CB.say(`🔁 ${from} 님이 팀을 바꿨어요 → ${ORGS[o].ico} ${tagOf(o)}`);
     }
-    case 'dc': { // 🎖 디스코드 서버 가입 여부 (내 게임이 알려 줌) → 멤버 · 게스트
+    case 'dc': { // 🎖 디스코드 서버 가입(→ 이등병) · 겜벗 공식 커뮤니티 가입(→ 멤버) 여부 (내 게임이 알려 줌)
       if (!from) return;
       if (fromDiscord) S.dc[from] = 1; else delete S.dc[from];
+      if (a.c) S.cm[from] = 1; else delete S.cm[from]; // 🏙 겜벗 공식 커뮤니티 가입 → 멤버
       return save();
     }
     case 'status': { // 🎖 /계급 @닉 상태: 멤버 · 게스트 · 탈옥수 · 사형수 (OP)
@@ -1390,7 +1392,7 @@ CB.command('계급', '/계급 — 🎖 계급표 · 군대 팀원들의 계급 �
   if (a[0] && a[1]) return req('status', { who: a[0], s: a[1] });
   const en = (r) => `${r}(${RANK_EN[r]})`;
   c.say(`🎖 ${ARMY_NAME} 계급 (위 → 아래): ` + [...RANKS].reverse().map(en).join(' · '));
-  c.say('군대가 아닌 사람: ' + ['멤버', '게스트', '수감자', '탈옥수', '사형수'].map(en).join(' · '));
+  c.say('군대가 아닌 사람: ' + ['멤버', '게스트', '수감자', '탈옥수', '사형수'].map(en).join(' · ') + ' · 💬 디스코드 서버 가입자는 무조건 이등병 · 🏙 멤버 = 겜벗 공식 커뮤니티 CLKKY CITY 가입');
   const L = Object.keys(S.m).filter((n) => ARMY.includes(teamOf(n))).sort((p, q) => mrOf(q) - mrOf(p));
   if (ownerNick()) c.say(`👑 ${ownerNick()} · ${en(RANKS[RANKS.length - 1])} · 총사령관`);
   for (const n of L.slice(0, 30)) c.say(`🎖 ${n} · ${en(rankOf(n))} · ${ORGS[teamOf(n)].ico} ${tagOf(teamOf(n))}`);
@@ -1449,7 +1451,7 @@ let payT = 0, curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN =
 let dcT = 5;
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
-  if ((dcT -= dt) <= 0) { dcT = 60; const n = me(); if (n && !!S.dc[n] !== !!CB.discord()) req('dc', {}); } // 🎖 디스코드 서버에 들어와 있으면 멤버 · 아니면 게스트
+  if ((dcT -= dt) <= 0) { dcT = 60; const n = me(), cm = !!(CB.community && CB.community()); if (n && (!!S.dc[n] !== !!CB.discord() || !!S.cm[n] !== cm)) req('dc', { c: cm ? 1 : 0 }); } // 🎖 디스코드 서버에 들어와 있으면 멤버 · 아니면 게스트
   const T = S.train, x = mine();
   if (T && x && T.kind === '체력' && inTrain(me(), T) && Date.now() < T.until) {
     const p = pos();
