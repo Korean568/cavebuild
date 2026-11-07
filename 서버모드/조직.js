@@ -75,19 +75,20 @@ const KITS = {
 };
 // 👮 팀 복장 (팀은 복장과 머리 위 닉네임 색으로 알아봐요): top 웃옷 · bottom 바지 · hat 모자 · badge 배지 색
 const OUTFITS = {
-  '경찰': { top: 0x1f3a7a, bottom: 0x161c2c, hat: 'cap', hatC: 0x1f3a7a, badge: 0xf2c418 },
-  '육군': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x4f5a34 },
-  '의무병': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0xeeeeee, badge: 0xe02828 },
-  '군사경찰': { top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x1a1a1a, badge: 0xfbbf24 },
-  '특수임무대': { top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0x9ca3af },
-  '장교': { top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 },
-  '교육사': { top: 0x2f6a3a, bottom: 0x2a3a26, hat: 'beret', hatC: 0x1f4a2a, badge: 0x4ade80 },
-  'MP사령관': { top: 0x2a2f22, bottom: 0x1e2219, hat: 'beret', hatC: 0x9a1a1a, badge: 0xf59e0b },
-  '교육사령관': { top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 },
-  '부사령관': { top: 0x22263a, bottom: 0x181a26, hat: 'cap', hatC: 0x22263a, badge: 0xc0c6d0 },
-  '총사령관': { top: 0x1c2030, bottom: 0x14161f, hat: 'cap', hatC: 0x1c2030, badge: 0xffd040 },
-  '무법자': { top: 0x262626, bottom: 0x3a2e24, hat: 'bandana', hatC: 0xb02020 },
-  '죄수': { top: 0xe06a1a, bottom: 0xe06a1a },
+  // style: 게임이 그리는 진짜 같은 복장 (디지털 무늬 전투복 · 경찰 근무복 · 완장 · 방탄모 · 조끼 …) · 나머지는 style 을 모르는 옛 게임용
+  '경찰': { style: 'police', top: 0x2f7d77, bottom: 0x1d2742, hat: 'cap', hatC: 0x1d2742, badge: 0xf2c418 },
+  '육군': { style: 'army', top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x4f5a34 }, // 디지털 무늬 전투복 · 위장포 방탄모 · 탄띠 · 전투화
+  '의무병': { style: 'medic', top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0xeeeeee, badge: 0xe02828 }, // + 적십자 완장 · 방탄모 적십자
+  '군사경찰': { style: 'mp', top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x1a1a1a, badge: 0xfbbf24 }, // + 검은 MP 헬멧 · MP 완장
+  '특수임무대': { style: 'swat', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0x9ca3af }, // 검은 전술복 · 방탄조끼 · 방탄 헬멧 · 장갑
+  '장교': { style: 'officer', top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 }, // 전투복 · 전투모 · 계급장
+  '교육사': { style: 'tmc', top: 0x2f6a3a, bottom: 0x2a3a26, hat: 'beret', hatC: 0x1f4a2a, badge: 0x4ade80 }, // 조교 모자 · 선글라스 · 조교 완장
+  'MP사령관': { style: 'mpcmd', top: 0x2a2f22, bottom: 0x1e2219, hat: 'beret', hatC: 0x9a1a1a, badge: 0xf59e0b }, // 검은 베레모 · MP 완장
+  '교육사령관': { style: 'tmccmd', top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 }, // 녹색 베레모
+  '부사령관': { style: 'staff', top: 0x3b4630, bottom: 0x3b4630, hat: 'cap', hatC: 0x3b4630, badge: 0xc0c6d0 }, // 근무복 · 정모 (은장)
+  '총사령관': { style: 'owner', top: 0x1b2033, bottom: 0x1b2033, hat: 'cap', hatC: 0x1b2033, badge: 0xffd040 }, // 예복 · 정모 금줄 · 금줄 견장 · 훈장
+  '무법자': { style: 'outlaw', top: 0x262626, bottom: 0x3a2e24, hat: 'bandana', hatC: 0xb02020 }, // 검은 후드 · 빨간 복면
+  '죄수': { style: 'prisoner', top: 0xe06a1a, bottom: 0xe06a1a }, // 주황 수의 · 수감 표시
 };
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
 const tagOf = (o) => (ORGS[o].key === ORGS[o].short ? o : `${o}(${ORGS[o].short})`); // 경찰(CP)
