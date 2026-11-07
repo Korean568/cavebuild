@@ -332,7 +332,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.243 — 🪲 조직 모드 버그 고침</h4>
+    <h4>🆕 v26.244 — 🪖 복귀 상담원 · 🎨 모드 블록 그림 고침</h4>
+    <ul><li>🪖 군부대 정문 바로 안쪽에 <b>복귀 상담원</b>이 생겼어요 · 휴가는 군부대로 돌아와도 저절로 끝나지 않고, 복귀 상담원에게 「복귀 신고」를 해야 끝나요 · 돌아와서 신고 안 하고 시간이 끝나면 수갑대상 (밖에 있으면 무단탈영)</li><li>🎨 모드 블록(조직 모드의 경찰 마크 · 군대 마크 · 위장 벽 · 감옥 벽 등)의 그림이 칸 왼쪽 위에 아주 작게만 그려지던 문제를 고쳤어요</li></ul>
+    <h4>v26.243 — 🪲 조직 모드 버그 고침</h4>
     <ul><li>🪲 이미 그 팀인데 /team 같은 팀 · /조직 가입 같은 팀 을 치면 무단 팀 변경으로 수갑대상이 되던 문제</li><li>🪲 OP가 /team 팀 으로 내 팀을 바꾸면 수갑대상이 되던 문제</li><li>🚓 경찰 등이 /team 시민 을 치면 탈퇴로 처리돼요 (군대는 전역소로 안내)</li><li>👑 Owner가 잠깐 군대였다가 전역소에서 전역하면 「총사령관으로 돌아왔어요」로 알려 줘요</li></ul>
     <h4>v26.242 — 🎖 전역소 · 🏖 휴가상담소</h4>
     <ul><li>🎖 입대소 안에 <b>전역 상담원</b>이 생겼어요 · 군대 팀은 여기서 우클릭해서 전역해요 (/조직 탈퇴 로는 안 돼요 · OP · 소령 · 장교 이상은 그대로)</li><li>🏖 입대소 안에 <b>휴가 상담원</b>이 생겼어요 · 10분 · 30분 휴가 동안은 군부대를 나가도 무단탈영이 아니고 밤 생활규칙도 괜찮아요 · 시간 안에 돌아와야 하고, 끝나고 1시간 뒤에 다시 갈 수 있어요</li><li>🪖 디스코드 가입자 자동 입대는 없앴어요 (계급은 그대로 이등병)</li></ul>
@@ -2210,7 +2212,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.243 — 🪲 Org mod fixes</h4>
+    <h4>🆕 v26.244 — 🪖 Return officer · 🎨 Mod block textures fixed</h4>
+    <ul><li>🪖 A <b>return officer</b> now stands just inside the army gate · leave no longer ends when you walk back in; report to the return officer to end it · if you come back but don't report before time runs out you become wanted (outside the base it's desertion)</li><li>🎨 Mod blocks (the org mod's police and army emblems, camo walls, jail walls and so on) were drawn tiny in the top-left corner of each block; they now fill the block</li></ul>
+    <h4>v26.243 — 🪲 Org mod fixes</h4>
     <ul><li>🪲 Typing /team or /조직 가입 with the team you're already on no longer makes you wanted for an unauthorized team change</li><li>🪲 OPs switching their own team with /team are no longer made wanted</li><li>🚓 /team 시민 now leaves the team for police and others (army members are sent to the discharge office)</li><li>👑 When the Owner discharges at the office after briefly joining the army, the message says they're back to 총사령관</li></ul>
     <h4>v26.242 — 🎖 Discharge office · 🏖 Leave office</h4>
     <ul><li>🎖 A <b>discharge officer</b> now stands inside the recruiting office · army members discharge by right-clicking them (/조직 탈퇴 no longer works for them · OPs, Majors and above, and Officers and above still can)</li><li>🏖 A <b>leave officer</b> stands there too · during a 10- or 30-minute leave you can leave the base without deserting and skip the night curfew · come back in time, and you can take leave again 1 hour after it ends</li><li>🪖 Discord auto-enlistment is removed (Discord members are still ranked Private)</li></ul>
@@ -9167,7 +9171,7 @@ const CB={version:'v26.164',
     const fid=o.id|0,id=fid>=1500&&fid<BLK_N&&!BL[fid]&&!IT[fid]?fid:modAlloc((modCur||'')+':'+(o.key||o.name),true),tile=modTile++;
     if(tile>=ATW*ATH)throw new Error('그림 칸이 다 찼어요');
     if(running){clearTimeout(modRemeshT);modRemeshT=setTimeout(()=>{for(const c of chunks.values())if(c)c.needsMesh=true;},400);} // 세계가 이미 그려진 뒤에 생긴 블록 → 다시 그림 (안 보이던 건물이 보이게)
-    const col=o.color||[180,180,180];T(tile,o.paint||((u,v,x,y)=>{const e=Math.min(x,y,TS-1-x,TS-1-y),k=(.86+.14*h2(x,y,tile*7+1))*(e<2?.7:1);return [col[0]*k,col[1]*k,col[2]*k];}));
+    const col=o.color||[180,180,180],pf=o.paint,S16=TS/16;T(tile,pf?(o.hd?pf:(u,v,x,y)=>pf(u,v,Math.floor(x/S16),Math.floor(y/S16))):((u,v,x,y)=>{/* 🧩 모드 그림은 16×16 칸 기준 (x, y = 0~15) · 게임 칸(TS)에 맞춰 크게 · o.hd 면 TS 그대로 */const e=Math.min(x,y,TS-1-x,TS-1-y),k=(.86+.14*h2(x,y,tile*7+1))*(e<2?.7:1);return [col[0]*k,col[1]*k,col[2]*k];}));
     const p={hard:o.hard||1.5,tool:o.tool||'pick',tier:o.tier||0};defB(id,o.name,tile,p);OPAQUE[id]=SOLID[id]=1;if(o.glow||o.light)EMIT[id]=1;if(o.light)LIGHT_SRC[id]=1;
     MOD_WSRC+=`\ndefB(${id},${JSON.stringify(o.name)},${tile},${JSON.stringify(p)});OPAQUE[${id}]=SOLID[${id}]=1;${o.glow||o.light?`EMIT[${id}]=1;`:''}${o.light?`LIGHT_SRC[${id}]=1;`:''}`;modWsrcChanged();
     actx.putImageData(AIMG,0,0);atlasTex.needsUpdate=true;ICON_CANVAS[id]=blockIcon(id);ICON[id]=ICON_CANVAS[id].toDataURL();return id;},

@@ -9,7 +9,7 @@
 // 🏴 불법 거래 상인 (NPC): 밤에만 나와서 시민 · 무법자에게 동전으로 무기를 팔아요 · 쓰러지면 다음 날 밤에 (/상인 · /상인 설정)
 // 🌙 생활규칙: 밤에는 경찰은 경찰서 구역, 군대는 군부대 안 (군대는 /외출 허가면 예외) · 밖에 60초 넘게 있으면 수갑대상
 // 🏙 모드를 깔면 부활 자리 근처 빈 땅에 도시 · 🚓 경찰서 · 🪖 군부대가 저절로 생겨요 (/도시 · OP는 /도시 짓기)
-// 🎖 전역: 입대소 안의 전역 상담원 (OP · 소령 · 장교 이상은 /조직 탈퇴도) · 🏖 휴가: 입대소 안의 휴가 상담원 (10 · 30분, 끝나고 1시간 뒤 다시) · 무단탈영: 군부대 정문의 빨간 선을 넘어 걸어 나가거나 군부대 안에서 /집 가기 (★★★ · 무법자)
+// 🎖 전역: 입대소 안의 전역 상담원 (OP · 소령 · 장교 이상은 /조직 탈퇴도) · 🏖 휴가: 입대소 안의 휴가 상담원 (10 · 30분, 끝나고 1시간 뒤 다시) → 돌아오면 정문 안쪽의 복귀 상담원에게 신고 (안 하면 시간이 끝날 때 수갑대상) · 무단탈영: 군부대 정문의 빨간 선을 넘어 걸어 나가거나 군부대 안에서 /집 가기 (★★★ · 무법자)
 // 🪪 외출: 장교(Officer) 이상이 /외출 @닉 [분] 으로 허가하면 군부대를 나가도 무단탈영이 아니에요 · 군부대로 돌아오면 외출 끝 · 시간을 넘기면 무단탈영 · /외출 취소 @닉
 // 🏰 도시 둘레에 성벽 (동 · 남 · 북 성문 · 성문 밖 길)
 // 🪖 입대: 시민이 입대소 · 경찰서의 상담원에게 우클릭 → 「네」 · 시민이 입대 없이 군부대에 들어가면 🏴 무법자 · 경찰 · 군대는 무법자가 안 되고 지명수배만
@@ -566,6 +566,12 @@ function apply(op, a, from, fromOp, fromDiscord) {
       delete S.leave[from]; save();
       return tell(from, `🪖 군부대로 복귀했어요 · ${vac ? '휴가가' : '외출이'} 끝났어요`);
     }
+    case 'vac-back': { // 🪖 복귀 상담원에게 휴가 복귀 신고 → 휴가 끝
+      const L = S.leave[from];
+      if (!L || !L.vac) return tell(from, '지금은 휴가 중이 아니에요');
+      delete S.leave[from]; S.vacT[from] = Date.now(); save();
+      return CB.say(`🪖 ${from} 님이 휴가에서 복귀했어요 (복귀 상담원)`);
+    }
     case 'discharge': { // 🎖 전역소에서 전역 (군대 → 시민)
       if (!ARMY.includes(Fo)) return tell(from, '군대 팀만 전역할 수 있어요');
       if (S.w[from] && !fromOp) return tell(from, '지명수배 중에는 전역할 수 없어요');
@@ -775,6 +781,7 @@ const RECRUITERS = {
   org_rec_army: { o: '육군', name: '🪖 입대 상담원', dx: -20, dz: 11, color: 0x55663a, q: `🪖 <b>${ARMY_NAME} 입대 상담원</b><br><br>입대하시겠어요?`, tag: '#7ec850' },
   org_discharge: { name: '🎖 전역 상담원', dx: -20, dz: 9, color: 0x3d4a2a, tag: '#c8d8a0', talk: () => dischargeDialog() }, // 입대소 안 (입대 상담원 양옆)
   org_vacation: { name: '🏖 휴가 상담원', dx: -20, dz: 13, color: 0x2f6a5a, tag: '#7ae0c0', talk: () => vacationDialog() },
+  org_return: { name: '🪖 복귀 상담원', dx: -25, dz: 4, color: 0x55663a, tag: '#a8e070', talk: () => returnDialog() }, // 군부대 정문 바로 안쪽 (길 옆)
   org_rec_police: { o: '경찰', name: '🚓 경찰 상담원', dx: 25, dz: 10, color: 0x1f3a7a, q: `🚓 <b>${POLICE_NAME} 상담원</b><br><br>경찰에 지원하시겠어요?`, tag: '#4aa8ff' },
   org_banker: { name: '🏦 은행원', dx: 41, dz: -10, color: 0x2a2f45, tag: '#ffd040', talk: () => bankDialog() },
   org_jobs: { name: '💼 직업 상담원', dx: 41, dz: 18, color: 0x2a6a7a, tag: '#7ad0e0', talk: () => jobDialog() },
@@ -795,6 +802,13 @@ for (const k in RECRUITERS) {
 }
 // 🎖 전역소 · 🏖 휴가상담소 (입대소 안): 전역은 여기서만 (OP는 /조직 탈퇴도) · 휴가는 10분 · 30분, 끝나고 1시간 뒤에 다시
 const VAC_GAP = 3600000;
+let vacNoteT = 0;
+function returnDialog() { // 🪖 복귀 상담원 (정문 안쪽): 휴가 복귀 신고 → 휴가 끝
+  const L = S.leave[me()];
+  if (!ARMY.includes(teamOf(me()))) return note('🪖 복귀 상담원: 군대 팀만 복귀 신고를 해요');
+  if (!L || !L.vac) return note('🪖 복귀 상담원: 지금은 휴가 중이 아니에요');
+  CB.dialog(`🪖 <b>${ARMY_NAME} 복귀 상담원</b><br><br>휴가에서 복귀하셨나요? 남은 시간 ${mmss(L.sec || 0)}<br><small>신고하면 휴가가 끝나고, 1시간 뒤에 다시 휴가를 갈 수 있어요</small>`, [['복귀 신고', () => req('vac-back')], ['아니요']]);
+}
 function dischargeDialog() {
   const t = teamOf(me());
   if (!ARMY.includes(t)) return note('🎖 전역 상담원: 군대 팀만 전역할 수 있어요');
@@ -807,7 +821,7 @@ function vacationDialog() {
   if (L) return note(`🏖 휴가 상담원: 이미 ${L.vac ? '휴가' : '외출'} 중이에요 · 남은 시간 ${mmss(L.sec || 0)} · 군부대로 돌아오면 끝나요`);
   const left = (S.vacT[me()] || 0) + VAC_GAP - Date.now();
   if (left > 0) return note(`🏖 휴가 상담원: 휴가는 끝나고 1시간 뒤에 다시 신청할 수 있어요 (${Math.ceil(left / 60000)}분 남음)`);
-  CB.dialog(`🏖 <b>${ARMY_NAME} 휴가 상담원</b><br><br>휴가를 신청하시겠어요?<br><small>휴가 동안은 군부대를 나가도 무단탈영이 아니에요 · 시간 안에 돌아오지 않으면 무단탈영</small>`, [['10분 휴가', () => req('vacation', { min: 10 })], ['30분 휴가', () => req('vacation', { min: 30 })], ['아니요']]);
+  CB.dialog(`🏖 <b>${ARMY_NAME} 휴가 상담원</b><br><br>휴가를 신청하시겠어요?<br><small>휴가 동안은 군부대를 나가도 무단탈영이 아니에요 · 돌아오면 정문 안쪽의 복귀 상담원에게 신고 · 시간 안에 못 돌아오면 무단탈영</small>`, [['10분 휴가', () => req('vacation', { min: 10 })], ['30분 휴가', () => req('vacation', { min: 30 })], ['아니요']]);
 }
 // 🏦 은행 · 💼 직업소개소 대화창 (대화창 버튼에서 새 대화창을 열 땐 먼저 닫히는 걸 기다림)
 const nextDlg = (f) => () => { setTimeout(f, 30); };
@@ -1369,7 +1383,7 @@ CB.command('도시', '/도시 — 🏙 도시 · 🚓 경찰서 · 🪖 군부�
   c.say(`🚓 ${POLICE_NAME} 경찰서: ${f(28, 7)} (도시 동쪽) · 🪖 ${ARMY_NAME} 군부대: ${f(-34, 0)} (도시 서쪽)`);
   c.say(`🏦 은행: ${f(41, -8)} · 💼 직업소개소: ${f(41, 17)} (도시 동쪽)`);
   c.say(`🍳 음식점: ${f(41, 8)} (도시 동쪽)${S.village ? ` · 🏘 마을: ${f(0, S.village.s * (TOWN_Z + VIL_D / 2))} (${S.village.s > 0 ? '북문' : '남문'} 밖)` : ''}`);
-  c.say(`🪖 입대 상담원: ${f(-20, 11)} · 🎖 전역 상담원: ${f(-20, 9)} · 🏖 휴가 상담원: ${f(-20, 13)} (입대소 · 군부대 정문 옆 건물) · 🚓 경찰 상담원: ${f(25, 10)} (경찰서 접수대 뒤)`);
+  c.say(`🪖 입대 상담원: ${f(-20, 11)} · 🎖 전역 상담원: ${f(-20, 9)} · 🏖 휴가 상담원: ${f(-20, 13)} (입대소 · 군부대 정문 옆 건물) · 🪖 복귀 상담원: ${f(-25, 4)} (군부대 정문 안쪽) · 🚓 경찰 상담원: ${f(25, 10)} (경찰서 접수대 뒤)`);
   c.say('🏕 /기지 로 우리 팀 기지(경찰서 · 군부대)로 갈 수 있어요');
 }, { everyone: true });
 const nearSpot = (dx, dz) => { const T = S.town, p = pos(); return !T || CB.isOp() || (CB.dimNow() === 'over' && Math.hypot(p.x - (T.x + dx), p.z - (T.z + dz)) <= 9); };
@@ -1519,7 +1533,9 @@ CB.onTick((dt) => {
       if (v.sec === 60 && v.out) tell(n, '⏰ 외출 시간이 1분 남았어요 · 군부대로 돌아오세요');
       if (v.sec > 0) continue;
       delete S.leave[n]; if (v.vac) S.vacT[n] = Date.now(); save();
-      if (v.out && ARMY.includes(teamOf(n)) && !CB.opOf(n)) desert(n, `무단탈영 (${v.vac ? '휴가' : '외출'} 시간 초과)`); else tell(n, `🪪 ${v.vac ? '휴가' : '외출 허가'} 시간이 끝났어요`);
+      const P = CB.playerPos ? CB.playerPos(n) : null, inBase = !!(P && S.town && Math.floor(P.x) - S.town.x >= -46 && Math.floor(P.x) - S.town.x <= -22 && Math.abs(Math.floor(P.z) - S.town.z) <= 22);
+      if (v.out && v.vac && inBase && ARMY.includes(teamOf(n))) crime(n, 1, '휴가 복귀 미신고'); // 돌아왔는데 복귀 상담원에게 신고 안 함 → 수갑대상
+      else if (v.out && ARMY.includes(teamOf(n)) && !CB.opOf(n)) desert(n, `무단탈영 (${v.vac ? '휴가' : '외출'} 시간 초과)`); else tell(n, `🪪 ${v.vac ? '휴가' : '외출 허가'} 시간이 끝났어요`);
     }
     if (++payT >= 600) { // 💰 월급 (10분마다 · 접속 중인 사람) → 통장: 경찰 · 군대는 계급만큼 · 시민은 직업이 있으면
       payT = 0;
@@ -1576,8 +1592,9 @@ CB.onTick((dt) => {
       if (inBaseP && !inside && Math.hypot(p.x - inBaseP.x, p.z - inBaseP.z) < 20) req('desert');
       inBaseP = inside ? { x: p.x, z: p.z } : null;
       const pass = S.leave[me()];
-      if (inside && pass && pass.out) req('pass-back');
-      if (inside && !pass && dx >= -26 && Math.abs(dz) <= 5) note('⚠ 앞의 빨간 선을 넘으면 무단탈영이에요 (지명수배 ★★★) · 나가려면 장교의 /외출 허가');
+      if (inside && pass && pass.out && !pass.vac) req('pass-back');
+      if (inside && pass && pass.out && pass.vac && Date.now() > vacNoteT) { vacNoteT = Date.now() + 20000; note('🏖 휴가에서 돌아왔으면 정문 안쪽의 🪖 복귀 상담원에게 신고하세요 (안 하면 휴가 시간이 끝날 때 수갑대상)'); }
+      if (inside && !pass && dx >= -26 && Math.abs(dz) <= 5) note('⚠ 앞의 빨간 선을 넘으면 무단탈영이에요 (지명수배 ★★★) · 나가려면 장교의 /외출 허가나 입대소의 휴가 상담원');
     } else inBaseP = null;
   }
   { // 🌙 생활규칙: 밤에는 경찰은 경찰서 구역, 군대는 군부대 안 (군대는 외출 허가가 있으면 예외) · 밖에 60초 넘게 있으면 수갑대상
