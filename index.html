@@ -332,7 +332,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.240 — 🏙 멤버 = 공식 커뮤니티 · 💬 디스코드 = 이등병</h4>
+    <h4>🆕 v26.241 — 🪖 디스코드 가입자 자동 입대</h4>
+    <ul><li>🪖 디스코드 서버에 가입한 시민은 조직 모드 서버에 들어오면 <b>육군 · 이등병</b>으로 자동 입대해요 (처음 한 번만 · 전역하면 다시 안 끌려가요 · 경찰 등 다른 팀은 그대로)</li><li>🏙 공식 커뮤니티 가입 확인을 더 가볍게 바꿨어요</li></ul>
+    <h4>v26.240 — 🏙 멤버 = 공식 커뮤니티 · 💬 디스코드 = 이등병</h4>
     <ul><li>🏙 조직 모드의 <b>멤버</b> · <b>게스트</b>는 이제 겜벗 <b>공식 커뮤니티(CLKKY CITY)</b> 가입으로 나눠요 (가입하면 멤버 · 5분 안에 반영)</li><li>💬 디스코드 서버에 가입한 사람은 군대가 아니어도 무조건 <b>이등병</b>이에요 (군대에서 더 높은 계급이면 그 계급)</li></ul>
     <h4>v26.239 — 🧱 방벽 · 🥢 차린 음식 없앰</h4>
     <ul><li>🧱 <b>방벽</b> (작업대: 강철 1 + 조약돌 4 → 4개): 회색 콘크리트 방호벽 · 폭탄 · 핵에도 안 부서지고 철 곡괭이 이상으로만 캘 수 있어요</li><li>🥢 음식을 바닥에 <b>차려 놓는 기능</b>을 없앴어요 · 예전 세계에 차려 둔 음식도 사라져요 (접시 요리 · 수프 먹기는 그대로)</li></ul>
@@ -2204,7 +2206,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.240 — 🏙 Member = official community · 💬 Discord = Private</h4>
+    <h4>🆕 v26.241 — 🪖 Discord members auto-enlist</h4>
+    <ul><li>🪖 Citizens who joined the Discord server are automatically enlisted in the army as a <b>Private</b> when they join an org-mod server (only once · they aren't pulled back after discharge · other teams like police stay as they are)</li><li>🏙 The official community check is now lighter</li></ul>
+    <h4>v26.240 — 🏙 Member = official community · 💬 Discord = Private</h4>
     <ul><li>🏙 In the org mod, <b>Member</b> and <b>Guest</b> now depend on joining the official 겜벗 community <b>CLKKY CITY</b> (updates within 5 minutes)</li><li>💬 Anyone who joined the Discord server is at least a <b>Private</b>, even outside the army (army members keep any higher rank)</li></ul>
     <h4>v26.239 — 🧱 Barricade · 🥢 Placed food removed</h4>
     <ul><li>🧱 <b>Barricade</b> (bench: 1 steel + 4 cobblestone → 4): a gray concrete barrier that survives bombs and nukes and can only be mined with an iron pickaxe or better</li><li>🥢 Placing food on the ground is gone · food already placed in old worlds disappears (plated dishes and soups still work)</li></ul>
@@ -6015,8 +6019,9 @@ async function accAuth(kind,nick,pw){const owned=legacyOwned((nick||'').trim()),
 function logOut(){const t=accToken();if(t)cbApi({action:'logout',token:t}).catch(()=>{});try{localStorage.removeItem(TKEY);localStorage.removeItem(ACCK);localStorage.removeItem(NKEY);}catch(e){}ACC=null;NICK='';}
 function nickNow(){return ACC&&accToken()?ACC.nick:'';} // 로그인한 닉네임 (서버 계정)
 function accOwned(){return ACC&&accToken()?(ACC.owned||[]):[];}
-async function accRefresh(){if(!accToken())return;try{const d=await cbApi({action:'me',token:accToken()});accSave(d.user);}catch(e){if(/로그인이 끝났/.test(e.message))logOut();}try{refreshWard();}catch(e){}accComm();}
-let ACC_COMM=false,accCommT=0;async function accComm(){if(!accToken()||!CB_ONSITE)return;accCommT=Date.now();try{const d=await cbApi({action:'cm_list',token:accToken()});ACC_COMM=!!(d&&d.me&&d.me.reward&&d.me.reward.member);}catch(e){}} // 🏙 겜벗 공식 커뮤니티(CLKKY CITY)에 가입했나 (조직 모드의 멤버 · 게스트) · 5분마다 다시 봄
+async function accRefresh(){if(!accToken())return;accCommT=Date.now();let off=null;try{const d=await cbApi({action:'me',token:accToken()});accSave(d.user);off=d.user&&d.user.official;}catch(e){if(/로그인이 끝났/.test(e.message))logOut();}try{refreshWard();}catch(e){}if(typeof off==='boolean')ACC_COMM=off;else accComm(true);}
+let ACC_COMM=false,accCommT=0;async function accComm(old){if(!accToken()||!CB_ONSITE)return;accCommT=Date.now();try{if(!old){const d=await cbApi({action:'me',token:accToken()});if(d&&d.user){accSave(d.user);if(typeof d.user.official==='boolean'){ACC_COMM=d.user.official;return;}}}
+  const d=await cbApi({action:'cm_list',token:accToken()});ACC_COMM=!!(d&&d.me&&d.me.reward&&d.me.reward.member);}catch(e){}} // 🏙 겜벗 공식 커뮤니티(CLKKY CITY)에 가입했나 (조직 모드의 멤버 · 게스트) · 5분마다 me 의 user.official (없으면 예전 cm_list)
 setInterval(()=>{if(running&&accToken()&&Date.now()-accCommT>300000)accComm();},60000); // 시작할 때 서버에서 최신 정보 (다른 곳에서 얻은 망토 등)
 setTimeout(accRefresh,1200);
 function cbHash(str){let a=0xdeadbeef,b=0x41c6ce57;for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);a=Math.imul(a^ch,2654435761);b=Math.imul(b^ch,1597334677);}a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);return (4294967296*(2097151&b)+(a>>>0)).toString(36).toUpperCase();}
@@ -9124,7 +9129,7 @@ const CB={version:'v26.164',
     return best?String(best.def.name):'';}, // 🧩 총으로 조준하고 있는 플레이어 닉네임 (40칸 · 없으면 '')
   outfit:(nick,o)=>{nick=String(nick);if(!o)delete MOD_OUTFIT[nick];else MOD_OUTFIT[nick]={top:o.top|0,bottom:o.bottom|0,hat:String(o.hat||''),hatC:o.hatC|0,badge:o.badge|0};}, // 🧩 복장: {top: 웃옷 색, bottom: 바지 색, hat: 'cap'|'helmet'|'beret'|'bandana', hatC, badge: 가슴 배지 색} · null 이면 벗음
   discord:()=>!!(ACC&&accToken()&&ACC.discord), // 🧩 우리 디스코드 서버에 들어와 있는지 (최근 디스코드 보상 확인 기준)
-  community:()=>!!(ACC&&accToken()&&ACC_COMM), // 🧩 겜벗 공식 커뮤니티(CLKKY CITY)에 가입했는지
+  community:()=>!!(ACC&&accToken()&&(typeof ACC.official==='boolean'?ACC.official:ACC_COMM)), // 🧩 겜벗 공식 커뮤니티(CLKKY CITY)에 가입했는지
   payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
   dim:(key,o)=>{key=String(key);o=o||{};if(DIM[key]&&!DIM[key].mod)return false; // 🧩 차원 만들기: {name, bg:[r,g,b], fog:[가까이,멀리], light, day, caveB, stars, spawn:{x,y,z}, noMobs, gen(data,cx,cz)} — gen 은 백그라운드에서도 돌아서 블록 번호(숫자)만 써야 해요
     DIM[key]={name:o.name||key,bg:o.bg||[.05,.05,.07],fog:o.fog||[10,60],light:o.light??.6,day:o.day??.5,caveB:o.caveB??.4,stars:o.stars??0,spawn:o.spawn||{x:.5,y:12,z:.5},noMobs:!!o.noMobs,mod:1};
