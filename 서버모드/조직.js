@@ -391,7 +391,9 @@ function apply(op, a, from, fromOp, fromDiscord) {
     case 'self': { // 🔁 내 팀 마음대로 바꾸기: 소령 이상 · 장교(Officer) 부서 이상 · Owner (한 번 바꾼 사람은 다시 바꿀 수 있어요)
       const o = findOrg(a.o);
       if (!o) return tell(from, '그런 팀이 없어요 · ' + TEAMS.map((t) => t.key).join(' · '));
-      if (!canSelf(from)) { crime(from, 1, '무단 팀 변경'); save(); return tell(from, `🚨 무단 팀 변경 → 수갑대상 · 내 팀을 직접 바꾸는 건 ${RANKS[MAJOR]} 이상 · 장교(Officer) 이상 · Owner만 할 수 있어요`); }
+      if (o === teamOf(from)) return tell(from, `이미 ${tagOf(o)}이에요`);
+      if (o === '시민' && !fromOp && !canSelf(from)) return apply('leave', {}, from, fromOp, fromDiscord); // 시민으로 = 탈퇴 (군대는 전역소로 안내)
+      if (!canSelf(from) && !fromOp) { crime(from, 1, '무단 팀 변경'); save(); return tell(from, `🚨 무단 팀 변경 → 수갑대상 · 내 팀을 직접 바꾸는 건 ${RANKS[MAJOR]} 이상 · 장교(Officer) 이상 · Owner만 할 수 있어요`); }
       if (locked(from) && !fromOp) return tell(from, `${tagOf(teamOf(from))}는 팀을 바꿀 수 없어요`);
       const isOwner = from === ownerNick() || from === '운영자';
       if (o === '총사령관' && !isOwner) return tell(from, '총사령관(Owner)은 서버를 만든 사람만 될 수 있어요');
@@ -425,6 +427,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const o = findOrg(a.o);
       if (!o) return tell(from, '그런 팀이 없어요 · /조직 목록');
       if (locked(from) && !fromOp) return tell(from, `${tagOf(teamOf(from))}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
+      if (o === teamOf(from)) return tell(from, `이미 ${tagOf(o)}이에요`);
       if (o === '시민' && ARMY.includes(teamOf(from)) && !fromOp && !canSelf(from)) return tell(from, '🎖 전역은 입대소 안의 전역 상담원에게 우클릭해서 해요 (군부대 정문 옆)');
       if (o !== '시민' && !fromOp && canSelf(from)) return apply('self', { o }, from, fromOp, fromDiscord); // 소령 · 장교 이상 · Owner 는 마음대로
       if (o !== '시민' && !fromOp) { crime(from, 1, '무단 팀 변경'); save(); return tell(from, `🚨 무단 팀 변경 → 수갑대상 · ${tagOf(o)}은(는) 더 높은 계급이 /team ${o} @${from} 로 배정해 줘야 들어가요`); }
@@ -567,6 +570,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!ARMY.includes(Fo)) return tell(from, '군대 팀만 전역할 수 있어요');
       if (S.w[from] && !fromOp) return tell(from, '지명수배 중에는 전역할 수 없어요');
       setTeam(from, '시민'); save();
+      if (from === ownerNick() || from === '운영자') return CB.say(`👑 ${from} 님이 ${tagOf(Fo)}에서 나와 총사령관으로 돌아왔어요`); // Owner가 /team 으로 잠깐 군대였음
       return CB.say(`🎖 ${from} 님이 ${tagOf(Fo)}에서 전역해 시민이 됐어요`);
     }
     case 'vacation': { // 🏖 휴가상담소: 스스로 휴가 (10 · 30분) · 끝나고 1시간 뒤에 다시

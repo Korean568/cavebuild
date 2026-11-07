@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.242 — 🎖 전역소 · 🏖 휴가상담소</h4>
+    <h4>🆕 v26.243 — 🪲 조직 모드 버그 고침</h4>
+    <ul><li>🪲 이미 그 팀인데 /team 같은 팀 · /조직 가입 같은 팀 을 치면 무단 팀 변경으로 수갑대상이 되던 문제</li><li>🪲 OP가 /team 팀 으로 내 팀을 바꾸면 수갑대상이 되던 문제</li><li>🚓 경찰 등이 /team 시민 을 치면 탈퇴로 처리돼요 (군대는 전역소로 안내)</li><li>👑 Owner가 잠깐 군대였다가 전역소에서 전역하면 「총사령관으로 돌아왔어요」로 알려 줘요</li></ul>
+    <h4>v26.242 — 🎖 전역소 · 🏖 휴가상담소</h4>
     <ul><li>🎖 입대소 안에 <b>전역 상담원</b>이 생겼어요 · 군대 팀은 여기서 우클릭해서 전역해요 (/조직 탈퇴 로는 안 돼요 · OP · 소령 · 장교 이상은 그대로)</li><li>🏖 입대소 안에 <b>휴가 상담원</b>이 생겼어요 · 10분 · 30분 휴가 동안은 군부대를 나가도 무단탈영이 아니고 밤 생활규칙도 괜찮아요 · 시간 안에 돌아와야 하고, 끝나고 1시간 뒤에 다시 갈 수 있어요</li><li>🪖 디스코드 가입자 자동 입대는 없앴어요 (계급은 그대로 이등병)</li></ul>
     <h4>v26.241 — 🪖 디스코드 가입자 자동 입대</h4>
     <ul><li>🪖 디스코드 서버에 가입한 시민은 조직 모드 서버에 들어오면 <b>육군 · 이등병</b>으로 자동 입대해요 (v26.242에서 없앰)</li><li>🏙 공식 커뮤니티 가입 확인을 더 가볍게 바꿨어요</li></ul>
@@ -2210,7 +2212,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.242 — 🎖 Discharge office · 🏖 Leave office</h4>
+    <h4>🆕 v26.243 — 🪲 Org mod fixes</h4>
+    <ul><li>🪲 Typing /team or /조직 가입 with the team you're already on no longer makes you wanted for an unauthorized team change</li><li>🪲 OPs switching their own team with /team are no longer made wanted</li><li>🚓 /team 시민 now leaves the team for police and others (army members are sent to the discharge office)</li><li>👑 When the Owner discharges at the office after briefly joining the army, the message says they're back to 총사령관</li></ul>
+    <h4>v26.242 — 🎖 Discharge office · 🏖 Leave office</h4>
     <ul><li>🎖 A <b>discharge officer</b> now stands inside the recruiting office · army members discharge by right-clicking them (/조직 탈퇴 no longer works for them · OPs, Majors and above, and Officers and above still can)</li><li>🏖 A <b>leave officer</b> stands there too · during a 10- or 30-minute leave you can leave the base without deserting and skip the night curfew · come back in time, and you can take leave again 1 hour after it ends</li><li>🪖 Discord auto-enlistment is removed (Discord members are still ranked Private)</li></ul>
     <h4>v26.241 — 🪖 Discord members auto-enlist</h4>
     <ul><li>🪖 Citizens who joined the Discord server were automatically enlisted as a <b>Private</b> (removed in v26.242)</li><li>🏙 The official community check is now lighter</li></ul>
