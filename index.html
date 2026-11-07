@@ -9351,10 +9351,11 @@ function ofCamo(seed,pal=OF_GRANITE){return ofTex('camo'+seed+pal[0],(g,W,H)=>{f
 function ofPlain(hex,seed=1){return ofTex('pl'+hex+seed,(g,W,H)=>{const c=new THREE.Color(hex);for(let y=0;y<H;y++)for(let x=0;x<W;x++){const k=.9+.1*ofHash(x,y,seed)+((x+y)%2?.03:0);g.fillStyle=`rgb(${c.r*255*k|0},${c.g*255*k|0},${c.b*255*k|0})`;g.fillRect(x,y,1,1);}});} // 천 결
 function ofText(txt,bg,fg,W=64,H=24){return ofTex('tx'+txt+bg+fg+W,(g)=>{g.fillStyle=bg;g.fillRect(0,0,W,H);g.fillStyle=fg;g.font=`bold ${Math.round(H*.72)}px 'Malgun Gothic',sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillText(txt,W/2,H/2+1,W-4);},W,H);}
 function ofCross(bg='#f4f4f4',fg='#d81e1e'){return ofTex('cross'+bg+fg,(g,W,H)=>{g.fillStyle=bg;g.fillRect(0,0,W,H);g.fillStyle=fg;g.fillRect(W*.4,H*.18,W*.2,H*.64);g.fillRect(W*.18,H*.4,W*.64,H*.2);});}
-function ofM(key,tex,col=0xffffff,r=.9,m=0){return OF_MAT[key]||(OF_MAT[key]=new THREE.MeshStandardMaterial({map:tex,color:col,roughness:r,metalness:m}));}
+function ofM(key,tex,col=0xffffff,r=.9,m=0){if(OF_MAT[key])return OF_MAT[key];const x=new THREE.MeshStandardMaterial({map:tex,color:col,roughness:r,metalness:m});x.userData.ofk=key;return OF_MAT[key]=x;}
 const ofSolid=(c,r=.8,m=0)=>ofM('s'+c+r+m,null,c,r,m);
 function ofTopTex(o){const s=o.style;return s==='swat'?ofPlain('#1d1e21',3):s==='police'?ofPlain('#2f7d77',4):s==='prisoner'?ofPlain('#e06a1a',5):s==='outlaw'?ofPlain('#26262a',6):s==='owner'?ofPlain('#1b2033',7):s==='staff'?ofPlain('#3b4630',8):ofCamo(11);} // 웃옷 무늬 (1인칭 소매도)
-function ofBuild(A,o,add){const s=o.style,F=v=>-.14-v,TOP=ofM('top'+s,ofTopTex(o)),POCK=ofM('pk'+s,ofTopTex(o),0xb8b8b8);
+function ofBuild(A,o,add0){const s=o.style,F=v=>-.14-v,DECO=new Set(['nm','pol','sw','sw2','pn','pn2','xb','mpb','tb','xh','mph','tc']), // 글자 · 그림판은 그림 한 장을 통째로 (게임 상자는 크기만큼 그림을 반복해서 귀퉁이만 보임)
+    add=(par,w,h,d,mat,x,y,z)=>{if(!DECO.has(mat.userData.ofk))return add0(par,w,h,d,mat,x,y,z);const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);par.add(m);A.outfitParts.push(m);return m;},TOP=ofM('top'+s,ofTopTex(o)),POCK=ofM('pk'+s,ofTopTex(o),0xb8b8b8);
   const BOT=s==='police'?ofM('bp',ofPlain('#1d2742',2)):s==='owner'?TOP:s==='staff'?TOP:s==='outlaw'?ofM('bo',ofPlain('#33465e',9)):s==='prisoner'?TOP:TOP;
   const BLK=ofSolid(0x18181a,.5,.2),BELT=s==='police'||s==='swat'?BLK:ofSolid(0x3b3f2c,.8),GOLD=ofSolid(0xe0b83a,.35,.8),SILV=ofSolid(0xd0d4dc,.35,.8),WH=ofSolid(0xf2f2f2,.6);
   add(A.up,.52,.7,.28,TOP,0,.34,0);for(const a of A.arms)add(a,.215,.5,.235,TOP,0,-.2,0);for(const l of A.legs)add(l,.255,.77,.265,BOT,0,-.375,0);
