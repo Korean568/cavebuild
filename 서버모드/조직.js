@@ -1421,6 +1421,12 @@ function buildAnnex(C, G) {
   save();
   CB.say(`🪖 ${ARMY_NAME} 기지가 생겼어요! (서쪽 성벽 밖 · 생활관 · 회의실 · 의료센터 · 교도소 · 헬기 · 구급차) · 🚑 🚁 는 엔진을 우클릭하면 타요`);
 }
+// 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술: 의무병(과 OP)만 · 수술은 기지의 군사응급수술센터 · 군사권역외상센터 안에서
+if (CB.downed) CB.downed({
+  sec: 60,
+  medic: () => teamOf(me()) === '의무병' || CB.isOp(),
+  surgery: (x, y, z) => { const T = S.town; if (!T || !S.annex) return false; const dx = Math.floor(x) - T.x, dz = Math.floor(z) - T.z; return dz >= 6 && dz <= 20 && ((dx >= -124 && dx <= -110) || (dx >= -100 && dx <= -86)); },
+});
 let townT = 0;
 function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음 (예전에 지은 도시에 집이 없으면 집만)
   if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;

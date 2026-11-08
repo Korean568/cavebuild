@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.248 — ⛓ 감옥 차원 없앰 · 🎗 사단장</h4>
+    <h4>🆕 v26.249 — 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술</h4>
+    <ul><li>🩸 조직 모드 멀티에서는 체력이 0이 되면 바로 죽지 않고 <b>60초 동안 쓰러져</b> 누워 있어요 (못 움직임 · B 로 포기하고 부활) · 시간이 지나면 진짜로 죽어요</li><li>💓 의무병이 메디킷으로 쓰러진 사람을 치면 <b>심폐소생술</b> 미니게임 (초록 칸에서 스페이스 5번) · 성공하면 그 자리에서 일어나고 죽은 기록이 안 남아요 · 대신 <b>😵 기절</b> (느리고 6초마다 피가 나요) → 메디킷으로 <b>응급 처치 · 지혈</b> 을 받아야 해요</li><li>🩺 Shift+메디킷으로 쓰러진 사람을 <b>들고</b> 기지의 <b>군사응급수술센터 · 권역외상센터</b>에서 메디킷 우클릭 → <b>수술</b> 미니게임 (절개 · 지혈 · 봉합 3단계) · 성공하면 완전히 회복</li><li>🪲 v26.247 오타 고침: 경찰 · 죄수 · 무법자 복장을 그릴 때 오류가 나던 문제</li></ul>
+    <h4>v26.248 — ⛓ 감옥 차원 없앰 · 🎗 사단장</h4>
     <ul><li>⛓ 「감옥」 차원을 없앴어요 · 징역은 프론티어의 <b>5사단 교도소</b> 감방으로 (기지가 아직 없으면 경찰서 유치장) · /감옥 가기 · 나가기 도 교도소로</li><li>🎗 부사령관 → <b>사단장</b>(Division Cmdr) · 👑 총사령관은 1 ~ 5사단을 모두 지휘해요</li></ul>
     <h4>v26.247 — 🪖 CLKKY ARMY 기지 · 1 ~ 5사단 · 🎖 정복 · 💬 채팅</h4>
     <ul><li>🪖 서쪽 성벽 밖에 큰 <b>CLKKY ARMY 기지</b> (120×112칸 · 방장이 서쪽으로 가까이 가면 지어져요): 육군 · 해군 · 공군 · 해병대 · 군사경찰 · 교육부 생활관, 사령관 · 고위 간부 · 부사관 · AFMPC 회의실, 특임대 작전 회의소, 총기 교체소, 교육소, 긴급 집합소, 5사단 교도소, 군사경상 · 중상의료센터 · 권역외상센터 · 응급수술센터 · 재활치료센터</li><li>🚑 구급차 2대 · 🚁 헬기 · 의무 헬기 (블록으로 지은 탈것 · 엔진을 우클릭하면 타요)</li><li>🪖 1사단 육군 · ⚓ 2사단 해군 · ✈ 3사단 공군 · 🦅 4사단 해병대 · ⛓ 5사단 교도소 (교도관: 군사경찰 · 경찰) · 입대 상담원에게 사단을 골라 입대 · 총사령관도 군대예요</li><li>⛓ 기지가 있으면 감옥은 프론티어의 5사단 교도소예요 · 쇠창살 사이로 빛이 들어요</li><li>🎖 군대는 <b>정복</b> (육군 신형 피콕그린 · 해군 감색 · 공군 청회색 · 해병대 팔각모 · 군사경찰 검은 행사복 · 계급마다 소매 금줄)</li><li>💬 채팅창을 안 열면 새 메시지만 10초 보이고 사라져요 (열면 1시간치) · 명령어는 맨 앞이 / 일 때만 실행돼요</li></ul>
@@ -2222,7 +2224,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.248 — ⛓ Jail dimension removed · 🎗 Division Commander</h4>
+    <h4>🆕 v26.249 — 🩸 Downed · 💓 CPR · 🩺 Surgery</h4>
+    <ul><li>🩸 In org-mod multiplayer, reaching 0 HP leaves you <b>downed for 60 seconds</b> instead of dying (you can't move · press B to give up and respawn) · after that you really die</li><li>💓 A medic hitting a downed player with a medkit starts a <b>CPR</b> minigame (press Space in the green zone 5 times) · on success they get up on the spot and no death is recorded, but they're <b>😵 unconscious</b> (slow and bleeding every 6 seconds) until they get <b>first aid and bleeding control</b> from a medkit</li><li>🩺 Shift+medkit <b>carries</b> a downed player; at the base's <b>emergency surgery or trauma center</b>, right-click the medkit for the <b>surgery</b> minigame (incision, bleeding, sutures) · success fully revives them</li><li>🪲 Fixed a v26.247 typo that broke the police, prisoner and outlaw outfits</li></ul>
+    <h4>v26.248 — ⛓ Jail dimension removed · 🎗 Division Commander</h4>
     <ul><li>⛓ The Jail dimension is gone · sentences are now served in the <b>5th-division prison</b> in the Frontier (or the police holding cells if the base isn't built yet), and /감옥 가기 · 나가기 go there</li><li>🎗 Staff is renamed <b>Division Commander</b> · 👑 the Owner commands all five divisions</li></ul>
     <h4>v26.247 — 🪖 CLKKY ARMY base · Divisions 1-5 · 🎖 Dress uniforms · 💬 Chat</h4>
     <ul><li>🪖 A large <b>CLKKY ARMY base</b> outside the west wall (120×112, built when the host gets close): barracks for the army, navy, air force, marines, MPs and training staff; meeting rooms; a SWAT ops room; an armory; a training center; an assembly area; the 5th-division prison; and five military medical centers</li><li>🚑 Two ambulances and 🚁 two helicopters, built from blocks (right-click the engine to ride)</li><li>🪖 1st Division Army · ⚓ 2nd Navy · ✈ 3rd Air Force · 🦅 4th Marines · ⛓ 5th Prison (guarded by MPs and police) · pick a division at the recruiter · the Owner counts as army</li><li>⛓ With the base, jail is the 5th-division prison in the Frontier · light now shines through the bars</li><li>🎖 Army teams wear <b>dress uniforms</b> with sleeve stripes by rank</li><li>💬 With chat closed, only new messages show for 10 seconds (open chat for the last hour) · commands run only when the line starts with /</li></ul>
@@ -7292,7 +7296,7 @@ function reloadTick(dt){const R=player.reload;if(!R)return;R.t+=dt;
   if(held()!==R.s||player.dead){player.reload=null;return;} // 다른 칸으로 바꾸면 장전 취소
   if(R.t>=R.dur){player.reload=null;if(!isCreative()){if(!inv.some(q=>q&&q.id===MAG))return;removeItem(MAG,1);}R.s.ammo=GUN_CAP[R.s.id];invChanged();toast(`🔫 장전 완료 (${R.s.ammo}발)`);}}
 function fireGun(s){
-  if(gunCD>0||player.reload||player.cuffed||player.tased)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
+  if(gunCD>0||player.reload||player.cuffed||player.tased||player.downed)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
   const rifle=s.id===RIFLE,snip=s.id===SNIPER;gunCD=snip?1.4:rifle?.32:.38;
   if(snip){gunShot(false,true);return;}
   const shots=rifle?3:1;for(let i=0;i<shots;i++)setTimeout(()=>gunShot(rifle),i*90);}
@@ -8017,7 +8021,7 @@ function njEggVideo(bird){if($('njVid'))return; // 뇌절모드 영상: 끝까�
   v.onended=close;v.onerror=close;v.play().catch(()=>{v.muted=true;v.play().catch(close);});}
 let njHurtA=null;function noejeolHurt(){try{if(!njHurtA)njHurtA=new Audio('noejeol/hurt.m4a'); // 뇌절모드 아픔 소리: 앞의 숨 들이키는 소리(0.2~0.5초)는 빼고 목소리 부분(0.5~1.07초)만, 원래 아픔 소리와 똑같은 0.22초에 맞춰 빠르게
     const a=njHurtA.cloneNode(),S0=.5,S1=1.07;a.currentTime=S0;a.playbackRate=(S1-S0)/HURT_DUR;a.volume=.9;a.play().then(()=>setTimeout(()=>a.pause(),HURT_DUR*1000)).catch(()=>SFX.hurt());}catch(e){SFX.hurt();}}
-function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){if(MP.proxy){mpHurtTo(MP.proxy.id,dmg,kx,kz,cause);return;} // 🌐 방장 몹이 친구를 때림
+function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){if(MP.proxy){mpHurtTo(MP.proxy.id,dmg,kx,kz,cause);return;}if(player.downed)return; // 🩸 쓰러진 몸은 더 안 다침 // 🌐 방장 몹이 친구를 때림
   if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec()||player.god)return; // 💻 /god: 무적 // 크리에이티브·관전: 다치지 않음
   if(!bypass&&(stFrozen()||gm))return; // 스텔라 연출 · 미사일 조종 중엔 몹에게 맞지 않음
   if(!bypass)dmg*=DIFF_MUL[world.diff||'normal']||1; // 난이도: EASY 0.5배 · DIFFICULTY · HARDCORE 1.5배
@@ -8046,7 +8050,7 @@ function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){if(MP
       removeItem(POTION,1);player.hp=20;player.invulnT=1;SFX.revive();
       spawnParticles(player.pos.x,player.pos.y+1,player.pos.z,new THREE.Color(0xffd040),30,.6,5);
       toast('✨ <b>불사의 마법 물약</b>이 발동했습니다! (1초 무적)','ach');
-    }else die(cause);
+    }else if(MOD_DN&&MP.on&&!isHardcore()&&!player.downed)dnStart(cause);else die(cause); // 🩸 조직 RP: 바로 죽지 않고 60초 쓰러짐
   }
   renderStats();
 }
@@ -8248,7 +8252,7 @@ function breakTime(id){
 }
 function canHarvest(id){const B=BL[id],t=heldTool();return !B.tier||(t&&t.type===B.tool&&t.tier>=B.tier);}
 function updateMining(dt){
-  if(!mouseL||!target||mobTarget||boatTarget||vehTarget||invOpen||player.dead||isSpec()||isGun(held())||player.cuffed){mining.active=false;mining.p=0;crack.visible=false;return;}
+  if(!mouseL||!target||mobTarget||boatTarget||vehTarget||invOpen||player.dead||isSpec()||isGun(held())||player.cuffed||player.downed){mining.active=false;mining.p=0;crack.visible=false;return;}
   if(!mining.active||mining.x!==target.x||mining.y!==target.y||mining.z!==target.z){Object.assign(mining,{x:target.x,y:target.y,z:target.z,p:0,active:true,hitT:0});}
   const bt=breakTime(target.id);if(bt===Infinity){crack.visible=false;return;}
   if(MOD_GUARD.length){const g=modGuard('break',target.x,target.y,target.z,target.id);if(g){crack.visible=false;mining.p=0;if((mining.gT=(mining.gT||0)-dt)<=0){mining.gT=2;toast('🚫 '+mpEsc(g));}return;}} // 🧩 모드가 막은 곳 (남의 집 등)
@@ -8318,12 +8322,13 @@ function weaponBanned(id){return id===STELLAR_REMOTE||id===BOMB||!!BOMB_BLK[id]|
 let weaponT=0;
 function weaponTick(dt){if(!weaponBan()||(weaponT+=dt)<1)return;weaponT=0;let n=0;for(let i=0;i<inv.length;i++)if(inv[i]&&weaponBanned(inv[i].id)){inv[i]=null;n++;}if(n){invChanged();toast('🚫 이 서버에서는 스텔라 리모컨과 폭탄을 쓸 수 없어요');}}
 function useItem(){
-  if(player.dead||isSpec()||player.cuffed)return;const s=held();
+  if(player.dead||isSpec()||player.cuffed||player.downed)return;const s=held();
   if(s&&weaponBan()&&weaponBanned(s.id)){toast('🚫 이 서버에서는 스텔라 리모컨과 폭탄을 쓸 수 없어요');return;}
   if(s&&s.id===COOKBOOK){openCookBook();return;} // 요리 가이드북
   if(s&&s.id===HW_KEY){hwUseKey();return;} // 🎃 할로윈 열쇠
   if(EVENT&&!HALLOWEEN&&evUse(s))return; // 🗓 이달의 모드: 선물 · 떡국 · 왕의 홀 · 의사봉 · 윷 · 괭이 · 볍씨 · 선생님
   if(s&&s.id===BOMB){if(performance.now()<(player.bombCD||0))return;player.bombCD=performance.now()+450;throwBomb();if(!isCreative()){s.count--;if(!s.count)inv[sel]=null;invChanged();}return;} // 💣 폭탄 던지기
+  if(s&&s.id===MEDKIT&&MP.carrying){const P=[...MP.peers.values()].find(q=>q.id===MP.carrying);if(!P||!P.t||!P.t.dn){MP.carrying=null;}else if(MOD_DN&&MOD_DN.surgery(player.pos.x,player.pos.y,player.pos.z)){const id=MP.carrying;medGame('surg',ok=>{if(ok){mpRoute({t:'surg',to:id,by:MP.me.nick});MP.carrying=null;}});return;}else{toast('🩺 수술은 응급수술센터 안에서 할 수 있어요 (지금 들고 있어요 · Shift+클릭 내려놓기)');return;}} // 🩺 들고 온 사람 수술
   if(s&&s.id===MEDKIT){if(performance.now()<(player.medCD||0))return;if(player.hp>=maxHp()){toast('⛑ 체력이 가득 차 있어요');return;}player.medCD=performance.now()+4000;player.hp=Math.min(maxHp(),player.hp+6);renderStats();swing=1;tone(660,990,.12,.05,'sine');toast('⛑ 메디킷으로 나를 치료했어요 (체력 +6)');return;} // ⛑ 나 치료
   if(s&&s.id===COLA){if(!player.colaOpen){player.colaOpen={t:0,sel,fz:false};swing=0;}return;} // 🥤 콜라 따기
   if(s&&s.id===CAPE){toast('👕 망토는 타이틀 화면의 <b>탈의실</b>에서 입을 수 있어요');return;}
@@ -8466,7 +8471,7 @@ function sleep(t){
   setTimeout(()=>{world.time=.02;for(const m of [...mobs])if(m.def.hostile&&!m.def.boss)m.remove();$('fade').style.opacity=0;paused=!locked&&!invOpen;toast('상쾌한 아침입니다! 스폰 지점이 설정되었습니다.');achieve('bed');},1300);
 }
 function attack(){
-  if(isSpec())return;if(player.cuffed){toast('⛓ 수갑에 묶여서 공격할 수 없어요');return;}if(player.tased)return;
+  if(isSpec()||player.downed)return;if(player.cuffed){toast('⛓ 수갑에 묶여서 공격할 수 없어요');return;}if(player.tased)return;
   const mace=heldTool()&&heldTool().type==='mace';
   if(!mobTarget||player.attackCD>0)return;player.attackCD=mace?2.5:.4;
   if(held()&&held().id===BANHAMMER){banHammerHit(mobTarget);return;}
@@ -9164,6 +9169,7 @@ const CB={version:'v26.164',
   outfit:(nick,o)=>{nick=String(nick);if(!o)delete MOD_OUTFIT[nick];else MOD_OUTFIT[nick]={top:o.top|0,bottom:o.bottom|0,hat:String(o.hat||''),hatC:o.hatC|0,badge:o.badge|0,style:OF_STYLES.includes(o.style)?o.style:'',stripes:Math.max(0,Math.min(3,o.stripes|0)),div:String(o.div||'').slice(0,8),field:o.field?1:0};}, // style: 'army' 'medic' 'mp' 'swat' 'officer' 'tmc' 'mpcmd' 'tmccmd' 'staff' 'owner' 'police' 'prisoner' 'outlaw' (진짜 같은 복장) // 🧩 복장: {top: 웃옷 색, bottom: 바지 색, hat: 'cap'|'helmet'|'beret'|'bandana', hatC, badge: 가슴 배지 색} · null 이면 벗음
   discord:()=>!!(ACC&&accToken()&&ACC.discord), // 🧩 우리 디스코드 서버에 들어와 있는지 (최근 디스코드 보상 확인 기준)
   community:()=>!!(ACC&&accToken()&&(typeof ACC.official==='boolean'?ACC.official:ACC_COMM)), // 🧩 겜벗 공식 커뮤니티(CLKKY CITY)에 가입했는지
+  downed:o=>{MOD_DN=o&&typeof o==='object'?{medic:typeof o.medic==='function'?o.medic:()=>true,surgery:typeof o.surgery==='function'?o.surgery:()=>false,sec:Math.max(10,Math.min(300,(o.sec|0)||60))}:null;}, // 🧩 🩸 쓰러짐 · 심폐소생술 · 수술 켜기: {medic: ()=>내가 의무병인지, surgery:(x,y,z)=>수술할 수 있는 자리인지, sec: 쓰러져 있는 초} · null 이면 끔
   payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
   dim:(key,o)=>{key=String(key);o=o||{};if(DIM[key]&&!DIM[key].mod)return false; // 🧩 차원 만들기: {name, bg:[r,g,b], fog:[가까이,멀리], light, day, caveB, stars, spawn:{x,y,z}, noMobs, gen(data,cx,cz)} — gen 은 백그라운드에서도 돌아서 블록 번호(숫자)만 써야 해요
     DIM[key]={name:o.name||key,bg:o.bg||[.05,.05,.07],fog:o.fog||[10,60],light:o.light??.6,day:o.day??.5,caveB:o.caveB??.4,stars:o.stars??0,spawn:o.spawn||{x:.5,y:12,z:.5},noMobs:!!o.noMobs,mod:1};
@@ -9399,7 +9405,7 @@ function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,COL=ofDressCol(s),TOP=ofM(
   const crown=s==='navy'?0xf4f4f4:s==='airforce'?0x4a6283:s==='staff'?0x2f3d2c:0x003942,Y=s==='owner'?GOLD:YEL;
   add(A.head,.55,.1,.55,ofSolid(s==='navy'?0x101012:0x0f1f22,.7),0,.41,0);add(A.head,.62,.1,.62,ofSolid(crown,.8),0,.5,0);add(A.head,.5,.03,.18,ofSolid(0x050505,.15,.4),0,.36,-.34); // 정모 테 · 윗부분 · 챙
   add(A.head,.5,.025,.02,Y,0,.38,-.282);add(A.head,.1,.09,.01,Y,0,.44,-.282);if(s==='owner')add(A.head,.46,.025,.02,GOLD,0,.35,-.42);} // 턱끈 · 무궁화 모장 · (장성) 챙 금장
-function ofTopTex(o){const s=o.style;if(OF_DRESS.includes(s))return ofPlain(ofDressCol(s),21);returns==='swat'?ofPlain('#1d1e21',3):s==='police'?ofPlain('#2f7d77',4):s==='prisoner'?ofPlain('#e06a1a',5):s==='outlaw'?ofPlain('#26262a',6):s==='owner'?ofPlain('#003942',7):s==='staff'?ofPlain('#2f3d2c',8):ofCamo(11);} // 총사령관: 신형 정복 피콕그린 · 부사령관: 근무복 진녹색 // 웃옷 무늬 (1인칭 소매도)
+function ofTopTex(o){const s=o.style;if(OF_DRESS.includes(s))return ofPlain(ofDressCol(s),21);return s==='swat'?ofPlain('#1d1e21',3):s==='police'?ofPlain('#2f7d77',4):s==='prisoner'?ofPlain('#e06a1a',5):s==='outlaw'?ofPlain('#26262a',6):s==='owner'?ofPlain('#003942',7):s==='staff'?ofPlain('#2f3d2c',8):ofCamo(11);} // 총사령관: 신형 정복 피콕그린 · 부사령관: 근무복 진녹색 // 웃옷 무늬 (1인칭 소매도)
 function ofBuild(A,o,add0){const s=o.style,F=v=>-.14-v,DECO=new Set(['nm','pol','sw','sw2','pn','pn2','xb','mpb','tb','xh','mph','tc','tg','um','roka']), // 글자 · 그림판은 그림 한 장을 통째로 (게임 상자는 크기만큼 그림을 반복해서 귀퉁이만 보임)
     add=(par,w,h,d,mat,x,y,z)=>{const k=mat.userData.ofk;if(!(DECO.has(k)||(k&&k.startsWith('um'))))return add0(par,w,h,d,mat,x,y,z);const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);par.add(m);A.outfitParts.push(m);return m;},TOP=ofM('top'+s,ofTopTex(o)),POCK=ofM('pk'+s,ofTopTex(o),0xb8b8b8);
   if(OF_DRESS.includes(s)&&!o.field){ofDress(A,o,add);return;} // 🎖 군대는 정복 (o.field 면 예전 전투복)
@@ -9596,7 +9602,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
     if(nk.toLowerCase()===String(MP.me.nick).toLowerCase()){if(cmdIsAdmin())c.send({t:'c',n:'🔨 서버',m:nk+' 님은 어드민이라 밴할 수 없어요'});else mpBanMe(c.P.nick);return;}
     if(!mpBanNick(nk))c.send({t:'c',n:'🔨 서버',m:nk+' 님은 밴할 수 없어요 (운영자 · 어드민)'});}
   else if(d.t==='opreq'){if(c.P.nick==='운영자'||c.P.adm||mpConnBoss(c))mpSetOp(String(d.n||'').slice(0,16),!!d.on);} // 🔑 OP 주기 · 빼기는 방장(만든 사람) · 어드민만 (서버가 확인)
-  else if(d.t==='cuff'||d.t==='tase'||d.t==='heal'){d.by=c.P.nick;mpRoute(d);}
+  else if(d.t==='cuff'||d.t==='tase'||d.t==='heal'||d.t==='cpr'||d.t==='surg'||d.t==='carry'){d.by=c.P.nick;mpRoute(d);}
   else if(d.t==='give'||d.t==='gmp'){if((!MULTI||c.P.adm||c.P.nick==='운영자')&&mpConnOp(c)){d.by=c.P.nick;mpRoute(d);}} // 🎁 /give @닉 · 🎮 /모드이름 @닉: OP만 (공개 서버는 어드민만 · 서버가 확인)
   else if(d.t==='mod'){d.n=c.P.nick;mpSend(d,c);modEmit('msg',d.k,d.v,d.n);}
   else if(d.t==='smods'){if(!mpConnOp(c)||!Array.isArray(d.mods))return;const L=d.mods.filter(m=>m&&typeof m.name==='string'&&(typeof m.code==='string'||typeof m.url==='string')).slice(0,40).map(m=>({name:m.name.slice(0,60),code:m.code||'',url:m.url||undefined,on:true}));
@@ -9677,6 +9683,7 @@ function mpGuestRecv(d){
   else if(d.t==='lang'){if(typeof d.l==='string')setLang(d.l,1);}
   else if(d.t==='cuff')cuffIn(d); // ⛓ 수갑
   else if(d.t==='heal')healIn(d); // ⛑ 메디킷
+  else if(d.t==='cpr'||d.t==='surg'||d.t==='carry')medIn(d); // 🩸 심폐소생술 · 수술 · 들기
   else if(d.t==='tase')taseIn(d); // ⚡ 테이저건
   else if(d.t==='give')giveIn(d); // 🎁 /give @닉
   else if(d.t==='gmp')gmIn(d); // 🎮 /모드이름 @닉
@@ -9694,7 +9701,7 @@ function mpTick(dt){if(!MP.on)return;weaponTick(dt);
   if(!MP.host&&(MP.stT=(MP.stT||0)+dt)>20){MP.stT=0;try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}} // 🌍 20초마다 내 가방 · 위치를 방장에게 (방장이 바뀌어도 이어서)
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
-    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0),sl:r(p.saluteK||0)};
+    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,dn:p.downed?1:0,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0),sl:r(p.saluteK||0)};
     if(MP.host)o.id='H';mpSend(o);}
   if(player.hp<MP.lhp)MP.redT=.35;MP.lhp=player.hp;MP.redT-=dt; // 다치면 친구 화면에서 빨갛게
   MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();mpWsScan();}
@@ -9704,7 +9711,7 @@ function mpTick(dt){if(!MP.on)return;weaponTick(dt);
   else{MP.st+=dt;if(MP.st>=10){MP.st=0;mpSend(mpState());}}
   for(const P of MP.peers.values()){const A=P.A,t=P.t;const vis=!!t&&running&&t.d===world.dim&&!t.v;A.g.visible=vis;if(!vis)continue; // 친구 캐릭터: 받은 위치로 부드럽게 · 걷기 · 휘두르기
     const k=Math.min(1,dt*12),ox=A.g.position.x,oz=A.g.position.z;
-    const gk=t.gk||0,sk=Math.max(t.wk||0,gk); // 활공 · 수영: 엎드려 누움
+    const gk=t.gk||0,sk=Math.max(t.wk||0,gk,t.dn?1:0); // 활공 · 수영 · 🩸 쓰러짐: 엎드려 누움
     if(!P.init){P.init=1;A.g.position.set(t.x,t.y,t.z);A.yaw=t.ya;}else A.g.position.lerp(_mpV.set(t.x+Math.sin(A.yaw)*.9*sk,t.y-(t.c?.1:0)+.3*sk,t.z+Math.cos(A.yaw)*.9*sk),k);
     const hs=Math.min(12,Math.hypot(A.g.position.x-ox,A.g.position.z-oz)/Math.max(dt,1e-3));
     let d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));if(hs>.5||sk>.5)A.yaw+=d*k;else if(Math.abs(d)>.75)A.yaw=t.ya-Math.sign(d)*.75;d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));
@@ -9766,13 +9773,60 @@ function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x
   if(M.pvp){if(!cmdIsOp()){NOOP_T();return;}const nk=M.def.name;if(MP.host&&!mpBanNick(nk)){toast('🔨 그 사람은 어드민이라 밴할 수 없어요');return;}if(!MP.host)mpSend({t:'banreq',n:nk});toast(`🔨 <b>${mpEsc(nk)}</b> 님을 밴했어요`);return;}
   if(M.def.boss&&!cmdIsOp()){NOOP_T();return;}M.hurt(1e6,0,0);toast('🔨 쾅! <b>'+(M.def.name||'몹')+'</b>을(를) 없앴어요');}
 // ⛓ 수갑: 플레이어를 치면 묶고 다시 치면 풀어요 (2분 뒤 저절로 풀림) · 몹은 30초 동안 멈춤
-function medkitHit(M){if(!M.pvp){toast('⛑ 메디킷으로 사람을 치면 치료해요 (우클릭하면 나를 치료)');return;}if(performance.now()<(player.medCD||0))return;player.medCD=performance.now()+4000;swing=1;tone(660,990,.12,.05,'sine');
-  mpRoute({t:'heal',to:M.id,by:MP.me.nick});toast(`⛑ <b>${mpEsc(M.def.name)}</b> 님을 메디킷으로 치료했어요 (체력 +8)`);modEmit('medkit',M.def.name);} // 🧩 모드 이벤트: 'medkit'(치료한 사람 닉)
-function healIn(d){if(player.dead)return;const by=String(d.by||'?').slice(0,16);player.hp=Math.min(maxHp(),player.hp+8);renderStats();tone(660,990,.12,.05,'sine');toast(`⛑ <b>${mpEsc(by)}</b> 님이 메디킷으로 치료해 줬어요 (체력 +8)`);}
+// 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술 (모드가 CB.downed({...}) 로 켬 · 멀티에서만)
+//   체력 0 → 60초 동안 쓰러짐 (시체로 누워 있음 · 못 움직임) · 시간이 지나거나 B 를 누르면 진짜로 죽음
+//   💓 심폐소생술 (의무병 · 메디킷으로 쓰러진 사람 치기 · 타이밍 미니게임): 그 자리에서 일어남 · 죽은 기록 없음 · 😵 기절 (느림 · 피가 남) → 응급 처치 · 지혈 (메디킷 2번)
+//   🩺 수술: Shift+메디킷으로 쓰러진 사람을 들고 → 수술센터에서 메디킷 우클릭 (3단계 미니게임) → 완전히 회복
+let MOD_DN=null,dnKeyOn=false;
+function dnStart(cause){player.downed={t:(MOD_DN&&MOD_DN.sec)||60,cause};player.hp=0;player.faint=null;player.carry=null;renderStats();
+  const m=MP.me.nick+' 님이 쓰러졌어요 🩸 ('+((MOD_DN&&MOD_DN.sec)||60)+'초 안에 의무병이 심폐소생술 · 수술을 하면 살아나요)';mpSend({t:'c',n:'🩸',m});mpChatShow('🩸',m);modEmit('down',MP.me.nick);
+  if(!dnKeyOn){dnKeyOn=true;addEventListener('keydown',e=>{if(player.downed&&e.code==='KeyB'&&!MP.chat)dnEnd('die');});}}
+function dnEnd(how,by){const D=player.downed;if(!D)return;player.downed=null;player.carry=null;
+  if(how==='die'){die(D.cause||'쓰러졌습니다');return;}
+  by=mpEsc(String(by||'?').slice(0,16));player.invulnT=2;
+  if(how==='surg'){player.hp=maxHp();player.faint=null;toast(`🩺 <b>${by}</b> 님의 수술로 완전히 살아났어요!`,'ach');}
+  else{player.hp=4;player.faint={aid:0,bleed:1,bt:0};toast(`💓 <b>${by}</b> 님의 심폐소생술로 깨어났어요 — 😵 기절 상태 (느리고 피가 나요) · 메디킷으로 응급 처치 · 지혈을 받으세요`);}
+  renderStats();const m=MP.me.nick+(how==='surg'?' 님이 수술로 살아났어요 🩺':' 님이 심폐소생술로 깨어났어요 💓');mpSend({t:'c',n:'⛑',m});mpChatShow('⛑',m);modEmit('revive',MP.me.nick,how);}
+function medIn(d){const by=String(d.by||'?').slice(0,16);
+  if(d.t==='carry'){if(player.downed){player.carry=d.on?by:null;toast(d.on?`🩸 <b>${mpEsc(by)}</b> 님이 나를 들었어요`:'🩸 내려졌어요');}return;}
+  if(player.downed)dnEnd(d.t==='surg'?'surg':'cpr',by);}
+function medTick(dt){const D=player.downed;let el=document.getElementById('dnHud');
+  if(D){D.t-=dt;if(D.t<=0||!MP.on){dnEnd('die');return;}
+    if(player.carry){const P=[...MP.peers.values()].find(q=>q.nick===player.carry);if(P&&P.t&&!P.t.v){player.pos.set(P.t.x,P.t.y+1.15,P.t.z);player.vel.set(0,0,0);}else player.carry=null;} // 들려 가는 중: 든 사람 어깨 위
+    if(!el){el=document.createElement('div');el.id='dnHud';el.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none;background:radial-gradient(rgba(120,0,0,.2),rgba(50,0,0,.8));display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font:bold 24px sans-serif;text-shadow:0 2px 6px #000';document.body.appendChild(el);}
+    el.innerHTML=`🩸 쓰러졌어요 · <b>${Math.ceil(D.t)}</b>초<br><span style="font-size:15px">의무병이 심폐소생술을 하거나, 응급수술센터로 옮겨 수술하면 살아나요${player.carry?' · '+mpEsc(player.carry)+' 님이 옮기는 중':''}<br>B : 포기하고 부활</span>`;return;}
+  if(el)el.remove();
+  const F=player.faint;let fe=document.getElementById('faintHud');
+  if(!F){if(fe)fe.remove();return;}
+  if(F.bleed&&(F.bt+=dt)>=6){F.bt=0;player.hp-=1;renderStats();if(player.hp<=0){player.faint=null;if(MOD_DN&&MP.on)dnStart('피를 너무 많이 흘렸습니다');else die('피를 너무 많이 흘렸습니다');return;}} // 🩸 지혈 전엔 6초마다 체력 -1
+  if(!fe){fe=document.createElement('div');fe.id='faintHud';fe.style.cssText='position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:25;pointer-events:none;background:rgba(80,0,0,.65);color:#fff;font:bold 15px sans-serif;padding:6px 12px;border-radius:8px';document.body.appendChild(fe);}
+  fe.innerHTML=`😵 기절 · 응급 처치 ${F.aid?'✅':'❌'} · 지혈 ${F.bleed?'❌ (피가 나요)':'✅'} — 의무병에게 메디킷 치료를 받으세요`;}
+function medGame(kind,cb){if(document.getElementById('medGame'))return; // 💓 · 🩺 타이밍 미니게임: 움직이는 막대가 초록 칸에 들어올 때 스페이스 (또는 화면 누르기)
+  const ST=kind==='surg'?[['🔪 절개',3,.15,1.3],['🩸 지혈',4,.12,1.7],['🧵 봉합',5,.1,2.1]]:[['💓 가슴 압박',5,.16,1.6]];
+  let si=0,hits=0,miss=0,t0=performance.now(),done=false;const box=document.createElement('div');box.id='medGame';
+  box.style.cssText='position:fixed;left:50%;top:58%;transform:translateX(-50%);z-index:40;width:min(420px,86vw);background:rgba(10,10,14,.9);border:2px solid #e44;border-radius:12px;padding:12px 14px;color:#fff;font:bold 16px sans-serif;text-align:center';
+  box.innerHTML=`<div id="mgT"></div><div style="position:relative;height:26px;margin:10px 0;background:#333;border-radius:6px;overflow:hidden"><div id="mgZ" style="position:absolute;top:0;bottom:0;background:#2bbf5a"></div><div id="mgM" style="position:absolute;top:0;bottom:0;width:6px;background:#fff"></div></div><div id="mgS" style="font-size:13px;opacity:.85"></div>`;document.body.appendChild(box);
+  const end=ok=>{if(done)return;done=true;removeEventListener('keydown',kh,true);box.remove();toast(ok?(kind==='surg'?'🩺 수술 성공!':'💓 심폐소생술 성공!'):(kind==='surg'?'🩺 수술 실패 · 다시 해 보세요':'💓 심폐소생술 실패 · 다시 해 보세요'));cb(ok);};
+  const pos=()=>{const s=ST[si];return .5+.5*Math.sin((performance.now()-t0)/1000*s[3]*Math.PI);};
+  const hit=()=>{const s=ST[si],p=pos(),inZ=Math.abs(p-.5)<=s[2]/2;if(inZ){hits++;tone(880,1200,.06,.05,'sine');if(hits>=s[1]){si++;hits=0;if(si>=ST.length)return end(true);}}else{miss++;tone(220,160,.1,.06,'square');if(miss>=4)return end(false);}};
+  const kh=e=>{if(e.code==='Space'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)hit();}else if(e.code==='Escape'){e.preventDefault();end(false);}};addEventListener('keydown',kh,true);box.onpointerdown=e=>{e.preventDefault();hit();};
+  const loop=()=>{if(done)return;const s=ST[si];if(!s)return;const z=$('mgZ'),m=$('mgM');z.style.left=((.5-s[2]/2)*100)+'%';z.style.width=(s[2]*100)+'%';m.style.left=`calc(${pos()*100}% - 3px)`;
+    $('mgT').textContent=`${kind==='surg'?'🩺 수술':'💓 심폐소생술'} · ${s[0]} ${hits}/${s[1]}${ST.length>1?` (${si+1}/${ST.length}단계)`:''}`;$('mgS').textContent=`초록 칸에서 스페이스 · 실수 ${miss}/4 · Esc 그만`;requestAnimationFrame(loop);};loop();}
+function medkitHit(M){if(!M.pvp){toast('⛑ 메디킷으로 사람을 치면 치료해요 (우클릭하면 나를 치료)');return;}
+  const P=[...MP.peers.values()].find(q=>q.id===M.id),me=MP.me.nick;
+  if(P&&P.t&&P.t.dn){ // 🩸 쓰러진 사람
+    if(!MOD_DN||!MOD_DN.medic()){toast('🩸 쓰러진 사람은 의무병만 살리거나 옮길 수 있어요');return;}
+    if(keys.ShiftLeft||keys.ShiftRight){if(MP.carrying===M.id){mpRoute({t:'carry',to:M.id,by:me,on:0});MP.carrying=null;toast('🩸 내려놓았어요');}else{mpRoute({t:'carry',to:M.id,by:me,on:1});MP.carrying=M.id;toast('🩸 들었어요 · 응급수술센터에서 메디킷 우클릭 → 수술 · Shift+클릭 내려놓기');}return;}
+    medGame('cpr',ok=>{if(ok){mpRoute({t:'cpr',to:M.id,by:me});if(MP.carrying===M.id)MP.carrying=null;}});return;}
+  if(performance.now()<(player.medCD||0))return;player.medCD=performance.now()+4000;swing=1;tone(660,990,.12,.05,'sine');
+  mpRoute({t:'heal',to:M.id,by:me});toast(`⛑ <b>${mpEsc(M.def.name)}</b> 님을 메디킷으로 치료했어요`);modEmit('medkit',M.def.name);} // 🧩 모드 이벤트: 'medkit'(치료한 사람 닉)
+function healIn(d){if(player.dead||player.downed)return;const by=mpEsc(String(d.by||'?').slice(0,16)),F=player.faint;tone(660,990,.12,.05,'sine');
+  if(F){if(!F.aid){F.aid=1;toast(`⛑ <b>${by}</b> 님이 응급 처치를 해 줬어요 (다음은 지혈)`);}else if(F.bleed){F.bleed=0;toast(`🩹 <b>${by}</b> 님이 지혈해 줬어요`);}if(F.aid&&!F.bleed){player.faint=null;toast('😮‍💨 기절에서 깨어났어요 · 이제 괜찮아요');}player.hp=Math.min(maxHp(),player.hp+4);renderStats();return;} // 😵 기절: 응급 처치 → 지혈
+  player.hp=Math.min(maxHp(),player.hp+8);renderStats();toast(`⛑ <b>${by}</b> 님이 메디킷으로 치료해 줬어요 (체력 +8)`);}
 function cuffHit(M){swing=1;tone(1800,1200,.06,.06,'square');tone(900,700,.08,.05,'square',.06);
   if(M.pvp){mpRoute({t:'cuff',to:M.id,by:MP.me.nick});toast(`⛓ <b>${mpEsc(M.def.name)}</b> 님에게 수갑을 채우거나 풀었어요`);return;}
   M.cuffT=M.cuffT>0?0:30;toast(M.cuffT>0?`⛓ <b>${M.def.name||'몹'}</b>을(를) 30초 동안 묶었어요`:'🔓 몹을 풀어 줬어요');}
-function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);else if(d.t==='heal')healIn(d);else if(d.t==='tase')taseIn(d);else if(d.t==='give')giveIn(d);else if(d.t==='gmp')gmIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
+function mpRoute(d){if(!MP.on)return;if(!MP.host){mpSend(d);return;}if(d.to==='H'){if(d.t==='cuff')cuffIn(d);else if(d.t==='heal')healIn(d);else if(d.t==='cpr'||d.t==='surg'||d.t==='carry')medIn(d);else if(d.t==='tase')taseIn(d);else if(d.t==='give')giveIn(d);else if(d.t==='gmp')gmIn(d);return;}for(const x of MP.conns)if(x.P&&x.P.id===d.to){x.send(d);break;}} // 한 사람에게만 보내기 (방장이 전달)
 const GM_NAMES={survival:'survival','서바이벌':'survival',creative:'creative','크리에이티브':'creative',spectator:'spectator','관전':'spectator'},GM_KO={survival:'서바이벌',creative:'크리에이티브',spectator:'관전'};
 function gmIn(d){if(!GM_KO[d.m]||world.mode===d.m||(world.flags&&world.flags.hcDead))return;MP.rx=1;MP.gmOk=1;try{setMode(d.m);}finally{MP.rx=0;MP.gmOk=0;}try{renderSettings();}catch(e){}toast(`🎮 <b>${mpEsc(String(d.by||'?').slice(0,16))}</b> 님이 내 게임 모드를 <b>${GM_KO[d.m]}</b>(으)로 바꿨어요`);} // /모드이름 @닉: 그 사람만 바뀜
 function giveIn(d){const id=d.id|0,n=Math.max(1,Math.min(999,d.n|0));if(!BL[id]&&!IT[id])return;const left=addItem(id,n);if(left>0)dropAtPlayer(id,left);invChanged();toast(`🎁 <b>${mpEsc(String(d.by||'?').slice(0,16))}</b> 님이 <b>${info(id).name}</b> ${n}개를 줬어요`);}
@@ -10367,7 +10421,7 @@ function frame(now){
   if(MOBILE)document.body.classList.toggle('playing',active&&!invOpen&&!player.dead&&!stFrozen());
   if(active){
     wdM(1);if(!stFrozen()&&!gm){ // 스텔라 연출 · 미사일 조종 중에는 플레이어가 멈춤
-    cuffTick(dt);taseTick(dt);if(taserCD>0)taserCD-=dt;updatePlayer(dt);if(player.cuffed||player.tased){player.vel.x=player.vel.z=0;}
+    cuffTick(dt);taseTick(dt);medTick(dt);if(taserCD>0)taserCD-=dt;updatePlayer(dt);if(player.cuffed||player.tased||player.downed){player.vel.x=player.vel.z=0;}else if(player.faint){player.vel.x*=.5;player.vel.z*=.5;} // 🩸 쓰러짐: 못 움직임 · 😵 기절: 느리게
     updateTarget();updateMining(dt);
     if(mouseR&&!invOpen&&!player.blocking){useT-=dt;if(useT<=0){useT=.25;useItem();}}if(mouseL&&!invOpen&&isGun(held()))fireGun(held());updateEating(dt);updateBite(dt);updateDine(dt);cbowTick(dt);}colaTick(dt);
     wdM(2);for(const m of [...mobs])mpMobUpdate(m,dt);
