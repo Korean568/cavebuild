@@ -1430,6 +1430,7 @@ function buildAnnex(C, G) {
   save();
   CB.say(`🪖 ${ARMY_NAME} 기지가 생겼어요! (서쪽 성벽 밖 · 생활관 · 회의실 · 의료센터 · 교도소 · 헬기 · 구급차) · 🚑 🚁 는 엔진을 우클릭하면 타요`);
 }
+if (CB.infiniteMags) CB.infiniteMags(() => ARMY.includes(teamOf(me()))); // 🔫 군대는 장전해도 탄창이 안 줄어요 (16개면 계속 16개)
 // 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술: 의무병(과 OP)만 · 수술은 기지의 군사응급수술센터 · 군사권역외상센터 안에서
 if (CB.downed) CB.downed({
   sec: 60,

@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.251 — 🚧 탈영선 자유 · 🗡 배신자</h4>
+    <h4>🆕 v26.252 — 🔫 군대 탄창 무한</h4>
+    <ul><li>🔫 조직 모드 군대 팀원은 장전해도 <b>탄창이 줄지 않아요</b> (16개면 계속 16개 · 탄창이 1개는 있어야 장전)</li></ul>
+    <h4>v26.251 — 🚧 탈영선 자유 · 🗡 배신자</h4>
     <ul><li>🚧 대통령 · 국무총리 · 사단장 · 교육사령관 · MP사령관은 탈영선을 넘어도 지명수배가 안 떠요 (휴가 · 외출 시간이 넘어도)</li><li>🗡 12순위 <b>배신자</b>(Traitor): 무죄인 군인(수배 중이 아닌 군대 팀원)을 50명 무단사살하고 탈영선을 넘으면 배신자가 돼요 · 지명수배 ★★★ · 팀을 못 바꿔요 (OP만) · 경찰 쪽이 배신자를 쓰러뜨리는 건 무단사살이 아니에요</li></ul>
     <h4>v26.250 — 👑 대통령 · 🏛 국무총리</h4>
     <ul><li>👑 총사령관 → <b>대통령</b>(President) · 서버를 만든 사람이고 대장이에요</li><li>🏛 새 계급 <b>국무총리</b>(Prime Minister): 대통령을 보좌하는 서버 운영진 · 사단장 위 · 검은 정장 · 빨간 넥타이</li><li>🎗 사단장의 영어 이름은 Commander · 계급표 (위 → 아래): 대통령 · 국무총리 · 사단장 · 교육사령관 · MP사령관 · 교육사 · 장교 · 특수임무대 · 군사경찰 · 의무병 · 육군 · 해군 · 공군 · 해병대</li></ul>
@@ -2228,7 +2230,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.251 — 🚧 Free desertion line · 🗡 Traitor</h4>
+    <h4>🆕 v26.252 — 🔫 Unlimited army magazines</h4>
+    <ul><li>🔫 Org-mod army members no longer use up magazines when reloading (16 stays 16 · you still need at least one)</li></ul>
+    <h4>v26.251 — 🚧 Free desertion line · 🗡 Traitor</h4>
     <ul><li>🚧 The President, Prime Minister, Commander, TMCO and CMPO can cross the desertion line without becoming wanted (even after leave runs out)</li><li>🗡 New 12th rank <b>Traitor</b>: anyone who kills 50 innocent soldiers (army members who aren't wanted) and then crosses the desertion line · wanted ★★★ · can't change team (OP only) · law teams downing a traitor isn't murder</li></ul>
     <h4>v26.250 — 👑 President · 🏛 Prime Minister</h4>
     <ul><li>👑 Commander-in-Chief is now <b>President</b> · the server's creator, ranked General</li><li>🏛 New rank <b>Prime Minister</b>: server staff who assist the President, above Commander · wears a black suit and red tie</li><li>🎗 The Division Commander is now called Commander in English</li></ul>
@@ -7302,7 +7306,7 @@ function startReload(){const s=held();if(!s||!GUN_CAP[s.id]||player.reload||play
   const rifle=longGun(s.id);player.reload={t:0,dur:s.id===SNIPER?2.4:rifle?1.8:1.5,s,sel,snd:rifle&&playSnd('reload',s.id===SNIPER?.7:.8)};}
 function reloadTick(dt){const R=player.reload;if(!R)return;R.t+=dt;
   if(held()!==R.s||player.dead){player.reload=null;return;} // 다른 칸으로 바꾸면 장전 취소
-  if(R.t>=R.dur){player.reload=null;if(!isCreative()){if(!inv.some(q=>q&&q.id===MAG))return;removeItem(MAG,1);}R.s.ammo=GUN_CAP[R.s.id];invChanged();toast(`🔫 장전 완료 (${R.s.ammo}발)`);}}
+  if(R.t>=R.dur){player.reload=null;if(!isCreative()){if(!inv.some(q=>q&&q.id===MAG))return;let keep=false;try{keep=!!(MOD_INFMAG&&MOD_INFMAG());}catch(e){}if(!keep)removeItem(MAG,1);}/* 🧩 모드가 정한 사람(군대 등)은 장전해도 탄창이 안 줄어요 */R.s.ammo=GUN_CAP[R.s.id];invChanged();toast(`🔫 장전 완료 (${R.s.ammo}발)`);}}
 function fireGun(s){
   if(gunCD>0||player.reload||player.cuffed||player.tased||player.downed)return;if(gunAmmo(s)<=0&&!isCreative()){startReload();return;} // 빈 총: 자동으로 장전
   const rifle=s.id===RIFLE,snip=s.id===SNIPER;gunCD=snip?1.4:rifle?.32:.38;
@@ -9177,6 +9181,7 @@ const CB={version:'v26.164',
   outfit:(nick,o)=>{nick=String(nick);if(!o)delete MOD_OUTFIT[nick];else MOD_OUTFIT[nick]={top:o.top|0,bottom:o.bottom|0,hat:String(o.hat||''),hatC:o.hatC|0,badge:o.badge|0,style:OF_STYLES.includes(o.style)?o.style:'',stripes:Math.max(0,Math.min(3,o.stripes|0)),div:String(o.div||'').slice(0,8),field:o.field?1:0};}, // style: 'army' 'medic' 'mp' 'swat' 'officer' 'tmc' 'mpcmd' 'tmccmd' 'staff' 'owner' 'police' 'prisoner' 'outlaw' (진짜 같은 복장) // 🧩 복장: {top: 웃옷 색, bottom: 바지 색, hat: 'cap'|'helmet'|'beret'|'bandana', hatC, badge: 가슴 배지 색} · null 이면 벗음
   discord:()=>!!(ACC&&accToken()&&ACC.discord), // 🧩 우리 디스코드 서버에 들어와 있는지 (최근 디스코드 보상 확인 기준)
   community:()=>!!(ACC&&accToken()&&(typeof ACC.official==='boolean'?ACC.official:ACC_COMM)), // 🧩 겜벗 공식 커뮤니티(CLKKY CITY)에 가입했는지
+  infiniteMags:f=>{MOD_INFMAG=typeof f==='function'?f:null;}, // 🧩 f() 가 true 면 장전해도 탄창이 안 줄어요 (탄창이 1개는 있어야 장전)
   downed:o=>{MOD_DN=o&&typeof o==='object'?{medic:typeof o.medic==='function'?o.medic:()=>true,surgery:typeof o.surgery==='function'?o.surgery:()=>false,sec:Math.max(10,Math.min(300,(o.sec|0)||60))}:null;}, // 🧩 🩸 쓰러짐 · 심폐소생술 · 수술 켜기: {medic: ()=>내가 의무병인지, surgery:(x,y,z)=>수술할 수 있는 자리인지, sec: 쓰러져 있는 초} · null 이면 끔
   payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
   dim:(key,o)=>{key=String(key);o=o||{};if(DIM[key]&&!DIM[key].mod)return false; // 🧩 차원 만들기: {name, bg:[r,g,b], fog:[가까이,멀리], light, day, caveB, stars, spawn:{x,y,z}, noMobs, gen(data,cx,cz)} — gen 은 백그라운드에서도 돌아서 블록 번호(숫자)만 써야 해요
@@ -9789,7 +9794,7 @@ function banHammerHit(M){swing=1;SFX.smash();shake(.4,.3);spawnParticles(M.pos.x
 //   체력 0 → 60초 동안 쓰러짐 (시체로 누워 있음 · 못 움직임) · 시간이 지나거나 B 를 누르면 진짜로 죽음
 //   💓 심폐소생술 (의무병 · 메디킷으로 쓰러진 사람 치기 · 타이밍 미니게임): 그 자리에서 일어남 · 죽은 기록 없음 · 😵 기절 (느림 · 피가 남) → 응급 처치 · 지혈 (메디킷 2번)
 //   🩺 수술: Shift+메디킷으로 쓰러진 사람을 들고 → 수술센터에서 메디킷 우클릭 (3단계 미니게임) → 완전히 회복
-let MOD_DN=null,dnKeyOn=false;
+let MOD_DN=null,dnKeyOn=false;var MOD_INFMAG=null;
 function dnStart(cause){player.downed={t:(MOD_DN&&MOD_DN.sec)||60,cause};player.hp=0;player.faint=null;player.carry=null;renderStats();
   const m=MP.me.nick+' 님이 쓰러졌어요 🩸 ('+((MOD_DN&&MOD_DN.sec)||60)+'초 안에 의무병이 심폐소생술 · 수술을 하면 살아나요)';mpSend({t:'c',n:'🩸',m});mpChatShow('🩸',m);modEmit('down',MP.me.nick);
   if(!dnKeyOn){dnKeyOn=true;addEventListener('keydown',e=>{if(player.downed&&e.code==='KeyB'&&!MP.chat)dnEnd('die');});}}
