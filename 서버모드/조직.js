@@ -1,5 +1,5 @@
 // 🪖 조직 (팀 계급) 모드 — CAVEBUILD 서버용 .js 모드
-// 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 육군(Soldier) · 의무병(Medic) · 군사경찰(CMP) · 특수임무대(SWAT) · 장교(Officer) · 교육사(TMC) · MP사령관(CMPO) · 교육사령관(TMCO) · 사단장(Division Cmdr) · 대통령(President)
+// 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 육군(Soldier) · 의무병(Medic) · 군사경찰(CMP) · 특수임무대(SWAT) · 장교(Officer) · 교육사(TMC) · MP사령관(CMPO) · 교육사령관(TMCO) · 사단장(VIP) · 대통령(President)
 //   CLKKY ARMY 조직 구성: 의무병은 메디킷으로 치료 (사람을 치면 +8 · 우클릭하면 나 +6) · 특수임무대는 ★★★ 진압 (수갑 · 체포 가능) · 장교는 육군 · 의무병 관리 · 군사경찰은 MP사령관 지휘
 //   처음엔 누구나 시민 · 위 계급이 아래 계급 사람을 배정 · 진급 · 강등해요 (내 계급보다 아래로만) · 대통령(President)은 서버를 만든 사람 · 국무총리(Prime Minister)는 대통령을 보좌하는 운영진
 //   머리 위 닉네임에 [팀] + 팀 색, 기지 · 집합, 훈련 · 임무, 같은 팀끼리도 때릴 수 있음
@@ -42,7 +42,7 @@ const TEAMS = [ // 아래 → 위 (계급 순서)
   { key: '교육사', short: 'TMC', ico: '📘', color: '#4ade80' },
   { key: 'MP사령관', short: 'CMPO', ico: '⚜', color: '#f59e0b' },
   { key: '교육사령관', short: 'TMCO', ico: '⭐', color: '#22c55e' },
-  { key: '사단장', short: 'Commander', ico: '🎗', color: '#e5e7eb' }, // 예전 부사령관(Staff) · 사단 전체 운영진
+  { key: '사단장', short: 'VIP', ico: '🎗', color: '#f2cc3a' }, // 사단장(VIP) · 예전 부사령관(Staff) · 사단 전체 운영진
   { key: '국무총리', short: 'Prime Minister', ico: '🏛', color: '#ffd166' }, // 대통령을 보좌하는 서버 운영진
   { key: '대통령', short: 'President', ico: '👑', color: '#ff5a5a' }, // 예전 총사령관(Owner) · 서버를 만든 사람
 ];
