@@ -32,6 +32,9 @@ const TEAMS = [ // 아래 → 위 (계급 순서)
   { key: '시민', short: '시민', ico: '🙂', color: '#e0e0e0' },
   { key: '경찰', short: 'CP', ico: '🚓', color: '#4aa8ff' },
   { key: '육군', short: 'Soldier', ico: '🪖', color: '#7ec850' },
+  { key: '해군', short: 'Navy', ico: '⚓', color: '#5b8def' },
+  { key: '공군', short: 'Air Force', ico: '✈', color: '#8ec5ff' },
+  { key: '해병대', short: 'Marines', ico: '🦅', color: '#e84a4a' },
   { key: '의무병', short: 'Medic', ico: '⛑', color: '#ff7a8a' },
   { key: '군사경찰', short: 'CMP', ico: '🛡', color: '#fbbf24' },
   { key: '특수임무대', short: 'SWAT', ico: '🎯', color: '#9ca3af' },
@@ -43,6 +46,8 @@ const TEAMS = [ // 아래 → 위 (계급 순서)
   { key: '총사령관', short: 'Owner', ico: '👑', color: '#ff5a5a' },
 ];
 const ORGS = Object.fromEntries(TEAMS.map((t, i) => [t.key, { ...t, lv: i, full: t.short }]));
+ORGS['해군'].lv = ORGS['공군'].lv = ORGS['해병대'].lv = ORGS['육군'].lv; // 🪖 CLKKY ARMY 1사단 육군 · ⚓ 2사단 해군 · ✈ 3사단 공군 · 🦅 4사단 해병대는 같은 단계 (서로 지휘 못 함)
+const DIVS = { '육군': '1사단', '해군': '2사단', '공군': '3사단', '해병대': '4사단', '군사경찰': '5사단' }; // ⛓ 5사단 = 교도소 (교도관: 군사경찰 · 경찰)
 const OUTLAW = '무법자', PRISONER = '죄수'; // 계급표 밖의 팀 (배정 · 진급 안 됨)
 ORGS[OUTLAW] = { key: OUTLAW, short: OUTLAW, ico: '🏴', color: '#ff4040', lv: 0, full: OUTLAW, special: 1 };
 ORGS[PRISONER] = { key: PRISONER, short: PRISONER, ico: '⛓', color: '#ff9a3a', lv: 0, full: PRISONER, special: 1 };
@@ -64,6 +69,9 @@ const GUNS = ['권총', '돌격소총', '저격소총'];
 const KITS = {
   '경찰': ['권총', '테이저건'],
   '육군': ['권총', '돌격소총'],
+  '해군': ['권총', '돌격소총'],
+  '공군': ['권총', '돌격소총'],
+  '해병대': ['권총', '돌격소총'],
   '의무병': ['메디킷', '권총'],
   '군사경찰': ['권총', '돌격소총', '수갑', '테이저건'],
   '특수임무대': ['돌격소총', '권총', '수갑', '테이저건'],
@@ -77,7 +85,10 @@ const KITS = {
 const OUTFITS = {
   // style: 게임이 그리는 진짜 같은 복장 (디지털 무늬 전투복 · 경찰 근무복 · 완장 · 방탄모 · 조끼 …) · 나머지는 style 을 모르는 옛 게임용
   '경찰': { style: 'police', top: 0x2f7d77, bottom: 0x1d2742, hat: 'cap', hatC: 0x1d2742, badge: 0xf2c418 },
-  '육군': { style: 'army', top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x4f5a34 }, // 디지털 무늬 전투복 · 위장포 방탄모 · 탄띠 · 전투화
+  '육군': { style: 'army', top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x4f5a34 }, // 🎖 정복 (게임이 그림 · 계급마다 소매 금줄)
+  '해군': { style: 'navy', top: 0x1a2238, bottom: 0x1a2238, hat: 'cap', hatC: 0xf4f4f4 }, // 해군 감색 정복 · 흰 정모
+  '공군': { style: 'airforce', top: 0x4a6283, bottom: 0x4a6283, hat: 'cap', hatC: 0x4a6283 }, // 공군 청회색 정복
+  '해병대': { style: 'marine', top: 0x2e3a26, bottom: 0x2e3a26, hat: 'cap', hatC: 0x2e3a26 }, // 해병대 정복 · 팔각모 · 빨간 명찰
   '의무병': { style: 'medic', top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0xeeeeee, badge: 0xe02828 }, // + 적십자 완장 · 방탄모 적십자
   '군사경찰': { style: 'mp', top: 0x55663a, bottom: 0x47512f, hat: 'helmet', hatC: 0x1a1a1a, badge: 0xfbbf24 }, // + 검은 MP 헬멧 · MP 완장
   '특수임무대': { style: 'swat', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0x9ca3af }, // 검은 전술복 · 방탄조끼 · 방탄 헬멧 · 장갑
@@ -93,7 +104,7 @@ const OUTFITS = {
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
 const tagOf = (o) => (ORGS[o].key === ORGS[o].short ? o : `${o}(${ORGS[o].short})`); // 경찰(CP)
 const CITY_NAME = 'CLKKY CITY', ARMY_NAME = 'CLKKY ARMY', POLICE_NAME = 'CLKKY POLICE';
-const orgNameOf = (o) => (ARMY.includes(o) ? ARMY_NAME : o === '경찰' ? POLICE_NAME : ''); // 그 팀이 속한 조직 이름
+const orgNameOf = (o) => (ARMY.includes(o) ? ARMY_NAME + (DIVS[o] ? ' ' + DIVS[o] : '') : o === '경찰' ? POLICE_NAME : ''); // 그 팀이 속한 조직 이름 (CLKKY ARMY 1사단 · 2사단 · 3사단)
 
 // ── 🏦 화폐 · 💼 직업 ──
 const COIN = '동전', JOB_SALARY = 2, JOB_CAP = 20; // 직업 월급 (10분마다) · 일해서 버는 돈은 1분에 이만큼까지
@@ -122,7 +133,7 @@ const SELL = { // 납품 값 (한 개당 동전)
 //   2등급 「지명수배 ★★」  중범죄   — 경찰 쪽 팀원 폭행 · 불법 무기 소지 (시민이 총을 가짐)                                  → 징역 15분
 //   3등급 「지명수배 ★★★」 중대범죄 — 무단사살 (정당방위 · 경찰이 수배자를 쓰러뜨린 건 빼고) · 대학살 · 무단탈영 (군대) · 무기로 협박 → 징역 30분
 const LAW = ['경찰', '군사경찰', '특수임무대', '장교', 'MP사령관', '부사령관', '총사령관'];
-const ARMY = ['육군', '의무병', '군사경찰', '특수임무대', '장교', '교육사', 'MP사령관', '교육사령관', '부사령관']; // 군대 (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
+const ARMY = ['육군', '해군', '공군', '해병대', '의무병', '군사경찰', '특수임무대', '장교', '교육사', 'MP사령관', '교육사령관', '부사령관', '총사령관']; // 군대 (총사령관 포함) (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
 // 🎖 군사계급 (CLKKY ARMY 계급 구성 · 부서와 따로): 군대 팀원마다 하나 · /진급 · /강등 으로 올리고 내림 · 부서 이동은 /team · 전역하면 처음부터
 //   대장(General)은 총사령관(Owner)만 · 진급으로는 대령(Colonel)까지
 //   군대가 아닌 사람: 이등병(디스코드 서버 가입자는 무조건) · 멤버(겜벗 공식 커뮤니티 CLKKY CITY 가입) · 게스트(미가입) · 수감자(감옥) · 탈옥수 · 사형수(밴 예정) — /계급 @닉 상태 (OP)
@@ -140,7 +151,7 @@ const CHEST = 48; // 상자 블록
 // 징역을 받으면 감옥 차원의 감방으로 끌려가고, 형기가 끝나면 원래 있던 곳으로 돌아와요
 // /감옥 설정 으로 다른 자리(감옥 차원 안이든 프론티어든)를 감옥으로 정할 수도 있어요 · /감옥 가기 · /감옥 나가기 (경찰 쪽 · OP)
 const JAIL_WALL = CB.block({ id: 1900, key: 'jail_wall', name: '감옥 벽', hard: -1, paint: (u, v, x, y) => { const m = (y % 8 === 0) || ((x + (Math.floor(y / 8) % 2) * 8) % 16 === 0), k = 0.85 + 0.15 * Math.sin(x * 7.1 + y * 3.3); return m ? [52, 52, 58] : [96 * k, 96 * k, 104 * k]; } });
-const JAIL_BARS = CB.block({ id: 1901, key: 'jail_bars', name: '감옥 철창', hard: -1, paint: (u, v, x, y) => (x % 5 < 2 || y < 2 || y > 13) ? [58, 60, 68] : [22, 22, 26] });
+const JAIL_BARS = CB.block({ id: 1901, key: 'jail_bars', name: '감옥 철창', hard: -1, see: true, paint: (u, v, x, y) => (x % 5 < 2 || y < 2 || y > 13) ? [58, 60, 68] : null }); // 쇠창살 사이는 뚫려 있어서 빛이 들어요
 const LAMP = CB.id('등불') || 0;
 const CELLS_Z = 6, HALF = 42; // 감방 폭 · 감옥 길이(반)
 CB.dim('감옥', {
@@ -157,11 +168,13 @@ CB.dim('감옥', {
         else{data[I(x,14,z)]=(ax===8&&((wz%${CELLS_Z})+${CELLS_Z})%${CELLS_Z}===3&&L)?L:W;}}}`),
 });
 // 감방 자리: 수감자마다 다른 칸 (오른쪽 · 왼쪽 번갈아)
-function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)); const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
+function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick));
+  if (S.annex && S.town) return { dim: 'over', x: S.town.x - 161 + (i % 4) * 4 + 0.5, y: S.town.y, z: S.town.z - 18 + 0.5 }; // ⛓ 기지가 있으면 프론티어의 5사단 교도소 감방 4칸
+  const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, exo: s.exo || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, exo: s.exo || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -221,7 +234,7 @@ function clearSuits(nick) { S.suit = S.suit.filter((c) => c.who !== nick); delet
 function toJail(nick, min, why) {
   S.jail[nick] = min * 60; clearSuits(nick); delete S.fine[nick]; if (S.m[nick] && S.m[nick].o === OUTLAW) S.m[nick].o = '시민'; save(); // 감옥에선 죄수 · 나오면 시민
   CB.send('org-jail', { to: nick });
-  CB.say(`⛓ ${nick} 님 징역 ${min}분 (${why}) · ${S.jailPos ? '감옥으로' : '감옥 차원의 감방으로'} 끌려가요`);
+  CB.say(`⛓ ${nick} 님 징역 ${min}분 (${why}) · ${S.jailPos ? '감옥으로' : S.annex ? `${ARMY_NAME} 5사단 교도소로` : '감옥 차원의 감방으로'} 끌려가요`);
 }
 function askFine(nick, n, why) {
   S.fine[nick] = { n, why }; save();
@@ -590,7 +603,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return CB.say(`🏖 ${from} 님이 ${min}분 휴가를 떠나요 (휴가상담소)`);
     }
     case 'enlist': { // 🪖 상담원에게 「네」: 시민 → 군사 · 경찰
-      const o = a.o === '경찰' ? '경찰' : '육군';
+      const o = ['경찰', '해군', '공군', '해병대'].includes(a.o) ? a.o : '육군';
       if (Fo !== '시민') return tell(from, `이미 ${tagOf(Fo)}이에요`);
       if (S.w[from]) return tell(from, '지명수배 중에는 입대할 수 없어요');
       setTeam(from, o); delete S.job[from]; save(); sendKit(from);
@@ -797,6 +810,7 @@ for (const k in RECRUITERS) {
       const t = teamOf(me());
       if (t !== '시민') return note(t === OUTLAW || t === PRISONER ? `${R.name}: ${tagOf(t)}는 받아 줄 수 없어요` : `${R.name}: 이미 ${tagOf(t)}이시네요`);
       if (S.w[me()]) return note(`${R.name}: 지명수배 중에는 안 돼요`);
+      if (R.o === '육군') return CB.dialog(`🪖 <b>${ARMY_NAME} 입대 상담원</b><br><br>어느 사단에 입대하시겠어요?`, [['🪖 1사단 육군', () => req('enlist', { o: '육군' })], ['⚓ 2사단 해군', () => req('enlist', { o: '해군' })], ['✈ 3사단 공군', () => req('enlist', { o: '공군' })], ['🦅 4사단 해병대', () => req('enlist', { o: '해병대' })], ['아니요']]);
       CB.dialog(R.q, [['네', () => req('enlist', { o: R.o })], ['아니요']]);
     },
   });
@@ -893,6 +907,11 @@ function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서�
   CB.bigSign('org_food', '음식점', T.x + 41.5, T.y + 9, T.z + 8.5, { bg: '#a8421a', w: 12 });
   CB.bigSign('org_bank', '🏦 은행', T.x + 41.5, T.y + 9, T.z - 7.5, { bg: '#8a6a10', w: 12 });
   CB.bigSign('org_jobs', '💼 직업소개소', T.x + 41.5, T.y + 9, T.z + 17.5, { bg: '#2a6a7a', w: 14 });
+  if (S.annex) { // 🪖 기지 간판
+    CB.bigSign('anx_gate', `${ARMY_NAME} 기지`, T.x - 47.5, T.y + 9, T.z + 0.5, { bg: '#3d4a2a', w: 18 });
+    ANX.forEach(([n, ax, az, bx, bz, h, kind], i) => CB.bigSign('anx' + i, n, T.x + ((ax + bx) >> 1) + 1, T.y + h + 3, T.z + ((az + bz) >> 1) + 0.5, { bg: kind === 'med' || kind === 'surg' ? '#b02020' : kind === 'jail' ? '#444' : '#3d4a2a', w: Math.min(18, 6 + n.length) }));
+    ANX_OPEN.forEach(([n, x, z], i) => CB.bigSign('anxo' + i, n, T.x + x + 0.5, T.y + 6, T.z + z + 0.5, { bg: '#3d4a2a', w: 12 }));
+  }
   if (S.village) CB.bigSign('org_food2', '음식점', T.x + S.village.fx, T.y + 9, T.z + S.village.s * S.village.fd, { bg: '#a8421a', w: 12 });
 }
 function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임에 한 명씩)
@@ -993,6 +1012,9 @@ const TOWN_X = 46, TOWN_Z = 24; // 동서 ±46칸 · 남북 ±24칸
 const LAD_W = 44, LAD_E = 45, LAD_N = 46, LAD_S = 47; // 🪜 사다리 블록 (붙은 벽: 서 · 동 · 북(-z) · 남(+z))
 const TOWN_V = 7; // 도시 판 번호 — 2 이전은 같은 자리에 새로 지음 (사다리 · 고정 블록 번호) · 2 ~ 6은 없는 것만 더함 (탈영선 · 성벽 · 입대소 · 점프맵 · 음식점 · 은행 · 직업소개소)
 const VIL_D = 34; // 🏘 도시 옆 마을 깊이 (성문 밖 34칸)
+// 🪖 CLKKY ARMY 기지 (서쪽 성벽 밖으로 넓힘): x -166 ~ -47 · z -56 ~ 56 (도시 가운데 기준) · 서쪽 성벽 가운데에 기지 문
+const ANX_X1 = -166, ANX_Z = 56;
+const inBaseD = (dx, dz) => (dx >= -46 && dx <= -22 && Math.abs(dz) <= 22) || (!!S.annex && dx >= ANX_X1 && dx <= -46 && Math.abs(dz) <= ANX_Z); // 군부대 안 (도시 안 본부 + 바깥 기지)
 const T_DESERT = CB.block({ id: 1914, key: 'town_desert', name: '탈영선', paint: (u, v, x, y) => (((x + y) >> 2) % 2 ? [235, 225, 60] : [205, 30, 30]) });
 function wallPlan(C, G) { // 🏰 성벽: 도시 · 경찰서 · 군부대 둘레 (높이 7칸 · 톱니 · 모서리 탑 · 동 · 남 · 북 성문 · 올라가는 사다리)
   const L = [], BR = BLK('돌벽돌'), LAMPB = BLK('등불'), put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + z, id]);
@@ -1310,6 +1332,107 @@ function buildTown(C, G) {
   CB.say(again ? '🏙 도시를 새로 고쳤어요 (🪜 건물마다 위층 · 옥상 사다리)' : '🏙 도시 · 🚓 경찰서 · 🪖 군부대가 생겼어요! /도시 로 위치를 볼 수 있어요');
   return '';
 }
+// ── 🪖 CLKKY ARMY 기지 (서쪽 성벽 밖 · 120×112칸): 생활관 · 회의실 · 의료센터 · 교도소 · 총기 교체소 · 교육소 · 긴급 집합소 · 헬기장 · 구급차 ──
+const T_NAVY = CB.block({ id: 1916, key: 'army_navy', name: '해군 벽', paint: (u, v, x, y) => { const k = 0.92 + 0.08 * Math.sin(x * 5.1 + y * 7.3); return y === 0 || y === 15 ? [230, 230, 230] : [26 * k, 38 * k, 72 * k]; } });
+const T_AIRF = CB.block({ id: 1917, key: 'army_airforce', name: '공군 벽', paint: (u, v, x, y) => { const k = 0.93 + 0.07 * Math.sin(x * 6.7 + y * 4.1); return [96 * k, 124 * k, 160 * k]; } });
+const T_REDX = CB.block({ id: 1918, key: 'army_redcross', name: '적십자 표시', paint: (u, v, x, y) => ((x >= 6 && x <= 9 && y >= 2 && y <= 13) || (y >= 6 && y <= 9 && x >= 2 && x <= 13) ? [214, 30, 30] : [244, 244, 244]) });
+const T_SIREN = CB.block({ id: 1919, key: 'army_siren', name: '경광등', glow: true, light: true, paint: (u, v, x, y) => (x < 8 ? [240, 40, 40] : [40, 90, 240]) });
+const ANX = [ // [이름, x1, z1, x2, z2, 높이, 종류, 벽] · 북쪽(z<0) 건물은 문이 남쪽(+z) · 남쪽 건물은 문이 북쪽(-z)
+  ['🪖 육군 생활관 · 1사단', -64, -20, -50, -6, 6, 'bar', 'camo'], ['⚓ 해군 생활관 · 2사단', -82, -20, -68, -6, 6, 'bar', 'navy'], ['✈ 공군 생활관 · 3사단', -100, -20, -86, -6, 6, 'bar', 'air'],
+  ['🛡 군사경찰 생활관', -124, -20, -110, -6, 6, 'bar', 'mp'], ['📘 교육부 생활관', -142, -20, -128, -6, 6, 'bar', 'camo'], ['⛓ 5사단 교도소', -163, -21, -146, -6, 6, 'jail', 'iron'],
+  ['⚜ 사령관 회의실', -64, -38, -52, -26, 6, 'meet', 'conc'], ['🎖 고위 간부 회의실', -80, -38, -68, -26, 6, 'meet', 'conc'], ['📋 부사관 회의실', -96, -38, -84, -26, 5, 'meet', 'camo'],
+  ['🛡 AFMPC 회의실', -122, -38, -110, -26, 6, 'meet', 'mp'], ['🎯 특임대 작전 회의소', -138, -38, -126, -26, 5, 'ops', 'mp'], ['🔫 총기 교체소', -156, -38, -144, -26, 5, 'arms', 'conc'],
+  ['📚 교육소', -100, -54, -84, -42, 6, 'class', 'camo'],
+  ['🩹 군사경상의료센터', -64, 6, -50, 20, 6, 'med', 'white'], ['🏥 군사중상의료센터', -82, 6, -68, 20, 7, 'med', 'white'], ['🚑 군사권역외상센터', -100, 6, -86, 20, 8, 'med', 'white'],
+  ['🩺 군사응급수술센터', -124, 6, -110, 20, 7, 'surg', 'white'], ['♿ 군사재활치료센터', -142, 6, -128, 20, 6, 'med', 'white'],
+  ['🦅 해병대 생활관 · 4사단', -124, 26, -110, 40, 6, 'bar', 'marine'],
+];
+const ANX_OPEN = [['📣 긴급 집합소', -70, -48], ['🚁 헬기장', -121, -48], ['🚑 구급차 주차장', -57, 31], ['🚁 의무 헬기장', -76, 34]]; // 간판만 (건물 없는 곳)
+function annexVeh(put, skip, x0, z0, kind) { // 🚑 구급차 · 🚁 헬기: 블록으로 지은 탈것 (엔진을 우클릭하면 타요) · 바퀴 · 받침 밑은 땅을 안 깔아요 (탈것에 땅이 붙지 않게)
+  const WH = T_WHITE, GL = BLK('유리'), IRON = BLK('철 블록'), ENG = BLK(kind === 'amb' ? '자동차 엔진' : '비행기 엔진'), WHEEL = BLK('바퀴'), STEER = BLK('핸들'), SEAT = BLK('드라이브 쿠션');
+  if (kind === 'amb') { // 길이 7 (x) · 폭 3 (z) · 앞이 +x
+    for (const x of [1, 5]) for (const z of [0, 2]) { put(x0 + x, 0, z0 + z, WHEEL); skip(x0 + x, z0 + z); }
+    for (let x = 0; x <= 6; x++) for (let z = 0; z <= 2; z++) put(x0 + x, 1, z0 + z, WH);
+    for (let x = 0; x <= 4; x++) for (let z = 0; z <= 2; z++) for (let y = 2; y <= 4; y++) put(x0 + x, y, z0 + z, y === 2 && z !== 1 ? T_REDX : WH);
+    put(x0 + 2, 3, z0, T_REDX); put(x0 + 2, 3, z0 + 2, T_REDX); put(x0, 3, z0 + 1, GL); put(x0 + 2, 2, z0 + 1, ENG);
+    put(x0 + 5, 2, z0 + 1, SEAT); put(x0 + 6, 2, z0 + 1, STEER); for (const z of [0, 2]) { put(x0 + 5, 2, z0 + z, WH); put(x0 + 6, 2, z0 + z, WH); put(x0 + 5, 3, z0 + z, GL); }
+    for (let z = 0; z <= 2; z++) { put(x0 + 6, 3, z0 + z, GL); put(x0 + 5, 4, z0 + z, WH); put(x0 + 6, 4, z0 + z, WH); }
+    put(x0 + 5, 5, z0, T_SIREN); put(x0 + 5, 5, z0 + 2, T_SIREN);
+    return;
+  }
+  const B = kind === 'medheli' ? WH : T_CAMO; // 🚁 헬기: 몸통 5 · 꼬리 4 · 받침 · 회전날개 (앞이 +x)
+  for (let x = 0; x <= 4; x++) for (const z of [0, 2]) { put(x0 + x, 0, z0 + z, IRON); skip(x0 + x, z0 + z); }
+  for (let x = 0; x <= 4; x++) for (let z = 0; z <= 2; z++) put(x0 + x, 1, z0 + z, x === 3 && z === 1 ? SEAT : x === 4 && z === 1 ? STEER : B);
+  for (let x = 0; x <= 2; x++) for (let z = 0; z <= 2; z++) for (let y = 2; y <= 3; y++) put(x0 + x, y, z0 + z, B);
+  put(x0 + 1, 2, z0 + 1, ENG); for (const z of [0, 2]) { put(x0 + 3, 2, z0 + z, B); put(x0 + 4, 2, z0 + z, GL); } put(x0 + 4, 2, z0 + 1, GL);
+  for (let x = 3; x <= 4; x++) for (let z = 0; z <= 2; z++) put(x0 + x, 3, z0 + z, GL);
+  if (kind === 'medheli') { put(x0 + 1, 2, z0, T_REDX); put(x0 + 1, 2, z0 + 2, T_REDX); }
+  for (let x = -4; x <= -1; x++) put(x0 + x, 2, z0 + 1, B); put(x0 - 4, 3, z0 + 1, B); put(x0 - 4, 4, z0 + 1, B); put(x0 - 4, 3, z0 + 2, IRON); // 꼬리 · 꼬리 날개
+  put(x0 + 1, 4, z0 + 1, IRON); for (let k = -4; k <= 4; k++) { put(x0 + 1 + k, 5, z0 + 1, IRON); put(x0 + 1, 5, z0 + 1 + k, IRON); } // 회전날개
+}
+function annexPlan(C, G) {
+  const W = new Map(), AIR = 0, noGround = new Set(), x1 = ANX_X1, x2 = -47, Z = ANX_Z;
+  const GRASS = BLK('잔디 블록'), ROAD = BLK('도로', '돌'), GLASS = BLK('유리'), PLANK = BLK('판자'), LAMPB = BLK('등불'), IRON = BLK('철 블록'), FLAG = BLK('태극기', '흰 벽');
+  const BED = BLK('침대', '판자'), SHELF = BLK('책장', '판자'), BOARD = BLK('칠판', '돌'), TILE = BLK('실험실 타일', '흰 벽');
+  const put = (dx, dy, dz, id) => { const x = C.x + dx, y = G + dy, z = C.z + dz; W.set(x + ',' + y + ',' + z, [x, y, z, id]); };
+  const box = (ax, ay, az, bx, by, bz, id) => { for (let x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) for (let y = Math.min(ay, by); y <= Math.max(ay, by); y++) for (let z = Math.min(az, bz); z <= Math.max(az, bz); z++) put(x, y, z, id); };
+  const skip = (dx, dz) => noGround.add(dx + ',' + dz);
+  // 땅 고르기 · 담 · 망루 · 길 (탈것 자리는 마지막에 땅을 빼요)
+  box(x1, 0, -Z, x2, 16, Z, AIR);
+  for (let x = x1; x <= x2; x++) for (let z = -Z; z <= Z; z++) put(x, -1, z, GRASS);
+  for (let x = x1; x <= x2; x++) for (let z = -Z; z <= Z; z++) if (x === x1 || x === x2 || Math.abs(z) === Z) { for (let y = 0; y <= 3; y++) put(x, y, z, T_CAMO); put(x, 4, z, T_CONC); }
+  box(x2, 0, -2, -46, 4, 2, AIR); box(x2, -1, -2, -46, -1, 2, ROAD); // 🚪 기지 문 (도시 안 본부와 이어짐)
+  box(x1 + 1, -1, -2, x2, -1, 2, ROAD); for (let x = x1 + 1; x <= x2; x++) if (((x % 4) + 4) % 4 < 2) put(x, -1, 0, T_LINE); // 큰길 (동서)
+  box(-106, -1, -Z + 1, -104, -1, Z - 1, ROAD); // 남북 길
+  box(x1 + 1, -1, -24, x2 - 1, -1, -23, ROAD); box(x1 + 1, -1, -41, x2 - 1, -1, -40, ROAD); box(x1 + 1, -1, 23, x2 - 1, -1, 24, ROAD); // 옆길
+  for (const [x, z] of [[x1 + 1, -Z + 1], [x1 + 1, Z - 1], [x2 - 1, -Z + 1], [x2 - 1, Z - 1]]) { box(x - 1, 0, z - 1, x + 1, 7, z + 1, T_CONC); box(x - 2, 8, z - 2, x + 2, 8, z + 2, PLANK); put(x, 9, z, LAMPB); } // 망루
+  for (let x = x1 + 6; x < x2; x += 12) { box(x, 0, 3, x, 2, 3, IRON); put(x, 3, 3, LAMPB); box(x, 0, -3, x, 2, -3, IRON); put(x, 3, -3, LAMPB); } // 가로등
+  // 🏢 건물
+  const WALL = { camo: T_CAMO, navy: T_NAVY, air: T_AIRF, marine: T_CAMO, mp: T_CONC, conc: T_CONC, white: T_WHITE, iron: IRON };
+  for (const [, ax, az, bx, bz, h, kind, wk] of ANX) {
+    const wall = WALL[wk] || T_CONC, med = kind === 'med' || kind === 'surg', door = az < 0 ? bz : az, inw = door === bz ? -1 : 1, mx = (ax + bx) >> 1; // inw: 문에서 안쪽으로 가는 방향
+    box(ax, -1, az, bx, -1, bz, med ? TILE : PLANK);
+    for (let y = 0; y < h; y++) for (let x = ax; x <= bx; x++) for (let z = az; z <= bz; z++) {
+      if (x !== ax && x !== bx && z !== az && z !== bz) continue;
+      const corner = (x === ax || x === bx) && (z === az || z === bz);
+      put(x, y, z, !corner && (y === 1 || y === 2) && (x + z) % 3 !== 0 && kind !== 'jail' ? GLASS : wk === 'mp' && y === h - 2 ? T_STRIPE : wall);
+    }
+    box(ax, h, az, bx, h, bz, wk === 'navy' ? T_NAVY : T_CONC); put(mx, h - 1, (az + bz) >> 1, LAMPB); put(mx - 4, h - 1, (az + bz) >> 1, LAMPB); put(mx + 4, h - 1, (az + bz) >> 1, LAMPB);
+    box(mx, 0, door, mx + 1, 2, door, AIR); // 문 (길 쪽)
+    if (med) { put(mx - 2, 2, door, T_REDX); put(mx + 3, 2, door, T_REDX); put(mx, h, (az + bz) >> 1, T_REDX); }
+    if (wk === 'mp') { put(mx - 2, 2, door, T_BADGE); put(mx + 3, 2, door, T_BADGE); }
+    if (wk === 'camo' || wk === 'navy' || wk === 'air' || wk === 'marine') { put(mx - 2, 2, door, T_ARMY); put(mx + 3, 2, door, T_ARMY); }
+    const back = door === bz ? az : bz;
+    const nb = back - inw; // 뒷벽 바로 안쪽
+    if (kind === 'bar') for (let x = ax + 1; x <= bx - 1; x += 2) { if (x !== mx && x !== mx + 1) put(x, 0, door + inw, BED); put(x, 0, nb, BED); } // 침대 두 줄
+    if (kind === 'bar') { put(ax + 1, 0, (az + bz) >> 1, CHEST); put(bx - 1, 0, (az + bz) >> 1, CHEST); }
+    if (kind === 'meet' || kind === 'ops') { box(ax + 3, 0, (az + bz) >> 1, bx - 3, 0, (az + bz) >> 1, PLANK); box(mx - 1, 1, nb, mx + 2, 2, nb, BOARD); put(ax + 1, 0, nb, SHELF); put(bx - 1, 0, nb, SHELF); }
+    if (kind === 'ops') put(mx, 1, (az + bz) >> 1, T_TARGET);
+    if (kind === 'class') { box(mx - 2, 1, nb, mx + 3, 2, nb, BOARD); for (let k = 3; k < Math.abs(bz - az) - 2; k += 2) for (let x = ax + 2; x <= bx - 2; x += 3) put(x, 0, door + inw * k, PLANK); } // 칠판 · 책상 줄
+    if (kind === 'arms') { box(ax + 1, 0, door + inw * 3, bx - 1, 0, door + inw * 3, PLANK); for (let x = ax + 1; x <= bx - 1; x += 2) put(x, 0, nb, CHEST); box(ax + 1, 1, nb, bx - 1, 1, nb, IRON); }
+    if (kind === 'med' || kind === 'surg') for (let x = ax + 2; x <= bx - 2; x += 3) { put(x, 0, nb, BED); if (kind === 'surg') put(x, 0, (az + bz) >> 1, T_WHITE); }
+    if (kind === 'jail') { for (let x = ax + 1; x <= bx - 1; x++) box(x, 0, az + 6, x, 3, az + 6, JAIL_BARS); for (let x = ax + 4; x < bx; x += 4) box(x, 0, az + 1, x, 3, az + 5, IRON); for (let x = ax + 2; x < bx; x += 4) put(x, 0, az + 2, BED); }
+  }
+  // 📣 긴급 집합소 · 🚁 헬기장 · 🚑 구급차 주차장 · 🚁 의무 헬기장
+  box(-80, -1, -54, -60, -1, -42, T_CONC); box(-72, 0, -53, -68, 0, -52, PLANK); box(-70, 0, -50, -70, 7, -50, IRON); put(-70, 8, -50, FLAG); for (let x = -78; x <= -62; x += 4) box(x, -1, -47, x, -1, -44, T_LINE);
+  box(-130, -1, -54, -112, -1, -42, T_CONC); box(-124, -1, -51, -124, -1, -45, T_LINE); box(-118, -1, -51, -118, -1, -45, T_LINE); box(-124, -1, -48, -118, -1, -48, T_LINE);
+  box(-64, -1, 26, -50, -1, 38, T_CONC); for (let x = -64; x <= -50; x += 5) box(x, -1, 26, x, -1, 38, T_LINE);
+  box(-84, -1, 26, -68, -1, 42, T_CONC); box(-80, -1, 30, -72, -1, 38, T_REDX); box(-79, -1, 31, -73, -1, 37, T_CONC); // 의무 헬기장 (빨간 십자 테)
+  annexVeh(put, skip, -63, 28, 'amb'); annexVeh(put, skip, -58, 33, 'amb'); annexVeh(put, skip, -123, -49, 'heli'); annexVeh(put, skip, -77, 33, 'medheli');
+  for (const k of noGround) { const [dx, dz] = k.split(',').map(Number); W.delete((C.x + dx) + ',' + (G - 1) + ',' + (C.z + dz)); } // 탈것 밑 땅은 그대로 (땅이 탈것에 붙지 않게)
+  return { L: [...W.values()], noGround };
+}
+function annexReady(C) { for (let x = C.x + ANX_X1; x <= C.x - 47 + 15; x += 16) for (let z = C.z - ANX_Z; z <= C.z + ANX_Z + 15; z += 16) if (!CB.loaded(Math.min(x, C.x - 47), Math.min(z, C.z + ANX_Z))) return false; return true; }
+function buildAnnex(C, G) {
+  const P = annexPlan(C, G), L = P.L, DIRT = BLK('흙'), soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null));
+  for (let dx = ANX_X1; dx <= -47; dx++) for (let dz = -ANX_Z; dz <= ANX_Z; dz++) { if (P.noGround.has(dx + ',' + dz)) continue; for (let y = G - 2; y > G - 18; y--) { if (!soft.has(CB.getBlock(C.x + dx, y, C.z + dz))) break; L.push([C.x + dx, y, C.z + dz, DIRT]); } } // 아래 빈 곳 · 물은 흙으로
+  CB.setBlocks(L);
+  S.annex = { v: 1 };
+  const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
+  Object.assign(S.base, { '육군': at(-57, -4), '해군': at(-75, -4), '공군': at(-93, -4), '군사경찰': at(-117, -4), '특수임무대': at(-117, -4), 'MP사령관': at(-117, -4), '장교': at(-135, -4), '교육사': at(-135, -4), '교육사령관': at(-135, -4), '의무병': at(-57, 4), '해병대': at(-117, 25) });
+  save();
+  CB.say(`🪖 ${ARMY_NAME} 기지가 생겼어요! (서쪽 성벽 밖 · 생활관 · 회의실 · 의료센터 · 교도소 · 헬기 · 구급차) · 🚑 🚁 는 엔진을 우클릭하면 타요`);
+}
 let townT = 0;
 function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음 (예전에 지은 도시에 집이 없으면 집만)
   if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
@@ -1332,6 +1455,7 @@ function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾�
       if (L) { CB.setBlocks(L); S.gates[i] = 1; save(); }
     }
     if (S.townV !== TOWN_V) { buildTown({ x: S.town.x, z: S.town.z }, S.town.y); return; } // 예전 도시 → 같은 자리에 새로 (땅이 다 불러와지면)
+    if (!S.annex && S.townV === TOWN_V && annexReady(S.town)) { buildAnnex({ x: S.town.x, z: S.town.z }, S.town.y); return; } // 🪖 기지: 서쪽 땅이 다 불러와지면
     if (!S.houses && CB.loaded(S.town.x - 17, S.town.z - 23) && CB.loaded(S.town.x + 17, S.town.z + 23) && CB.loaded(S.town.x - 17, S.town.z + 23) && CB.loaded(S.town.x + 17, S.town.z - 23)) buildHouses({ x: S.town.x, z: S.town.z }, S.town.y);
     return;
   }
@@ -1490,6 +1614,7 @@ CB.command('감옥', '/감옥 — 수감자 목록 · /감옥 설정 (지금 자
   if (a[0] === '가기' || a[0] === '나가기') {
     if (!(CB.isOp() || isLaw(me()))) return c.say('감옥 차원은 경찰(CP) · 군사경찰(CMP) · 장교(Officer) · MP사령관 · 총사령관나 OP만 드나들 수 있어요');
     if (S.jail[me()]) return c.say('수감 중에는 나갈 수 없어요');
+    if (a[0] === '가기' && S.annex && S.town && !S.jailPos) { if (CB.dimNow() !== 'over') CB.goDim('over', S.town.x - 154.5, S.town.y + 0.2, S.town.z - 10.5); else CB.tp(S.town.x - 154.5, S.town.y + 0.2, S.town.z - 10.5); return c.say('⛓ 5사단 교도소 복도로 가요 (교도관: 군사경찰 · 경찰)'); }
     if (a[0] === '가기') { CB.goDim('감옥'); return c.say('⛓ 감옥 차원으로 가요'); }
     if (CB.dimNow() !== '감옥') return c.say('지금 감옥 차원에 있지 않아요');
     CB.goDim('over'); return c.say('프론티어로 돌아가요');
@@ -1534,7 +1659,7 @@ CB.onTick((dt) => {
       if (v.sec === 60 && v.out) tell(n, '⏰ 외출 시간이 1분 남았어요 · 군부대로 돌아오세요');
       if (v.sec > 0) continue;
       delete S.leave[n]; if (v.vac) S.vacT[n] = Date.now(); save();
-      const P = CB.playerPos ? CB.playerPos(n) : null, inBase = !!(P && S.town && Math.floor(P.x) - S.town.x >= -46 && Math.floor(P.x) - S.town.x <= -22 && Math.abs(Math.floor(P.z) - S.town.z) <= 22);
+      const P = CB.playerPos ? CB.playerPos(n) : null, inBase = !!(P && S.town && inBaseD(Math.floor(P.x) - S.town.x, Math.floor(P.z) - S.town.z));
       if (v.out && v.vac && inBase && ARMY.includes(teamOf(n))) crime(n, 1, '휴가 복귀 미신고'); // 돌아왔는데 복귀 상담원에게 신고 안 함 → 수갑대상
       else if (v.out && ARMY.includes(teamOf(n)) && !CB.opOf(n)) desert(n, `무단탈영 (${v.vac ? '휴가' : '외출'} 시간 초과)`); else tell(n, `🪪 ${v.vac ? '휴가' : '외출 허가'} 시간이 끝났어요`);
     }
@@ -1557,7 +1682,7 @@ CB.onTick((dt) => {
     const sub = S.jail[n] ? '⛓ 수감 중' : W ? '🚨 ' + stars(W.lv) : '';
     const rk = rankOf(n);
     CB.tag(n, '', y ? ORGS[o].color : '#ffffff', { rank: y ? `${ORGS[o].ico} ${tagOf(o)}${rk ? ' · ' + rk : ''}` : jb ? `${JOBS[jb].ico} ${jb} · ${rk}` : rk, rankColor: y ? ORGS[o].color : jb ? '#ffe9a8' : '#cfcfcf', sub, subColor: '#ff4a4a' });
-    if (CB.outfit) CB.outfit(n, OUTFITS[o] || null);
+    if (CB.outfit) { const O = OUTFITS[o], r = mrOf(n); CB.outfit(n, O ? { ...O, stripes: r >= 14 ? 3 : r >= 11 ? 2 : r >= 4 ? 1 : 0, div: DIVS[o] || '' } : null); } // 🎖 정복 소매 금줄: 병 0 · 부사관 · 위관 1 · 영관 2 · 장성 3 · 왼팔 사단 마크
     now.add(n);
   }
   for (const n of tagged) if (!now.has(n)) { CB.tag(n); if (CB.outfit) CB.outfit(n, null); }
@@ -1580,7 +1705,7 @@ CB.onTick((dt) => {
     const TW = S.town, p = pos();
     if (baseGrace > 0) baseGrace--;
     if (TW && y.o === '시민' && CB.dimNow() === 'over' && !CB.isOp()) {
-      const dx = Math.floor(p.x) - TW.x, dz = Math.floor(p.z) - TW.z, inside = dx >= -46 && dx <= -22 && Math.abs(dz) <= 22;
+      const dx = Math.floor(p.x) - TW.x, dz = Math.floor(p.z) - TW.z, inside = inBaseD(dx, dz);
       if (inside && lastTeam && ARMY.includes(lastTeam)) { inBaseP = null; CB.tp(TW.x - 20 + 0.5, TW.y + 0.2, TW.z + 0.5); note('🎖 전역했어요 · 군부대 밖으로 나왔어요'); }
       else if (inside && baseGrace <= 0) req('trespass');
       else if (!inside && dx >= -21 && dx <= -17 && Math.abs(dz) <= 3) note('⚠ 입대하지 않고 군부대에 들어가면 🏴 무법자가 돼요 · 입대는 옆 건물 상담원에게');
@@ -1589,7 +1714,7 @@ CB.onTick((dt) => {
   { // 🪖 무단탈영: 군대 팀이 걸어서 군부대 밖으로 나가면 (정문의 빨간 선) · 순간이동 · OP는 빼고
     const TW = S.town, p = pos();
     if (TW && ARMY.includes(y.o) && CB.dimNow() === 'over' && !CB.isOp()) {
-      const dx = Math.floor(p.x) - TW.x, dz = Math.floor(p.z) - TW.z, inside = dx >= -46 && dx <= -22 && Math.abs(dz) <= 22;
+      const dx = Math.floor(p.x) - TW.x, dz = Math.floor(p.z) - TW.z, inside = inBaseD(dx, dz);
       if (inBaseP && !inside && Math.hypot(p.x - inBaseP.x, p.z - inBaseP.z) < 20) req('desert');
       inBaseP = inside ? { x: p.x, z: p.z } : null;
       const pass = S.leave[me()];
@@ -1602,7 +1727,7 @@ CB.onTick((dt) => {
     const TW = S.town, p = pos(), army = ARMY.includes(y.o);
     if (TW && (army || y.o === '경찰') && nightNow() && CB.dimNow() === 'over' && !CB.isOp() && !S.jail[me()]) {
       const dx = Math.floor(p.x) - TW.x, dz = Math.floor(p.z) - TW.z;
-      const home = army ? dx >= -46 && dx <= -22 && Math.abs(dz) <= 22 : dx >= 20 && dx <= 36 && dz >= -17 && dz <= 18;
+      const home = army ? inBaseD(dx, dz) : dx >= 20 && dx <= 36 && dz >= -17 && dz <= 18;
       if (home || W || (army && S.leave[me()])) curfewT = 0;
       else if (++curfewT <= 60) note(`🌙 생활규칙: 밤에는 ${army ? '군부대' : '경찰서'}로 돌아가야 해요 · ${61 - curfewT}초 뒤 수갑대상`);
       else if (curfewT === 61) req('curfew');
