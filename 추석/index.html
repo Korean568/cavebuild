@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.249 — 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술</h4>
+    <h4>🆕 v26.250 — 👑 대통령 · 🏛 국무총리</h4>
+    <ul><li>👑 총사령관 → <b>대통령</b>(President) · 서버를 만든 사람이고 대장이에요</li><li>🏛 새 계급 <b>국무총리</b>(Prime Minister): 대통령을 보좌하는 서버 운영진 · 사단장 위 · 검은 정장 · 빨간 넥타이</li><li>🎗 사단장의 영어 이름은 Commander · 계급표 (위 → 아래): 대통령 · 국무총리 · 사단장 · 교육사령관 · MP사령관 · 교육사 · 장교 · 특수임무대 · 군사경찰 · 의무병 · 육군 · 해군 · 공군 · 해병대</li></ul>
+    <h4>v26.249 — 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술</h4>
     <ul><li>🩸 조직 모드 멀티에서는 체력이 0이 되면 바로 죽지 않고 <b>60초 동안 쓰러져</b> 누워 있어요 (못 움직임 · B 로 포기하고 부활) · 시간이 지나면 진짜로 죽어요</li><li>💓 의무병이 메디킷으로 쓰러진 사람을 치면 <b>심폐소생술</b> 미니게임 (초록 칸에서 스페이스 5번) · 성공하면 그 자리에서 일어나고 죽은 기록이 안 남아요 · 대신 <b>😵 기절</b> (느리고 6초마다 피가 나요) → 메디킷으로 <b>응급 처치 · 지혈</b> 을 받아야 해요</li><li>🩺 Shift+메디킷으로 쓰러진 사람을 <b>들고</b> 기지의 <b>군사응급수술센터 · 권역외상센터</b>에서 메디킷 우클릭 → <b>수술</b> 미니게임 (절개 · 지혈 · 봉합 3단계) · 성공하면 완전히 회복</li><li>🪲 v26.247 오타 고침: 경찰 · 죄수 · 무법자 복장을 그릴 때 오류가 나던 문제</li></ul>
     <h4>v26.248 — ⛓ 감옥 차원 없앰 · 🎗 사단장</h4>
     <ul><li>⛓ 「감옥」 차원을 없앴어요 · 징역은 프론티어의 <b>5사단 교도소</b> 감방으로 (기지가 아직 없으면 경찰서 유치장) · /감옥 가기 · 나가기 도 교도소로</li><li>🎗 부사령관 → <b>사단장</b>(Division Cmdr) · 👑 총사령관은 1 ~ 5사단을 모두 지휘해요</li></ul>
@@ -2224,7 +2226,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.249 — 🩸 Downed · 💓 CPR · 🩺 Surgery</h4>
+    <h4>🆕 v26.250 — 👑 President · 🏛 Prime Minister</h4>
+    <ul><li>👑 Commander-in-Chief is now <b>President</b> · the server's creator, ranked General</li><li>🏛 New rank <b>Prime Minister</b>: server staff who assist the President, above Commander · wears a black suit and red tie</li><li>🎗 The Division Commander is now called Commander in English</li></ul>
+    <h4>v26.249 — 🩸 Downed · 💓 CPR · 🩺 Surgery</h4>
     <ul><li>🩸 In org-mod multiplayer, reaching 0 HP leaves you <b>downed for 60 seconds</b> instead of dying (you can't move · press B to give up and respawn) · after that you really die</li><li>💓 A medic hitting a downed player with a medkit starts a <b>CPR</b> minigame (press Space in the green zone 5 times) · on success they get up on the spot and no death is recorded, but they're <b>😵 unconscious</b> (slow and bleeding every 6 seconds) until they get <b>first aid and bleeding control</b> from a medkit</li><li>🩺 Shift+medkit <b>carries</b> a downed player; at the base's <b>emergency surgery or trauma center</b>, right-click the medkit for the <b>surgery</b> minigame (incision, bleeding, sutures) · success fully revives them</li><li>🪲 Fixed a v26.247 typo that broke the police, prisoner and outlaw outfits</li></ul>
     <h4>v26.248 — ⛓ Jail dimension removed · 🎗 Division Commander</h4>
     <ul><li>⛓ The Jail dimension is gone · sentences are now served in the <b>5th-division prison</b> in the Frontier (or the police holding cells if the base isn't built yet), and /감옥 가기 · 나가기 go there</li><li>🎗 Staff is renamed <b>Division Commander</b> · 👑 the Owner commands all five divisions</li></ul>
@@ -9405,10 +9409,14 @@ function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,COL=ofDressCol(s),TOP=ofM(
   const crown=s==='navy'?0xf4f4f4:s==='airforce'?0x4a6283:s==='staff'?0x2f3d2c:0x003942,Y=s==='owner'?GOLD:YEL;
   add(A.head,.55,.1,.55,ofSolid(s==='navy'?0x101012:0x0f1f22,.7),0,.41,0);add(A.head,.62,.1,.62,ofSolid(crown,.8),0,.5,0);add(A.head,.5,.03,.18,ofSolid(0x050505,.15,.4),0,.36,-.34); // 정모 테 · 윗부분 · 챙
   add(A.head,.5,.025,.02,Y,0,.38,-.282);add(A.head,.1,.09,.01,Y,0,.44,-.282);if(s==='owner')add(A.head,.46,.025,.02,GOLD,0,.35,-.42);} // 턱끈 · 무궁화 모장 · (장성) 챙 금장
-function ofTopTex(o){const s=o.style;if(OF_DRESS.includes(s))return ofPlain(ofDressCol(s),21);return s==='swat'?ofPlain('#1d1e21',3):s==='police'?ofPlain('#2f7d77',4):s==='prisoner'?ofPlain('#e06a1a',5):s==='outlaw'?ofPlain('#26262a',6):s==='owner'?ofPlain('#003942',7):s==='staff'?ofPlain('#2f3d2c',8):ofCamo(11);} // 총사령관: 신형 정복 피콕그린 · 부사령관: 근무복 진녹색 // 웃옷 무늬 (1인칭 소매도)
+function ofTopTex(o){const s=o.style;if(OF_DRESS.includes(s))return ofPlain(ofDressCol(s),21);if(s==='pm')return ofPlain('#1d2433',23);return s==='swat'?ofPlain('#1d1e21',3):s==='police'?ofPlain('#2f7d77',4):s==='prisoner'?ofPlain('#e06a1a',5):s==='outlaw'?ofPlain('#26262a',6):s==='owner'?ofPlain('#003942',7):s==='staff'?ofPlain('#2f3d2c',8):ofCamo(11);} // 총사령관: 신형 정복 피콕그린 · 부사령관: 근무복 진녹색 // 웃옷 무늬 (1인칭 소매도)
 function ofBuild(A,o,add0){const s=o.style,F=v=>-.14-v,DECO=new Set(['nm','pol','sw','sw2','pn','pn2','xb','mpb','tb','xh','mph','tc','tg','um','roka']), // 글자 · 그림판은 그림 한 장을 통째로 (게임 상자는 크기만큼 그림을 반복해서 귀퉁이만 보임)
     add=(par,w,h,d,mat,x,y,z)=>{const k=mat.userData.ofk;if(!(DECO.has(k)||(k&&k.startsWith('um'))))return add0(par,w,h,d,mat,x,y,z);const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);par.add(m);A.outfitParts.push(m);return m;},TOP=ofM('top'+s,ofTopTex(o)),POCK=ofM('pk'+s,ofTopTex(o),0xb8b8b8);
   if(OF_DRESS.includes(s)&&!o.field){ofDress(A,o,add);return;} // 🎖 군대는 정복 (o.field 면 예전 전투복)
+  if(s==='pm'){const SU=ofM('suit',ofPlain('#1d2433',23)),SH=ofSolid(0xf4f4f4,.7),TI=ofSolid(0xa01c2c,.6),GD=ofSolid(0xe0b83a,.35,.8),SHOE=ofSolid(0x0e0e10,.2,.3); // 🏛 국무총리: 검은 정장 · 흰 셔츠 · 빨간 넥타이 · 금 배지
+    add(A.up,.52,.7,.28,SU,0,.34,0);for(const a of A.arms){add(a,.215,.5,.235,SU,0,-.2,0);add(a,.22,.04,.24,SH,0,-.44,0);}for(const l of A.legs){add(l,.255,.77,.265,SU,0,-.375,0);add(l,.265,.12,.275,SHOE,0,-.71,0);}
+    add(A.up,.16,.18,.01,SH,0,.59,F(.006));add(A.up,.045,.22,.012,TI,0,.54,F(.012));for(const sd of [-1,1]){const lp=add(A.up,.07,.24,.012,ofM('suitL',ofPlain('#141a26',24)),sd*.1,.56,F(.009));lp.rotation.z=sd*.35;}
+    add(A.up,.04,.04,.015,GD,-.15,.56,F(.015));for(let i=0;i<2;i++)add(A.up,.03,.03,.02,ofSolid(0x111111,.4),0,.32-i*.1,F(.01));return;} // 금 배지 · 단추
   const BOT=s==='police'?ofM('bp',ofPlain('#1d2742',2)):s==='owner'?TOP:s==='staff'?TOP:s==='outlaw'?ofM('bo',ofPlain('#33465e',9)):s==='prisoner'?TOP:TOP;
   const BLK=ofSolid(0x18181a,.5,.2),BELT=s==='police'||s==='swat'?BLK:ofSolid(0x3b3f2c,.8),GOLD=ofSolid(0xe0b83a,.35,.8),SILV=ofSolid(0xd0d4dc,.35,.8),WH=ofSolid(0xf2f2f2,.6);
   add(A.up,.52,.7,.28,TOP,0,.34,0);for(const a of A.arms)add(a,.215,.5,.235,TOP,0,-.2,0);for(const l of A.legs)add(l,.255,.77,.265,BOT,0,-.375,0);
@@ -9446,7 +9454,7 @@ function ofBuild(A,o,add0){const s=o.style,F=v=>-.14-v,DECO=new Set(['nm','pol',
   if(s==='police'){const N=ofSolid(0x1d2742,.8);add(A.head,.55,.1,.55,ofSolid(0x111522,.7),0,.41,0);add(A.head,.6,.1,.6,N,0,.5,0);add(A.head,.5,.03,.18,ofSolid(0x050505,.2,.3),0,.36,-.34);add(A.head,.09,.08,.01,GOLD,0,.42,-.28);} // 근무모 · 챙 · 참수리 모장
   if(s==='owner'||s==='staff'){const Y=s==='owner'?ofSolid(0xf2d23a,.35,.7):SILV;add(A.head,.55,.1,.55,BLK,0,.41,0);add(A.head,.62,.1,.62,ofSolid(s==='owner'?0x003942:0x2f3d2c,.8),0,.5,0);add(A.head,.5,.03,.18,ofSolid(0x050505,.15,.4),0,.36,-.34);add(A.head,.5,.025,.02,Y,0,.38,-.282);add(A.head,.1,.09,.01,Y,0,.44,-.282);} // 정모 · 턱끈 (신형: 밝은 노랑) · 무궁화 모장
 }
-const OF_STYLES=['army','medic','mp','swat','officer','tmc','mpcmd','tmccmd','staff','owner','police','prisoner','outlaw','navy','airforce','marine'];
+const OF_STYLES=['army','medic','mp','swat','officer','tmc','mpcmd','tmccmd','staff','owner','police','prisoner','outlaw','navy','airforce','marine','pm'];
 function outfitAvatar(A,o){for(const m of A.outfitParts||[])m.parent&&m.parent.remove(m);A.outfitParts=[];if(!o)return; // 👮 팀 복장: 웃옷 · 바지 · 모자 · 배지 (스킨 위에 살짝 크게 덮음)
   const add=(par,w,h,d,mat,x,y,z)=>{const p=part(par,w,h,d,mat,x,y,z);A.outfitParts.push(p);return p;},M=c=>imat('of'+c,c,'cloth',.9);
   if(o.style&&OF_STYLES.includes(o.style)){try{ofBuild(A,o,add);}catch(e){console.warn('복장',e);}return;}
