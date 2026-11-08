@@ -168,7 +168,7 @@ function cellOf(nick) {
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, exo: s.exo || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -417,6 +417,14 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!from) return;
       if (fromDiscord) S.dc[from] = 1; else delete S.dc[from];
       if (a.c) S.cm[from] = 1; else delete S.cm[from]; // 🏙 겜벗 공식 커뮤니티 가입 → 멤버
+      if (a.b) { // 💎 디스코드 서버 부스터(VIP) → 사단장(VIP) 자동 배정 (더 높거나 묶인 사람은 그대로)
+        S.vip[from] = 1; const t = teamOf(from);
+        if (!S.vipAuto[from] && from !== ownerNick() && !locked(from) && !(S.jail[from] > 0) && lvOf(from) < ORGS['사단장'].lv) { S.vipAuto[from] = t; setTeam(from, '사단장'); sendKit(from); CB.say(`💎 ${from} 님이 디스코드 서버 부스터(VIP)라서 🎗 사단장(VIP)이 됐어요!`); }
+      } else if (S.vip[from]) {
+        delete S.vip[from];
+        if (S.vipAuto[from] && teamOf(from) === '사단장') { const back = ORGS[S.vipAuto[from]] && !ORGS[S.vipAuto[from]].special ? S.vipAuto[from] : '시민'; setTeam(from, back); CB.say(`💎 ${from} 님의 부스트가 끝나서 ${tagOf(back)}(으)로 돌아갔어요`); }
+        delete S.vipAuto[from];
+      }
       return save();
     }
     case 'status': { // 🎖 /계급 @닉 상태: 멤버 · 게스트 · 탈옥수 · 사형수 (OP)
@@ -1655,7 +1663,7 @@ let payT = 0, curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN =
 let dcT = 5;
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
-  if ((dcT -= dt) <= 0) { dcT = 60; const n = me(), cm = !!(CB.community && CB.community()); if (n && (!!S.dc[n] !== !!CB.discord() || !!S.cm[n] !== cm)) req('dc', { c: cm ? 1 : 0 }); } // 🎖 디스코드 서버에 들어와 있으면 멤버 · 아니면 게스트
+  if ((dcT -= dt) <= 0) { dcT = 60; const n = me(), cm = !!(CB.community && CB.community()), bs = !!(CB.boost && CB.boost()); if (n && (!!S.dc[n] !== !!CB.discord() || !!S.cm[n] !== cm || !!S.vip[n] !== bs)) req('dc', { c: cm ? 1 : 0, b: bs ? 1 : 0 }); } // 🎖 디스코드 서버에 들어와 있으면 멤버 · 아니면 게스트
   const T = S.train, x = mine();
   if (T && x && T.kind === '체력' && inTrain(me(), T) && Date.now() < T.until) {
     const p = pos();

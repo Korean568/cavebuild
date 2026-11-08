@@ -332,8 +332,8 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.254 — 🎗 사단장(VIP)</h4>
-    <ul><li>🎗 사단장은 이제 <b>사단장(VIP)</b>로 보여요 (머리 위 · 계급표 · 노란색)</li></ul>
+    <h4>🆕 v26.254 — 🎗 사단장(VIP) · 💎 부스터</h4>
+    <ul><li>🎗 사단장은 이제 <b>사단장(VIP)</b>로 보여요 (머리 위 · 계급표 · 노란색)</li><li>💎 디스코드 서버 <b>부스터</b>(한 달에 100코인 받는 분)는 조직 모드 서버에서 저절로 <b>사단장(VIP)</b>이 돼요 · 부스트가 끝나면 원래 팀으로 · 이미 더 높은 계급이면 그대로</li></ul>
     <h4>v26.253 — 🪲 버그 고침</h4>
     <ul><li>🪖 기지 자리(서쪽 성벽 밖)에 사람이 지은 것이 있으면 기지를 저절로 짓지 않아요 (그 자리를 밀어 버리지 않게) · OP가 <b>/군사기지 짓기</b> 하면 밀고 지어요 · /군사기지 로 상태 보기</li><li>🩸 쓰러져 있다가 용암 · 공허 등으로 바로 죽으면, 부활한 뒤에도 쓰러짐이 남아 또 죽던 문제</li><li>💓 미니게임에서 Esc 를 누르면 일시정지 화면까지 열리던 문제</li></ul>
     <h4>v26.252 — 🔫 군대 탄창 무한</h4>
@@ -2233,7 +2233,7 @@ const HELP_EN=`
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
     <h4>🆕 v26.254 — 🎗 Commander (VIP)</h4>
-    <ul><li>🎗 The Commander now shows as <b>사단장(VIP)</b> in yellow (above heads and in the rank list)</li></ul>
+    <ul><li>🎗 The Commander now shows as <b>사단장(VIP)</b> in yellow (above heads and in the rank list)</li><li>💎 Discord server <b>boosters</b> (who get 100 coins a month) automatically become <b>사단장(VIP)</b> on org-mod servers · they return to their old team when the boost ends · higher ranks stay as they are</li></ul>
     <h4>v26.253 — 🪲 Fixes</h4>
     <ul><li>🪖 The base is no longer built automatically over land where players have built (so it doesn't flatten their builds) · an OP can force it with <b>/군사기지 짓기</b> · /군사기지 shows its status</li><li>🩸 Dying another way (lava, void) while downed left you downed after respawning, so you died again</li><li>💓 Pressing Esc in a minigame also opened the pause menu</li></ul>
     <h4>v26.252 — 🔫 Unlimited army magazines</h4>
@@ -9188,6 +9188,7 @@ const CB={version:'v26.164',
   outfit:(nick,o)=>{nick=String(nick);if(!o)delete MOD_OUTFIT[nick];else MOD_OUTFIT[nick]={top:o.top|0,bottom:o.bottom|0,hat:String(o.hat||''),hatC:o.hatC|0,badge:o.badge|0,style:OF_STYLES.includes(o.style)?o.style:'',stripes:Math.max(0,Math.min(3,o.stripes|0)),div:String(o.div||'').slice(0,8),field:o.field?1:0};}, // style: 'army' 'medic' 'mp' 'swat' 'officer' 'tmc' 'mpcmd' 'tmccmd' 'staff' 'owner' 'police' 'prisoner' 'outlaw' (진짜 같은 복장) // 🧩 복장: {top: 웃옷 색, bottom: 바지 색, hat: 'cap'|'helmet'|'beret'|'bandana', hatC, badge: 가슴 배지 색} · null 이면 벗음
   discord:()=>!!(ACC&&accToken()&&ACC.discord), // 🧩 우리 디스코드 서버에 들어와 있는지 (최근 디스코드 보상 확인 기준)
   community:()=>!!(ACC&&accToken()&&(typeof ACC.official==='boolean'?ACC.official:ACC_COMM)), // 🧩 겜벗 공식 커뮤니티(CLKKY CITY)에 가입했는지
+  boost:()=>!!(ACC&&accToken()&&ACC.boost===true), // 🧩 디스코드 서버 부스터인지 (한 달에 100코인 받는 분 · 계정 서버의 user.boost)
   infiniteMags:f=>{MOD_INFMAG=typeof f==='function'?f:null;}, // 🧩 f() 가 true 면 장전해도 탄창이 안 줄어요 (탄창이 1개는 있어야 장전)
   downed:o=>{MOD_DN=o&&typeof o==='object'?{medic:typeof o.medic==='function'?o.medic:()=>true,surgery:typeof o.surgery==='function'?o.surgery:()=>false,sec:Math.max(10,Math.min(300,(o.sec|0)||60))}:null;}, // 🧩 🩸 쓰러짐 · 심폐소생술 · 수술 켜기: {medic: ()=>내가 의무병인지, surgery:(x,y,z)=>수술할 수 있는 자리인지, sec: 쓰러져 있는 초} · null 이면 끔
   payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
