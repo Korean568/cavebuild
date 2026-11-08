@@ -52,6 +52,9 @@ const DIVS = { '육군': '1사단', '해군': '2사단', '공군': '3사단', '�
 const OUTLAW = '무법자', PRISONER = '죄수'; // 계급표 밖의 팀 (배정 · 진급 안 됨)
 ORGS[OUTLAW] = { key: OUTLAW, short: OUTLAW, ico: '🏴', color: '#ff4040', lv: 0, full: OUTLAW, special: 1 };
 ORGS[PRISONER] = { key: PRISONER, short: PRISONER, ico: '⛓', color: '#ff9a3a', lv: 0, full: PRISONER, special: 1 };
+const TRAITOR = '배신자', TRAITOR_KILLS = 50; // 🗡 12순위 배신자(Traitor): 무죄인 군인 50명을 무단사살하고 탈영선을 넘은 사람만 · 팀을 못 바꿈 (OP만)
+ORGS[TRAITOR] = { key: TRAITOR, short: 'Traitor', ico: '🗡', color: '#b01010', lv: 0, full: TRAITOR, special: 1 };
+const DESERT_FREE = ['대통령', '국무총리', '사단장', '교육사령관', 'MP사령관']; // 탈영선을 넘어도 지명수배가 안 떠요
 const TOP = TEAMS.length - 1, OFFICER_LV = TEAMS.findIndex((t) => t.key === '장교'); // 대통령 · 장교(Officer)부터 지휘
 const OLDTEAM = { 'CP': '경찰', 'TMC': '교육사', 'CMP': '군사경찰', 'CP 사령부': 'MP사령관', 'TMC 사령부': '교육사령관', 'CMP 사령부': 'MP사령관', '군사': '육군', 'CM': '육군', 'CMO': '장교', '교육부': '교육사', 'MP사령부': 'MP사령관', '교육사령부': '교육사령관', '총사령부': '대통령', '부사령관': '사단장', 'Staff': '사단장', '총사령관': '대통령' }; // 예전 조직 이름 → 새 팀
 const norm = (s) => String(s || '').replace(/[\s()]/g, '').toLowerCase();
@@ -64,7 +67,7 @@ function teamOf(nick) { // 그 사람의 팀 (서버를 만든 사람 · 운영�
   return ORGS[x.o] ? x.o : (OLDTEAM[x.o] || '시민');
 }
 const lvOf = (nick) => ORGS[teamOf(nick)].lv;
-const locked = (nick) => { const t = teamOf(nick); return t === OUTLAW || t === PRISONER; }; // 🏴 무법자 · ⛓ 죄수는 팀을 못 바꿈 (수갑으로 잡혀야)
+const locked = (nick) => { const t = teamOf(nick); return t === OUTLAW || t === PRISONER || t === TRAITOR; }; // 🏴 무법자 · ⛓ 죄수는 팀을 못 바꿈 (수갑으로 잡혀야)
 const GUNS = ['권총', '돌격소총', '저격소총'];
 // 🎒 팀 기본 장비: 그 팀이 되면 받아요 (없는 것만) · /장비 로 잃어버린 것 다시 받기 (5분에 한 번)
 const KITS = {
@@ -102,6 +105,7 @@ const OUTFITS = {
   '국무총리': { style: 'pm', top: 0x1d2433, bottom: 0x1d2433 }, // 🏛 검은 정장 · 넥타이 · 금 배지 (모자 없음)
   '대통령': { style: 'owner', top: 0x1b2033, bottom: 0x1b2033, hat: 'cap', hatC: 0x1b2033, badge: 0xffd040 }, // 예복 · 정모 금줄 · 금줄 견장 · 훈장
   '무법자': { style: 'outlaw', top: 0x262626, bottom: 0x3a2e24, hat: 'bandana', hatC: 0xb02020 }, // 검은 후드 · 빨간 복면
+  '배신자': { style: 'outlaw', top: 0x1a1a1a, bottom: 0x1a1a1a, hat: 'bandana', hatC: 0x700000 }, // 🗡 배신자: 검은 후드 · 빨간 복면
   '죄수': { style: 'prisoner', top: 0xe06a1a, bottom: 0xe06a1a }, // 주황 수의 · 수감 표시
 };
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
@@ -164,7 +168,7 @@ function cellOf(nick) {
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, exo: s.exo || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, exo: s.exo || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -535,11 +539,12 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return crime(from, 1, '생활규칙 위반 (밤에 숙소 밖)');
     }
     case 'desert': { // 🪖 군부대 밖으로 나감 → 무단탈영 (★★★ · 무법자)
-      if (!ARMY.includes(Fo) || fromOp) return;
+      if (!ARMY.includes(Fo) || fromOp || DESERT_FREE.includes(Fo)) return; // 대통령 · 국무총리 · 사단장 · 교육사령관 · MP사령관은 탈영선을 넘어도 괜찮아요
       if (S.leave[from]) { // 🪪 외출 허가가 있으면 무단탈영이 아님
         if (!S.leave[from].out) { const vac = S.leave[from].vac; S.leave[from].out = true; save(); tell(from, vac ? '🏖 휴가로 군부대를 나왔어요 · 군부대로 돌아오면 휴가가 끝나요' : '🪪 외출 허가로 군부대를 나왔어요 · 군부대로 돌아오면 외출이 끝나요'); }
         return;
       }
+      if ((S.tk[from] || 0) >= TRAITOR_KILLS) { setTeam(from, TRAITOR); save(); CB.say(`🗡 ${from} 님이 무죄인 군인 ${S.tk[from]}명을 무단사살하고 탈영선을 넘어 ${ARMY_NAME}의 배신자(Traitor)가 됐어요!`); } // 🗡 배신자
       return desert(from, `무단탈영 (${tagOf(Fo)})`);
     }
     case 'pass': case 'pass-cancel': { // 🪪 외출 허가 · 취소: 장교(Officer) 이상이 나보다 아래 계급에게 (OP는 누구나)
@@ -715,8 +720,9 @@ CB.on('pdeath', (v) => {
   if (!L || now - L.t > 10000 || L.by === v) return;
   const k = L.by;
   delete lastHit[v];
-  if (isLaw(k) && ((S.w[v] || {}).lv >= 2 || teamOf(v) === OUTLAW)) return; // 경찰이 ★★ 이상 수배자 · 무법자를 쓰러뜨림
+  if (isLaw(k) && ((S.w[v] || {}).lv >= 2 || teamOf(v) === OUTLAW || teamOf(v) === TRAITOR)) return; // 경찰이 ★★ 이상 수배자 · 무법자 · 배신자를 쓰러뜨림
   if (hitBy[k] && hitBy[k][v] && now - hitBy[k][v] < 30000) return;      // 쓰러진 사람이 먼저 때렸으면 정당방위
+  if (ARMY.includes(teamOf(v)) && !S.w[v]) { S.tk[k] = (S.tk[k] || 0) + 1; save(); if (S.tk[k] === TRAITOR_KILLS && ARMY.includes(teamOf(k))) tell(k, `🗡 무죄인 군인 ${TRAITOR_KILLS}명을 무단사살했어요 · 탈영선을 넘으면 배신자가 돼요`); } // 🗡 무죄인 군인 무단사살 수
   const K = (kills[k] = (kills[k] || []).filter((t) => now - t < 300000));
   K.push(now);
   if (K.length >= 3) crime(k, 3, `대학살 · 5분 안에 ${K.length}명을 쓰러뜨림`, v);
@@ -1488,11 +1494,12 @@ CB.command('조직', '내 팀 · /조직 목록 (계급표) · /조직 탈퇴 (�
   if (sub === '추방') return req('kick', { who: a[1] });
   if (sub === '목록') {
     c.say(`🪖 팀 계급표 (위 → 아래) · ${ARMY_NAME} · ${POLICE_NAME}`);
-    for (let i = TOP; i >= 0; i--) { const o = TEAMS[i].key, n = teamMembers(o).length, on = orgNameOf(o); c.say(`${i + 1}. ${ORGS[o].ico} ${on ? on + ' ' : ''}${tagOf(o)}${o === '시민' ? '' : ` · ${n}명`} · 점수 ${S.pts[o] || 0}${i === TOP ? ' · 서버를 만든 사람 · 1 ~ 5사단 모두 지휘' : i >= OFFICER_LV ? ' · 지휘' : ''}`); }
+    for (let i = TOP; i >= 0; i--) { const o = TEAMS[i].key, n = teamMembers(o).length, on = orgNameOf(o); c.say(`${i + 1}. ${ORGS[o].ico} ${on ? on + ' ' : ''}${tagOf(o)}${o === '시민' ? '' : ` · ${n}명`} · 점수 ${S.pts[o] || 0}${i === TOP ? ' · 서버를 만든 사람 · 1 ~ 5사단 모두 지휘' : i >= OFFICER_LV ? ' · 지휘' : ''}${DESERT_FREE.includes(o) ? ' · 탈영선 자유' : ''}`); }
+    c.say(`🗡 배신자(Traitor) · ${teamMembers(TRAITOR).length}명 · 무죄인 군인 ${TRAITOR_KILLS}명을 무단사살하고 탈영선을 넘은 사람만`);
     return;
   }
   const x = mine();
-  c.say(`${ORGS[x.o].ico} ${tagOf(x.o)} (${ORGS[x.o].special ? (x.o === OUTLAW ? '수갑으로 잡히기 전엔 팀을 못 바꿔요' : '형기를 마치면 시민') : `${ORGS[x.o].lv + 1}/${TEAMS.length}번째 부서`}${rankOf(me()) ? ` · 🎖 군사계급 ${rankOf(me())}` : ''}) · 내 점수 ${x.p || 0} · 팀 점수 ${S.pts[x.o] || 0}`);
+  c.say(`${ORGS[x.o].ico} ${tagOf(x.o)} (${ORGS[x.o].special ? (x.o === OUTLAW ? '수갑으로 잡히기 전엔 팀을 못 바꿔요' : x.o === TRAITOR ? '배신자는 팀을 못 바꿔요 (OP만)' : '형기를 마치면 시민') : `${ORGS[x.o].lv + 1}/${TEAMS.length}번째 부서`}${rankOf(me()) ? ` · 🎖 군사계급 ${rankOf(me())}` : ''}) · 내 점수 ${x.p || 0} · 팀 점수 ${S.pts[x.o] || 0}`);
   if (x.o !== '시민') c.say('같은 팀: ' + teamMembers(x.o).join(', '));
   else c.say(`${ARMY_NAME}는 군부대 옆 입대소, ${POLICE_NAME}는 경찰서의 상담원에게 우클릭해서 지원해요 · /조직 목록`);
 }, { everyone: true });
@@ -1660,7 +1667,7 @@ CB.onTick((dt) => {
       delete S.leave[n]; if (v.vac) S.vacT[n] = Date.now(); save();
       const P = CB.playerPos ? CB.playerPos(n) : null, inBase = !!(P && S.town && inBaseD(Math.floor(P.x) - S.town.x, Math.floor(P.z) - S.town.z));
       if (v.out && v.vac && inBase && ARMY.includes(teamOf(n))) crime(n, 1, '휴가 복귀 미신고'); // 돌아왔는데 복귀 상담원에게 신고 안 함 → 수갑대상
-      else if (v.out && ARMY.includes(teamOf(n)) && !CB.opOf(n)) desert(n, `무단탈영 (${v.vac ? '휴가' : '외출'} 시간 초과)`); else tell(n, `🪪 ${v.vac ? '휴가' : '외출 허가'} 시간이 끝났어요`);
+      else if (v.out && ARMY.includes(teamOf(n)) && !CB.opOf(n) && !DESERT_FREE.includes(teamOf(n))) desert(n, `무단탈영 (${v.vac ? '휴가' : '외출'} 시간 초과)`); else tell(n, `🪪 ${v.vac ? '휴가' : '외출 허가'} 시간이 끝났어요`);
     }
     if (++payT >= 600) { // 💰 월급 (10분마다 · 접속 중인 사람) → 통장: 경찰 · 군대는 계급만큼 · 시민은 직업이 있으면
       payT = 0;
@@ -1720,7 +1727,7 @@ CB.onTick((dt) => {
       const pass = S.leave[me()];
       if (inside && pass && pass.out && !pass.vac) req('pass-back');
       if (inside && pass && pass.out && pass.vac && Date.now() > vacNoteT) { vacNoteT = Date.now() + 20000; note('🏖 휴가에서 돌아왔으면 정문 안쪽의 🪖 복귀 상담원에게 신고하세요 (안 하면 휴가 시간이 끝날 때 수갑대상)'); }
-      if (inside && !pass && dx >= -26 && Math.abs(dz) <= 5) note('⚠ 앞의 빨간 선을 넘으면 무단탈영이에요 (지명수배 ★★★) · 나가려면 장교의 /외출 허가나 입대소의 휴가 상담원');
+      if (inside && !pass && dx >= -26 && Math.abs(dz) <= 5 && !DESERT_FREE.includes(y.o)) note('⚠ 앞의 빨간 선을 넘으면 무단탈영이에요 (지명수배 ★★★) · 나가려면 장교의 /외출 허가나 입대소의 휴가 상담원');
     } else inBaseP = null;
   }
   { // 🌙 생활규칙: 밤에는 경찰은 경찰서 구역, 군대는 군부대 안 (군대는 외출 허가가 있으면 예외) · 밖에 60초 넘게 있으면 수갑대상
