@@ -334,7 +334,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.252 — 🔫 군대 탄창 무한</h4>
+    <h4>🆕 v26.253 — 🪲 버그 고침</h4>
+    <ul><li>🪖 기지 자리(서쪽 성벽 밖)에 사람이 지은 것이 있으면 기지를 저절로 짓지 않아요 (그 자리를 밀어 버리지 않게) · OP가 <b>/군사기지 짓기</b> 하면 밀고 지어요 · /군사기지 로 상태 보기</li><li>🩸 쓰러져 있다가 용암 · 공허 등으로 바로 죽으면, 부활한 뒤에도 쓰러짐이 남아 또 죽던 문제</li><li>💓 미니게임에서 Esc 를 누르면 일시정지 화면까지 열리던 문제</li></ul>
+    <h4>v26.252 — 🔫 군대 탄창 무한</h4>
     <ul><li>🔫 조직 모드 군대 팀원은 장전해도 <b>탄창이 줄지 않아요</b> (16개면 계속 16개 · 탄창이 1개는 있어야 장전)</li></ul>
     <h4>v26.251 — 🚧 탈영선 자유 · 🗡 배신자</h4>
     <ul><li>🚧 대통령 · 국무총리 · 사단장 · 교육사령관 · MP사령관은 탈영선을 넘어도 지명수배가 안 떠요 (휴가 · 외출 시간이 넘어도)</li><li>🗡 12순위 <b>배신자</b>(Traitor): 무죄인 군인(수배 중이 아닌 군대 팀원)을 50명 무단사살하고 탈영선을 넘으면 배신자가 돼요 · 지명수배 ★★★ · 팀을 못 바꿔요 (OP만) · 경찰 쪽이 배신자를 쓰러뜨리는 건 무단사살이 아니에요</li></ul>
@@ -2230,7 +2232,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.252 — 🔫 Unlimited army magazines</h4>
+    <h4>🆕 v26.253 — 🪲 Fixes</h4>
+    <ul><li>🪖 The base is no longer built automatically over land where players have built (so it doesn't flatten their builds) · an OP can force it with <b>/군사기지 짓기</b> · /군사기지 shows its status</li><li>🩸 Dying another way (lava, void) while downed left you downed after respawning, so you died again</li><li>💓 Pressing Esc in a minigame also opened the pause menu</li></ul>
+    <h4>v26.252 — 🔫 Unlimited army magazines</h4>
     <ul><li>🔫 Org-mod army members no longer use up magazines when reloading (16 stays 16 · you still need at least one)</li></ul>
     <h4>v26.251 — 🚧 Free desertion line · 🗡 Traitor</h4>
     <ul><li>🚧 The President, Prime Minister, Commander, TMCO and CMPO can cross the desertion line without becoming wanted (even after leave runs out)</li><li>🗡 New 12th rank <b>Traitor</b>: anyone who kills 50 innocent soldiers (army members who aren't wanted) and then crosses the desertion line · wanted ★★★ · can't change team (OP only) · law teams downing a traitor isn't murder</li></ul>
@@ -8066,7 +8070,8 @@ function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){if(MP
   }
   renderStats();
 }
-function die(cause){modEmit('death',cause);if(MP.on)try{mpDied(cause);}catch(e){}
+function die(cause){if(player.downed||player.faint){player.downed=null;player.faint=null;player.carry=null;for(const i of ['dnHud','faintHud']){const e=document.getElementById(i);if(e)e.remove();}} // 🩸 쓰러짐 · 기절 중에 다른 이유로 죽으면 그 상태를 지움 (부활 뒤에 또 죽지 않게)
+  modEmit('death',cause);if(MP.on)try{mpDied(cause);}catch(e){}
   player.dead=true;world.stats.deaths++;invOpen&&closeInv(true);$('deadMsg').textContent=cause;$('dead').classList.add('show');
   if(isHardcore()){$('deadMsg').innerHTML=cause+'<br><b style="color:#ff9a9a">💀 하드코어 세계에서는 다시 살아날 수 없어요 — 이제 관전만 할 수 있어요</b>';$('btnRespawn').textContent='👁 관전하기';}
   else $('btnRespawn').textContent='부활하기';
@@ -9826,7 +9831,7 @@ function medGame(kind,cb){if(document.getElementById('medGame'))return; // 💓 
   const end=ok=>{if(done)return;done=true;removeEventListener('keydown',kh,true);box.remove();toast(ok?(kind==='surg'?'🩺 수술 성공!':'💓 심폐소생술 성공!'):(kind==='surg'?'🩺 수술 실패 · 다시 해 보세요':'💓 심폐소생술 실패 · 다시 해 보세요'));cb(ok);};
   const pos=()=>{const s=ST[si];return .5+.5*Math.sin((performance.now()-t0)/1000*s[3]*Math.PI);};
   const hit=()=>{const s=ST[si],p=pos(),inZ=Math.abs(p-.5)<=s[2]/2;if(inZ){hits++;tone(880,1200,.06,.05,'sine');if(hits>=s[1]){si++;hits=0;if(si>=ST.length)return end(true);}}else{miss++;tone(220,160,.1,.06,'square');if(miss>=4)return end(false);}};
-  const kh=e=>{if(e.code==='Space'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)hit();}else if(e.code==='Escape'){e.preventDefault();end(false);}};addEventListener('keydown',kh,true);box.onpointerdown=e=>{e.preventDefault();hit();};
+  const kh=e=>{if(e.code==='Space'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)hit();}else if(e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();end(false);}};addEventListener('keydown',kh,true);box.onpointerdown=e=>{e.preventDefault();hit();};
   const loop=()=>{if(done)return;const s=ST[si];if(!s)return;const z=$('mgZ'),m=$('mgM');z.style.left=((.5-s[2]/2)*100)+'%';z.style.width=(s[2]*100)+'%';m.style.left=`calc(${pos()*100}% - 3px)`;
     $('mgT').textContent=`${kind==='surg'?'🩺 수술':'💓 심폐소생술'} · ${s[0]} ${hits}/${s[1]}${ST.length>1?` (${si+1}/${ST.length}단계)`:''}`;$('mgS').textContent=`초록 칸에서 스페이스 · 실수 ${miss}/4 · Esc 그만`;requestAnimationFrame(loop);};loop();}
 function medkitHit(M){if(!M.pvp){toast('⛑ 메디킷으로 사람을 치면 치료해요 (우클릭하면 나를 치료)');return;}

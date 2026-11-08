@@ -168,7 +168,7 @@ function cellOf(nick) {
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, exo: s.exo || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, exo: s.exo || {} }; };
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -575,6 +575,12 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const vac = S.leave[from].vac; if (vac) S.vacT[from] = Date.now();
       delete S.leave[from]; save();
       return tell(from, `🪖 군부대로 복귀했어요 · ${vac ? '휴가가' : '외출이'} 끝났어요`);
+    }
+    case 'annexbuild': { // 🪖 /군사기지 짓기 (OP): 사람이 지은 게 있어도 그 자리를 밀고 기지를 지음
+      if (!fromOp) return tell(from, '/군사기지 짓기 는 OP만 할 수 있어요');
+      if (!S.town) return tell(from, '아직 도시가 없어요');
+      if (!annexReady(S.town)) return tell(from, '기지 자리(서쪽 성벽 밖)의 땅이 아직 다 불러와지지 않았어요 · 방장이 그쪽으로 가까이 가야 해요');
+      delete S.annexBlocked; buildAnnex({ x: S.town.x, z: S.town.z }, S.town.y); return;
     }
     case 'vac-back': { // 🪖 복귀 상담원에게 휴가 복귀 신고 → 휴가 끝
       const L = S.leave[from];
@@ -1419,6 +1425,13 @@ function annexPlan(C, G) {
   for (const k of noGround) { const [dx, dz] = k.split(',').map(Number); W.delete((C.x + dx) + ',' + (G - 1) + ',' + (C.z + dz)); } // 탈것 밑 땅은 그대로 (땅이 탈것에 붙지 않게)
   return { L: [...W.values()], noGround };
 }
+function annexFree(C) { // 기지 자리에 사람이 지은 게 많으면 저절로 짓지 않음 (OP의 /군사기지 짓기 로만) · 도시 쪽 청크는 빼고 셈
+  if (!CB.edited) return true;
+  const n = CB.edited(C.x + ANX_X1, C.z - ANX_Z, C.x - 64, C.z + ANX_Z);
+  if (n <= 150) return true;
+  if (!S.annexBlocked) { S.annexBlocked = 1; save(); CB.say(`🪖 ${ARMY_NAME} 기지 자리(서쪽 성벽 밖)에 사람이 지은 것이 있어서 기지를 짓지 않았어요 · OP가 /군사기지 짓기 하면 그 자리를 밀고 지어요`); }
+  return false;
+}
 function annexReady(C) { for (let x = C.x + ANX_X1; x <= C.x - 47 + 15; x += 16) for (let z = C.z - ANX_Z; z <= C.z + ANX_Z + 15; z += 16) if (!CB.loaded(Math.min(x, C.x - 47), Math.min(z, C.z + ANX_Z))) return false; return true; }
 function buildAnnex(C, G) {
   const P = annexPlan(C, G), L = P.L, DIRT = BLK('흙'), soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null));
@@ -1459,7 +1472,7 @@ function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾�
       if (L) { CB.setBlocks(L); S.gates[i] = 1; save(); }
     }
     if (S.townV !== TOWN_V) { buildTown({ x: S.town.x, z: S.town.z }, S.town.y); return; } // 예전 도시 → 같은 자리에 새로 (땅이 다 불러와지면)
-    if (!S.annex && S.townV === TOWN_V && annexReady(S.town)) { buildAnnex({ x: S.town.x, z: S.town.z }, S.town.y); return; } // 🪖 기지: 서쪽 땅이 다 불러와지면
+    if (!S.annex && !S.annexBlocked && S.townV === TOWN_V && annexReady(S.town) && annexFree(S.town)) { buildAnnex({ x: S.town.x, z: S.town.z }, S.town.y); return; } // 🪖 기지: 서쪽 땅이 다 불러와지면
     if (!S.houses && CB.loaded(S.town.x - 17, S.town.z - 23) && CB.loaded(S.town.x + 17, S.town.z + 23) && CB.loaded(S.town.x - 17, S.town.z + 23) && CB.loaded(S.town.x + 17, S.town.z - 23)) buildHouses({ x: S.town.x, z: S.town.z }, S.town.y);
     return;
   }
@@ -1629,6 +1642,10 @@ CB.command('감옥', '/감옥 — 수감자 목록 · /감옥 설정 (지금 자
   const L = Object.entries(S.jail);
   if (!L.length) return c.say('지금 수감 중인 사람이 없어요');
   for (const [n, s] of L) c.say(`⛓ ${n} · 남은 시간 ${Math.ceil(s / 60)}분`);
+}, { everyone: true });
+CB.command('군사기지', '/군사기지 — 기지 상태 · /군사기지 짓기 (OP · 그 자리에 있는 것을 밀고 지어요)', (a, c) => {
+  if (a[0] === '짓기') return req('annexbuild');
+  c.say(S.annex ? `🪖 ${ARMY_NAME} 기지: 서쪽 성벽 밖 (생활관 · 회의실 · 의료센터 · 5사단 교도소 · 헬기 · 구급차)` : S.annexBlocked ? '🪖 기지 자리에 사람이 지은 것이 있어서 아직 안 지었어요 · OP가 /군사기지 짓기' : '🪖 기지는 방장이 서쪽 성벽 밖으로 가까이 가면 지어져요');
 }, { everyone: true });
 CB.command('석방', '/석방 @닉 (장교(Officer) 이상 · OP)', (a) => req('release', { who: a[0] }), { everyone: true });
 
