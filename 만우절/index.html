@@ -9781,7 +9781,7 @@ let MOD_DN=null,dnKeyOn=false;
 function dnStart(cause){player.downed={t:(MOD_DN&&MOD_DN.sec)||60,cause};player.hp=0;player.faint=null;player.carry=null;renderStats();
   const m=MP.me.nick+' 님이 쓰러졌어요 🩸 ('+((MOD_DN&&MOD_DN.sec)||60)+'초 안에 의무병이 심폐소생술 · 수술을 하면 살아나요)';mpSend({t:'c',n:'🩸',m});mpChatShow('🩸',m);modEmit('down',MP.me.nick);
   if(!dnKeyOn){dnKeyOn=true;addEventListener('keydown',e=>{if(player.downed&&e.code==='KeyB'&&!MP.chat)dnEnd('die');});}}
-function dnEnd(how,by){const D=player.downed;if(!D)return;player.downed=null;player.carry=null;
+function dnEnd(how,by){const D=player.downed;if(!D)return;player.downed=null;player.carry=null;const h=document.getElementById('dnHud');if(h)h.remove(); // 죽은 동안엔 틱이 멈춰서 바로 지움
   if(how==='die'){die(D.cause||'쓰러졌습니다');return;}
   by=mpEsc(String(by||'?').slice(0,16));player.invulnT=2;
   if(how==='surg'){player.hp=maxHp();player.faint=null;toast(`🩺 <b>${by}</b> 님의 수술로 완전히 살아났어요!`,'ach');}
