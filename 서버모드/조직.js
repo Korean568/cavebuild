@@ -1,5 +1,5 @@
 // 🪖 조직 (팀 계급) 모드 — CAVEBUILD 서버용 .js 모드
-// 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 육군(Soldier) · 의무병(Medic) · 군사경찰(CMP) · 특수임무대(SWAT) · 장교(Officer) · 교육사(TMC) · MP사령관(CMPO) · 교육사령관(TMCO) · 부사령관(Staff) · 총사령관(Owner)
+// 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 육군(Soldier) · 의무병(Medic) · 군사경찰(CMP) · 특수임무대(SWAT) · 장교(Officer) · 교육사(TMC) · MP사령관(CMPO) · 교육사령관(TMCO) · 사단장(Division Cmdr) · 총사령관(Owner)
 //   CLKKY ARMY 조직 구성: 의무병은 메디킷으로 치료 (사람을 치면 +8 · 우클릭하면 나 +6) · 특수임무대는 ★★★ 진압 (수갑 · 체포 가능) · 장교는 육군 · 의무병 관리 · 군사경찰은 MP사령관 지휘
 //   처음엔 누구나 시민 · 위 계급이 아래 계급 사람을 배정 · 진급 · 강등해요 (내 계급보다 아래로만) · 총사령관은 서버를 만든 사람(Owner)
 //   머리 위 닉네임에 [팀] + 팀 색, 기지 · 집합, 훈련 · 임무, 같은 팀끼리도 때릴 수 있음
@@ -42,7 +42,7 @@ const TEAMS = [ // 아래 → 위 (계급 순서)
   { key: '교육사', short: 'TMC', ico: '📘', color: '#4ade80' },
   { key: 'MP사령관', short: 'CMPO', ico: '⚜', color: '#f59e0b' },
   { key: '교육사령관', short: 'TMCO', ico: '⭐', color: '#22c55e' },
-  { key: '부사령관', short: 'Staff', ico: '🎗', color: '#e5e7eb' },
+  { key: '사단장', short: 'Division Cmdr', ico: '🎗', color: '#e5e7eb' }, // 예전 부사령관(Staff)
   { key: '총사령관', short: 'Owner', ico: '👑', color: '#ff5a5a' },
 ];
 const ORGS = Object.fromEntries(TEAMS.map((t, i) => [t.key, { ...t, lv: i, full: t.short }]));
@@ -52,7 +52,7 @@ const OUTLAW = '무법자', PRISONER = '죄수'; // 계급표 밖의 팀 (배정
 ORGS[OUTLAW] = { key: OUTLAW, short: OUTLAW, ico: '🏴', color: '#ff4040', lv: 0, full: OUTLAW, special: 1 };
 ORGS[PRISONER] = { key: PRISONER, short: PRISONER, ico: '⛓', color: '#ff9a3a', lv: 0, full: PRISONER, special: 1 };
 const TOP = TEAMS.length - 1, OFFICER_LV = TEAMS.findIndex((t) => t.key === '장교'); // 총사령관 · 장교(Officer)부터 지휘
-const OLDTEAM = { 'CP': '경찰', 'TMC': '교육사', 'CMP': '군사경찰', 'CP 사령부': 'MP사령관', 'TMC 사령부': '교육사령관', 'CMP 사령부': 'MP사령관', '군사': '육군', 'CM': '육군', 'CMO': '장교', '교육부': '교육사', 'MP사령부': 'MP사령관', '교육사령부': '교육사령관', '총사령부': '총사령관' }; // 예전 조직 이름 → 새 팀
+const OLDTEAM = { 'CP': '경찰', 'TMC': '교육사', 'CMP': '군사경찰', 'CP 사령부': 'MP사령관', 'TMC 사령부': '교육사령관', 'CMP 사령부': 'MP사령관', '군사': '육군', 'CM': '육군', 'CMO': '장교', '교육부': '교육사', 'MP사령부': 'MP사령관', '교육사령부': '교육사령관', '총사령부': '총사령관', '부사령관': '사단장', 'Staff': '사단장' }; // 예전 조직 이름 → 새 팀
 const norm = (s) => String(s || '').replace(/[\s()]/g, '').toLowerCase();
 const findOrg = (s) => { const k = norm(s); const t = TEAMS.find((t) => norm(t.key) === k || norm(t.short) === k || norm(t.key + t.short) === k); return t ? t.key : null; };
 const ownerNick = () => (CB.owner && CB.owner()) || '';
@@ -79,7 +79,7 @@ const KITS = {
   '교육사': ['권총', '돌격소총', '수갑'],
   'MP사령관': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
   '교육사령관': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검'],
-  '부사령관': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
+  '사단장': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
 };
 // 👮 팀 복장 (팀은 복장과 머리 위 닉네임 색으로 알아봐요): top 웃옷 · bottom 바지 · hat 모자 · badge 배지 색
 const OUTFITS = {
@@ -96,7 +96,7 @@ const OUTFITS = {
   '교육사': { style: 'tmc', top: 0x2f6a3a, bottom: 0x2a3a26, hat: 'beret', hatC: 0x1f4a2a, badge: 0x4ade80 }, // 조교 모자 · 선글라스 · 조교 완장
   'MP사령관': { style: 'mpcmd', top: 0x2a2f22, bottom: 0x1e2219, hat: 'beret', hatC: 0x9a1a1a, badge: 0xf59e0b }, // 검은 베레모 · MP 완장
   '교육사령관': { style: 'tmccmd', top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 }, // 녹색 베레모
-  '부사령관': { style: 'staff', top: 0x3b4630, bottom: 0x3b4630, hat: 'cap', hatC: 0x3b4630, badge: 0xc0c6d0 }, // 근무복 · 정모 (은장)
+  '사단장': { style: 'staff', top: 0x3b4630, bottom: 0x3b4630, hat: 'cap', hatC: 0x3b4630, badge: 0xc0c6d0 }, // 근무복 · 정모 (은장)
   '총사령관': { style: 'owner', top: 0x1b2033, bottom: 0x1b2033, hat: 'cap', hatC: 0x1b2033, badge: 0xffd040 }, // 예복 · 정모 금줄 · 금줄 견장 · 훈장
   '무법자': { style: 'outlaw', top: 0x262626, bottom: 0x3a2e24, hat: 'bandana', hatC: 0xb02020 }, // 검은 후드 · 빨간 복면
   '죄수': { style: 'prisoner', top: 0xe06a1a, bottom: 0xe06a1a }, // 주황 수의 · 수감 표시
@@ -132,8 +132,8 @@ const SELL = { // 납품 값 (한 개당 동전)
 //   1등급 「수갑대상」     경범죄   — 부적절한 말 (아래 BADWORDS) · 폭행 (먼저 맞지 않았는데 때림) · 도둑질 (남의 상자를 부숨) → 벌금 동전 10개 (가방 → 통장 순서로 · 못 내면 징역 10분)
 //   2등급 「지명수배 ★★」  중범죄   — 경찰 쪽 팀원 폭행 · 불법 무기 소지 (시민이 총을 가짐)                                  → 징역 15분
 //   3등급 「지명수배 ★★★」 중대범죄 — 무단사살 (정당방위 · 경찰이 수배자를 쓰러뜨린 건 빼고) · 대학살 · 무단탈영 (군대) · 무기로 협박 → 징역 30분
-const LAW = ['경찰', '군사경찰', '특수임무대', '장교', 'MP사령관', '부사령관', '총사령관'];
-const ARMY = ['육군', '해군', '공군', '해병대', '의무병', '군사경찰', '특수임무대', '장교', '교육사', 'MP사령관', '교육사령관', '부사령관', '총사령관']; // 군대 (총사령관 포함) (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
+const LAW = ['경찰', '군사경찰', '특수임무대', '장교', 'MP사령관', '사단장', '총사령관'];
+const ARMY = ['육군', '해군', '공군', '해병대', '의무병', '군사경찰', '특수임무대', '장교', '교육사', 'MP사령관', '교육사령관', '사단장', '총사령관']; // 군대 (총사령관 포함) (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
 // 🎖 군사계급 (CLKKY ARMY 계급 구성 · 부서와 따로): 군대 팀원마다 하나 · /진급 · /강등 으로 올리고 내림 · 부서 이동은 /team · 전역하면 처음부터
 //   대장(General)은 총사령관(Owner)만 · 진급으로는 대령(Colonel)까지
 //   군대가 아닌 사람: 이등병(디스코드 서버 가입자는 무조건) · 멤버(겜벗 공식 커뮤니티 CLKKY CITY 가입) · 게스트(미가입) · 수감자(감옥) · 탈옥수 · 사형수(밴 예정) — /계급 @닉 상태 (OP)
@@ -146,31 +146,18 @@ const BADWORDS = ['시발', '씨발', 'ㅅㅂ', 'ㅆㅂ', '병신', 'ㅂㅅ', '�
 const stars = (n) => (n >= 3 ? '지명수배 ★★★' : n === 2 ? '지명수배 ★★' : '수갑대상'); // 머리 위 · 안내판에 뜨는 말
 const CHEST = 48; // 상자 블록
 
-// ── ⛓ 감옥 차원: 이 모드를 깔면 「감옥」 차원이 생겨요 ──
-// 가운데 복도 양쪽으로 감방이 늘어선 어두운 감옥 · 벽 · 철창은 부술 수 없어요 · 몹이 안 생겨요
-// 징역을 받으면 감옥 차원의 감방으로 끌려가고, 형기가 끝나면 원래 있던 곳으로 돌아와요
-// /감옥 설정 으로 다른 자리(감옥 차원 안이든 프론티어든)를 감옥으로 정할 수도 있어요 · /감옥 가기 · /감옥 나가기 (경찰 쪽 · OP)
-const JAIL_WALL = CB.block({ id: 1900, key: 'jail_wall', name: '감옥 벽', hard: -1, paint: (u, v, x, y) => { const m = (y % 8 === 0) || ((x + (Math.floor(y / 8) % 2) * 8) % 16 === 0), k = 0.85 + 0.15 * Math.sin(x * 7.1 + y * 3.3); return m ? [52, 52, 58] : [96 * k, 96 * k, 104 * k]; } });
+// ── ⛓ 감옥 = 프론티어의 5사단 교도소 (예전 「감옥」 차원은 없앴어요) ──
+// 징역을 받으면 기지의 5사단 교도소 감방(4칸)으로 끌려가고, 형기가 끝나면 원래 있던 곳으로 돌아와요 · 교도관: 군사경찰 · 경찰
+// 기지가 아직 없으면 경찰서 유치장(3칸) · /감옥 설정 으로 다른 자리를 감옥으로 정할 수도 있어요 · /감옥 가기 · /감옥 나가기 (경찰 쪽 · OP)
+CB.block({ id: 1900, key: 'jail_wall', name: '감옥 벽', hard: -1, paint: (u, v, x, y) => { const m = (y % 8 === 0) || ((x + (Math.floor(y / 8) % 2) * 8) % 16 === 0), k = 0.85 + 0.15 * Math.sin(x * 7.1 + y * 3.3); return m ? [52, 52, 58] : [96 * k, 96 * k, 104 * k]; } }); // 예전 세계에 남은 블록용 (번호 그대로)
 const JAIL_BARS = CB.block({ id: 1901, key: 'jail_bars', name: '감옥 철창', hard: -1, see: true, paint: (u, v, x, y) => (x % 5 < 2 || y < 2 || y > 13) ? [58, 60, 68] : null }); // 쇠창살 사이는 뚫려 있어서 빛이 들어요
-const LAMP = CB.id('등불') || 0;
-const CELLS_Z = 6, HALF = 42; // 감방 폭 · 감옥 길이(반)
-CB.dim('감옥', {
-  name: '감옥', bg: [0.05, 0.05, 0.07], fog: [6, 34], light: 0.5, day: 0.4, caveB: 0.25, stars: 0, noMobs: true, spawn: { x: 0.5, y: 11, z: 0.5 },
-  gen: new Function('data', 'cx', 'cz', `const W=${JAIL_WALL},B=${JAIL_BARS},L=${LAMP},I=(x,y,z)=>(y*16+z)*16+x;
-    for(let z=0;z<16;z++)for(let x=0;x<16;x++){const wx=cx*16+x,wz=cz*16+z,ax=Math.abs(wx),az=Math.abs(wz);
-      for(let y=0;y<=10;y++)data[I(x,y,z)]=W;
-      if(ax>12||az>${HALF}){for(let y=11;y<=20;y++)data[I(x,y,z)]=W;continue;}
-      data[I(x,15,z)]=(ax===0&&((wz%6)+6)%6===0&&L)?L:W;for(let y=16;y<=20;y++)data[I(x,y,z)]=W;
-      if(ax===12||az===${HALF}){for(let y=11;y<=14;y++)data[I(x,y,z)]=W;continue;}
-      if(ax>=3){const edge=((wz%${CELLS_Z})+${CELLS_Z})%${CELLS_Z}===0;
-        if(edge){for(let y=11;y<=14;y++)data[I(x,y,z)]=W;}
-        else if(ax===3){for(let y=11;y<=13;y++)data[I(x,y,z)]=B;data[I(x,14,z)]=W;}
-        else{data[I(x,14,z)]=(ax===8&&((wz%${CELLS_Z})+${CELLS_Z})%${CELLS_Z}===3&&L)?L:W;}}}`),
-});
-// 감방 자리: 수감자마다 다른 칸 (오른쪽 · 왼쪽 번갈아)
-function cellOf(nick) { const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick));
-  if (S.annex && S.town) return { dim: 'over', x: S.town.x - 161 + (i % 4) * 4 + 0.5, y: S.town.y, z: S.town.z - 18 + 0.5 }; // ⛓ 기지가 있으면 프론티어의 5사단 교도소 감방 4칸
-  const row = Math.floor(i / 2) % Math.floor(HALF * 2 / CELLS_Z - 1); return { dim: '감옥', x: (i % 2 ? -7.5 : 7.5), y: 11, z: -HALF + CELLS_Z * (row + 1) - CELLS_Z / 2 + 0.5 }; }
+// 감방 자리: 수감자마다 다른 칸
+function cellOf(nick) {
+  const L = Object.keys(S.jail).sort(), i = Math.max(0, L.indexOf(nick)), T = S.town;
+  if (!T) return null;
+  if (S.annex) return { dim: 'over', x: T.x - 161 + (i % 4) * 4 + 0.5, y: T.y, z: T.z - 18 + 0.5 }; // 5사단 교도소 감방 4칸
+  return { dim: 'over', x: T.x + [23, 27, 32][i % 3] + 0.5, y: T.y, z: T.z + 14 + 0.5 }; // 경찰서 유치장 3칸
+}
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
@@ -234,7 +221,7 @@ function clearSuits(nick) { S.suit = S.suit.filter((c) => c.who !== nick); delet
 function toJail(nick, min, why) {
   S.jail[nick] = min * 60; clearSuits(nick); delete S.fine[nick]; if (S.m[nick] && S.m[nick].o === OUTLAW) S.m[nick].o = '시민'; save(); // 감옥에선 죄수 · 나오면 시민
   CB.send('org-jail', { to: nick });
-  CB.say(`⛓ ${nick} 님 징역 ${min}분 (${why}) · ${S.jailPos ? '감옥으로' : S.annex ? `${ARMY_NAME} 5사단 교도소로` : '감옥 차원의 감방으로'} 끌려가요`);
+  CB.say(`⛓ ${nick} 님 징역 ${min}분 (${why}) · ${S.jailPos ? '감옥으로' : S.annex ? `${ARMY_NAME} 5사단 교도소로` : '경찰서 유치장으로'} 끌려가요`);
 }
 function askFine(nick, n, why) {
   S.fine[nick] = { n, why }; save();
@@ -398,9 +385,10 @@ function apply(op, a, from, fromOp, fromDiscord) {
     }
     case 'jailpos': {
       if (!(fromOp || (isLaw(from) && isOfficer(from)))) return tell(from, '감옥은 장교(Officer) · MP사령관 · 총사령관나 OP만 정할 수 있어요');
-      if (a.reset) { S.jailPos = null; save(); return CB.say('⛓ 감옥 자리를 「감옥 차원의 감방」으로 되돌렸어요'); }
+      if (a.reset) { S.jailPos = null; save(); return CB.say('⛓ 감옥 자리를 「5사단 교도소」(기지가 없으면 경찰서 유치장)로 되돌렸어요'); }
+      if (a.dim === '감옥') return tell(from, '감옥 차원은 없어졌어요 · 프론티어에서 정해 주세요');
       S.jailPos = { x: +a.x, y: +a.y, z: +a.z, dim: String(a.dim || 'over') }; save();
-      return CB.say(`⛓ 감옥 자리를 정했어요 (${a.dim === '감옥' ? '감옥 차원' : '이 자리'})`);
+      return CB.say('⛓ 감옥 자리를 정했어요 (이 자리)');
     }
     case 'self': { // 🔁 내 팀 마음대로 바꾸기: 소령 이상 · 장교(Officer) 부서 이상 · Owner (한 번 바꾼 사람은 다시 바꿀 수 있어요)
       const o = findOrg(a.o);
@@ -1325,7 +1313,7 @@ function buildTown(C, G) {
   S.town = { x: C.x, y: G, z: C.z }; S.townV = TOWN_V;
   CB.setSpawn(C.x + 0.5, G + 0.1, C.z + 0.5); // 🏙 스폰 = 도시 한가운데
   const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
-  const B = { '경찰': at(28, 7), '육군': at(-30, 0), '의무병': at(-30, 0), '군사경찰': at(-30, 0), '특수임무대': at(-30, 0), '장교': at(-39, -10), '교육사': at(-39, -10), 'MP사령관': at(-39, -10), '교육사령관': at(-39, -10), '부사령관': at(-39, -10), '총사령관': at(-39, -10) };
+  const B = { '경찰': at(28, 7), '육군': at(-30, 0), '의무병': at(-30, 0), '군사경찰': at(-30, 0), '특수임무대': at(-30, 0), '장교': at(-39, -10), '교육사': at(-39, -10), 'MP사령관': at(-39, -10), '교육사령관': at(-39, -10), '사단장': at(-39, -10), '총사령관': at(-39, -10) };
   for (const o in B) if (!S.base[o]) S.base[o] = B[o];
   if (!S.dealerSet) S.dealer = { ...at(-16, -20), dim: 'over' };
   save();
@@ -1491,7 +1479,7 @@ CB.command('조직', '내 팀 · /조직 목록 (계급표) · /조직 탈퇴 (�
   if (sub === '추방') return req('kick', { who: a[1] });
   if (sub === '목록') {
     c.say(`🪖 팀 계급표 (위 → 아래) · ${ARMY_NAME} · ${POLICE_NAME}`);
-    for (let i = TOP; i >= 0; i--) { const o = TEAMS[i].key, n = teamMembers(o).length, on = orgNameOf(o); c.say(`${i + 1}. ${ORGS[o].ico} ${on ? on + ' ' : ''}${tagOf(o)}${o === '시민' ? '' : ` · ${n}명`} · 점수 ${S.pts[o] || 0}${i === TOP ? ' · 서버를 만든 사람' : i >= OFFICER_LV ? ' · 지휘' : ''}`); }
+    for (let i = TOP; i >= 0; i--) { const o = TEAMS[i].key, n = teamMembers(o).length, on = orgNameOf(o); c.say(`${i + 1}. ${ORGS[o].ico} ${on ? on + ' ' : ''}${tagOf(o)}${o === '시민' ? '' : ` · ${n}명`} · 점수 ${S.pts[o] || 0}${i === TOP ? ' · 서버를 만든 사람 · 1 ~ 5사단 모두 지휘' : i >= OFFICER_LV ? ' · 지휘' : ''}`); }
     return;
   }
   const x = mine();
@@ -1612,12 +1600,14 @@ CB.on('cuffed', (by, on) => { if (on) req('cuffed', { by }); }); // 🔗 내가 
 CB.command('감옥', '/감옥 — 수감자 목록 · /감옥 설정 (지금 자리를 감옥으로) · /감옥 설정 초기화 · /감옥 가기 · /감옥 나가기', (a, c) => {
   if (a[0] === '설정') return req('jailpos', a[1] === '초기화' ? { reset: 1 } : { ...pos(), dim: CB.dimNow() });
   if (a[0] === '가기' || a[0] === '나가기') {
-    if (!(CB.isOp() || isLaw(me()))) return c.say('감옥 차원은 경찰(CP) · 군사경찰(CMP) · 장교(Officer) · MP사령관 · 총사령관나 OP만 드나들 수 있어요');
+    if (!(CB.isOp() || isLaw(me()))) return c.say('교도소는 교도관(군사경찰 · 경찰 쪽)이나 OP만 /감옥 가기 로 드나들 수 있어요');
     if (S.jail[me()]) return c.say('수감 중에는 나갈 수 없어요');
-    if (a[0] === '가기' && S.annex && S.town && !S.jailPos) { if (CB.dimNow() !== 'over') CB.goDim('over', S.town.x - 154.5, S.town.y + 0.2, S.town.z - 10.5); else CB.tp(S.town.x - 154.5, S.town.y + 0.2, S.town.z - 10.5); return c.say('⛓ 5사단 교도소 복도로 가요 (교도관: 군사경찰 · 경찰)'); }
-    if (a[0] === '가기') { CB.goDim('감옥'); return c.say('⛓ 감옥 차원으로 가요'); }
-    if (CB.dimNow() !== '감옥') return c.say('지금 감옥 차원에 있지 않아요');
-    CB.goDim('over'); return c.say('프론티어로 돌아가요');
+    const T = S.town; if (!T) return c.say('아직 도시가 없어요');
+    const go = (x, z, m) => { if (CB.dimNow() !== 'over') CB.goDim('over', x, T.y + 0.2, z); else CB.tp(x, T.y + 0.2, z); return c.say(m); };
+    if (a[0] === '나가기') return go(T.x + 0.5, T.z + 0.5, '🏙 도시 한가운데로 나왔어요');
+    if (S.jailPos) return go(S.jailPos.x, S.jailPos.z, '⛓ 감옥 자리로 가요');
+    if (S.annex) return go(T.x - 154.5, T.z - 10.5, '⛓ 5사단 교도소 복도로 가요 (교도관: 군사경찰 · 경찰)');
+    return go(T.x + 28.5, T.z + 10.5, '⛓ 경찰서 유치장 앞으로 가요');
   }
   const L = Object.entries(S.jail);
   if (!L.length) return c.say('지금 수감 중인 사람이 없어요');
@@ -1691,11 +1681,12 @@ CB.onTick((dt) => {
   const J = S.jail[me()];
   if (J > 0) {
     if (!jailFrom) { const p0 = pos(); jailFrom = { dim: CB.dimNow(), x: p0.x, y: p0.y, z: p0.z }; } // 끌려가기 전 자리 (풀려나면 돌아감)
-    const jp = S.jailPos || cellOf(me()), jd = jp.dim || 'over', p = pos();
-    if (CB.dimNow() !== jd) { if ((jailGoT -= 1) <= 0) { jailGoT = 4; CB.goDim(jd, jp.x, jp.y + 0.2, jp.z); } } // 감옥 차원으로 끌려감
+    const jp = (S.jailPos && S.jailPos.dim !== '감옥' ? S.jailPos : null) || cellOf(me()), jd = jp ? jp.dim || 'over' : '', p = pos(); // 예전에 감옥 차원으로 정한 자리는 무시
+    if (!jp) { /* 도시가 아직 없으면 제자리 */ }
+    else if (CB.dimNow() !== jd) { if ((jailGoT -= 1) <= 0) { jailGoT = 4; CB.goDim(jd, jp.x, jp.y + 0.2, jp.z); } } // 교도소로 끌려감
     else if (Math.hypot(p.x - jp.x, p.z - jp.z) > 4 || Math.abs(p.y - jp.y) > 4) CB.tp(jp.x, jp.y + 0.2, jp.z);
   } else if (jailFrom) { // 형기가 끝남 → 원래 자리로
-    const f = jailFrom; jailFrom = null; jailGoT = 0;
+    const f = jailFrom.dim === '감옥' && S.town ? { dim: 'over', x: S.town.x + 0.5, y: S.town.y, z: S.town.z + 0.5 } : jailFrom; jailFrom = null; jailGoT = 0; // 감옥 차원은 없어졌어요 → 도시로
     if (CB.dimNow() !== f.dim) CB.goDim(f.dim, f.x, f.y + 0.2, f.z); else CB.tp(f.x, f.y + 0.2, f.z);
     baseGrace = 20; // 군부대에서 잡혔다 풀려난 사람이 바로 침입으로 잡히지 않게
     note('🔓 풀려났어요 — 원래 있던 곳으로 돌아가요');
