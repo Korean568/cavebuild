@@ -177,7 +177,7 @@ function cellOf(nick) {
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {} }; };
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -1525,6 +1525,30 @@ function planGroups(tag, key, mk) {
   for (let cx = Math.min(ax, bx) >> 4; cx <= Math.max(ax, bx) >> 4; cx++) for (let cz = Math.min(az, bz) >> 4; cz <= Math.max(az, bz) >> 4; cz++) if (!groups.has(cx + ',' + cz)) groups.set(cx + ',' + cz, []);
   return (PLANS[tag] = { key, groups, fill: P.fill });
 }
+// ⛰ 기지 위에 남은 산 · 나무 (땅에서 17칸 위부터) 치우기 → L 에 공기를 더함
+function clearAbove(L, cx, cz, G, inA, q) { // q: 청크의 4분의 1 (8×8칸) 만 · 산이 커도 한 번에 5천 칸 남짓
+  const x0 = cx * 16 + (q & 1) * 8, z0 = cz * 16 + (q >> 1) * 8;
+  for (let x = x0; x < x0 + 8; x++) for (let z = z0; z < z0 + 8; z++) if (inA(x, z)) for (let y = G + 17; y <= G + 100; y++) if (CB.getBlock(x, y, z)) L.push([x, y, z, 0]);
+}
+function clearStep(tag, G, area, inA) { // 예전에 지은 기지 위 산 치우기 · 청크 하나씩 → 할 게 있었으면 true
+  const all = S.clr || (S.clr = {}), dn = all[tag] || (all[tag] = {});
+  if (dn.all) return false;
+  const [ax, az, bx, bz] = area;
+  let left = 0, scans = 0;
+  for (let cx = Math.min(ax, bx) >> 4; cx <= Math.max(ax, bx) >> 4; cx++) for (let cz = Math.min(az, bz) >> 4; cz <= Math.max(az, bz) >> 4; cz++) {
+    const k = cx + ',' + cz;
+    while (!dn[k]) {
+      if (scans >= 8 || !CB.loaded(cx * 16 + 8, cz * 16 + 8)) { left++; break; }
+      const q = dn[k + 'q'] || 0, L = []; clearAbove(L, cx, cz, G, inA, q); scans++;
+      if (q >= 3) { dn[k] = 1; delete dn[k + 'q']; } else dn[k + 'q'] = q + 1;
+      if (L.length) { CB.setBlocks(L); save(); return true; } // 치운 게 있으면 이번 차례는 끝
+    }
+  }
+  if (scans) save();
+  if (left && scans) return true;
+  if (!left) { dn.all = 1; save(); }
+  return false;
+}
 function chunkStep(P, done, G) { // 땅이 불러와진 청크 하나만 지음 → [지은 수, 남은 수]
   const DIRT = BLK('흙'), soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null));
   let built = 0, left = 0;
@@ -1543,6 +1567,10 @@ function chunkStep(P, done, G) { // 땅이 불러와진 청크 하나만 지음 
   return [built, left];
 }
 const NAVY_V = 2;
+const navyArea = (C, s) => [C.x - NAVY_X - 1, C.z + s * NAVY_D0, C.x + NAVY_X + 1, C.z + s * (NAVY_D1 + 1)];
+const navyIn = (C, s) => (x, z) => { const d = (z - C.z) * s; return Math.abs(x - C.x) <= NAVY_X + 1 && d >= NAVY_D0 && d <= NAVY_D1 + 1; };
+const annexArea = (C) => [C.x + ANX_X1, C.z - ANX_Z, C.x - 47, C.z + ANX_Z];
+const annexIn = (C) => (x, z) => { const dx = x - C.x; return dx >= ANX_X1 && dx <= -47 && Math.abs(z - C.z) <= ANX_Z; };
 function navyStep(C, G) { // ⚓ 해군 기지: 청크 하나씩 · 다 지으면 알림
   const s = S.navy.s;
   const P = planGroups('navy', C.x + ',' + C.z + ',' + G + ',' + s, () => ({
@@ -1577,7 +1605,7 @@ const ANX_V = 2; // 2: 둘레가 성벽
 function annexStep(C, G) { // 불러와진 청크 하나씩 지음 (렉이 안 걸리게) · 다 지으면 알림
   const P = planGroups('annex', C.x + ',' + C.z + ',' + G, () => {
     const p = annexPlan(C, G);
-    return { L: p.L, area: [C.x + ANX_X1, C.z - ANX_Z, C.x - 47, C.z + ANX_Z], fill: (x, z) => { const dx = x - C.x, dz = z - C.z; return dx >= ANX_X1 && dx <= -47 && Math.abs(dz) <= ANX_Z && !p.noGround.has(dx + ',' + dz); } };
+    return { L: p.L, area: annexArea(C), fill: (x, z) => { const dx = x - C.x, dz = z - C.z; return dx >= ANX_X1 && dx <= -47 && Math.abs(dz) <= ANX_Z && !p.noGround.has(dx + ',' + dz); } };
   });
   const [built, left] = chunkStep(P, S.annexDone || (S.annexDone = {}), G);
   if (built && !S.annex) { S.annex = { v: ANX_V, partial: 1 }; CB.say(`🪖 ${ARMY_NAME} 기지를 짓기 시작했어요 (서쪽 성벽 밖 · 땅이 불러와진 곳부터 차례로)`); }
@@ -1609,7 +1637,17 @@ if (CB.downed) CB.downed({
   medic: () => teamOf(me()) === '의무병' || CB.isOp(),
   surgery: (x, y, z) => { const T = S.town; if (!T || !S.annex) return false; const dx = Math.floor(x) - T.x, dz = Math.floor(z) - T.z; return dz >= 6 && dz <= 20 && ((dx >= -124 && dx <= -110) || (dx >= -100 && dx <= -86)); },
 });
-let townT = 0, navyMobT = 0;
+let townT = 0, navyMobT = 0, baseT = 0;
+function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 · 튕김 방지) · 해군 → 군사기지 → 성벽 바꾸기 → 위쪽 산 치우기 순서
+  if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over' || !S.town || S.townV !== TOWN_V) return;
+  const T = S.town, C = { x: T.x, z: T.z }, G = T.y;
+  if (S.navy && S.navy.partial) return navyStep(C, G);
+  if (!S.annexBlocked && (!S.annex || S.annex.partial) && (S.annex || annexFree(T))) { const n = Object.keys(S.annexDone || {}).length; annexStep(C, G); if (Object.keys(S.annexDone || {}).length !== n) return; } // 처음 한 번은 사람이 지은 게 많은지 확인
+  if (S.navy && (S.navy.v || 1) < NAVY_V) return wallUp('navyWall', T, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
+  if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) return wallUp('annexWall', T, annexWall, 1, () => { S.annex.v = ANX_V; });
+  if (S.annex && !S.annex.partial && clearStep('annex', G, annexArea(C), annexIn(C))) return;
+  if (S.navy && !S.navy.partial) clearStep('navy', G, navyArea(C, S.navy.s), navyIn(C, S.navy.s));
+}
 function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음 (예전에 지은 도시에 집이 없으면 집만)
   if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
   if (S.town) {
@@ -1626,16 +1664,12 @@ function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾�
       return;
     }
     if (!S.navy && S.townV === TOWN_V) { const s = S.village ? S.village.s : villageSite(S.town); if (s != null) buildNavy(S.town, S.town.y, s); } // ⚓ 마을 대신 2사단 해군 기지 (예전 마을은 밀고)
-    else if (S.navy && S.navy.partial) navyStep({ x: S.town.x, z: S.town.z }, S.town.y); // 청크 하나씩
-    else if (S.navy && (S.navy.v || 1) < NAVY_V) wallUp('navyWall', S.town, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
-    else if (S.navy && (navyMobT = (navyMobT || 0) + 1) % 6 === 0) clearVillageMobs(); // 🏘 주민 · 가디언이 다시 생기면 치움
-    if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) wallUp('annexWall', S.town, annexWall, 1, () => { S.annex.v = ANX_V; });
+    else if (S.navy && !S.navy.partial && (navyMobT = (navyMobT || 0) + 1) % 6 === 0) clearVillageMobs(); // 🏘 주민 · 가디언이 다시 생기면 치움
     for (let i = 0; i < 3; i++) if (!S.gates[i] && S.townV === TOWN_V && (i === 0 || S.navy)) { // 성문 밖 길: 그쪽 땅이 불러와지면 지음
       const L = gatePlan(S.town, S.town.y, i);
       if (L) { CB.setBlocks(L); S.gates[i] = 1; save(); }
     }
     if (S.townV !== TOWN_V) { buildTown({ x: S.town.x, z: S.town.z }, S.town.y); return; } // 예전 도시 → 같은 자리에 새로 (땅이 다 불러와지면)
-    if (S.townV === TOWN_V && !S.annexBlocked && (!S.annex || S.annex.partial) && (S.annex || annexFree(S.town))) annexStep({ x: S.town.x, z: S.town.z }, S.town.y); // 🪖 기지: 땅이 불러와진 청크부터 차례로 (처음 한 번은 사람이 지은 게 많은지 확인)
     if (!S.houses && CB.loaded(S.town.x - 17, S.town.z - 23) && CB.loaded(S.town.x + 17, S.town.z + 23) && CB.loaded(S.town.x - 17, S.town.z + 23) && CB.loaded(S.town.x + 17, S.town.z - 23)) buildHouses({ x: S.town.x, z: S.town.z }, S.town.y);
     return;
   }
@@ -1836,6 +1870,7 @@ CB.onTick((dt) => {
   deliveryTick();
   if (CB.isHost()) for (const n in S.m) if (S.m[n].o === OUTLAW && !S.jail[n] && !(S.w[n] && S.w[n].lv >= WMAX)) crime(n, WMAX, '🏴 무법자 (자동)'); // 무법자 팀은 언제나 ★★★
   if ((townT -= 1) <= 0) { townT = 5; try { townTick(); } catch (e) { console.warn('도시 짓기 오류', e); if (CB.report) CB.report('조직 도시', e); } }
+  else if ((baseT -= 1) <= 0) { baseT = 2; try { baseTick(); } catch (e) { console.warn('기지 짓기 오류', e); if (CB.report) CB.report('조직 기지', e); } }
   // 방장: 접속해 있는 수감자의 남은 시간을 줄임 (나가 있는 동안은 멈춤)
   if (CB.isHost()) {
     const on = CB.players();
