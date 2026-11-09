@@ -208,6 +208,9 @@ body.mobile.playing .tbtn{display:flex}
 #bDrop{right:134px;top:12px;width:52px;height:52px;border-radius:12px;font-size:22px}
 #bView{right:194px;top:12px;width:52px;height:52px;border-radius:12px;font-size:22px}
 #bCrouch{right:190px;bottom:154px;width:54px;height:54px;font-size:22px}
+#bHDown{right:112px;bottom:28px;width:64px;height:64px;font-size:28px}#bHExit{right:190px;bottom:84px;width:54px;height:54px;font-size:22px}
+body.mobile.playing #bHDown,body.mobile.playing #bHExit{display:none}body.mobile.playing.inheli #bHDown,body.mobile.playing.inheli #bHExit{display:flex}
+body.mobile.playing.inheli #bSprint{display:none}
 #title .help{display:none}
 #title.helpopen .help:not(.upd),#title.updopen .upd{display:block}
 #title.helpopen,#title.updopen{justify-content:flex-start;overflow-y:auto;padding:24px 0 30px;box-sizing:border-box}
@@ -334,7 +337,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.256 — ⚓ 2사단 해군 기지 · 🦅 해병대 · 🚁 헬기</h4>
+    <h4>🆕 v26.257 — 🪖 군사기지 렉 고침 · 🏰 기지도 성벽 안 · 📱 모바일 헬기 · 🩺 의무병 NPC</h4>
+    <ul><li>🪖 군사기지 · ⚓ 해군 기지를 한 번에 짓지 않고 5초에 16×16칸씩 나눠 지어요 (렉 · 튕김 고침)</li><li>🏰 군사기지 · 해군 기지 둘레도 도시와 같은 돌벽돌 성벽(높이 7 · 톱니)이에요 · 이미 지어진 기지는 둘레만 성벽으로 바뀌어요 (안에 지은 건 그대로)</li><li>📱 모바일에서 헬기 조종: ⤒ 상승 · ⤓ 하강 · 조이스틱으로 앞뒤 · 회전 · 🚪 내리기</li><li>🩺 의무병 NPC: 군사경상의료센터 · 군사권역외상센터 · 해군 의무대에 있어요 · 우클릭 → 치료받기 (체력 꽉 · 기절 풀기 · 30초마다) · 쓰러진 사람을 곁으로 데려오면 살려 줘요</li><li>🧩 모드 기능: CB.healFull · CB.revive · CB.isDowned</li></ul>
+    <h4>v26.256 — ⚓ 2사단 해군 기지 · 🦅 해병대 · 🚁 헬기</h4>
     <ul><li>⚓ 도시 옆 <b>마을을 없애고</b> 그 자리(북문 또는 남문 밖)에 <b>2사단 해군 기지</b>: 해군 · 해병대 생활관, 해군 사령부, 군사경찰 생활관, 의무대, 총기 교체소, 교육소, 집합소, 군항(부두) · 마을 주민 · 빌리저 가디언은 사라져요 · 도시 쪽 문에 탈영선</li><li>🦅 <b>해병대</b>(Marine Corps): 해군의 특임대 · 특전사 자리 (2사단) · 갈색 디지털 무늬 전투복 · 팔각모 · 빨간 명찰 · 수갑 · 체포 가능</li><li>🚁 새 탈것 <b>헬기</b> (작업대: 비행기 엔진 1 + 강철 4 + 유리 2): 땅에 우클릭해서 놓고 타요 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기 · 회전날개가 돌아가요 · 3번 치면 다시 아이템 · ✈ 3사단 공군은 기본 장비로 받아요</li></ul>
     <h4>v26.255 — 🎖 CLKKY ARMY 새 조직 · 계급 · 🪖 기지 차례로 짓기</h4>
     <ul><li>🎖 조직 (위 → 아래): 대통령 · 국무총리 · 사단장(VIP) · 🎓 국군 사관 학교(AFMA) · ⚜ 국군 군사경찰 연합(AFMPC) · 교육사령관(TMC) · 장교 · 📘 조교(Assistant) · 🗡 특수전사령부(SWC) · 특수임무대(SMU) · 군사경찰 · 의무병 · 해군(해병대 포함) · 공군 · 육군 · 예전 교육사 → 조교 · MP사령관 → AFMPC · 해병대 → 해군</li><li>🎖 계급에 <b>소장 · 중장 · 원수</b> 추가: 원수는 대통령만 · 대장은 운영진(국무총리 · 대통령이 진급시킨 사람)만 · 일반 진급은 중장까지 · 수감자 · 탈옥수 · 사형수 표시는 없앴어요</li><li>👔 복장: 정복(대통령 · 국무총리 · 사단장 · AFMA · 교육사령관 · 장교 · 조교) · 흑색 대테러복(AFMPC · 특전사 · 특임대, 조끼에 글자) · 행사복(군사경찰) · 전투복(의무병 · 육군 · 해군 청색 무늬 · 공군 청회색 무늬)</li><li>🚧 탈영선 자유는 대통령 · 국무총리 · 사단장만</li><li>🪖 기지는 이제 땅이 불러와진 곳부터 16×16칸씩 차례로 지어져요 (방장이 한 번에 다 볼 필요 없음 · 모바일 방장도) · /군사기지 로 몇 칸 지었는지 보기</li></ul>
@@ -1184,7 +1189,7 @@ body.mobile #toasts{top:72px}
 <div id="touch"></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
 <div class="tbtn" id="bAttack">⛏</div><div class="tbtn" id="bUse">✋</div><div class="tbtn" id="bJump">⤒</div>
-<div class="tbtn" id="bSprint">🏃</div><div class="tbtn" id="bInv">🎒</div><div class="tbtn" id="bPause">⏸</div><div class="tbtn" id="bDrop">🗑</div><div class="tbtn" id="bView">👁</div><div class="tbtn" id="bCrouch">🧎</div>
+<div class="tbtn" id="bSprint">🏃</div><div class="tbtn" id="bInv">🎒</div><div class="tbtn" id="bPause">⏸</div><div class="tbtn" id="bDrop">🗑</div><div class="tbtn" id="bView">👁</div><div class="tbtn" id="bCrouch">🧎</div><div class="tbtn" id="bHDown">⤓</div><div class="tbtn" id="bHExit">🚪</div>
 <div id="cursor"></div>
 <div id="loading">세계를 만드는 중...</div>
 
@@ -2238,7 +2243,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.256 — ⚓ 2nd Division navy base · 🦅 Marines · 🚁 Helicopter</h4>
+    <h4>🆕 v26.257 — 🪖 Military base lag fix · 🏰 Bases inside castle walls · 📱 Mobile helicopter · 🩺 Medic NPC</h4>
+    <ul><li>🪖 The military base and ⚓ navy base are now built one 16×16 chunk every 5 seconds instead of all at once (fixes lag and crashes)</li><li>🏰 Both bases are now surrounded by the same stone-brick castle wall as the city (height 7, crenels) · already-built bases only get their outer wall replaced</li><li>📱 Fly the helicopter on mobile: ⤒ up · ⤓ down · joystick to move and turn · 🚪 exit</li><li>🩺 Medic NPCs in the light-injury center, trauma center and navy medical unit · right-click → get treated (full HP, clears fainting, every 30 s) · bring a downed player next to them to revive</li><li>🧩 Mod API: CB.healFull · CB.revive · CB.isDowned</li></ul>
+    <h4>v26.256 — ⚓ 2nd Division navy base · 🦅 Marines · 🚁 Helicopter</h4>
     <ul><li>⚓ The village next to the city is replaced by the <b>2nd Division navy base</b> (outside the north or south gate): navy and marine barracks, navy HQ, MP barracks, medical unit, armory, training center, assembly area and a harbor · the village's villagers and village guardians are removed · a desertion line marks the city-side gate</li><li>🦅 <b>Marine Corps</b>: the navy's special forces (2nd Division) · brown digital camo, octagonal cap, red name tape · can cuff and arrest</li><li>🚁 New vehicle <b>Helicopter</b> (bench: 1 plane engine + 4 steel + 2 glass): right-click the ground to place it, then ride · Space up · C down · W/S forward/back · A/D turn · X to get out · spinning rotor · hit 3 times to fold it back into an item · ✈ the 3rd Division Air Force gets one in its kit</li></ul>
     <h4>v26.255 — 🎖 New CLKKY ARMY structure · ranks · 🪖 base builds bit by bit</h4>
     <ul><li>🎖 Teams (top → bottom): President · Prime Minister · Commander (VIP) · AFMA · AFMPC · TMC · Officer · Assistant · SWC · SMU · CMP · Medic · Navy (incl. Marines) · Air Force · Soldier · the old TMC becomes Assistant, CMPO becomes AFMPC and Marines join the Navy</li><li>🎖 New ranks Major General, Lieutenant General and General (5-Star): 5-Star is the President only · General is staff only (Prime Minister, or promoted by the President) · normal promotion stops at Lieutenant General · the Prisoner, Escaped Prisoner and Death Row labels are gone</li><li>👔 Uniforms: dress (President to Assistant), black tactical (AFMPC, SWC, SMU with vest lettering), ceremonial (CMP), and combat (Medic, Soldier, plus blue Navy and blue-gray Air Force camo)</li><li>🚧 Only the President, Prime Minister and Commander can cross the desertion line freely</li><li>🪖 The base is now built 16×16 at a time as the land loads, so the host doesn't need to see all of it at once (mobile hosts too) · /군사기지 shows progress</li></ul>
@@ -5016,7 +5023,7 @@ const player={pos:new THREE.Vector3(),vel:new THREE.Vector3(),w:.6,h:1.8,yaw:0,p
   peakY:0,hungerAcc:0,regenT:0,starveT:0,drownT:0,stepD:0,attackCD:0,hurtCD:0,invulnT:0,lavaT:0};
 const world={time:.03,spawn:{x:.5,y:40,z:.5},dim:'over',flags:{},lastPos:{},stats:{kills:0,deaths:0,play:0,days:0}};
 let running=false,paused=false,invOpen=false,locked=false,debugOn=false;
-const joy={id:null,active:false,x:0,y:0,cx:0,cy:0};let mobileSprint=false,mobileCrouch=false,invMode='normal';
+const joy={id:null,active:false,x:0,y:0,cx:0,cy:0};let mobileSprint=false,mobileCrouch=false,invMode='normal',heliUI=false;
 const keys={};
 let mouseL=false,mouseR=false,useT=0;
 let target=null,mobTarget=null,boatTarget=null,mining={x:0,y:0,z:0,p:0,active:false,hitT:0};
@@ -7916,7 +7923,7 @@ function heliBlocks(){const B=SUPER_ALLOY,G=GLASS,I=IRON_BLOCK,L=[];
 function placeHeli(t){if(!t){toast('🚁 헬기를 놓을 땅을 바라보세요');return false;}const yaw=Math.round(player.yaw/(Math.PI/2))*Math.PI/2;
   const d={t:'heli',b:heliBlocks(),x:t.x+.5,y:t.y+1,z:t.z+.5,yaw,pitch:0,d:world.dim,seat:[0,1.5,-1],sit:1,eng:1,wh:0};
   (world.vehicles||(world.vehicles=[])).push(d);if(MP.on){d.vid=MP.myId+'.v'+(++MP.gn);mpSend({t:'vi',d});}SFX.place();spawnVeh(d);toast('🚁 헬기를 놓았어요 · 우클릭으로 타요 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기');return true;}
-function mountVeh(v){player.veh=v;player.boat=null;player.sit=null;if(v.d.t==='heli'){toast('🚁 헬기에 탔어요 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기');return;}toast(v.d.t==='plane'?'✈ 비행기에 탔어요 · W 출력 올리기 · S 줄이기 · 마우스로 방향 · 스페이스 내리기':'🚗 자동차에 탔어요 · W/S 앞뒤 · A/D 핸들 · 스페이스 내리기');}
+function mountVeh(v){player.veh=v;player.boat=null;player.sit=null;if(v.d.t==='heli'){toast(document.body.classList.contains('mobile')?'🚁 헬기에 탔어요 · ⤒ 상승 · ⤓ 하강 · 조이스틱으로 앞뒤 · 회전 · 🚪 내리기':'🚁 헬기에 탔어요 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기');return;}toast(v.d.t==='plane'?'✈ 비행기에 탔어요 · W 출력 올리기 · S 줄이기 · 마우스로 방향 · 스페이스 내리기':'🚗 자동차에 탔어요 · W/S 앞뒤 · A/D 핸들 · 스페이스 내리기');}
 function vehExit(){const v=player.veh,p=player;p.veh=null;if(!v)return;p.pos.set(...v.d.seat).applyQuaternion(v.q).add(v.pos);p.pos.y+=.2;p.vel.set(0,4,0);
   while(entHits(p)&&p.pos.y<CH-2)p.pos.y+=1;p.peakY=p.pos.y;}
 function removeVeh(v){if(MP.on&&!MP.vin&&v.d.vid)mpSend({t:'vr',v:v.d.vid});scene.remove(v.g);const i=VEH.indexOf(v);if(i>=0)VEH.splice(i,1);world.vehicles=(world.vehicles||[]).filter(d=>d!==v.d);if(player.veh===v)player.veh=null;}
@@ -8145,6 +8152,7 @@ function updatePlayer(dt){
     p.pos.addScaledVector(p.vel,dt);p.pos.y=clamp(p.pos.y,-8,CH+24);
     Object.assign(p,{onGround:false,inWater:false,peakY:p.pos.y,h:1.8,swimming:false,gliding:false,flying:false,crouch:false,swimK:0,glideK:0,crouchK:0,sprinting:false});
     camera.position.set(p.pos.x,p.pos.y+1.62,p.pos.z);camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();return;}
+  {const hm=!!(p.veh&&p.veh.d&&p.veh.d.t==='heli');if(hm!==heliUI){heliUI=hm;document.body.classList.toggle('inheli',hm);}} // 📱 헬기 탈 때만 하강 · 내리기 버튼
   if(p.veh){ // 탈것: 자리에 앉아 감 (스페이스로 내리기)
     const v=p.veh,ex=v&&v.d&&v.d.t==='heli'?keys.KeyX:keys.Space;if(ex||!VEH.includes(v)){keys.Space=false;keys.KeyX=false;vehExit();} // 🚁 헬기는 X 로 내림 (스페이스는 상승)
     else{p.pos.set(...v.d.seat).applyQuaternion(v.q).add(v.pos);p.vel.set(0,0,0);p.onGround=true;p.inWater=false;p.peakY=p.pos.y;p.gliding=false;p.flying=false;
@@ -8833,6 +8841,8 @@ if(MOBILE){
   btn('bSprint',()=>{mobileSprint=!mobileSprint;},()=>{$('bSprint').classList.toggle('on',mobileSprint);});
   btn('bInv',()=>{if(running&&!player.dead)openInv();});
   btn('bCrouch',()=>{mobileCrouch=!mobileCrouch;},()=>{$('bCrouch').classList.toggle('on',mobileCrouch);});
+  btn('bHDown',()=>{keys.KeyC=true;},()=>{keys.KeyC=false;}); // 🚁 헬기 하강 (누르고 있는 동안)
+  btn('bHExit',()=>{keys.KeyX=true;},()=>{keys.KeyX=false;}); // 🚁 헬기에서 내리기
   btn('bView',()=>{if(running)cycleView();});
   btn('bPause',()=>{if(running){saveGame();showPause();}});
   let dropT=0; // 길게 누르면 한 묶음을 모두 버림
@@ -9226,6 +9236,9 @@ const CB={version:'v26.164',
   boost:()=>!!(ACC&&accToken()&&ACC.boost===true), // 🧩 디스코드 서버 부스터인지 (한 달에 100코인 받는 분 · 계정 서버의 user.boost)
   infiniteMags:f=>{MOD_INFMAG=typeof f==='function'?f:null;}, // 🧩 f() 가 true 면 장전해도 탄창이 안 줄어요 (탄창이 1개는 있어야 장전)
   downed:o=>{MOD_DN=o&&typeof o==='object'?{medic:typeof o.medic==='function'?o.medic:()=>true,surgery:typeof o.surgery==='function'?o.surgery:()=>false,sec:Math.max(10,Math.min(300,(o.sec|0)||60))}:null;}, // 🧩 🩸 쓰러짐 · 심폐소생술 · 수술 켜기: {medic: ()=>내가 의무병인지, surgery:(x,y,z)=>수술할 수 있는 자리인지, sec: 쓰러져 있는 초} · null 이면 끔
+  healFull:()=>{if(player.dead||player.downed)return false;player.hp=maxHp();player.faint=null;renderStats();return true;}, // 🧩 🩺 내 체력을 꽉 채우고 기절도 풂 (의무병 NPC 등)
+  revive:by=>{if(!player.downed)return false;dnEnd('surg',by);return true;}, // 🧩 🩸 쓰러진 나를 살림 (by: 살려 준 이름)
+  isDowned:()=>!!player.downed,
   payFine:(n,why)=>accToken()?cbApi({action:'fine_pay',token:accToken(),amount:n,why:String(why||'').slice(0,30)}):Promise.resolve({ok:false}), // 🧩 내 케이브코인으로 벌금 내기 (1 · 10 코인) → {ok, coins}
   dim:(key,o)=>{key=String(key);o=o||{};if(DIM[key]&&!DIM[key].mod)return false; // 🧩 차원 만들기: {name, bg:[r,g,b], fog:[가까이,멀리], light, day, caveB, stars, spawn:{x,y,z}, noMobs, gen(data,cx,cz)} — gen 은 백그라운드에서도 돌아서 블록 번호(숫자)만 써야 해요
     DIM[key]={name:o.name||key,bg:o.bg||[.05,.05,.07],fog:o.fog||[10,60],light:o.light??.6,day:o.day??.5,caveB:o.caveB??.4,stars:o.stars??0,spawn:o.spawn||{x:.5,y:12,z:.5},noMobs:!!o.noMobs,mod:1};

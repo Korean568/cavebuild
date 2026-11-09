@@ -823,7 +823,20 @@ const RECRUITERS = {
   org_rec_police: { o: '경찰', name: '🚓 경찰 상담원', dx: 25, dz: 10, color: 0x1f3a7a, q: `🚓 <b>${POLICE_NAME} 상담원</b><br><br>경찰에 지원하시겠어요?`, tag: '#4aa8ff' },
   org_banker: { name: '🏦 은행원', dx: 41, dz: -10, color: 0x2a2f45, tag: '#ffd040', talk: () => bankDialog() },
   org_jobs: { name: '💼 직업 상담원', dx: 41, dz: 18, color: 0x2a6a7a, tag: '#7ad0e0', talk: () => jobDialog() },
+  // 🩺 의무병 NPC: 우클릭 → 치료 (체력 꽉 · 기절 풀기) · 쓰러진 사람을 곁(4칸)에 데려오면 살려 줌 · 기지가 지어진 곳에만
+  org_medic1: { name: '🩺 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.annex ? { dx: -57, dz: 12 } : null), talk: () => medicDialog() }, // 군사경상의료센터
+  org_medic2: { name: '🩺 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.annex ? { dx: -93, dz: 12 } : null), talk: () => medicDialog() }, // 군사권역외상센터
+  org_medic3: { name: '🩺 해군 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.navy ? { dx: -13, dz: S.navy.s * 52 } : null), talk: () => medicDialog() }, // ⚓ 해군 의무대
 };
+let medNpcT = 0;
+function medicDialog() {
+  CB.dialog(`🩺 <b>${ARMY_NAME} 의무병</b><br><br>어디 다치셨어요? 치료해 드릴게요<br><span style="font-size:12px;opacity:.8">쓰러진 사람은 제 곁으로 데려오면 살려 드려요</span>`, [['🩺 치료받기', () => {
+    const t = Date.now() - medNpcT;
+    if (t < 30000) return note(`🩺 의무병: ${Math.ceil((30000 - t) / 1000)}초 뒤에 다시 와 주세요`);
+    if (!CB.healFull) return note('🩺 게임을 새로고침해 주세요');
+    if (CB.healFull()) { medNpcT = Date.now(); note('🩺 의무병이 치료해 줬어요 · 체력이 꽉 찼어요'); }
+  }], ['아니요']]);
+}
 for (const k in RECRUITERS) {
   const R = RECRUITERS[k];
   CB.mob(k, {
@@ -945,9 +958,13 @@ function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서�
 }
 function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임에 한 명씩)
   const T = S.town; if (!T || CB.dimNow() !== 'over') return;
+  const P = CB.player && CB.player(), down = CB.isDowned && CB.isDowned();
   for (const k in RECRUITERS) {
-    const R = RECRUITERS[k], x = T.x + R.dx + 0.5, z = T.z + R.dz + 0.5, near = npcNear(x, z);
+    const R = RECRUITERS[k], A = R.at ? R.at() : R;
     const L = CB.mobs().filter((m) => m.kind === 'mod_' + k && !m.dead);
+    if (!A) { for (const m of L) m.remove(); continue; }
+    const x = T.x + A.dx + 0.5, z = T.z + A.dz + 0.5, near = npcNear(x, z);
+    if (R.med && down && P && Math.hypot(P.pos.x - x, P.pos.z - z) < 4 && CB.revive) CB.revive(R.name); // 🩸 쓰러진 채 의무병 곁에 오면 살려 줌
     for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x, z }; if (CB.mobTag) CB.mobTag(m, R.name, R.tag); } }
     if (near && !L.length && CB.loaded(x, z)) { const m = CB.spawn(k, x, T.y + 0.1, z); if (m) m.orgHome = { x, z }; }
   }
@@ -1399,6 +1416,11 @@ function annexVeh(put, skip, x0, z0, kind) { // 🚑 구급차 · 🚁 헬기: �
   for (let x = -4; x <= -1; x++) put(x0 + x, 2, z0 + 1, B); put(x0 - 4, 3, z0 + 1, B); put(x0 - 4, 4, z0 + 1, B); put(x0 - 4, 3, z0 + 2, IRON); // 꼬리 · 꼬리 날개
   put(x0 + 1, 4, z0 + 1, IRON); for (let k = -4; k <= 4; k++) { put(x0 + 1 + k, 5, z0 + 1, IRON); put(x0 + 1, 5, z0 + 1 + k, IRON); } // 회전날개
 }
+function annexWall(put, box) { // 🏰 기지 둘레도 도시와 같은 성벽 (높이 7 · 톱니) → 기지가 성벽 안에 있어요
+  const BR = BLK('돌벽돌'), x1 = ANX_X1, x2 = -47, Z = ANX_Z;
+  for (let x = x1; x <= x2; x++) for (let z = -Z; z <= Z; z++) if ((x === x1 || x === x2 || Math.abs(z) === Z) && !((x <= x1 + 2 || x >= x2 - 2) && Math.abs(z) >= Z - 2)) { for (let y = 0; y <= 6; y++) put(x, y, z, BR); put(x, 7, z, ((x + z) % 2 + 2) % 2 === 0 ? BR : 0); }
+  box(x2, 0, -2, -46, 4, 2, 0); // 🚪 기지 문 (도시 안 본부와 이어짐)
+}
 function annexPlan(C, G) {
   const W = new Map(), AIR = 0, noGround = new Set(), x1 = ANX_X1, x2 = -47, Z = ANX_Z;
   const GRASS = BLK('잔디 블록'), ROAD = BLK('도로', '돌'), PLANK = BLK('판자'), LAMPB = BLK('등불'), IRON = BLK('철 블록');
@@ -1408,8 +1430,8 @@ function annexPlan(C, G) {
   // 땅 고르기 · 담 · 망루 · 길 (탈것 자리는 마지막에 땅을 빼요)
   box(x1, 0, -Z, x2, 16, Z, AIR);
   for (let x = x1; x <= x2; x++) for (let z = -Z; z <= Z; z++) put(x, -1, z, GRASS);
-  for (let x = x1; x <= x2; x++) for (let z = -Z; z <= Z; z++) if (x === x1 || x === x2 || Math.abs(z) === Z) { for (let y = 0; y <= 3; y++) put(x, y, z, T_CAMO); put(x, 4, z, T_CONC); }
-  box(x2, 0, -2, -46, 4, 2, AIR); box(x2, -1, -2, -46, -1, 2, ROAD); // 🚪 기지 문 (도시 안 본부와 이어짐)
+  annexWall(put, box);
+  box(x2, -1, -2, -46, -1, 2, ROAD); // 🚪 기지 문 (도시 안 본부와 이어짐)
   box(x1 + 1, -1, -2, x2, -1, 2, ROAD); for (let x = x1 + 1; x <= x2; x++) if (((x % 4) + 4) % 4 < 2) put(x, -1, 0, T_LINE); // 큰길 (동서)
   box(-106, -1, -Z + 1, -104, -1, Z - 1, ROAD); // 남북 길
   box(x1 + 1, -1, -24, x2 - 1, -1, -23, ROAD); box(x1 + 1, -1, -41, x2 - 1, -1, -40, ROAD); box(x1 + 1, -1, 23, x2 - 1, -1, 24, ROAD); // 옆길
@@ -1468,13 +1490,18 @@ const NAVY = [ // [이름, x1, d1, x2, d2, 높이, 종류, 벽, 문 쪽]
 ];
 const NAVY_OPEN = [['📣 해군 집합소', -23, 73], ['⚓ 군항', 22, 75]];
 const inNavy = (dx, dz) => !!S.navy && Math.abs(dx) <= NAVY_X && dz * S.navy.s >= NAVY_D0 && dz * S.navy.s <= NAVY_D1;
+function navyWall(put, box) { // 🏰 둘레는 도시와 같은 성벽 (높이 7 · 톱니 · 모서리 탑) → 해군 기지도 성벽 안
+  const BR = BLK('돌벽돌'), LAMPB = BLK('등불');
+  for (let d = NAVY_D0; d < NAVY_D1 - 1; d++) for (const x of [-NAVY_X, NAVY_X]) { for (let y = 0; y <= 6; y++) put(x, y, d, BR); put(x, 7, d, d % 2 === 0 ? BR : 0); } // 담
+  for (let x = -NAVY_X + 2; x <= NAVY_X - 2; x++) { const gate = Math.abs(x) <= 2; for (let y = 0; y <= 6; y++) put(x, y, NAVY_D1, gate && y <= 3 ? 0 : BR); put(x, 7, NAVY_D1, ((x % 2) + 2) % 2 === 0 ? BR : 0); } // 바깥 담 · 바깥 문
+  for (const x of [-NAVY_X, NAVY_X]) { box(x - 1, 0, NAVY_D1 - 1, x + 1, 8, NAVY_D1 + 1, BR); put(x, 9, NAVY_D1, LAMPB); } // 모서리 탑
+}
 function navyPlan(C, G, s) {
   const L = [], AIR = 0, GRASS = BLK('잔디 블록'), ROAD = BLK('도로', '돌'), PLANK = BLK('판자'), LAMPB = BLK('등불'), IRON = BLK('철 블록'), FLAG = BLK('태극기', '흰 벽'), WATER = BLK('물');
   const put = (x, y, d, id) => L.push([C.x + x, G + y, C.z + s * d, id]);
   const box = (ax, ay, ad, bx, by, bd, id) => { for (let x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) for (let y = Math.min(ay, by); y <= Math.max(ay, by); y++) for (let d = Math.min(ad, bd); d <= Math.max(ad, bd); d++) put(x, y, d, id); };
   box(-NAVY_X, 0, NAVY_D0, NAVY_X, 14, NAVY_D1, AIR); box(-NAVY_X, -1, NAVY_D0, NAVY_X, -1, NAVY_D1, GRASS); // 땅 고르기 (예전 마을은 사라짐)
-  for (let d = NAVY_D0; d <= NAVY_D1; d++) for (const x of [-NAVY_X, NAVY_X]) { for (let y = 0; y <= 3; y++) put(x, y, d, T_NAVY); put(x, 4, d, T_CONC); } // 담
-  for (let x = -NAVY_X; x <= NAVY_X; x++) { for (let y = 0; y <= 3; y++) put(x, y, NAVY_D1, Math.abs(x) <= 2 && y <= 3 ? AIR : T_NAVY); put(x, 4, NAVY_D1, T_CONC); } // 바깥 담 · 바깥 문
+  navyWall(put, box);
   box(-2, -1, NAVY_D0, 2, -1, NAVY_D1, ROAD); for (let d = NAVY_D0; d <= NAVY_D1; d++) if (d % 4 < 2) put(0, -1, d, T_LINE); // 큰길
   box(-2, -1, NAVY_D0, 2, -1, NAVY_D0, T_DESERT); // 🚧 도시 쪽 탈영선
   box(-NAVY_X + 1, -1, 44, NAVY_X - 1, -1, 46, ROAD); box(-NAVY_X + 1, -1, 62, NAVY_X - 1, -1, 64, ROAD); // 옆길
@@ -1484,21 +1511,58 @@ function navyPlan(C, G, s) {
   for (let d = NAVY_D0 + 3; d < NAVY_D1; d += 9) for (const x of [-4, 4]) { box(x, 0, d, x, 2, d, IRON); put(x, 3, d, LAMPB); } // 가로등
   return L;
 }
-function navyReady(C, s) { for (let x = C.x - NAVY_X; x <= C.x + NAVY_X + 15; x += 16) for (let d = NAVY_D0; d <= NAVY_D1 + 15; d += 16) if (!CB.loaded(Math.min(x, C.x + NAVY_X), C.z + s * Math.min(d, NAVY_D1))) return false; return true; }
 function clearVillageMobs() { // 🏘 해군 기지 자리의 주민 · 빌리저 가디언을 없앰
   const T = S.town; if (!T || !S.navy) return 0; let n = 0;
   for (const m of CB.mobs()) if ((m.kind === 'villager' || m.kind === 'vguard') && !m.dead && inNavy(Math.floor(m.pos.x) - T.x, Math.floor(m.pos.z) - T.z)) { m.remove(); n++; }
   return n;
 }
-function buildNavy(C, G, s) {
-  const L = navyPlan(C, G, s), DIRT = BLK('흙'), soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null));
-  for (let x = -NAVY_X; x <= NAVY_X; x++) for (let d = NAVY_D0; d <= NAVY_D1; d++) { if (x >= 6 && x <= 38 && d >= 67) continue; for (let y = G - 2; y > G - 18; y--) { if (!soft.has(CB.getBlock(C.x + x, y, C.z + s * d))) break; L.push([C.x + x, y, C.z + s * d, DIRT]); } } // 아래 빈 곳 · 물은 흙으로 (군항은 물 그대로)
-  CB.setBlocks(L);
-  S.navy = { s }; delete S.village; S.gates[s > 0 ? 1 : 2] = 0;
-  const at = (x, d) => ({ x: C.x + x + 0.5, y: G, z: C.z + s * d + 0.5 });
-  Object.assign(S.base, { '해군': at(-31, 44), '해병대': at(-13, 44) });
-  clearVillageMobs(); save();
-  CB.say(`⚓ ${ARMY_NAME} 2사단 해군 기지가 생겼어요! (${s > 0 ? '북문' : '남문'} 밖 · 예전 마을 자리) · 해군 · 해병대 생활관 · 사령부 · 군사경찰 · 의무대 · 총기 교체소 · 교육소 · 집합소 · 군항`);
+// 🧱 큰 건물은 16×16칸(청크) 하나씩 나눠 지어요 (한 번에 다 지으면 렉 · 튕김) · 설계도는 한 번만 계산
+const PLANS = {};
+function planGroups(tag, key, mk) {
+  if (PLANS[tag] && PLANS[tag].key === key) return PLANS[tag];
+  const P = mk(), groups = new Map(), ck = (x, z) => (x >> 4) + ',' + (z >> 4), [ax, az, bx, bz] = P.area;
+  for (const b of P.L) { const k = ck(b[0], b[2]); (groups.get(k) || groups.set(k, []).get(k)).push(b); }
+  for (let cx = Math.min(ax, bx) >> 4; cx <= Math.max(ax, bx) >> 4; cx++) for (let cz = Math.min(az, bz) >> 4; cz <= Math.max(az, bz) >> 4; cz++) if (!groups.has(cx + ',' + cz)) groups.set(cx + ',' + cz, []);
+  return (PLANS[tag] = { key, groups, fill: P.fill });
+}
+function chunkStep(P, done, G) { // 땅이 불러와진 청크 하나만 지음 → [지은 수, 남은 수]
+  const DIRT = BLK('흙'), soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null));
+  let built = 0, left = 0;
+  for (const [k, L0] of P.groups) {
+    if (done[k]) continue;
+    const [cx, cz] = k.split(',').map(Number);
+    if (built || !CB.loaded(cx * 16 + 8, cz * 16 + 8)) { left++; continue; }
+    const L = L0.slice();
+    for (let x = cx * 16; x < cx * 16 + 16; x++) for (let z = cz * 16; z < cz * 16 + 16; z++) { // 아래 빈 곳 · 물은 흙으로
+      if (!P.fill(x, z)) continue;
+      for (let y = G - 2; y > G - 18; y--) { if (!soft.has(CB.getBlock(x, y, z))) break; L.push([x, y, z, DIRT]); }
+    }
+    if (L.length) CB.setBlocks(L);
+    done[k] = 1; built++;
+  }
+  return [built, left];
+}
+const NAVY_V = 2;
+function navyStep(C, G) { // ⚓ 해군 기지: 청크 하나씩 · 다 지으면 알림
+  const s = S.navy.s;
+  const P = planGroups('navy', C.x + ',' + C.z + ',' + G + ',' + s, () => ({
+    L: navyPlan(C, G, s), area: [C.x - NAVY_X, C.z + s * NAVY_D0, C.x + NAVY_X, C.z + s * NAVY_D1],
+    fill: (x, z) => { const dx = x - C.x, d = (z - C.z) * s; return Math.abs(dx) <= NAVY_X && d >= NAVY_D0 && d <= NAVY_D1 && !(dx >= 6 && dx <= 38 && d >= 67); }, // 군항은 물 그대로
+  }));
+  const [built, left] = chunkStep(P, S.navyDone || (S.navyDone = {}), G);
+  if (built) { clearVillageMobs(); save(); }
+  if (!left) {
+    delete S.navy.partial; delete PLANS.navy;
+    const at = (x, d) => ({ x: C.x + x + 0.5, y: G, z: C.z + s * d + 0.5 });
+    Object.assign(S.base, { '해군': at(-31, 44), '해병대': at(-13, 44) });
+    save();
+    CB.say(`⚓ ${ARMY_NAME} 2사단 해군 기지가 다 지어졌어요! (${s > 0 ? '북문' : '남문'} 밖 · 성벽 안) · 해군 · 해병대 생활관 · 사령부 · 군사경찰 · 의무대 · 총기 교체소 · 교육소 · 집합소 · 군항`);
+  }
+}
+function buildNavy(C, G, s) { // 짓기 시작 (예전 마을은 밀고)
+  S.navy = { s, v: NAVY_V, partial: 1 }; S.navyDone = {}; delete S.village; S.gates[s > 0 ? 1 : 2] = 0; delete PLANS.navy;
+  save();
+  CB.say(`⚓ ${ARMY_NAME} 2사단 해군 기지를 짓기 시작했어요 (${s > 0 ? '북문' : '남문'} 밖 · 예전 마을 자리 · 땅이 불러와진 곳부터 조금씩)`);
 }
 function annexFree(C) { // 기지 자리에 사람이 지은 게 많으면 저절로 짓지 않음 (OP의 /군사기지 짓기 로만) · 도시 쪽 청크는 빼고 셈
   if (!CB.edited) return true;
@@ -1509,40 +1573,35 @@ function annexFree(C) { // 기지 자리에 사람이 지은 게 많으면 저�
 }
 function annexReady(C) { for (let x = C.x + ANX_X1; x <= C.x - 47 + 15; x += 16) for (let z = C.z - ANX_Z; z <= C.z + ANX_Z + 15; z += 16) if (!CB.loaded(Math.min(x, C.x - 47), Math.min(z, C.z + ANX_Z))) return false; return true; }
 // 🪖 기지는 16×16칸(청크)씩 땅이 불러와진 곳부터 차례로 지어요 (방장이 한 번에 다 볼 필요 없음 · 모바일도) · S.annex = 짓기 시작함 · S.annexDone = 지은 청크
-let ANX_P = null;
-function annexGroups(C, G) { // 설계도를 청크별로 나눔 (한 번만 계산)
-  if (ANX_P && ANX_P.key === C.x + ',' + C.z + ',' + G) return ANX_P;
-  const P = annexPlan(C, G), groups = new Map(), ck = (x, z) => (x >> 4) + ',' + (z >> 4);
-  for (const b of P.L) { const k = ck(b[0], b[2]); (groups.get(k) || groups.set(k, []).get(k)).push(b); }
-  for (let dx = ANX_X1; dx <= -47; dx++) for (let dz = -ANX_Z; dz <= ANX_Z; dz++) { const k = ck(C.x + dx, C.z + dz); if (!groups.has(k)) groups.set(k, []); }
-  return (ANX_P = { key: C.x + ',' + C.z + ',' + G, groups, noGround: P.noGround });
-}
-function annexStep(C, G) { // 불러와진 청크 몇 개를 지음 · 다 지으면 알림
-  const P = annexGroups(C, G), done = S.annexDone || (S.annexDone = {}), DIRT = BLK('흙'), soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null));
-  let built = 0, left = 0;
-  for (const [k, L0] of P.groups) {
-    if (done[k]) continue;
-    const [cx, cz] = k.split(',').map(Number);
-    if (built >= 6 || !CB.loaded(cx * 16 + 8, cz * 16 + 8)) { left++; continue; }
-    const L = L0.slice();
-    for (let x = cx * 16; x < cx * 16 + 16; x++) for (let z = cz * 16; z < cz * 16 + 16; z++) { // 아래 빈 곳 · 물은 흙으로
-      const dx = x - C.x, dz = z - C.z; if (dx < ANX_X1 || dx > -47 || Math.abs(dz) > ANX_Z || P.noGround.has(dx + ',' + dz)) continue;
-      for (let y = G - 2; y > G - 18; y--) { if (!soft.has(CB.getBlock(x, y, z))) break; L.push([x, y, z, DIRT]); }
-    }
-    if (L.length) CB.setBlocks(L);
-    done[k] = 1; built++;
-  }
-  if (built && !S.annex) { S.annex = { v: 1, partial: 1 }; CB.say(`🪖 ${ARMY_NAME} 기지를 짓기 시작했어요 (서쪽 성벽 밖 · 땅이 불러와진 곳부터 차례로)`); }
+const ANX_V = 2; // 2: 둘레가 성벽
+function annexStep(C, G) { // 불러와진 청크 하나씩 지음 (렉이 안 걸리게) · 다 지으면 알림
+  const P = planGroups('annex', C.x + ',' + C.z + ',' + G, () => {
+    const p = annexPlan(C, G);
+    return { L: p.L, area: [C.x + ANX_X1, C.z - ANX_Z, C.x - 47, C.z + ANX_Z], fill: (x, z) => { const dx = x - C.x, dz = z - C.z; return dx >= ANX_X1 && dx <= -47 && Math.abs(dz) <= ANX_Z && !p.noGround.has(dx + ',' + dz); } };
+  });
+  const [built, left] = chunkStep(P, S.annexDone || (S.annexDone = {}), G);
+  if (built && !S.annex) { S.annex = { v: ANX_V, partial: 1 }; CB.say(`🪖 ${ARMY_NAME} 기지를 짓기 시작했어요 (서쪽 성벽 밖 · 땅이 불러와진 곳부터 차례로)`); }
   if (built) save();
   if (!left && S.annex && S.annex.partial) {
-    delete S.annex.partial;
+    delete S.annex.partial; delete PLANS.annex;
     const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
     Object.assign(S.base, { '육군': at(-57, -4), '해군': at(-75, -4), '공군': at(-93, -4), '군사경찰': at(-117, -4), '특수임무대': at(-117, -4), '특수전사령부': at(-131, -25), '국군 군사경찰 연합': at(-115, -25), '장교': at(-135, -4), '조교': at(-135, -4), '교육사령관': at(-135, -4), '국군 사관 학교': at(-91, -41), '의무병': at(-57, 4) });
     save();
     CB.say(`🪖 ${ARMY_NAME} 기지가 다 지어졌어요! (생활관 · 회의실 · 의료센터 · 5사단 교도소 · 헬기 · 구급차) · 🚑 🚁 는 엔진을 우클릭하면 타요`);
   }
 }
-function buildAnnex(C, G) { S.annexDone = {}; delete S.annex; ANX_P = null; annexStep(C, G); } // /군사기지 짓기: 처음부터 다시
+function wallUp(tag, T, draw, s, fin) { // 🏰 예전에 지은 기지 → 둘레만 성벽으로 바꿈 (안에 지은 건 그대로 · 청크 하나씩)
+  const C = { x: T.x, z: T.z }, G = T.y, L = [], put = (x, y, z, id) => L.push([C.x + x, G + y, C.z + s * z, id]);
+  const P = planGroups(tag, C.x + ',' + C.z + ',' + G + ',' + s, () => {
+    draw(put, (ax, ay, az, bx, by, bz, id) => { for (let x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) for (let y = Math.min(ay, by); y <= Math.max(ay, by); y++) for (let z = Math.min(az, bz); z <= Math.max(az, bz); z++) put(x, y, z, id); });
+    return { L, area: [L[0][0], L[0][2], L[0][0], L[0][2]], fill: () => false };
+  });
+  const done = S.wallUp || (S.wallUp = {}), dn = done[tag] || (done[tag] = {});
+  const [built, left] = chunkStep(P, dn, G);
+  if (built) save();
+  if (!left) { fin(); delete done[tag]; delete PLANS[tag]; save(); CB.say('🏰 군사기지 둘레가 도시와 같은 성벽이 됐어요'); }
+}
+function buildAnnex(C, G) { S.annexDone = {}; delete S.annex; delete PLANS.annex; annexStep(C, G); } // /군사기지 짓기: 처음부터 다시
 if (CB.infiniteMags) CB.infiniteMags(() => ARMY.includes(teamOf(me()))); // 🔫 군대는 장전해도 탄창이 안 줄어요 (16개면 계속 16개)
 // 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술: 의무병(과 OP)만 · 수술은 기지의 군사응급수술센터 · 군사권역외상센터 안에서
 if (CB.downed) CB.downed({
@@ -1566,8 +1625,11 @@ function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾�
       CB.say('🏙 도시에 새 건물이 생겼어요 (🏦 은행 · 💼 직업소개소)');
       return;
     }
-    if (!S.navy && S.townV === TOWN_V) { const s = S.village ? S.village.s : villageSite(S.town); if (s != null && navyReady(S.town, s)) buildNavy(S.town, S.town.y, s); } // ⚓ 마을 대신 2사단 해군 기지 (예전 마을은 밀고)
+    if (!S.navy && S.townV === TOWN_V) { const s = S.village ? S.village.s : villageSite(S.town); if (s != null) buildNavy(S.town, S.town.y, s); } // ⚓ 마을 대신 2사단 해군 기지 (예전 마을은 밀고)
+    else if (S.navy && S.navy.partial) navyStep({ x: S.town.x, z: S.town.z }, S.town.y); // 청크 하나씩
+    else if (S.navy && (S.navy.v || 1) < NAVY_V) wallUp('navyWall', S.town, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
     else if (S.navy && (navyMobT = (navyMobT || 0) + 1) % 6 === 0) clearVillageMobs(); // 🏘 주민 · 가디언이 다시 생기면 치움
+    if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) wallUp('annexWall', S.town, annexWall, 1, () => { S.annex.v = ANX_V; });
     for (let i = 0; i < 3; i++) if (!S.gates[i] && S.townV === TOWN_V && (i === 0 || S.navy)) { // 성문 밖 길: 그쪽 땅이 불러와지면 지음
       const L = gatePlan(S.town, S.town.y, i);
       if (L) { CB.setBlocks(L); S.gates[i] = 1; save(); }
