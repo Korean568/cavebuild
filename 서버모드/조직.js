@@ -824,9 +824,9 @@ const RECRUITERS = {
   org_banker: { name: '🏦 은행원', dx: 41, dz: -10, color: 0x2a2f45, tag: '#ffd040', talk: () => bankDialog() },
   org_jobs: { name: '💼 직업 상담원', dx: 41, dz: 18, color: 0x2a6a7a, tag: '#7ad0e0', talk: () => jobDialog() },
   // 🩺 의무병 NPC: 우클릭 → 치료 (체력 꽉 · 기절 풀기) · 쓰러진 사람을 곁(4칸)에 데려오면 살려 줌 · 기지가 지어진 곳에만
-  org_medic1: { name: '🩺 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.annex ? { dx: -57, dz: 12 } : null), talk: () => medicDialog() }, // 군사경상의료센터
-  org_medic2: { name: '🩺 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.annex ? { dx: -93, dz: 12 } : null), talk: () => medicDialog() }, // 군사권역외상센터
-  org_medic3: { name: '🩺 해군 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.navy ? { dx: -13, dz: S.navy.s * 52 } : null), talk: () => medicDialog() }, // ⚓ 해군 의무대
+  org_medic1: { name: '🩺 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.annex && !S.annex.partial ? { dx: -57, dz: 12 } : null), talk: () => medicDialog() }, // 군사경상의료센터
+  org_medic2: { name: '🩺 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.annex && !S.annex.partial ? { dx: -93, dz: 12 } : null), talk: () => medicDialog() }, // 군사권역외상센터
+  org_medic3: { name: '🩺 해군 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.navy && !S.navy.partial ? { dx: -13, dz: S.navy.s * 52 } : null), talk: () => medicDialog() }, // ⚓ 해군 의무대
 };
 let medNpcT = 0;
 function medicBuild(g, { part, pivot, lam, bas }) { // 🩺 의무병 모습: 전투복 · 철모(빨간 십자) · 흰 의무 조끼(앞뒤 빨간 십자) · 완장 · 군화
@@ -858,7 +858,7 @@ for (const k in RECRUITERS) {
   const R = RECRUITERS[k];
   CB.mob(k, {
     name: R.name, hp: 9999, color: R.color, head: 0xd8a07c, build: R.med ? medicBuild : undefined,
-    ai: (m) => { m.vel.x = m.vel.z = 0; m.face = true; if (m.orgHome && Math.hypot(m.pos.x - m.orgHome.x, m.pos.z - m.orgHome.z) > 0.5) { m.pos.x = m.orgHome.x; m.pos.z = m.orgHome.z; } },
+    ai: (m) => { m.vel.x = m.vel.z = 0; m.face = true; const H = m.orgHome; if (H && (Math.hypot(m.pos.x - H.x, m.pos.z - H.z) > 0.5 || (H.y != null && Math.abs(m.pos.y - H.y) > 1.5))) { m.pos.x = H.x; m.pos.z = H.z; if (H.y != null) { m.pos.y = H.y; m.vel.y = 0; } } }, // 자리 · 바닥 높이 (지붕 위로 밀려 올라가도 제자리로)
     talk: () => {
       if (R.talk) return R.talk();
       const t = teamOf(me());
@@ -982,8 +982,9 @@ function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임�
     if (!A) { for (const m of L) m.remove(); continue; }
     const x = T.x + A.dx + 0.5, z = T.z + A.dz + 0.5, near = npcNear(x, z);
     if (R.med && down && P && Math.hypot(P.pos.x - x, P.pos.z - z) < 4 && CB.revive) CB.revive(R.name); // 🩸 쓰러진 채 의무병 곁에 오면 살려 줌
-    for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x, z }; if (CB.mobTag) CB.mobTag(m, R.name, R.tag); } }
-    if (near && !L.length && CB.loaded(x, z)) { const m = CB.spawn(k, x, T.y + 0.1, z); if (m) m.orgHome = { x, z }; }
+    const y = T.y + 0.1;
+    for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x, y, z }; if (CB.mobTag) CB.mobTag(m, R.name, R.tag); } }
+    if (near && !L.length && CB.loaded(x, z)) { const m = CB.spawn(k, x, y, z); if (m) m.orgHome = { x, y, z }; }
   }
 }
 // ── 📝 진급 시험: 군부대 안에서 /시험 사격 · /시험 점프 (둘 다 통과해야 /진급) ──
