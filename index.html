@@ -335,7 +335,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.257 — 🪖 군사기지 렉 고침 · 🏰 기지도 성벽 안 · 📱 모바일 헬기 · 🩺 의무병 NPC</h4>
+    <h4>🆕 v26.258 — 🐞 탈것 버그 고침</h4>
+    <ul><li>🚁 헬기 · 자동차 · 비행기에 탄 채 죽으면 부활해도 다시 탈것 자리로 끌려가던 것 고침 (부활하면 내려요)</li><li>🚁 크리에이티브에서 헬기를 타고 상승(스페이스 · ⤒)을 두 번 빨리 누르면 「날기 시작」이 켜지던 것 고침</li></ul>
+    <h4>v26.257 — 🪖 군사기지 렉 고침 · 🏰 기지도 성벽 안 · 📱 모바일 헬기 · 🩺 의무병 NPC</h4>
     <ul><li>🪖 군사기지 · ⚓ 해군 기지를 한 번에 짓지 않고 5초에 16×16칸씩 나눠 지어요 (렉 · 튕김 고침)</li><li>🏰 군사기지 · 해군 기지 둘레도 도시와 같은 돌벽돌 성벽(높이 7 · 톱니)이에요 · 이미 지어진 기지는 둘레만 성벽으로 바뀌어요 (안에 지은 건 그대로)</li><li>📱 모바일에서 헬기 조종: ⤒ 상승 · ⤓ 하강 · 조이스틱으로 앞뒤 · 회전 · 🚪 내리기</li><li>🩺 의무병 NPC: 군사경상의료센터 · 군사권역외상센터 · 해군 의무대에 있어요 · 우클릭 → 치료받기 (체력 꽉 · 기절 풀기 · 30초마다) · 쓰러진 사람을 곁으로 데려오면 살려 줘요</li><li>🧩 모드 기능: CB.healFull · CB.revive · CB.isDowned</li></ul>
     <h4>v26.256 — ⚓ 2사단 해군 기지 · 🦅 해병대 · 🚁 헬기</h4>
     <ul><li>⚓ 도시 옆 <b>마을을 없애고</b> 그 자리(북문 또는 남문 밖)에 <b>2사단 해군 기지</b>: 해군 · 해병대 생활관, 해군 사령부, 군사경찰 생활관, 의무대, 총기 교체소, 교육소, 집합소, 군항(부두) · 마을 주민 · 빌리저 가디언은 사라져요 · 도시 쪽 문에 탈영선</li><li>🦅 <b>해병대</b>(Marine Corps): 해군의 특임대 · 특전사 자리 (2사단) · 갈색 디지털 무늬 전투복 · 팔각모 · 빨간 명찰 · 수갑 · 체포 가능</li><li>🚁 새 탈것 <b>헬기</b> (작업대: 비행기 엔진 1 + 강철 4 + 유리 2): 땅에 우클릭해서 놓고 타요 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기 · 회전날개가 돌아가요 · 3번 치면 다시 아이템 · ✈ 3사단 공군은 기본 장비로 받아요</li></ul>
@@ -2241,7 +2243,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.257 — 🪖 Military base lag fix · 🏰 Bases inside castle walls · 📱 Mobile helicopter · 🩺 Medic NPC</h4>
+    <h4>🆕 v26.258 — 🐞 Vehicle fixes</h4>
+    <ul><li>🚁 Dying inside a helicopter, car or plane no longer pulls you back into the seat after respawning</li><li>🚁 Double-tapping up (Space / ⤒) in a helicopter in Creative no longer turns on flying</li></ul>
+    <h4>v26.257 — 🪖 Military base lag fix · 🏰 Bases inside castle walls · 📱 Mobile helicopter · 🩺 Medic NPC</h4>
     <ul><li>🪖 The military base and ⚓ navy base are now built one 16×16 chunk every 5 seconds instead of all at once (fixes lag and crashes)</li><li>🏰 Both bases are now surrounded by the same stone-brick castle wall as the city (height 7, crenels) · already-built bases only get their outer wall replaced</li><li>📱 Fly the helicopter on mobile: ⤒ up · ⤓ down · joystick to move and turn · 🚪 exit</li><li>🩺 Medic NPCs in the light-injury center, trauma center and navy medical unit · right-click → get treated (full HP, clears fainting, every 30 s) · bring a downed player next to them to revive</li><li>🧩 Mod API: CB.healFull · CB.revive · CB.isDowned</li></ul>
     <h4>v26.256 — ⚓ 2nd Division navy base · 🦅 Marines · 🚁 Helicopter</h4>
     <ul><li>⚓ The village next to the city is replaced by the <b>2nd Division navy base</b> (outside the north or south gate): navy and marine barracks, navy HQ, MP barracks, medical unit, armory, training center, assembly area and a harbor · the village's villagers and village guardians are removed · a desertion line marks the city-side gate</li><li>🦅 <b>Marine Corps</b>: the navy's special forces (2nd Division) · brown digital camo, octagonal cap, red name tape · can cuff and arrest</li><li>🚁 New vehicle <b>Helicopter</b> (bench: 1 plane engine + 4 steel + 2 glass): right-click the ground to place it, then ride · Space up · C down · W/S forward/back · A/D turn · X to get out · spinning rotor · hit 3 times to fold it back into an item · ✈ the 3rd Division Air Force gets one in its kit</li></ul>
@@ -8120,7 +8124,7 @@ function die(cause){if(player.downed||player.faint){player.downed=null;player.fa
 }
 function respawn(){
   if(HALLOWEEN&&world.flags.hwBox)setTimeout(hwGivePumpkin,300); // 🎃 상자에 갇혀 있으면 호박을 다시 줌
-  player.dead=false;player.boat=null;player.hp=20;player.food=20;player.air=10;player.vel.set(0,0,0);
+  player.dead=false;player.boat=null;player.veh=null;player.hp=20; /* 🚁 탈것 안에서 죽으면 부활할 때 내림 (안 그러면 다시 그 자리로 끌려감) */player.food=20;player.air=10;player.vel.set(0,0,0);
   let s=modRespawn||world.spawn; // 🧩 모드가 정한 나만의 부활 자리 (팀 기지 등)
   if(HALLOWEEN&&world.dim==='back'){s=arrivalOf('back');toast('🟨 백룸에서 다시 깨어났어요... 아직 나갈 수 없어요');} // 🎃 백룸에서 쓰러지면 백룸에서 부활 (버틴 날은 그대로)
   else if(world.dim!=='over')enterDim('over',s);
@@ -9129,7 +9133,7 @@ $('setDiff').addEventListener('click',e=>{const b=e.target.closest('button');if(
 $('btnMode').onclick=()=>{renderSettings();$('pause').classList.remove('show');$('settings').classList.add('show');};
 $('btnSetClose').onclick=()=>{$('settings').classList.remove('show');$('pause').classList.add('show');};
 $('setMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.m===world.mode)return;if(MP.on&&!cmdIsOp()){NOOP_T();return;}if(world.flags.hcDead){toast(world.flags.banned?'🚫 밴당한 세계는 관전만 할 수 있어요':'💀 하드코어에서 쓰러진 세계는 관전만 할 수 있어요');return;}setMode(b.dataset.m);renderSettings();toast('게임 모드: <b>'+MODE_INFO[world.mode][0]+'</b>'+(MP.on?' (나만 · 방 전체는 /gamemode)':''));});
-let lastSpaceT=0;function spaceTap(){const n=performance.now();if((isCreative()||canFly())&&n-lastSpaceT<300&&!player.boat){player.flying=!player.flying;if(player.flying)player.vel.y=Math.max(player.vel.y,5);toast(player.flying?'🕊 날기 시작 (스페이스: 위 · C: 아래)':'날기 그만');lastSpaceT=0;}else lastSpaceT=n;}
+let lastSpaceT=0;function spaceTap(){const n=performance.now();if((isCreative()||canFly())&&n-lastSpaceT<300&&!player.boat&&!player.veh){player.flying=!player.flying;if(player.flying)player.vel.y=Math.max(player.vel.y,5);toast(player.flying?'🕊 날기 시작 (스페이스: 위 · C: 아래)':'날기 그만');lastSpaceT=0;}else lastSpaceT=n;}
 function parseSeed(t){ // 숫자는 그대로, 글자는 같은 글자면 늘 같은 숫자로
   t=(t||'').trim();if(!t)return null;
   if(/^-?\d+$/.test(t)){const n=Number(t)|0;return n;}
