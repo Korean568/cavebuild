@@ -335,7 +335,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.259 — 🐞 해군 기지가 계속 처음부터 다시 지어지던 것 (렉 · 튕김 원인) · ⛰ 기지 위 산 치우기</h4>
+    <h4>🆕 v26.260 — 🩺 의무병 NPC 모습 · 🏘 기지 안 주민 치우기</h4>
+    <ul><li>🩺 의무병 NPC가 진짜 의무병처럼 보여요: 전투복 · 철모(빨간 십자) · 흰 의무 조끼(앞뒤 빨간 십자) · 왼팔 완장 · 군화</li><li>🏘 군부대 · 군사기지 · 해군 기지 안으로 들어온 주민 · 빌리저 가디언은 10초마다 치워요 (도시 음식점 요리사는 그대로)</li></ul>
+    <h4>v26.259 — 🐞 해군 기지가 계속 처음부터 다시 지어지던 것 (렉 · 튕김 원인) · ⛰ 기지 위 산 치우기</h4>
     <ul><li>⚓ 해군 기지 정보가 저장되지 않아서 5초마다 기지를 처음부터 다시 지으려 했어요 (v26.256 렉 · 튕김의 진짜 원인 · 「짓기 시작했어요」가 계속 뜨던 것 · 마을이 안 없어지던 것) → 고침</li><li>⛰ 기지 위에 걸쳐 있던 산 · 나무(땅에서 17칸 위)도 조금씩 치워요 (떠 있는 산 · 건물이 산에 묻히던 것)</li><li>🪖 기지 짓기는 2초에 청크 하나씩: 해군 기지 → 군사기지 → 성벽 바꾸기 → 위쪽 산 치우기 순서</li></ul>
     <h4>v26.258 — 🐞 탈것 버그 고침</h4>
     <ul><li>🚁 헬기 · 자동차 · 비행기에 탄 채 죽으면 부활해도 다시 탈것 자리로 끌려가던 것 고침 (부활하면 내려요)</li><li>🚁 크리에이티브에서 헬기를 타고 상승(스페이스 · ⤒)을 두 번 빨리 누르면 「날기 시작」이 켜지던 것 고침</li></ul>
@@ -2245,7 +2247,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.259 — 🐞 Navy base kept rebuilding from scratch (cause of lag and crashes) · ⛰ Hills above bases cleared</h4>
+    <h4>🆕 v26.260 — 🩺 Medic NPC look · 🏘 Villagers cleared from bases</h4>
+    <ul><li>🩺 Medic NPCs now look like real army medics: combat uniform, helmet with red cross, white medic vest with red crosses, armband, boots</li><li>🏘 Villagers and village guardians that wander into the army bases are removed every 10 seconds (the city restaurant cook stays)</li></ul>
+    <h4>v26.259 — 🐞 Navy base kept rebuilding from scratch (cause of lag and crashes) · ⛰ Hills above bases cleared</h4>
     <ul><li>⚓ The navy base state was never saved, so the game tried to rebuild the whole base every 5 seconds (the real cause of the v26.256 lag and crashes, the repeated "started building" message, and the village not disappearing) → fixed</li><li>⛰ Hills and trees hanging over the bases (17+ blocks above ground) are now cleared bit by bit</li><li>🪖 Bases build one chunk every 2 seconds: navy base → military base → wall upgrade → clearing hills</li></ul>
     <h4>v26.258 — 🐞 Vehicle fixes</h4>
     <ul><li>🚁 Dying inside a helicopter, car or plane no longer pulls you back into the seat after respawning</li><li>🚁 Double-tapping up (Space / ⤒) in a helicopter in Creative no longer turns on flying</li></ul>

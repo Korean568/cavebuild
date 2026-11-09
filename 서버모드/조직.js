@@ -829,6 +829,23 @@ const RECRUITERS = {
   org_medic3: { name: '🩺 해군 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.navy ? { dx: -13, dz: S.navy.s * 52 } : null), talk: () => medicDialog() }, // ⚓ 해군 의무대
 };
 let medNpcT = 0;
+function medicBuild(g, { part, pivot, lam, bas }) { // 🩺 의무병 모습: 전투복 · 철모(빨간 십자) · 흰 의무 조끼(앞뒤 빨간 십자) · 완장 · 군화
+  const uni = lam(0x55663a, 0, 'cloth'), pants = lam(0x434f2e, 0, 'cloth'), skin = lam(0xd8a07c, 0, 'skin'), wh = lam(0xf2f2f2, 0, 'cloth'), red = lam(0xd42020, 0, 'cloth'), boot = lam(0x1c1c1c, 0, 'cloth'), helm = lam(0x3f4a2c, 0, 'cloth'), eye = bas(0x101010), hair = lam(0x2a1a10, 0, 'cloth');
+  const legs = [-0.15, 0.15].map((x) => { const q = pivot(g, x, 0.8, 0); part(q, 0.28, 0.8, 0.28, pants, 0, -0.4, 0); part(q, 0.3, 0.2, 0.32, boot, 0, -0.7, -0.01); return q; });
+  part(g, 0.6, 0.72, 0.36, uni, 0, 1.16, 0); part(g, 0.62, 0.12, 0.38, boot, 0, 0.84, 0); // 몸 · 허리띠
+  part(g, 0.64, 0.46, 0.4, wh, 0, 1.24, 0); // 흰 조끼
+  for (const z of [-0.205, 0.205]) { part(g, 0.08, 0.28, 0.02, red, 0, 1.24, z); part(g, 0.28, 0.08, 0.02, red, 0, 1.24, z); } // 빨간 십자 (앞 · 뒤)
+  const h = pivot(g, 0, 1.52, 0);
+  part(h, 0.5, 0.5, 0.5, skin, 0, 0.25, 0); part(h, 0.52, 0.12, 0.2, hair, 0, 0.42, 0.16); part(h, 0.1, 0.1, 0.02, eye, -0.12, 0.3, -0.26); part(h, 0.1, 0.1, 0.02, eye, 0.12, 0.3, -0.26);
+  part(h, 0.58, 0.22, 0.58, helm, 0, 0.56, 0); part(h, 0.64, 0.05, 0.64, helm, 0, 0.46, 0); // 철모
+  part(h, 0.16, 0.16, 0.02, wh, 0, 0.56, -0.3); part(h, 0.04, 0.12, 0.02, red, 0, 0.56, -0.31); part(h, 0.12, 0.04, 0.02, red, 0, 0.56, -0.31); // 철모의 십자
+  const arms = [-1, 1].map((sx) => {
+    const q = pivot(g, sx * 0.42, 1.42, 0); part(q, 0.2, 0.62, 0.2, uni, 0, -0.28, 0); part(q, 0.18, 0.14, 0.18, skin, 0, -0.66, 0); // 팔 · 손
+    if (sx < 0) { part(q, 0.22, 0.14, 0.22, wh, 0, -0.1, 0); part(q, 0.02, 0.1, 0.04, red, -0.115, -0.1, 0); part(q, 0.02, 0.04, 0.1, red, -0.115, -0.1, 0); } // 왼팔 완장 (빨간 십자)
+    return q;
+  });
+  return { legs, arms, head: h, mats: [uni, skin] };
+}
 function medicDialog() {
   CB.dialog(`🩺 <b>${ARMY_NAME} 의무병</b><br><br>어디 다치셨어요? 치료해 드릴게요<br><span style="font-size:12px;opacity:.8">쓰러진 사람은 제 곁으로 데려오면 살려 드려요</span>`, [['🩺 치료받기', () => {
     const t = Date.now() - medNpcT;
@@ -840,7 +857,7 @@ function medicDialog() {
 for (const k in RECRUITERS) {
   const R = RECRUITERS[k];
   CB.mob(k, {
-    name: R.name, hp: 9999, color: R.color, head: 0xd8a07c,
+    name: R.name, hp: 9999, color: R.color, head: 0xd8a07c, build: R.med ? medicBuild : undefined,
     ai: (m) => { m.vel.x = m.vel.z = 0; m.face = true; if (m.orgHome && Math.hypot(m.pos.x - m.orgHome.x, m.pos.z - m.orgHome.z) > 0.5) { m.pos.x = m.orgHome.x; m.pos.z = m.orgHome.z; } },
     talk: () => {
       if (R.talk) return R.talk();
@@ -1511,9 +1528,9 @@ function navyPlan(C, G, s) {
   for (let d = NAVY_D0 + 3; d < NAVY_D1; d += 9) for (const x of [-4, 4]) { box(x, 0, d, x, 2, d, IRON); put(x, 3, d, LAMPB); } // 가로등
   return L;
 }
-function clearVillageMobs() { // 🏘 해군 기지 자리의 주민 · 빌리저 가디언을 없앰
-  const T = S.town; if (!T || !S.navy) return 0; let n = 0;
-  for (const m of CB.mobs()) if ((m.kind === 'villager' || m.kind === 'vguard') && !m.dead && inNavy(Math.floor(m.pos.x) - T.x, Math.floor(m.pos.z) - T.z)) { m.remove(); n++; }
+function clearVillageMobs() { // 🏘 군부대 · 군사기지 · 해군 기지 안의 주민 · 빌리저 가디언을 없앰 (도시 음식점 요리사는 그대로)
+  const T = S.town; if (!T) return 0; let n = 0;
+  for (const m of CB.mobs()) if ((m.kind === 'villager' || m.kind === 'vguard') && !m.dead && inBaseD(Math.floor(m.pos.x) - T.x, Math.floor(m.pos.z) - T.z)) { m.remove(); n++; }
   return n;
 }
 // 🧱 큰 건물은 16×16칸(청크) 하나씩 나눠 지어요 (한 번에 다 지으면 렉 · 튕김) · 설계도는 한 번만 계산
@@ -1664,7 +1681,7 @@ function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾�
       return;
     }
     if (!S.navy && S.townV === TOWN_V) { const s = S.village ? S.village.s : villageSite(S.town); if (s != null) buildNavy(S.town, S.town.y, s); } // ⚓ 마을 대신 2사단 해군 기지 (예전 마을은 밀고)
-    else if (S.navy && !S.navy.partial && (navyMobT = (navyMobT || 0) + 1) % 6 === 0) clearVillageMobs(); // 🏘 주민 · 가디언이 다시 생기면 치움
+    if ((S.navy || S.annex) && (navyMobT = (navyMobT || 0) + 1) % 2 === 0) clearVillageMobs(); // 🏘 주민 · 가디언이 다시 생기면 치움
     for (let i = 0; i < 3; i++) if (!S.gates[i] && S.townV === TOWN_V && (i === 0 || S.navy)) { // 성문 밖 길: 그쪽 땅이 불러와지면 지음
       const L = gatePlan(S.town, S.town.y, i);
       if (L) { CB.setBlocks(L); S.gates[i] = 1; save(); }
