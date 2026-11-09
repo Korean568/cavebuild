@@ -335,7 +335,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.261 — ⚓ 해군 기지는 꼭 인공 마을 자리에</h4>
+    <h4>🆕 v26.262 — 📢 /say 화면 안내</h4>
+    <ul><li>📢 /say 글 하면 모두의 화면 위쪽 가운데에 반투명 검은 띠 · 흰 글씨로 6초 동안 안내가 떠요 (보낸 사람 이름도 작게) · 채팅 기록에도 남아요 · 최대 120글자</li></ul>
+    <h4>v26.261 — ⚓ 해군 기지는 꼭 인공 마을 자리에</h4>
     <ul><li>⚓ 해군 기지가 인공 마을 반대쪽 성문 밖에 지어지던 것 고침 · 마을 집을 실제 블록으로 찾아서 그 자리에 지어요 (마을은 밀어요)</li><li>🧹 잘못된 쪽에 지어진 해군 기지는 해군 기지를 다 지은 뒤 조금씩 평평한 풀밭으로 치워요</li></ul>
     <h4>v26.260 — 🩺 의무병 NPC 모습 · 🏘 기지 안 주민 치우기</h4>
     <ul><li>🩺 의무병 NPC가 진짜 의무병처럼 보여요: 전투복 · 철모(빨간 십자) · 흰 의무 조끼(앞뒤 빨간 십자) · 왼팔 완장 · 군화</li><li>🏘 군부대 · 군사기지 · 해군 기지 안으로 들어온 주민 · 빌리저 가디언은 10초마다 치워요 (도시 음식점 요리사는 그대로)</li></ul>
@@ -2249,7 +2251,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.261 — ⚓ Navy base always on the built village</h4>
+    <h4>🆕 v26.262 — 📢 /say on-screen notice</h4>
+    <ul><li>📢 /say text now shows a notice at the top of everyone's screen for 6 seconds: semi-transparent black bar with white text and the sender's name · also kept in the chat log · up to 120 characters</li></ul>
+    <h4>v26.261 — ⚓ Navy base always on the built village</h4>
     <ul><li>⚓ Fixed the navy base being built outside the opposite gate · it now finds the mod-built village by its blocks and builds there (replacing the village)</li><li>🧹 A navy base built on the wrong side is flattened to grass bit by bit after the real one is done</li></ul>
     <h4>v26.260 — 🩺 Medic NPC look · 🏘 Villagers cleared from bases</h4>
     <ul><li>🩺 Medic NPCs now look like real army medics: combat uniform, helmet with red cross, white medic vest with red crosses, armband, boots</li><li>🏘 Villagers and village guardians that wander into the army bases are removed every 10 seconds (the city restaurant cook stays)</li></ul>
@@ -6083,6 +6087,11 @@ var CHAT_MS=3600000,CHAT=[],chatT=0,chatSeen=new Set();try{CHAT=JSON.parse(sessi
 function chatEsc(s){return String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
 let chatMode='';const CHAT_PEEK=10000; // 채팅창을 안 열었을 땐 새 메시지만 10초 동안 보여 줌 · 열면 1시간치 전부
 function chatRender(L=CHAT){const el=$('chatLog');if(!el)return;const end=el.scrollHeight-el.scrollTop-el.clientHeight<30;el.innerHTML=L.map(x=>{const d=new Date(x.t);return `<div class="${x.c||''}"><small>${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</small>${x.h}</div>`;}).join('');if(end)el.scrollTop=el.scrollHeight;}
+let sayT=0;function sayShow(n,m){ // 📢 /say 안내: 화면 위쪽 가운데에 반투명 검은 띠 · 흰 글씨 (6초 · 새 안내가 오면 바꿈) · 채팅 기록에도 남김
+  if(!m)return;chatAdd(`📢 ${n?'<b>'+mpEsc(n)+'</b>: ':''}${mpEsc(m)}`);let el=document.getElementById('sayBox');
+  if(!el){el=document.createElement('div');el.id='sayBox';el.style.cssText='position:fixed;left:50%;top:14%;transform:translateX(-50%);z-index:28;pointer-events:none;max-width:min(760px,90vw);background:rgba(0,0,0,.55);color:#fff;font:bold 22px sans-serif;text-align:center;padding:12px 26px;border-radius:6px;line-height:1.35;word-break:keep-all;overflow-wrap:anywhere;text-shadow:0 1px 3px #000;transition:opacity .4s;opacity:0';document.body.appendChild(el);}
+  el.innerHTML=(n?`<div style="font-size:13px;font-weight:normal;opacity:.75;margin-bottom:4px">📢 ${mpEsc(n)}</div>`:'')+mpEsc(m);requestAnimationFrame(()=>{el.style.opacity='1';});
+  clearTimeout(sayT);sayT=setTimeout(()=>{el.style.opacity='0';},6000);}
 function chatAdd(h,c){CHAT.push({t:Date.now(),h,c:c||''});if(CHAT.length>500)CHAT.shift();try{sessionStorage.setItem('cb-chatlog',JSON.stringify(CHAT));}catch(e){}chatMode='';chatT=0;}
 function chatTick(now){if(now-chatT<1000&&now>=chatT)return;chatT=now;while(CHAT.length&&Date.now()-CHAT[0].t>=CHAT_MS)CHAT.shift();
   const el=$('chatLog');if(!el)return;const open=!!MP.chat,cut=Date.now()-CHAT_PEEK,L=open?CHAT:CHAT.filter(x=>x.t>cut),key=(open?'a':'p')+L.length+':'+(L.length?L[L.length-1].t:0);
@@ -9667,6 +9676,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
   if(d.t==='p'){d.id=c.P.id;const P=MP.peers.get(c.P.id);if(P)mpPos(P,d);mpSend(d,c);}
   else if(d.t==='b'&&Array.isArray(d.L)){mpApply(d.L);mpSend(d,c);}
   else if(d.t==='c'){const m=String(d.m||'').slice(0,80);mpChatShow(c.P.nick,m);mpSend({t:'c',n:c.P.nick,m},c);}
+  else if(d.t==='say'){const m=String(d.m||'').slice(0,120);sayShow(c.P.nick,m);mpSend({t:'say',n:c.P.nick,m},c);} // 📢 /say: 방장이 모두에게 전함
   else if(d.t==='mh'){const m=mobs.find(o=>o.nid===d.id&&!o.dead);if(m){m.byPlayer=performance.now();m.byNick=c.P.nick;m.hurt(Math.max(0,Math.min(500,+d.dmg||0)),+d.kx||0,+d.kz||0,!!d.s);}}
   else if(d.t==='ms'){if(MOBDEF[d.kind]&&running)try{new Mob(d.kind,+d.x,+d.y,+d.z);}catch(e){}}
   else if(d.t==='hurt'){if(d.pv){const v=d.to==='H'?{P:MP.me}:[...MP.conns].find(x=>x.P&&x.P.id===d.to);if(v&&v.P)modEmit('pvp',c.P.nick,v.P.nick);} // 🧩 누가 누구를 때렸는지 (방장 게임의 모드에게)
@@ -9744,6 +9754,7 @@ function mpGuestRecv(d){
   else if(d.t==='join'){mpAdd(d);modEmit('join',d.nick);toast(mpL(`🌐 <b>${mpEsc(d.nick)}</b> 님이 들어왔어요`,`🌐 <b>${mpEsc(d.nick)}</b> joined`));}
   else if(d.t==='leave'){const P=MP.peers.get(d.id);if(P)toast(mpL(`🌐 <b>${mpEsc(P.nick)}</b> 님이 나갔어요`,`🌐 <b>${mpEsc(P.nick)}</b> left`));mpDel(d.id);}
   else if(d.t==='c')mpChatShow(d.n,d.m);
+  else if(d.t==='say')sayShow(String(d.n||'').slice(0,16),String(d.m||'').slice(0,120));
   else if(d.t==='mobs')mpMobsIn(d.L);
   else if(d.t==='md'){const m=MP.pm.get(d.id);if(m){spawnParticles(m.pos.x,m.pos.y+m.h/2,m.pos.z,new THREE.Color(m.def.color),14,.5,4);m.remove();MP.pm.delete(d.id);}}
   else if(d.t==='hurt')mpHurtIn(d);
@@ -10197,7 +10208,7 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
     case 'roll':case '주사위':{const f=Math.max(2,Math.min(1000,Math.floor(+a[0]||6))),r=1+Math.floor(Math.random()*f);cmdOut(`🎲 ${f}면 주사위: <b>${r}</b>`);if(MP.on)mpSend({t:'c',n:'🎲',m:`${MP.me.nick}: ${r} (${f}면)`});break;}
     case 'flip':case '동전':{const r=Math.random()<.5?'앞면':'뒷면';cmdOut(`🪙 <b>${r}</b>`);if(MP.on)mpSend({t:'c',n:'🪙',m:`${MP.me.nick}: ${r}`});break;}
     case 'clock':case '시각':cmdOut('🕒 '+new Date().toLocaleString('ko-KR',{month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit'}));break;
-    case 'say':case '알림':{const t=a.join(' ').slice(0,70);if(!t){cmdOut('/say 글',1);break;}toast('📢 <b>'+mpEsc(t)+'</b>');if(MP.on)mpSend({t:'c',n:'📢',m:t});break;}
+    case 'say':case '알림':{const t=a.join(' ').slice(0,120);if(!t){cmdOut('/say 글',1);break;}const n=MP.on&&MP.me.nick?MP.me.nick:'';sayShow(n,t);if(MP.on)mpSend({t:'say',n,m:t});break;} // 📢 모두의 화면에 안내 (반투명 검은 띠 · 흰 글씨)
     case 'ver':case '버전':{const v=(document.querySelector('#title .help.upd h4')||{}).textContent||'';cmdOut('CAVEBUILD '+((v.match(/v\d+\.\d+/)||[''])[0]));break;}
     case 'tphere':case 'tpall':case '부르기':{if(!MP.on||!MP.host){cmdOut('멀티플레이 방장만 쓸 수 있어요',1);break;}const L=[...MP.conns].filter(q=>q.P&&(c==='tpall'||q.P.nick.toLowerCase()===(a[0]||'').toLowerCase()));
       if(!L.length){cmdOut(c==='tpall'?'방에 친구가 없어요':'그 사람을 찾지 못했어요 · /list',1);break;}for(const q of L)q.send({t:'tpto',x:P.x,y:P.y+.1,z:P.z});cmdOut(`🧲 ${L.map(q=>mpEsc(q.P.nick)).join(' · ')} 님을 불렀어요`);break;}
