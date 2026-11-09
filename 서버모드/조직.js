@@ -177,7 +177,7 @@ function cellOf(nick) {
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
+const load = () => { const s = CB.load('org') || {}; return { m: s.m || {}, base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -1604,10 +1604,39 @@ function navyStep(C, G) { // ⚓ 해군 기지: 청크 하나씩 · 다 지으�
     CB.say(`⚓ ${ARMY_NAME} 2사단 해군 기지가 다 지어졌어요! (${s > 0 ? '북문' : '남문'} 밖 · 성벽 안) · 해군 · 해병대 생활관 · 사령부 · 군사경찰 · 의무대 · 총기 교체소 · 교육소 · 집합소 · 군항`);
   }
 }
+function villageSideAt(C, G) { // 🏘 인공 마을 집이 실제로 있는 쪽 (저장이 날아가도 집 모서리 원목 기둥으로 찾음) · 없으면 null
+  const LOG = BLK('원목', '판자'), D0 = TOWN_Z + 1;
+  for (const s of [1, -1]) {
+    if (!CB.loaded(C.x, C.z + s * (D0 + 6))) continue;
+    let n = 0;
+    for (const [x, d] of [[-13, D0 + 3], [-7, D0 + 3], [7, D0 + 3], [13, D0 + 3], [-13, D0 + 9], [-7, D0 + 9], [7, D0 + 9], [13, D0 + 9]]) if (CB.getBlock(C.x + x, G + 1, C.z + s * d) === LOG) n++;
+    if (n >= 4) return s;
+  }
+  return null;
+}
+function navyUndoStep(C, G) { // 🧹 잘못된 쪽에 지어진 해군 기지 → 평평한 풀밭 (청크 하나씩)
+  const s = S.navyUndo.s;
+  const P = planGroups('navyUndo', C.x + ',' + C.z + ',' + G + ',' + s, () => {
+    const L = [], GRASS = BLK('잔디 블록'), DIRT = BLK('흙'), put = (x, y, d, id) => L.push([C.x + x, G + y, C.z + s * d, id]);
+    for (let x = -NAVY_X - 1; x <= NAVY_X + 1; x++) for (let d = NAVY_D0; d <= NAVY_D1 + 1; d++) {
+      for (let y = 0; y <= 14; y++) put(x, y, d, 0);
+      put(x, -1, d, GRASS);
+      if (x >= 6 && x <= 38 && d >= 67 && d <= 82) for (let y = -4; y <= -2; y++) put(x, y, d, DIRT); // 군항 물도 메움
+    }
+    return { L, area: navyArea(C, s), fill: () => false };
+  });
+  const [, left] = chunkStep(P, S.navyUndoDone || (S.navyUndoDone = {}), G);
+  if (left) { save(); return; }
+  delete S.navyUndo; delete S.navyUndoDone; delete PLANS.navyUndo; S.gates[s > 0 ? 1 : 2] = 0; save();
+  CB.say(`🧹 ${s > 0 ? '북문' : '남문'} 밖에 잘못 지어진 해군 기지를 치웠어요`);
+}
 function buildNavy(C, G, s) { // 짓기 시작 (예전 마을은 밀고)
-  S.navy = { s, v: NAVY_V, partial: 1 }; S.navyDone = {}; delete S.village; S.gates[s > 0 ? 1 : 2] = 0; delete PLANS.navy;
+  if (S.navy && S.navy.s !== s && !S.navyUndo) { S.navyUndo = { s: S.navy.s }; S.navyUndoDone = {}; } // 다른 쪽에 짓던 건 치움
+  S.navy = { s, v: NAVY_V, partial: 1 }; S.navyDone = {}; delete S.village; S.gates[s > 0 ? 1 : 2] = 0; delete PLANS.navy; delete PLANS.navyUndo;
+  if (S.clr) delete S.clr.navy;
+  if (S.wallUp) delete S.wallUp.navyWall;
   save();
-  CB.say(`⚓ ${ARMY_NAME} 2사단 해군 기지를 짓기 시작했어요 (${s > 0 ? '북문' : '남문'} 밖 · 예전 마을 자리 · 땅이 불러와진 곳부터 조금씩)`);
+  CB.say(`⚓ ${ARMY_NAME} 2사단 해군 기지를 짓기 시작했어요 (${s > 0 ? '북문' : '남문'} 밖 · 인공 마을 자리 · 땅이 불러와진 곳부터 조금씩)`);
 }
 function annexFree(C) { // 기지 자리에 사람이 지은 게 많으면 저절로 짓지 않음 (OP의 /군사기지 짓기 로만) · 도시 쪽 청크는 빼고 셈
   if (!CB.edited) return true;
@@ -1659,6 +1688,7 @@ function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 �
   if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over' || !S.town || S.townV !== TOWN_V) return;
   const T = S.town, C = { x: T.x, z: T.z }, G = T.y;
   if (S.navy && S.navy.partial) return navyStep(C, G);
+  if (S.navyUndo) return navyUndoStep(C, G);
   if (!S.annexBlocked && (!S.annex || S.annex.partial) && (S.annex || annexFree(T))) { const n = Object.keys(S.annexDone || {}).length; annexStep(C, G); if (Object.keys(S.annexDone || {}).length !== n) return; } // 처음 한 번은 사람이 지은 게 많은지 확인
   if (S.navy && (S.navy.v || 1) < NAVY_V) return wallUp('navyWall', T, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
   if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) return wallUp('annexWall', T, annexWall, 1, () => { S.annex.v = ANX_V; });
@@ -1680,7 +1710,11 @@ function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾�
       CB.say('🏙 도시에 새 건물이 생겼어요 (🏦 은행 · 💼 직업소개소)');
       return;
     }
-    if (!S.navy && S.townV === TOWN_V) { const s = S.village ? S.village.s : villageSite(S.town); if (s != null) buildNavy(S.town, S.town.y, s); } // ⚓ 마을 대신 2사단 해군 기지 (예전 마을은 밀고)
+    if (S.townV === TOWN_V) { // ⚓ 인공 마을 자리에 2사단 해군 기지 (마을은 밀고) · 다른 쪽에 지어졌으면 마을 쪽으로 옮김
+      const vs = villageSideAt(S.town, S.town.y);
+      if (vs != null && (!S.navy || S.navy.s !== vs)) buildNavy(S.town, S.town.y, vs);
+      else if (!S.navy) { const s = S.village ? S.village.s : villageSite(S.town); if (s != null) buildNavy(S.town, S.town.y, s); }
+    }
     if ((S.navy || S.annex) && (navyMobT = (navyMobT || 0) + 1) % 2 === 0) clearVillageMobs(); // 🏘 주민 · 가디언이 다시 생기면 치움
     for (let i = 0; i < 3; i++) if (!S.gates[i] && S.townV === TOWN_V && (i === 0 || S.navy)) { // 성문 밖 길: 그쪽 땅이 불러와지면 지음
       const L = gatePlan(S.town, S.town.y, i);
