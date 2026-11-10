@@ -1,5 +1,5 @@
 // 🪖 조직 (팀 계급) 모드 — CAVEBUILD 서버용 .js 모드
-// 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 육군(Soldier) · 공군(Air Force) · 해군(Navy · 해병대 포함) · 의무병(Medic) · 군사경찰(CMP) · 특수임무대(SMU) · 특수전사령부(SWC) · 조교(Assistant) · 장교(Officer) · 교육사령관(TMC) · 국군 군사경찰 연합(AFMPC) · 국제평화단(AFMA) · 사단장(VIP) · 국무총리(Prime Minister) · 대통령(President)
+// 팀 계급 (아래 → 위): 시민 · 경찰(CP) · 육군(Soldier) · 공군(Air Force) · 해군(Navy · 해병대 포함) · 의무병(Medic) · 군사경찰(CMP) · 특수임무대(SMU) · 특수전사령부(SWC) · 조교(Assistant) · 장교(Officer) · 교육사령관(TMC) · 국군 군사경찰 연합(AFMPC) · 국군평화단(AFMA) · 사단장(VIP) · 국무총리(Prime Minister) · 대통령(President)
 //   CLKKY ARMY 조직 구성: 의무병은 메디킷으로 치료 · 특임대 · 특전사는 ★★★ 진압 (수갑 · 체포 가능) · 조교는 육군 · 의무병 교육 · 장교는 하위 조직 지휘 · 교육 · AFMPC 는 군사경찰 · 특임대 · 특전사 총괄 · AFMA 는 모든 부서 교육
 //   처음엔 누구나 시민 · 위 계급이 아래 계급 사람을 배정 · 진급 · 강등해요 (내 계급보다 아래로만) · 대통령(President)은 서버를 만든 사람 · 국무총리(Prime Minister)는 대통령을 보좌하는 운영진
 //   머리 위 닉네임에 [팀] + 팀 색, 기지 · 집합, 훈련 · 임무, 같은 팀끼리도 때릴 수 있음
@@ -44,7 +44,7 @@ const TEAMS = [ // 아래 → 위 (계급 순서)
   { key: '장교', short: 'Officer', ico: '🎖', color: '#c084fc' },
   { key: '교육사령관', short: 'TMC', ico: '⭐', color: '#22c55e' }, // 장교 · 조교와 하위 부서 교육
   { key: '국군 군사경찰 연합', short: 'AFMPC', ico: '⚜', color: '#f59e0b' }, // 군사경찰 · 특임대 · 특전사 총괄 (예전 MP사령관)
-  { key: '국제평화단', short: 'IPC', ico: '🕊', color: '#38bdf8' }, // International Peace Corps (예전 국군 사관 학교 AFMA) · 모든 부서를 교육
+  { key: '국군평화단', short: 'AFPC', ico: '🕊', color: '#38bdf8' }, // 국평단 · Armed Forces Peace Corps (예전 국군 사관 학교 AFMA · 국제평화단) · 모든 부서를 교육
   { key: '사단장', short: 'VIP', ico: '🎗', color: '#f2cc3a' }, // 사단장(VIP) · 디스코드 부스터 · 사단 전체 운영진
   { key: '국무총리', short: 'Prime Minister', ico: '🏛', color: '#ffd166' }, // 대통령을 보좌하는 서버 운영진
   { key: '대통령', short: 'President', ico: '👑', color: '#ff5a5a' }, // 서버를 만든 사람
@@ -60,7 +60,7 @@ const TRAITOR = '배신자', TRAITOR_KILLS = 50; // 🗡 12순위 배신자(Trai
 ORGS[TRAITOR] = { key: TRAITOR, short: 'Traitor', ico: '🗡', color: '#b01010', lv: 0, full: TRAITOR, special: 1 };
 const DESERT_FREE = ['대통령', '국무총리', '사단장']; // 탈영선을 넘어도 지명수배가 안 떠요
 const TOP = TEAMS.length - 1, OFFICER_LV = TEAMS.findIndex((t) => t.key === '장교'); // 대통령 · 장교(Officer)부터 지휘
-const OLDTEAM = { 'CP': '경찰', 'TMC': '조교', 'CMP': '군사경찰', 'CP 사령부': '국군 군사경찰 연합', 'TMC 사령부': '교육사령관', 'CMP 사령부': '국군 군사경찰 연합', '군사': '육군', 'CM': '육군', 'CMO': '장교', '교육부': '조교', 'MP사령부': '국군 군사경찰 연합', '교육사령부': '교육사령관', '총사령부': '대통령', '부사령관': '사단장', 'Staff': '사단장', '총사령관': '대통령', '교육사': '조교', 'MP사령관': '국군 군사경찰 연합', '국군 사관 학교': '국제평화단', 'AFMA': '국제평화단' }; // 예전 조직 이름 → 새 팀
+const OLDTEAM = { 'CP': '경찰', 'TMC': '조교', 'CMP': '군사경찰', 'CP 사령부': '국군 군사경찰 연합', 'TMC 사령부': '교육사령관', 'CMP 사령부': '국군 군사경찰 연합', '군사': '육군', 'CM': '육군', 'CMO': '장교', '교육부': '조교', 'MP사령부': '국군 군사경찰 연합', '교육사령부': '교육사령관', '총사령부': '대통령', '부사령관': '사단장', 'Staff': '사단장', '총사령관': '대통령', '교육사': '조교', 'MP사령관': '국군 군사경찰 연합', '국군 사관 학교': '국군평화단', 'AFMA': '국군평화단', '국제평화단': '국군평화단', 'IPC': '국군평화단' }; // 예전 조직 이름 → 새 팀
 const norm = (s) => String(s || '').replace(/[\s()]/g, '').toLowerCase();
 const findOrg = (s) => { const k = norm(s); const t = TEAMS.find((t) => norm(t.key) === k || norm(t.short) === k || norm(t.key + t.short) === k); return t ? t.key : null; };
 const ownerNick = () => (CB.owner && CB.owner()) || '';
@@ -88,7 +88,7 @@ const KITS = {
   '장교': ['권총', '블랙 다이아몬드 검', '수갑'],
   '교육사령관': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검'],
   '국군 군사경찰 연합': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
-  '국제평화단': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검'],
+  '국군평화단': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검'],
   '사단장': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
   '국무총리': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
 };
@@ -109,7 +109,7 @@ const OUTFITS = {
   '장교': { style: 'officer', top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 }, // 🎖 정복 · 베레모 · 계급장
   '교육사령관': { style: 'tmccmd', top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 }, // ⭐ 정복 · 녹색 베레모
   '국군 군사경찰 연합': { style: 'swat', field: 1, vt: 'AFMPC', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0xf59e0b }, // ⚜ 흑색 대테러복 · 방탄조끼(AFMPC)
-  '국제평화단': { style: 'ipc', field: 1, top: 0x55663a, bottom: 0x47512f, hat: 'beret', hatC: 0x3f8fb5, badge: 0xe0b83a }, // 🕊 전투복 · 하늘색(UN) 베레모 · 빨간 스카프 · UN 패치
+  '국군평화단': { style: 'ipc', field: 1, top: 0x55663a, bottom: 0x47512f, hat: 'beret', hatC: 0x3f8fb5, badge: 0xe0b83a }, // 🕊 전투복 · 하늘색(UN) 베레모 · 빨간 스카프 · UN 패치
   '사단장': { style: 'staff', top: 0x003942, bottom: 0x003942, hat: 'cap', hatC: 0x003942, badge: 0xc0c6d0 }, // 🎗 정복 · 정모 (은장)
   '국무총리': { style: 'pm', top: 0x003942, bottom: 0x003942, hat: 'cap', hatC: 0x003942, badge: 0xf2c418 }, // 🏛 정복 · 정모 (금장)
   '대통령': { style: 'owner', top: 0x1b2033, bottom: 0x1b2033, hat: 'cap', hatC: 0x1b2033, badge: 0xffd040 }, // 정복 (청와대에서 갈아입음) · 정모 금줄 · 금줄 견장 · 훈장
@@ -150,9 +150,9 @@ const SELL = { // 납품 값 (한 개당 동전)
 //   2등급 「지명수배 ★★」  중범죄   — 경찰 쪽 팀원 폭행 · 불법 무기 소지 (시민이 총을 가짐)                                  → 징역 15분
 //   3등급 「지명수배 ★★★」 중대범죄 — 무단사살 (정당방위 · 경찰이 수배자를 쓰러뜨린 건 빼고) · 대학살 · 무단탈영 (군대) · 무기로 협박 → 징역 30분
 const LAW = ['경찰', '군사경찰', '해병대', '특수임무대', '특수전사령부', '장교', '국군 군사경찰 연합', '사단장', '국무총리', '대통령'];
-const ARMY = ['육군', '공군', '해군', '의무병', '군사경찰', '해병대', '특수임무대', '특수전사령부', '조교', '장교', '교육사령관', '국군 군사경찰 연합', '국제평화단', '사단장', '대통령']; // 군대 (대통령 포함) (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
-// ❤ CLKKY ARMY 체력 구성 (100 = 보통 사람 · 대통령은 무적) · 국군 군사경찰 연합은 표에 없어서 국제평화단과 특전사 사이 400
-const TEAM_HP = { '육군': 100, '해군': 100, '공군': 100, '해병대': 150, '교육사령관': 150, '의무병': 150, '군사경찰': 200, '조교': 200, '특수임무대': 250, '장교': 250, '특수전사령부': 300, '국군 군사경찰 연합': 400, '국제평화단': 500, '사단장': 750, '국무총리': 900, '대통령': Infinity };
+const ARMY = ['육군', '공군', '해군', '의무병', '군사경찰', '해병대', '특수임무대', '특수전사령부', '조교', '장교', '교육사령관', '국군 군사경찰 연합', '국군평화단', '사단장', '대통령']; // 군대 (대통령 포함) (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
+// ❤ CLKKY ARMY 체력 구성 (100 = 보통 사람 · 대통령은 무적) · 국군 군사경찰 연합은 표에 없어서 국군평화단과 특전사 사이 400
+const TEAM_HP = { '육군': 100, '해군': 100, '공군': 100, '해병대': 150, '교육사령관': 150, '의무병': 150, '군사경찰': 200, '조교': 200, '특수임무대': 250, '장교': 250, '특수전사령부': 300, '국군 군사경찰 연합': 400, '국군평화단': 500, '사단장': 750, '국무총리': 900, '대통령': Infinity };
 if (CB.maxHp) CB.maxHp(() => { if (!CB.players || !CB.players().length) return null; /* 멀티에서만 (혼자 하는 세계에선 보통 하트 · 무적 아님) */ const t = teamOf(me()); return TEAM_HP[t] != null ? TEAM_HP[t] : null; });
 // 🎖 군사계급 (CLKKY ARMY 계급 구성 · 부서와 따로): 군대 팀원마다 하나 · /진급 · /강등 으로 올리고 내림 · 부서 이동은 /team · 전역하면 처음부터
 //   원수(General 5-Star)는 대통령(서버를 만든 사람)만 · 대장(General)은 운영진(국무총리 · 대통령이 진급시킨 사람)만 · 일반 진급은 중장(Lieutenant General)까지
@@ -181,7 +181,7 @@ function cellOf(nick) {
 
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
-const migM = (m) => { for (const k in m) if (m[k] && m[k].o && !ORGS[m[k].o] && OLDTEAM[m[k].o]) m[k].o = OLDTEAM[m[k].o]; return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국제평화단 등)
+const migM = (m) => { for (const k in m) if (m[k] && m[k].o && !ORGS[m[k].o] && OLDTEAM[m[k].o]) m[k].o = OLDTEAM[m[k].o]; return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국군평화단 등)
 const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0 }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
@@ -1408,7 +1408,7 @@ function buildTown(C, G) {
   S.town = { x: C.x, y: G, z: C.z }; S.townV = TOWN_V;
   CB.setSpawn(C.x + 0.5, G + 0.1, C.z + 0.5); // 🏙 스폰 = 도시 한가운데
   const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
-  const B = { '경찰': at(28, 7), '육군': at(-30, 0), '의무병': at(-30, 0), '군사경찰': at(-30, 0), '특수임무대': at(-30, 0), '특수전사령부': at(-30, 0), '장교': at(-39, -10), '조교': at(-39, -10), '국군 군사경찰 연합': at(-39, -10), '국제평화단': at(-39, -10), '교육사령관': at(-39, -10), '사단장': at(-39, -10), '국무총리': at(-39, -10), '대통령': at(-39, -10) };
+  const B = { '경찰': at(28, 7), '육군': at(-30, 0), '의무병': at(-30, 0), '군사경찰': at(-30, 0), '특수임무대': at(-30, 0), '특수전사령부': at(-30, 0), '장교': at(-39, -10), '조교': at(-39, -10), '국군 군사경찰 연합': at(-39, -10), '국군평화단': at(-39, -10), '교육사령관': at(-39, -10), '사단장': at(-39, -10), '국무총리': at(-39, -10), '대통령': at(-39, -10) };
   for (const o in B) if (!S.base[o]) S.base[o] = B[o];
   if (!S.dealerSet) S.dealer = { ...at(-16, -20), dim: 'over' };
   save();
@@ -1425,7 +1425,7 @@ const ANX = [ // [이름, x1, z1, x2, z2, 높이, 종류, 벽] · 북쪽(z<0) �
   ['🛡 군사경찰 생활관', -124, -20, -110, -6, 6, 'bar', 'mp'], ['📘 조교 · 교육부 생활관', -142, -20, -128, -6, 6, 'bar', 'camo'], ['⛓ 5사단 교도소', -163, -21, -146, -6, 6, 'jail', 'iron'],
   ['⚜ 사령관 회의실', -64, -38, -52, -26, 6, 'meet', 'conc'], ['🎖 고위 간부 회의실', -80, -38, -68, -26, 6, 'meet', 'conc'], ['📋 부사관 회의실', -96, -38, -84, -26, 5, 'meet', 'camo'],
   ['⚜ AFMPC 국군 군사경찰 연합', -122, -38, -110, -26, 6, 'meet', 'mp'], ['🗡 특수전사령부 · 특임대 작전 회의소', -138, -38, -126, -26, 5, 'ops', 'mp'], ['🔫 총기 교체소', -156, -38, -144, -26, 5, 'arms', 'conc'],
-  ['🕊 국제평화단 IPC', -100, -54, -84, -42, 6, 'class', 'camo'],
+  ['🕊 국군평화단 AFPC', -100, -54, -84, -42, 6, 'class', 'camo'],
   ['🩹 군사경상의료센터', -64, 6, -50, 20, 6, 'med', 'white'], ['🏥 군사중상의료센터', -82, 6, -68, 20, 7, 'med', 'white'], ['🚑 군사권역외상센터', -100, 6, -86, 20, 8, 'med', 'white'],
   ['🩺 군사응급수술센터', -124, 6, -110, 20, 7, 'surg', 'white'], ['♿ 군사재활치료센터', -142, 6, -128, 20, 6, 'med', 'white'],
   ['🦅 해병대 생활관 · 2사단', -124, 26, -110, 40, 6, 'bar', 'marine'],
@@ -1679,7 +1679,7 @@ function annexStep(C, G) { // 불러와진 청크 하나씩 지음 (렉이 안 �
   if (!left && S.annex && S.annex.partial) {
     delete S.annex.partial; delete PLANS.annex;
     const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
-    Object.assign(S.base, { '육군': at(-57, -4), '해군': at(-75, -4), '공군': at(-93, -4), '군사경찰': at(-117, -4), '특수임무대': at(-117, -4), '특수전사령부': at(-131, -25), '국군 군사경찰 연합': at(-115, -25), '장교': at(-135, -4), '조교': at(-135, -4), '교육사령관': at(-135, -4), '국제평화단': at(-91, -41), '의무병': at(-57, 4) });
+    Object.assign(S.base, { '육군': at(-57, -4), '해군': at(-75, -4), '공군': at(-93, -4), '군사경찰': at(-117, -4), '특수임무대': at(-117, -4), '특수전사령부': at(-131, -25), '국군 군사경찰 연합': at(-115, -25), '장교': at(-135, -4), '조교': at(-135, -4), '교육사령관': at(-135, -4), '국군평화단': at(-91, -41), '의무병': at(-57, 4) });
     save();
     CB.say(`🪖 ${ARMY_NAME} 기지가 다 지어졌어요! (생활관 · 회의실 · 의료센터 · 5사단 교도소 · 헬기 · 구급차) · 🚑 🚁 는 엔진을 우클릭하면 타요`);
   }
