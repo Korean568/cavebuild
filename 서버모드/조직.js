@@ -1755,7 +1755,8 @@ function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 �
   if (S.navy && (S.navy.v || 1) < NAVY_V) return wallUp('navyWall', T, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
   if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) return wallUp('annexWall', T, annexWall, 1, () => { S.annex.v = ANX_V; });
   if (S.annex && !S.annex.partial && clearStep('annex', G, annexArea(C), annexIn(C))) return;
-  if (S.navy && !S.navy.partial) clearStep('navy', G, navyArea(C, S.navy.s), navyIn(C, S.navy.s));
+  if (S.navy && !S.navy.partial && clearStep('navy', G, navyArea(C, S.navy.s), navyIn(C, S.navy.s))) return;
+  if (S.bh && !S.bh.partial) clearStep('bh', G, [C.x + BH_X0, C.z - BH_Z, C.x + BH_X1, C.z + BH_Z], (x, z) => { const dx = x - C.x; return dx >= BH_X0 && dx <= BH_X1 && Math.abs(z - C.z) <= BH_Z; }); // ⛰ 청와대 위 산
 }
 function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음 (예전에 지은 도시에 집이 없으면 집만)
   if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
