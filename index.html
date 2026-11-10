@@ -336,7 +336,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.271 — 🕶 선글라스 · 🎯 특임대 헌병 전투복 · 👑 대통령 HP 1000</h4>
+    <h4>🆕 v26.272 — 🛡 폭동진압 방탄방패 · 🕶 투명 렌즈 · 🪖 군사경찰 사단</h4>
+    <ul><li>🛡 <b>폭동진압 방탄방패</b>: 손에 들고만 있으면 앞(약 ±80°)에서 오는 공격 · 총알을 막아요 · 부서지지 않아요 · 우클릭 · ✋ 로 쓰는 게 아니에요 · 특임대 · 특전사 장비에 들어 있어요</li><li>🕶 선글라스 렌즈가 살짝 투명해요</li><li>🪖 교도소는 이제 사단이 아니에요 (5사단 교도소 → 군 교도소) · 군사경찰 · 특임대는 처음 들어간 군의 사단 (육군 1사단 · 해군 2사단 · 공군 3사단)</li></ul>
+    <h4>v26.271 — 🕶 선글라스 · 🎯 특임대 헌병 전투복 · 👑 대통령 HP 1000</h4>
     <ul><li>🕶 선글라스가 진짜 선글라스처럼: 반짝이는 렌즈 두 알 · 렌즈 반사 · 코받침 · 위 테 · 귀에 거는 다리 (군사경찰 · 교육사령관 · 조교 · 특전사)</li><li>🎯 특임대는 군사경찰 소속 · 복장은 <b>헌병 전투복</b>: 처음 들어간 군(육군 · 해군 · 공군)의 무늬로 된 대테러복 · 조끼 · 헬멧도 그 군 색 · 왼팔 「헌병」 완장 · 검은 복면</li><li>👑 대통령은 서바이벌에서 HP 1000 (크리에이티브 · 관전에서는 ♾️)</li><li>🧩 모드 기능: CB.gameMode() · CB.outfit 의 cam ('army' · 'navy' · 'airforce' · 'marine')</li></ul>
     <h4>v26.270 — ⛰ 청와대 위 산 치우기</h4>
     <ul><li>⛰ 청와대 위에 걸친 산 · 나무(땅에서 17칸 위)도 조금씩 치워요 (기지처럼 떠 있는 산이 남지 않게)</li></ul>
@@ -2270,7 +2272,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.271 — 🕶 Sunglasses · 🎯 SMU military-police combat suit · 👑 President HP 1000</h4>
+    <h4>🆕 v26.272 — 🛡 Riot ballistic shield · 🕶 See-through lenses · 🪖 MP divisions</h4>
+    <ul><li>🛡 <b>Riot ballistic shield</b>: just holding it blocks attacks and bullets from the front (about ±80°) · never breaks · not used with right-click or ✋ · included in the SMU and SWC kits</li><li>🕶 Sunglass lenses are slightly see-through</li><li>🪖 The prison is no longer a division (5th Division prison → military prison) · military police and SMU belong to the division of the branch they first joined (Army 1st, Navy 2nd, Air Force 3rd)</li></ul>
+    <h4>v26.271 — 🕶 Sunglasses · 🎯 SMU military-police combat suit · 👑 President HP 1000</h4>
     <ul><li>🕶 Sunglasses now look like real sunglasses: two glossy lenses with a glint, nose bridge, top frame and temple arms</li><li>🎯 SMU now belongs to the military police and wears an <b>MP combat suit</b>: a counter-terror suit in the camo of the branch they first joined (Army, Navy, Air Force) · vest and helmet in that branch's colors · black 헌병 armband · black balaclava</li><li>👑 The President has 1000 HP in survival (♾️ in creative and spectator)</li><li>🧩 Mod API: CB.gameMode() · cam option for CB.outfit ('army', 'navy', 'airforce', 'marine')</li></ul>
     <h4>v26.270 — ⛰ Hills above the Blue House cleared</h4>
     <ul><li>⛰ Hills and trees hanging over the Blue House (17+ blocks above ground) are cleared bit by bit, like the bases</li></ul>
@@ -3335,6 +3339,7 @@ IT[HELLSTEEL]={name:'블레이즈스톤 주괴',stack:64};
 IT[COIN]={name:'동전',stack:64};
 IT[PORTAL_KEY]={name:'포탈 열쇠',stack:16,use:true};
 const COLA=352,OPEN_COLA=353;IT[COLA]={name:'콜라',stack:16};IT[OPEN_COLA]={name:'딴 콜라',stack:1,food:3,drink:true}; // 🥤 콜라: 우클릭으로 따고 (따개를 들었다 눌러 닫음) 꾹 눌러 마심
+const RIOT=379;IT[RIOT]={name:'폭동진압 방탄방패',stack:1}; // 🛡 폭동진압 방탄방패: 손에 들고만 있으면 앞(약 ±80°)에서 오는 공격 · 총알을 막아요 (우클릭 · ✋ 로 쓰는 게 아님)
 const HELI=378;IT[HELI]={name:'헬기',stack:1,use:true}; // 🚁 헬기: 땅에 우클릭하면 나와요 · 타고 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기 · 3번 치면 다시 아이템
 const MEDKIT=377;IT[MEDKIT]={name:'메디킷',stack:1,use:true}; // ⛑ 메디킷: 플레이어를 치면 그 사람 체력 +8 · 우클릭하면 내 체력 +6 (4초마다)
 const TASER=376;IT[TASER]={name:'테이저건',stack:1}; // ⚡ 테이저건: 클릭하면 전극 발사 (12칸) · 맞은 플레이어 · 몹은 5초 동안 감전돼 못 움직임 · 3초마다
@@ -3631,6 +3636,7 @@ function itemIcon(id){
     case RIFLE:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=7&&x>=1&&x<=15)return y===5?'#8a909c':x<5?'#5a3e26':'#3a3e48';if(y>=8&&y<=11&&x>=7&&x<=8)return '#2a2e36';if(y>=8&&y<=10&&x>=1&&x<=3)return '#5a3e26';if(y===4&&x>=8&&x<=11)return '#22252c';return null;});
     case BULLET:return pixelIcon((X,Y,x,y)=>{const c=[[5,'#d8a040'],[8,'#e8c060'],[11,'#d8a040']];for(const [bx,col] of c){if(x>=bx&&x<=bx+1&&y>=7&&y<=12)return col;if(x>=bx&&x<=bx+1&&y>=4&&y<=6)return y===4?'#9a6a3a':'#b88050';}return null;});
     case HELI:return pixelIcon((X,Y,x,y)=>{if(y===3&&x>=1&&x<=14)return '#3a3d42';if(y===4&&x===7)return '#5a5e66';if(y>=6&&y<=10&&x>=4&&x<=10)return x>=8&&y<=8?'#9fd4ff':'#6b7a8c';if(y===8&&x>=11&&x<=14)return '#6b7a8c';if(y>=6&&y<=7&&x===14)return '#6b7a8c';if(y===12&&x>=3&&x<=11)return '#2a2c30';if(y===11&&(x===5||x===9))return '#2a2c30';return null;});
+    case RIOT:return pixelIcon((X,Y,x,y)=>{if(x<3||x>12||y<1||y>14)return null;if(x===3||x===12||y===1||y===14)return '#1a1b1e';if(y>=3&&y<=5&&x>=5&&x<=10)return '#9fb4c8';if(y===9&&x>=4&&x<=11)return '#f2f2f2';return (x+y)%5===0?'#3a3f48':'#2a2e35';}); // 🛡 폭동진압 방탄방패 아이콘: 검은 테 · 보는 창 · 흰 줄
     case MEDKIT:return pixelIcon((X,Y,x,y)=>{if((y===3&&x>=6&&x<=9)||(y===4&&(x===6||x===9)))return '#9aa0aa';if(x<2||x>13||y<5||y>13)return null;if((x>=7&&x<=8&&y>=6&&y<=12)||(y>=8&&y<=10&&x>=4&&x<=11))return '#e02828';return y===5||y===13||x===2||x===13?'#c8ccd4':'#f4f4f6';});
     case TASER:return pixelIcon((X,Y,x,y)=>{if(y>=5&&y<=8&&x>=3&&x<=10)return y===5?'#ffe060':'#f2c418';if(y>=5&&y<=8&&x>=11&&x<=13)return '#1a1a1e';if(y===6&&x===14)return '#40a0ff';if(y===8&&x===14)return '#40a0ff';if(y>=9&&y<=13&&x>=3&&x<=5)return '#1a1a1e';return null;});
     case LASER:return pixelIcon((X,Y,x,y)=>{if(x>=13&&x<=14&&y>=6&&y<=9)return '#ff3050';if(y===7&&x>=6&&x<=9)return '#ff6080';if(y>=6&&y<=9&&x>=2&&x<=12)return y===6?'#8a8a9a':'#4a4a58';if(y>=10&&y<=13&&x>=3&&x<=5)return '#3a3a44';return null;});
@@ -5969,6 +5975,9 @@ function buildItemModel0(id){
     case HELI:{const b=imat('hlB',0x6b7a8c,'metal',.4,.5),gl=imat('hlG',0x9fd4ff,'metal',.15,.3),k=imat('hlK',0x2a2c30,'metal',.4,.6); // 🚁 헬기 3D: 몸통 · 유리 앞 · 꼬리 · 받침 · 회전날개
       iBox(g,.12,.09,.16,b,0,.12,0);iBox(g,.1,.07,.04,gl,0,.13,-.09);iBox(g,.03,.03,.16,b,0,.14,.15);iBox(g,.01,.06,.03,b,0,.17,.22);
       for(const s of [-1,1])iBox(g,.01,.01,.2,k,s*.06,.06,0);iBox(g,.015,.03,.015,k,0,.18,0);iBox(g,.34,.006,.02,k,0,.2,0);iBox(g,.02,.006,.34,k,0,.2,0);break;}
+    case RIOT:{const p=imat('rtP',0x2a2e35,'metal',.35,.5),f=imat('rtF',0x141518,'metal',.4,.6),v=imat('rtV',0x9fb4c8,'metal',.1,.4),w=imat('rtW',0xf2f2f2,'rough',.6); // 🛡 방탄방패 3D: 큰 판 · 검은 테 · 보는 창 · 흰 「POLICE」 줄 · 손잡이
+      iBox(g,.26,.42,.03,p,0,.22,0);for(const s of [-1,1]){iBox(g,.02,.44,.04,f,s*.135,.22,0);iBox(g,.28,.02,.04,f,0,.22+s*.215,0);}
+      iBox(g,.14,.06,.035,v,0,.36,0);iBox(g,.2,.03,.035,w,0,.2,0);iBox(g,.03,.08,.04,f,0,.22,.04);break;}
     case MEDKIT:{const w=imat('mkW',0xf2f2f4,'rough',.5),r=imat('mkR',0xe02828,'rough',.5),k=imat('mkK',0x5a5e68,'metal',.35,.8); // ⛑ 메디킷 3D: 흰 상자 · 양쪽 빨간 십자 · 손잡이
       iBox(g,.2,.14,.08,w,0,.08,0);for(const s of [-1,1]){iBox(g,.03,.09,.006,r,0,.08,s*.042);iBox(g,.09,.03,.006,r,0,.08,s*.042);}
       iBox(g,.012,.04,.012,k,-.04,.17,0);iBox(g,.012,.04,.012,k,.04,.17,0);iBox(g,.092,.012,.012,k,0,.19,0);break;}
@@ -8148,6 +8157,8 @@ function hurtPlayer(dmg,kx=0,kz=0,cause='쓰러졌습니다',bypass=false){if(MP
   if(player.dead||dmg<=0||player.invulnT>0||isCreative()||isSpec()||player.god||modHp()===Infinity)return; /* ♾️ 모드 체력 무한 = 무적 */ // 💻 /god: 무적 // 크리에이티브·관전: 다치지 않음
   if(!bypass&&(stFrozen()||gm))return; // 스텔라 연출 · 미사일 조종 중엔 몹에게 맞지 않음
   if(!bypass)dmg*=DIFF_MUL[world.diff||'normal']||1; // 난이도: EASY 0.5배 · DIFFICULTY · HARDCORE 1.5배
+  if(!bypass&&held()&&held().id===RIOT&&(kx||kz)){const l=Math.hypot(kx,kz),fx=-Math.sin(player.yaw),fz=-Math.cos(player.yaw); // 🛡 폭동진압 방탄방패: 들고만 있어도 앞에서 오는 공격 · 총알을 막음 (부서지지 않음)
+    if(fx*(-kx/l)+fz*(-kz/l)>.17){SFX.block();spawnParticles(player.pos.x+fx*.7,player.pos.y+1.2,player.pos.z+fz*.7,new THREE.Color(0x9fb4c8),6,.2,2);player.vel.x+=kx*.8;player.vel.z+=kz*.8;return;}}
   // 방패: 정면(약 ±70°)에서 오는 공격을 막음. 대미지 30 이상은 절반만 막고 5초간 막기 불가
   if(!bypass&&player.blocking&&armor[4]&&(kx||kz)){
     const l=Math.hypot(kx,kz),fx=-Math.sin(player.yaw),fz=-Math.cos(player.yaw);
@@ -9520,7 +9531,7 @@ const OF_NAVY=['#5d6f86','#3c4c63','#2a3648','#7b8ba0','#1c232e'],OF_AF=['#7d8a9
 const OF_MAR=['#8a6a44','#6b5236','#4a3a26','#a08860','#2e251a']; // 해병대 전투복 (갈색 디지털 무늬)
 const OF_PEACE=['#5d5e56','#3e3f3a','#2b2c28','#74756c','#1b1c19']; // 🕊 국군평화복: 회흑색 디지털 무늬
 const ofFieldTex=s=>s==='ipc'?ofCamo(71,OF_PEACE):s==='navy'?ofCamo(41,OF_NAVY):s==='airforce'?ofCamo(51,OF_AF):s==='marine'?ofCamo(61,OF_MAR):ofCamo(11); // 해군 감색 · 공군 청회색 · 군사경찰 · 특임대 검정 · 부사령관 근무복 진녹색 · 나머지 피콕그린
-function ofSun(add,A){const L=ofSolid(0x0a0c12,.06,.85),F=ofSolid(0x1c1c1f,.25,.85),G=ofSolid(0x6a7a9a,.05,.9); // 🕶 선글라스: 렌즈 두 알 (번쩍이는 검은 유리) · 코받침 · 위 테 · 귀에 거는 다리 · 렌즈 반사
+function ofSun(add,A){const L=OF_MAT.sunL||(OF_MAT.sunL=new THREE.MeshStandardMaterial({color:0x0a0c12,roughness:.06,metalness:.85,transparent:true,opacity:.7})), /* 렌즈는 살짝 투명 */F=ofSolid(0x1c1c1f,.25,.85),G=ofSolid(0x6a7a9a,.05,.9); // 🕶 선글라스: 렌즈 두 알 (번쩍이는 검은 유리) · 코받침 · 위 테 · 귀에 거는 다리 · 렌즈 반사
   for(const sd of [-1,1]){add(A.head,.18,.11,.02,L,sd*.112,.255,-.268);add(A.head,.05,.025,.005,G,sd*.112-.04,.285,-.28);}
   add(A.head,.06,.025,.02,F,0,.282,-.27);add(A.head,.47,.025,.022,F,0,.312,-.27);for(const sd of [-1,1])add(A.head,.012,.025,.27,F,sd*.266,.305,-.14);}
 function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,COL=ofDressCol(s),TOP=ofM('dr'+s,ofPlain(COL,21)),DARK=ofM('dk'+s,ofPlain(COL,22),0x9a9a9a);
