@@ -109,14 +109,15 @@ const OUTFITS = {
   '장교': { style: 'officer', top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 }, // 🎖 정복 · 베레모 · 계급장
   '교육사령관': { style: 'tmccmd', top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 }, // ⭐ 정복 · 녹색 베레모
   '국군 군사경찰 연합': { style: 'swat', field: 1, vt: 'AFMPC', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0xf59e0b }, // ⚜ 흑색 대테러복 · 방탄조끼(AFMPC)
-  '국제평화단': { style: 'army', top: 0x003942, bottom: 0x003942, hat: 'cap', hatC: 0x003942, badge: 0xf2c418 }, // 🎓 정복 · 정모
+  '국제평화단': { style: 'ipc', field: 1, top: 0x55663a, bottom: 0x47512f, hat: 'beret', hatC: 0x3f8fb5, badge: 0xe0b83a }, // 🕊 전투복 · 하늘색(UN) 베레모 · 빨간 스카프 · UN 패치
   '사단장': { style: 'staff', top: 0x003942, bottom: 0x003942, hat: 'cap', hatC: 0x003942, badge: 0xc0c6d0 }, // 🎗 정복 · 정모 (은장)
   '국무총리': { style: 'pm', top: 0x003942, bottom: 0x003942, hat: 'cap', hatC: 0x003942, badge: 0xf2c418 }, // 🏛 정복 · 정모 (금장)
-  '대통령': { style: 'owner', top: 0x1b2033, bottom: 0x1b2033, hat: 'cap', hatC: 0x1b2033, badge: 0xffd040 }, // 예복 · 정모 금줄 · 금줄 견장 · 훈장
+  '대통령': { style: 'owner', top: 0x1b2033, bottom: 0x1b2033, hat: 'cap', hatC: 0x1b2033, badge: 0xffd040 }, // 정복 (청와대에서 갈아입음) · 정모 금줄 · 금줄 견장 · 훈장
   '무법자': { style: 'outlaw', top: 0x262626, bottom: 0x3a2e24, hat: 'bandana', hatC: 0xb02020 }, // 검은 후드 · 빨간 복면
   '배신자': { style: 'outlaw', top: 0x1a1a1a, bottom: 0x1a1a1a, hat: 'bandana', hatC: 0x700000 }, // 🗡 배신자: 검은 후드 · 빨간 복면
   '죄수': { style: 'prisoner', top: 0xe06a1a, bottom: 0xe06a1a }, // 주황 수의 · 수감 표시
 };
+const PRES_SUIT = { style: 'pres', top: 0x141a2b, bottom: 0x141a2b, hat: 'none', hatC: 0x141a2b, badge: 0xffd040 }; // 👑 대통령 기본: 남색 정장 · 파란 넥타이 · 금 배지
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
 const tagOf = (o) => (ORGS[o].key === ORGS[o].short ? o : `${o}(${ORGS[o].short})`); // 경찰(CP)
 const CITY_NAME = 'CLKKY CITY', ARMY_NAME = 'CLKKY ARMY', POLICE_NAME = 'CLKKY POLICE';
@@ -181,7 +182,7 @@ function cellOf(nick) {
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
 const migM = (m) => { for (const k in m) if (m[k] && m[k].o && !ORGS[m[k].o] && OLDTEAM[m[k].o]) m[k].o = OLDTEAM[m[k].o]; return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국제평화단 등)
-const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
+const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0 }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -601,6 +602,18 @@ function apply(op, a, from, fromOp, fromDiscord) {
       delete S.leave[from]; save();
       return tell(from, `🪖 군부대로 복귀했어요 · ${vac ? '휴가가' : '외출이'} 끝났어요`);
     }
+    case 'bhbuild': { // 🏛 /청와대 짓기 (OP)
+      if (!fromOp) return tell(from, '/청와대 짓기 는 OP만 할 수 있어요');
+      if (!S.town) return tell(from, '아직 도시가 없어요');
+      delete S.bhBlocked; delete S.bh; S.bhDone = {}; delete PLANS.bh; save();
+      return tell(from, '🏛 청와대를 짓기 시작했어요 (동문 밖 · 방장이 가까이 가면 지어져요)');
+    }
+    case 'dress': { // 👑 청와대 비서: 대통령 정장 ↔ 정복
+      if (teamOf(from) !== '대통령') return tell(from, '🏛 청와대 비서: 정복으로 갈아입는 건 대통령만 할 수 있어요');
+      if (S.dress[from]) delete S.dress[from]; else S.dress[from] = 1;
+      save();
+      return tell(from, S.dress[from] ? '🎖 정복으로 갈아입었어요' : '👔 정장으로 갈아입었어요');
+    }
     case 'annexbuild': { // 🪖 /군사기지 짓기 (OP): 사람이 지은 게 있어도 그 자리를 밀고 기지를 지음
       if (!fromOp) return tell(from, '/군사기지 짓기 는 OP만 할 수 있어요');
       if (!S.town) return tell(from, '아직 도시가 없어요');
@@ -830,6 +843,7 @@ const RECRUITERS = {
   // 🩺 의무병 NPC: 우클릭 → 치료 (체력 꽉 · 기절 풀기) · 쓰러진 사람을 곁(4칸)에 데려오면 살려 줌 · 기지가 지어진 곳에만
   org_medic1: { name: '🩺 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.annex && !S.annex.partial ? { dx: -57, dz: 12 } : null), talk: () => medicDialog() }, // 군사경상의료센터
   org_medic2: { name: '🩺 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.annex && !S.annex.partial ? { dx: -93, dz: 12 } : null), talk: () => medicDialog() }, // 군사권역외상센터
+  org_bh: { name: '🏛 청와대 비서', color: 0x141a2b, tag: '#7ab8ff', at: () => (S.bh && !S.bh.partial ? { dx: BH_B1 - 5, dz: 3, dy: 1 } : null), talk: () => (teamOf(me()) === '대통령' ? CB.dialog(`🏛 <b>청와대 비서</b><br><br>대통령님, ${S.dress[me()] ? '정장으로' : '정복으로'} 갈아입으시겠어요?`, [['네', () => req('dress')], ['아니요']]) : note('🏛 청와대 비서: 어서 오세요 · 여기는 대통령 집무실이에요')) }, // 집무실 책상 옆
   org_medic3: { name: '🩺 해군 의무병', color: 0xeeeeee, tag: '#ff6b6b', med: 1, at: () => (S.navy && !S.navy.partial ? { dx: -13, dz: S.navy.s * 52 } : null), talk: () => medicDialog() }, // ⚓ 해군 의무대
 };
 let medNpcT = 0;
@@ -965,6 +979,7 @@ function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서�
   CB.bigSign('org_food', '음식점', T.x + 41.5, T.y + 9, T.z + 8.5, { bg: '#a8421a', w: 12 });
   CB.bigSign('org_bank', '🏦 은행', T.x + 41.5, T.y + 9, T.z - 7.5, { bg: '#8a6a10', w: 12 });
   CB.bigSign('org_jobs', '💼 직업소개소', T.x + 41.5, T.y + 9, T.z + 17.5, { bg: '#2a6a7a', w: 14 });
+  if (S.bh && !S.bh.partial) CB.bigSign('bh', '🏛 청와대', T.x + BH_B0 - 3.5, T.y + 15, T.z + 0.5, { bg: '#1c4fa0', w: 12 }); // 🏛 청와대 간판 (지붕 앞)
   if (S.annex) { // 🪖 기지 간판
     CB.bigSign('anx_gate', `${ARMY_NAME} 기지`, T.x - 47.5, T.y + 9, T.z + 0.5, { bg: '#3d4a2a', w: 18 });
     ANX.forEach(([n, ax, az, bx, bz, h, kind], i) => CB.bigSign('anx' + i, n, T.x + ((ax + bx) >> 1) + 1, T.y + h + 3, T.z + ((az + bz) >> 1) + 0.5, { bg: kind === 'med' || kind === 'surg' ? '#b02020' : kind === 'jail' ? '#444' : '#3d4a2a', w: Math.min(18, 6 + n.length) }));
@@ -986,7 +1001,7 @@ function recruiterTick() { // 상담원이 제자리에 서 있게 (내 게임�
     if (!A) { for (const m of L) m.remove(); continue; }
     const x = T.x + A.dx + 0.5, z = T.z + A.dz + 0.5, near = npcNear(x, z);
     if (R.med && down && P && Math.hypot(P.pos.x - x, P.pos.z - z) < 4 && CB.revive) CB.revive(R.name); // 🩸 쓰러진 채 의무병 곁에 오면 살려 줌
-    const y = T.y + 0.1;
+    const y = T.y + (A.dy || 0) + 0.1;
     for (const m of L) { if (!near || m !== L[0]) m.remove(); else { m.orgHome = { x, y, z }; if (CB.mobTag) CB.mobTag(m, R.name, R.tag); } }
     if (near && !L.length && CB.loaded(x, z)) { const m = CB.spawn(k, x, y, z); if (m) m.orgHome = { x, y, z }; }
   }
@@ -1680,6 +1695,47 @@ function wallUp(tag, T, draw, s, fin) { // 🏰 예전에 지은 기지 → 둘�
   if (built) save();
   if (!left) { fin(); delete done[tag]; delete PLANS[tag]; save(); CB.say('🏰 군사기지 둘레가 도시와 같은 성벽이 됐어요'); }
 }
+// 🏛 청와대 (동문 밖 · 길 끝): 흰 본관 · 푸른 기와 지붕 · 돌 기단 · 기둥 · 빨간 카펫 · 태극기 · 잔디 마당 · 🏛 청와대 비서 (대통령 정장 ↔ 정복)
+const T_BTILE = CB.block({ id: 1920, key: 'bh_tile', name: '청기와', paint: (u, v, x, y) => { const k = 0.85 + 0.15 * Math.sin(x * 0.8 + ((y >> 2) & 1) * 2); return (y & 3) === 3 ? [18, 44, 88] : [38 * k, 92 * k, 168 * k]; } });
+const BH_X0 = TOWN_X + 1, BH_X1 = TOWN_X + 52, BH_Z = 14, BH_B0 = TOWN_X + 32, BH_B1 = TOWN_X + 48; // 땅 · 본관 (x: 성벽에서 떨어진 칸)
+function bhPlan(C, G) {
+  const W = new Map(), GRASS = BLK('잔디 블록'), ROAD = BLK('도로', '돌'), BR = BLK('돌벽돌'), GLASS = BLK('유리'), LAMPB = BLK('등불'), IRON = BLK('철 블록'), FLAG = BLK('태극기', '흰 벽'), RED = BLK('빨간 양털', '판자'), PLANK = BLK('판자'), SHELF = BLK('책장', '판자');
+  const put = (dx, dy, dz, id) => { const x = C.x + dx, y = G + dy, z = C.z + dz; W.set(x + ',' + y + ',' + z, [x, y, z, id]); };
+  const box = (ax, ay, az, bx, by, bz, id) => { for (let x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) for (let y = Math.min(ay, by); y <= Math.max(ay, by); y++) for (let z = Math.min(az, bz); z <= Math.max(az, bz); z++) put(x, y, z, id); };
+  const x0 = BH_B0, x1 = BH_B1, Z = 11;
+  box(BH_X0, 0, -BH_Z, BH_X1, 16, BH_Z, 0); box(BH_X0, -1, -BH_Z, BH_X1, -1, BH_Z, GRASS); // 땅 고르기 · 잔디 마당
+  box(BH_X0, -1, -2, x0 - 3, -1, 2, ROAD); // 동문에서 오는 길
+  for (let x = BH_X0 + 4; x < x0 - 3; x += 6) for (const z of [-4, 4]) { box(x, 0, z, x, 2, z, IRON); put(x, 3, z, LAMPB); } // 가로등
+  box(x0 - 2, 0, -Z - 2, x1 + 2, 0, Z + 2, BR); box(x0 - 3, 0, -2, x0 - 3, 0, 2, BR); // 돌 기단 · 계단
+  for (let x = x0; x <= x1; x++) for (let z = -Z; z <= Z; z++) { // 흰 본관 (높이 6) · 창문
+    const edge = x === x0 || x === x1 || Math.abs(z) === Z; put(x, 0, z, PLANK);
+    if (edge) for (let y = 1; y <= 6; y++) put(x, y, z, (y === 3 || y === 4) && !((x === x0 || x === x1) && Math.abs(z) === Z) && (x + z) % 3 !== 0 ? GLASS : T_WHITE);
+  }
+  box(x0, 1, -1, x0, 3, 1, 0); // 정문
+  for (const z of [-9, -6, -3, 3, 6, 9]) box(x0 - 2, 1, z, x0 - 2, 6, z, T_WHITE); // 앞 기둥
+  box(x0 - 2, 7, -Z - 1, x0 - 1, 7, Z + 1, T_BTILE); // 현관 지붕
+  for (let k = 0; k <= 4; k++) box(x0 - 2 + k, 7 + k, -Z - 2 + k, x1 + 2 - k, 7 + k, Z + 2 - k, T_BTILE); // 푸른 기와 팔작지붕 (층층이)
+  box(x0 + 1, 0, 0, x1 - 2, 0, 0, RED); // 빨간 카펫
+  box(x1 - 3, 1, -2, x1 - 3, 1, 2, PLANK); put(x1 - 1, 1, -3, FLAG); put(x1 - 1, 1, 3, FLAG); put(x1 - 1, 2, -3, FLAG); put(x1 - 1, 2, 3, FLAG); // 집무 책상 · 태극기
+  for (const z of [-Z + 1, Z - 1]) for (let x = x0 + 2; x <= x1 - 2; x += 3) put(x, 1, z, SHELF); // 책장
+  for (const [x, z] of [[x0 + 3, -6], [x0 + 3, 6], [x1 - 3, -6], [x1 - 3, 6]]) put(x, 6, z, LAMPB); // 천장 등
+  box(x0 - 2, 0, -1, x0 - 2, 0, 1, RED); box(BH_X0 + 2, 0, -BH_Z + 1, BH_X0 + 2, 6, -BH_Z + 1, IRON); put(BH_X0 + 2, 7, -BH_Z + 1, FLAG); // 현관 카펫 · 국기 게양대
+  return [...W.values()];
+}
+function bhFree(C) { // 청와대 자리에 사람이 지은 게 많으면 안 지음 (OP: /청와대 짓기)
+  if (!CB.edited) return true;
+  if (CB.edited(C.x + BH_B0 - 4, C.z - BH_Z, C.x + BH_X1, C.z + BH_Z) <= 300) return true;
+  if (!S.bhBlocked) { S.bhBlocked = 1; save(); CB.say('🏛 동문 밖 청와대 자리에 사람이 지은 것이 있어서 청와대를 짓지 않았어요 · OP가 /청와대 짓기 하면 그 자리를 밀고 지어요'); }
+  return false;
+}
+function bhStep(C, G) { // 청크 하나씩 · 다 지으면 알림 → 지었으면 true
+  const P = planGroups('bh', C.x + ',' + C.z + ',' + G, () => ({ L: bhPlan(C, G), area: [C.x + BH_X0, C.z - BH_Z, C.x + BH_X1, C.z + BH_Z], fill: (x, z) => { const dx = x - C.x; return dx >= BH_X0 && dx <= BH_X1 && Math.abs(z - C.z) <= BH_Z; } }));
+  const [built, left] = chunkStep(P, S.bhDone || (S.bhDone = {}), G);
+  if (built && !S.bh) S.bh = { partial: 1 };
+  if (built) save();
+  if (!left && S.bh && S.bh.partial) { delete S.bh.partial; delete PLANS.bh; save(); CB.say('🏛 동문 밖에 청와대가 생겼어요 · 대통령은 청와대 비서에게 말을 걸면 정장 ↔ 정복을 갈아입어요'); }
+  return built > 0;
+}
 function buildAnnex(C, G) { S.annexDone = {}; delete S.annex; delete PLANS.annex; annexStep(C, G); } // /군사기지 짓기: 처음부터 다시
 if (CB.infiniteMags) CB.infiniteMags(() => ARMY.includes(teamOf(me()))); // 🔫 군대는 장전해도 탄창이 안 줄어요 (16개면 계속 16개)
 // 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술: 의무병(과 OP)만 · 수술은 기지의 군사응급수술센터 · 군사권역외상센터 안에서
@@ -1694,6 +1750,7 @@ function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 �
   const T = S.town, C = { x: T.x, z: T.z }, G = T.y;
   if (S.navy && S.navy.partial) return navyStep(C, G);
   if (S.navyUndo) return navyUndoStep(C, G);
+  if (!S.bhBlocked && (!S.bh || S.bh.partial) && (S.bh || bhFree(T)) && bhStep(C, G)) return; // 🏛 청와대
   if (!S.annexBlocked && (!S.annex || S.annex.partial) && (S.annex || annexFree(T))) { const n = Object.keys(S.annexDone || {}).length; annexStep(C, G); if (Object.keys(S.annexDone || {}).length !== n) return; } // 처음 한 번은 사람이 지은 게 많은지 확인
   if (S.navy && (S.navy.v || 1) < NAVY_V) return wallUp('navyWall', T, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
   if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) return wallUp('annexWall', T, annexWall, 1, () => { S.annex.v = ANX_V; });
@@ -1901,6 +1958,10 @@ CB.command('군사기지', '/군사기지 — 기지 상태 · /군사기지 짓
   if (S.annex && S.annex.partial) return c.say(`🪖 ${ARMY_NAME} 기지를 짓는 중이에요 · ${Object.keys(S.annexDone || {}).length}청크 지음 · 방장이 서쪽 성벽 밖으로 가면 나머지도 지어져요`);
   c.say(S.annex ? `🪖 ${ARMY_NAME} 기지: 서쪽 성벽 밖 (생활관 · 회의실 · 의료센터 · 5사단 교도소 · 헬기 · 구급차)` : S.annexBlocked ? '🪖 기지 자리에 사람이 지은 것이 있어서 아직 안 지었어요 · OP가 /군사기지 짓기' : '🪖 기지는 방장이 서쪽 성벽 밖으로 가까이 가면 지어져요');
 }, { everyone: true });
+CB.command('청와대', '/청와대 — 청와대 상태 · /청와대 짓기 (OP · 그 자리에 있는 것을 밀고 지어요)', (a, c) => {
+  if (a[0] === '짓기') return req('bhbuild');
+  c.say(S.bh && !S.bh.partial ? '🏛 청와대: 동문 밖 길 끝 · 대통령은 청와대 비서에게 말을 걸면 정장 ↔ 정복' : S.bh ? `🏛 청와대를 짓는 중이에요 · ${Object.keys(S.bhDone || {}).length}청크 지음` : S.bhBlocked ? '🏛 청와대 자리에 사람이 지은 것이 있어서 아직 안 지었어요 · OP가 /청와대 짓기' : '🏛 청와대는 방장이 동문 밖으로 가까이 가면 지어져요');
+}, { everyone: true });
 CB.command('석방', '/석방 @닉 (장교(Officer) 이상 · OP)', (a) => req('release', { who: a[0] }), { everyone: true });
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
@@ -1961,7 +2022,7 @@ CB.onTick((dt) => {
     const sub = S.jail[n] ? '⛓ 수감 중' : W ? '🚨 ' + stars(W.lv) : '';
     const rk = rankOf(n);
     CB.tag(n, '', y ? ORGS[o].color : '#ffffff', { rank: y ? `${ORGS[o].ico} ${tagOf(o)}${rk ? ' · ' + rk : ''}` : jb ? `${JOBS[jb].ico} ${jb} · ${rk}` : rk, rankColor: y ? ORGS[o].color : jb ? '#ffe9a8' : '#cfcfcf', sub, subColor: '#ff4a4a' });
-    if (CB.outfit) { const O = OUTFITS[o], r = mrOf(n); CB.outfit(n, O ? { ...O, stripes: r >= 14 ? 3 : r >= 11 ? 2 : r >= 4 ? 1 : 0, div: DIVS[o] || '' } : null); } // 🎖 정복 소매 금줄: 병 0 · 부사관 · 위관 1 · 영관 2 · 장성 3 · 왼팔 사단 마크
+    if (CB.outfit) { const O = o === '대통령' && !(S.dress && S.dress[n]) ? PRES_SUIT : OUTFITS[o], r = mrOf(n); /* 👑 대통령은 정장 (청와대 비서에게 정복으로 갈아입음) */ CB.outfit(n, O ? { ...O, stripes: r >= 14 ? 3 : r >= 11 ? 2 : r >= 4 ? 1 : 0, div: DIVS[o] || '' } : null); } // 🎖 정복 소매 금줄: 병 0 · 부사관 · 위관 1 · 영관 2 · 장성 3 · 왼팔 사단 마크
     now.add(n);
   }
   for (const n of tagged) if (!now.has(n)) { CB.tag(n); if (CB.outfit) CB.outfit(n, null); }
