@@ -336,7 +336,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.268 — 🕊 국군평화단</h4>
+    <h4>🆕 v26.269 — 🕊 국군평화복</h4>
+    <ul><li>🕊 국평단 복장이 전투복 대신 <b>국군평화복</b>이에요: 회흑색 디지털 무늬 웃옷 · 바지 · 하늘색(UN) 베레모 · 빨간 스카프 · UN 패치 · 검은 전투화</li></ul>
+    <h4>v26.268 — 🕊 국군평화단</h4>
     <ul><li>🕊 국제평화단이 <b>국군평화단(국평단 · AFPC)</b>으로 바뀌었어요 · 팀원 · 체력 500 · 복장 · 기지 건물은 그대로 옮겨져요</li></ul>
     <h4>v26.267 — 🎖 CLKKY ARMY 복장표 · 🏛 청와대</h4>
     <ul><li>🕊 국평단: 전투복 · 하늘색(UN) 베레모 · 빨간 스카프 · 왼팔 UN 패치</li><li>🎯 특임대 대테러복: 검은 복면(눈만 보임) · 🗡 특전사 대테러복: 헤드셋 · 마이크 · 선글라스</li><li>🎗 사단장: 장교 정복 (진녹색)</li><li>🏛 국무총리 정장이 군복(정복)으로 보이던 것 고침 → 검은 정장 · 빨간 넥타이</li><li>👑 대통령은 이제 남색 정장 · 파란 넥타이가 기본 · 🏛 <b>청와대</b>(동문 밖 길 끝 · 흰 본관 · 푸른 기와 지붕 · 집무실)의 청와대 비서에게 말을 걸면 정복 ↔ 정장으로 갈아입어요</li><li>/청와대 — 청와대 상태 · /청와대 짓기 (OP)</li></ul>
@@ -2264,7 +2266,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.268 — 🕊 Armed Forces Peace Corps</h4>
+    <h4>🆕 v26.269 — 🕊 Peace Corps uniform</h4>
+    <ul><li>🕊 The Peace Corps now wears its own <b>peace uniform</b> instead of the combat uniform: gray-black digital pattern top and trousers, sky-blue (UN) beret, red scarf, UN patch, black boots</li></ul>
+    <h4>v26.268 — 🕊 Armed Forces Peace Corps</h4>
     <ul><li>🕊 The International Peace Corps is now the <b>Armed Forces Peace Corps (국군평화단 · AFPC)</b> · members, 500 HP, uniform and base building carry over</li></ul>
     <h4>v26.267 — 🎖 CLKKY ARMY uniform chart · 🏛 Blue House</h4>
     <ul><li>🕊 Peace Corps: combat uniform, sky-blue (UN) beret, red scarf, UN patch</li><li>🎯 SMU counter-terror gear: black balaclava · 🗡 SWC counter-terror gear: headset, mic, sunglasses</li><li>🎗 VIP (division commander): officer dress uniform (dark green)</li><li>🏛 The Prime Minister's suit showed as a military dress uniform → fixed: black suit, red tie</li><li>👑 The President now wears a navy suit with a blue tie by default · talk to the secretary in the new 🏛 <b>Blue House</b> (end of the road outside the east gate) to switch to the dress uniform and back</li><li>/청와대 — Blue House status · /청와대 짓기 (OP)</li></ul>
@@ -9505,7 +9509,8 @@ const OF_DRESS=['army','medic','officer','tmc','mpcmd','tmccmd','staff','owner',
 const ofDressCol=s=>({navy:'#1a2238',airforce:'#4a6283',mp:'#173a36',swat:'#141416',marine:'#2e3a26',officer:'#1c3b30',staff:'#1c3b30',tmccmd:'#0f1d19'})[s]||'#003942'; // 사단장도 장교 정복 // 군사경찰 행사복 진녹색 · 장교 진녹색 · 교육사령부 검녹색
 const OF_NAVY=['#5d6f86','#3c4c63','#2a3648','#7b8ba0','#1c232e'],OF_AF=['#7d8a96','#5d6c7c','#46566a','#99a6b0','#2f3946']; // 해군 · 공군 전투복 디지털 무늬
 const OF_MAR=['#8a6a44','#6b5236','#4a3a26','#a08860','#2e251a']; // 해병대 전투복 (갈색 디지털 무늬)
-const ofFieldTex=s=>s==='navy'?ofCamo(41,OF_NAVY):s==='airforce'?ofCamo(51,OF_AF):s==='marine'?ofCamo(61,OF_MAR):ofCamo(11); // 해군 감색 · 공군 청회색 · 군사경찰 · 특임대 검정 · 부사령관 근무복 진녹색 · 나머지 피콕그린
+const OF_PEACE=['#5d5e56','#3e3f3a','#2b2c28','#74756c','#1b1c19']; // 🕊 국군평화복: 회흑색 디지털 무늬
+const ofFieldTex=s=>s==='ipc'?ofCamo(71,OF_PEACE):s==='navy'?ofCamo(41,OF_NAVY):s==='airforce'?ofCamo(51,OF_AF):s==='marine'?ofCamo(61,OF_MAR):ofCamo(11); // 해군 감색 · 공군 청회색 · 군사경찰 · 특임대 검정 · 부사령관 근무복 진녹색 · 나머지 피콕그린
 function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,COL=ofDressCol(s),TOP=ofM('dr'+s,ofPlain(COL,21)),DARK=ofM('dk'+s,ofPlain(COL,22),0x9a9a9a);
   const GOLD=ofSolid(0xe0b83a,.35,.8),SILV=ofSolid(0xd0d4dc,.35,.8),WH=ofSolid(0xf2f2f2,.6),SHOE=ofSolid(0x0e0e10,.2,.3),SHIRT=ofSolid(s==='navy'?0xf2f2f2:0xc9cdd0,.8),TIE=ofSolid(['navy','mp','swat','tmccmd'].includes(s)?0x101012:0x14302f,.6),YEL=ofSolid(0xf2d23a,.35,.7);
   add(A.up,.52,.7,.28,TOP,0,.34,0);for(const a of A.arms)add(a,.215,.5,.235,TOP,0,-.2,0);

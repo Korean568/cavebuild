@@ -109,7 +109,7 @@ const OUTFITS = {
   '장교': { style: 'officer', top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 }, // 🎖 정복 · 베레모 · 계급장
   '교육사령관': { style: 'tmccmd', top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 }, // ⭐ 정복 · 녹색 베레모
   '국군 군사경찰 연합': { style: 'swat', field: 1, vt: 'AFMPC', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0xf59e0b }, // ⚜ 흑색 대테러복 · 방탄조끼(AFMPC)
-  '국군평화단': { style: 'ipc', field: 1, top: 0x55663a, bottom: 0x47512f, hat: 'beret', hatC: 0x3f8fb5, badge: 0xe0b83a }, // 🕊 전투복 · 하늘색(UN) 베레모 · 빨간 스카프 · UN 패치
+  '국군평화단': { style: 'ipc', field: 1, top: 0x3e3f3a, bottom: 0x3e3f3a, hat: 'beret', hatC: 0x3f8fb5, badge: 0xe0b83a }, // 🕊 국군평화복 (회흑색 디지털 무늬) · 하늘색(UN) 베레모 · 빨간 스카프 · UN 패치
   '사단장': { style: 'staff', top: 0x003942, bottom: 0x003942, hat: 'cap', hatC: 0x003942, badge: 0xc0c6d0 }, // 🎗 정복 · 정모 (은장)
   '국무총리': { style: 'pm', top: 0x003942, bottom: 0x003942, hat: 'cap', hatC: 0x003942, badge: 0xf2c418 }, // 🏛 정복 · 정모 (금장)
   '대통령': { style: 'owner', top: 0x1b2033, bottom: 0x1b2033, hat: 'cap', hatC: 0x1b2033, badge: 0xffd040 }, // 정복 (청와대에서 갈아입음) · 정모 금줄 · 금줄 견장 · 훈장
