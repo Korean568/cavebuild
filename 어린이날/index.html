@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.265 — 📘 조교 복장</h4>
+    <h4>🆕 v26.266 — 🐞 조직 모드 버그 고침</h4>
+    <ul><li>🕊 예전 국군 사관 학교 팀원이 일부 화면(팀 표시 · 탈영선 · 야간 외출 검사)에서 군대가 아닌 것처럼 처리되던 것 고침 · 저장된 팀 이름을 국제평화단으로 바꿔 둬요</li><li>❤ 팀별 체력 · 대통령 무적은 멀티에서만 (혼자 하는 세계에서 조직 모드를 켜면 세계를 만든 사람이 무적이 되던 것 고침)</li></ul>
+    <h4>v26.265 — 📘 조교 복장</h4>
     <ul><li>📘 조교 복장: 빨간 반팔 · 빨간 모자(금색 모장) · 선글라스 · 「조교」 명찰 · 위장 무늬 바지 · 검은 전투화</li></ul>
     <h4>v26.264 — ❤ CLKKY ARMY 팀별 체력 · 🕊 국제평화단 · 🎖 복장 (군사경찰 · 장교 · 교육사령부)</h4>
     <ul><li>❤ 팀마다 체력이 달라요 (100 = 보통 사람): 육군 · 해군 · 공군 100 · 해병대 · 교육사령관 · 의무병 150 · 군사경찰 · 조교 200 · 특임대 · 장교 250 · 특전사 300 · AFMPC 400 · 국제평화단 500 · 사단장 750 · 국무총리 900 · 대통령 ♾️(무적)</li><li>❤ 체력은 하트 대신 숫자 막대로 보여요 (예: ❤ 620 / 750) · 팀이 바뀌어 체력이 늘면 바로 채워져요</li><li>🕊 국군 사관 학교(AFMA)가 <b>국제평화단(IPC)</b>으로 바뀌었어요 (원래 팀원은 그대로 옮겨져요)</li><li>🛡 군사경찰 행사복: 진녹색 · 흰 견사줄 · 소매 흰 줄 3개 · 왼팔 검은 「헌병」 완장 · 앞에 흰 「헌병」 글씨 헬멧 · 선글라스</li><li>🎖 장교 정복: 진녹색 · 옷깃 금색 계급장 · 진녹색 정모</li><li>⭐ 교육사령관(교육사령부): 검녹색 정복 · 회색 셔츠 · 검은 넥타이 · 검은 정모(태극 모장) · 왼팔 검은 완장 · 선글라스</li><li>🧩 모드 기능: CB.maxHp(() => 체력)</li></ul>
@@ -2260,7 +2262,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.265 — 📘 Assistant (drill instructor) uniform</h4>
+    <h4>🆕 v26.266 — 🐞 Organization mod fixes</h4>
+    <ul><li>🕊 Former Military Academy members were treated as non-army on some checks (team display, desertion line, night curfew) · their saved team is now renamed to International Peace Corps</li><li>❤ Team HP and President invincibility now apply only in multiplayer (the world owner was invincible in single-player worlds with the mod on)</li></ul>
+    <h4>v26.265 — 📘 Assistant (drill instructor) uniform</h4>
     <ul><li>📘 Assistant uniform: red short-sleeve shirt, red cap with gold badge, sunglasses, 조교 name tape, camo trousers, black boots</li></ul>
     <h4>v26.264 — ❤ CLKKY ARMY team HP · 🕊 International Peace Corps · 🎖 Uniforms (MP · Officer · Training Command)</h4>
     <ul><li>❤ Each team has its own HP (100 = normal person): Army, Navy, Air Force 100 · Marines, TMC, Medic 150 · CMP, Assistant 200 · SMU, Officer 250 · SWC 300 · AFMPC 400 · International Peace Corps 500 · VIP 750 · Prime Minister 900 · President ♾️ (invincible)</li><li>❤ HP shows as a number bar instead of hearts (e.g. ❤ 620 / 750) · when your HP grows from a team change it fills right away</li><li>🕊 The Armed Forces Military Academy (AFMA) is now the <b>International Peace Corps (IPC)</b> (members carry over)</li><li>🛡 Military police dress: dark green, white aiguillette, three white sleeve stripes, black 헌병 armband, helmet with white 헌병 text, sunglasses</li><li>🎖 Officer dress: dark green, gold collar insignia, dark green peaked cap</li><li>⭐ Training commander: black-green dress, gray shirt, black tie, black peaked cap with taegeuk badge, black armband, sunglasses</li><li>🧩 Mod API: CB.maxHp(() => hp)</li></ul>
