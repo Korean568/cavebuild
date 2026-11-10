@@ -152,8 +152,8 @@ const SELL = { // 납품 값 (한 개당 동전)
 const LAW = ['경찰', '군사경찰', '해병대', '특수임무대', '특수전사령부', '장교', '국군 군사경찰 연합', '사단장', '국무총리', '대통령'];
 const ARMY = ['육군', '공군', '해군', '의무병', '군사경찰', '해병대', '특수임무대', '특수전사령부', '조교', '장교', '교육사령관', '국군 군사경찰 연합', '국군평화단', '사단장', '대통령']; // 군대 (대통령 포함) (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
 // ❤ CLKKY ARMY 체력 구성 (100 = 보통 사람 · 대통령은 무적) · 국군 군사경찰 연합은 표에 없어서 국군평화단과 특전사 사이 400
-const TEAM_HP = { '육군': 100, '해군': 100, '공군': 100, '해병대': 150, '교육사령관': 150, '의무병': 150, '군사경찰': 200, '조교': 200, '특수임무대': 250, '장교': 250, '특수전사령부': 300, '국군 군사경찰 연합': 400, '국군평화단': 500, '사단장': 750, '국무총리': 900, '대통령': Infinity };
-if (CB.maxHp) CB.maxHp(() => { if (!CB.players || !CB.players().length) return null; /* 멀티에서만 (혼자 하는 세계에선 보통 하트 · 무적 아님) */ const t = teamOf(me()); return TEAM_HP[t] != null ? TEAM_HP[t] : null; });
+const TEAM_HP = { '육군': 100, '해군': 100, '공군': 100, '해병대': 150, '교육사령관': 150, '의무병': 150, '군사경찰': 200, '조교': 200, '특수임무대': 250, '장교': 250, '특수전사령부': 300, '국군 군사경찰 연합': 400, '국군평화단': 500, '사단장': 750, '국무총리': 900, '대통령': 1000 }; // 👑 대통령: 서바이벌 1000 · 크리에이티브 · 관전은 ♾️
+if (CB.maxHp) CB.maxHp(() => { if (!CB.players || !CB.players().length) return null; /* 멀티에서만 (혼자 하는 세계에선 보통 하트 · 무적 아님) */ const t = teamOf(me()); if (t === '대통령' && CB.gameMode && CB.gameMode() !== 'survival') return Infinity; return TEAM_HP[t] != null ? TEAM_HP[t] : null; });
 // 🎖 군사계급 (CLKKY ARMY 계급 구성 · 부서와 따로): 군대 팀원마다 하나 · /진급 · /강등 으로 올리고 내림 · 부서 이동은 /team · 전역하면 처음부터
 //   원수(General 5-Star)는 대통령(서버를 만든 사람)만 · 대장(General)은 운영진(국무총리 · 대통령이 진급시킨 사람)만 · 일반 진급은 중장(Lieutenant General)까지
 //   군대가 아닌 사람: 이등병(디스코드 서버 가입자는 무조건) · 멤버(겜벗 공식 커뮤니티 CLKKY CITY 가입) · 게스트(미가입) — /계급 @닉 멤버|게스트 (OP)
@@ -219,7 +219,10 @@ function rankOf(nick) { // 머리 위 · 안내판에 뜨는 계급: 군사계�
   if (S.dc[nick]) return RANKS[0]; // 💬 디스코드 서버 가입자는 무조건 이등병 (군대가 아니어도)
   return st === '멤버' || S.cm[nick] ? '멤버' : '게스트'; // 🏙 겜벗 공식 커뮤니티 가입 → 멤버 · 아니면 게스트
 }
-function setTeam(nick, o) { if (!ARMY.includes(o)) { delete S.leave[nick]; if (S.m[nick]) delete S.m[nick].mr; } if (S.m[nick]) { delete S.m[nick].sw; delete S.m[nick].self; } const x = S.m[nick]; if (o === '시민') { if (x) { x.o = '시민'; } else return; } else if (x) x.o = o; else S.m[nick] = { o, r: 0, p: 0 }; }
+function setTeam(nick, o) { if (!ARMY.includes(o)) { delete S.leave[nick]; if (S.m[nick]) delete S.m[nick].mr; } if (S.m[nick]) { delete S.m[nick].sw; delete S.m[nick].self; } const x = S.m[nick]; if (o === '시민') { if (x) { x.o = '시민'; } else return; } else if (x) x.o = o; else S.m[nick] = { o, r: 0, p: 0 }; noteBranch(S.m[nick], o); }
+const BRANCH = { '육군': '육군', '해군': '해군', '해병대': '해군', '공군': '공군' }; // 🪖 처음 들어간 군 (헌병 전투복 무늬 · 2사단 · 3사단)
+function noteBranch(x, o) { if (!x) return; if (BRANCH[o]) x.br = BRANCH[o]; else if (!ARMY.includes(o)) delete x.br; }
+const BR_CAM = { '육군': 'army', '해군': 'navy', '공군': 'airforce' };
 // 📝 고소: 범죄를 당한 사람 이름으로 고소가 자동으로 들어가요 → 고소 중 가장 높은 등급이 지명수배 등급
 //    피해자는 /고소 취소 (@닉) 로 취소할 수 있고, 남은 고소가 없으면 지명수배가 풀려요. 피해자가 따로 없는 범죄(욕설)는 「서버」 고소
 function rewanted(nick) {
@@ -424,7 +427,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       const isOwner = from === ownerNick() || from === '운영자';
       if (o === '대통령' && !isOwner) return tell(from, '대통령(President)은 서버를 만든 사람만 될 수 있어요');
       const x = S.m[from] || (S.m[from] = { o: '시민', r: 0, p: 0 });
-      if (o === '대통령') delete x.self; else { x.o = o; x.self = 1; } // 군사계급(mr)은 그대로 둠 (군대로 돌아오면 다시 보임)
+      if (o === '대통령') delete x.self; else { x.o = o; x.self = 1; noteBranch(x, o); } // 군사계급(mr)은 그대로 둠 (군대로 돌아오면 다시 보임)
       x.sw = 1; if (!ARMY.includes(o)) delete S.leave[from];
       if (KITS[o] && Date.now() - (S.kitT[from] || 0) >= 300000) { S.kitT[from] = Date.now(); sendKit(from); } // 팀을 오가며 장비를 계속 받지 않게 (/장비 와 같은 5분)
       save();
@@ -2023,7 +2026,7 @@ CB.onTick((dt) => {
     const sub = S.jail[n] ? '⛓ 수감 중' : W ? '🚨 ' + stars(W.lv) : '';
     const rk = rankOf(n);
     CB.tag(n, '', y ? ORGS[o].color : '#ffffff', { rank: y ? `${ORGS[o].ico} ${tagOf(o)}${rk ? ' · ' + rk : ''}` : jb ? `${JOBS[jb].ico} ${jb} · ${rk}` : rk, rankColor: y ? ORGS[o].color : jb ? '#ffe9a8' : '#cfcfcf', sub, subColor: '#ff4a4a' });
-    if (CB.outfit) { const O = o === '대통령' && !(S.dress && S.dress[n]) ? PRES_SUIT : OUTFITS[o], r = mrOf(n); /* 👑 대통령은 정장 (청와대 비서에게 정복으로 갈아입음) */ CB.outfit(n, O ? { ...O, stripes: r >= 14 ? 3 : r >= 11 ? 2 : r >= 4 ? 1 : 0, div: DIVS[o] || '' } : null); } // 🎖 정복 소매 금줄: 병 0 · 부사관 · 위관 1 · 영관 2 · 장성 3 · 왼팔 사단 마크
+    if (CB.outfit) { const O0 = o === '대통령' && !(S.dress && S.dress[n]) ? PRES_SUIT : OUTFITS[o], O = O0 && o === '특수임무대' ? { ...O0, cam: BR_CAM[(S.m[n] || {}).br] || 'army' } : O0, r = mrOf(n); /* 🎯 특임대 = 군사경찰 소속 헌병 전투복: 처음 들어간 군(육 · 해 · 공) 무늬 대테러복 */ /* 👑 대통령은 정장 (청와대 비서에게 정복으로 갈아입음) */ CB.outfit(n, O ? { ...O, stripes: r >= 14 ? 3 : r >= 11 ? 2 : r >= 4 ? 1 : 0, div: DIVS[o] || '' } : null); } // 🎖 정복 소매 금줄: 병 0 · 부사관 · 위관 1 · 영관 2 · 장성 3 · 왼팔 사단 마크
     now.add(n);
   }
   for (const n of tagged) if (!now.has(n)) { CB.tag(n); if (CB.outfit) CB.outfit(n, null); }
