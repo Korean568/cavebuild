@@ -105,7 +105,7 @@ const OUTFITS = {
   '해병대': { style: 'marine', field: 1, top: 0x6b5236, bottom: 0x6b5236, hat: 'cap', hatC: 0x6b5236 }, // 🦅 해병대 전투복 (갈색 디지털 무늬 · 팔각모 · 빨간 명찰)
   '특수임무대': { style: 'swat', field: 1, vt: 'SMU', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0x9ca3af }, // 🎯 흑색 대테러복 · 방탄조끼(SMU)
   '특수전사령부': { style: 'swat', field: 1, vt: 'SWC', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0x9ca3af }, // 🗡 흑색 대테러복 · 방탄조끼(SWC)
-  '조교': { style: 'tmc', top: 0x2f6a3a, bottom: 0x2a3a26, hat: 'beret', hatC: 0x1f4a2a, badge: 0x4ade80 }, // 📘 정복 · 조교 모자 · 선글라스 · 조교 완장
+  '조교': { style: 'tmc', top: 0xc41e1c, bottom: 0x4f5a38, hat: 'cap', hatC: 0xc41e1c, badge: 0xe0b83a }, // 📘 빨간 반팔 · 빨간 모자 · 선글라스 · 위장 바지
   '장교': { style: 'officer', top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 }, // 🎖 정복 · 베레모 · 계급장
   '교육사령관': { style: 'tmccmd', top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 }, // ⭐ 정복 · 녹색 베레모
   '국군 군사경찰 연합': { style: 'swat', field: 1, vt: 'AFMPC', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0xf59e0b }, // ⚜ 흑색 대테러복 · 방탄조끼(AFMPC)
