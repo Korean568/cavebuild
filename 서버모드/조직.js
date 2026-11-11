@@ -41,6 +41,7 @@ const TEAMS = [ // 아래 → 위 (계급 순서)
   { key: '특수임무대', short: 'SMU', ico: '🎯', color: '#9ca3af' }, // Special Mission Unit
   { key: '특수전사령부', short: 'SWC', ico: '🗡', color: '#6b7280' }, // Special Warfare Command · 특임대 지원 · 교육
   { key: '조교', short: 'Assistant', ico: '📘', color: '#4ade80' }, // 육군 · 의무병 교육 (예전 교육사)
+  { key: '교관', short: 'Instructor', ico: '📗', color: '#f59e42' }, // 조교와 장교 사이 · 훈련 교관
   { key: '장교', short: 'Officer', ico: '🎖', color: '#c084fc' },
   { key: '교육사령관', short: 'TMC', ico: '⭐', color: '#22c55e' }, // 장교 · 조교와 하위 부서 교육
   { key: '국군 군사경찰 연합', short: 'AFMPC', ico: '⚜', color: '#f59e0b' }, // 군사경찰 · 특임대 · 특전사 총괄 (예전 MP사령관)
@@ -87,6 +88,7 @@ const KITS = {
   '해병대': ['돌격소총', '권총', '수갑', '테이저건'],
   '특수전사령부': ['저격소총', '돌격소총', '권총', '수갑', '테이저건', '폭동진압 방탄방패'],
   '조교': ['권총', '돌격소총', '수갑'],
+  '교관': ['권총', '돌격소총', '수갑', '테이저건'],
   '장교': ['권총', '블랙 다이아몬드 검', '수갑'],
   '교육사령관': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검'],
   '국군 군사경찰 연합': ['저격소총', '돌격소총', '권총', '수갑', '블랙 다이아몬드 검', '테이저건'],
@@ -108,6 +110,7 @@ const OUTFITS = {
   '특수임무대': { style: 'swat', field: 1, vt: 'SMU', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0x9ca3af }, // 🎯 흑색 대테러복 · 방탄조끼(SMU)
   '특수전사령부': { style: 'swat', field: 1, vt: 'SWC', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0x9ca3af }, // 🗡 흑색 대테러복 · 방탄조끼(SWC)
   '조교': { style: 'tmc', top: 0xc41e1c, bottom: 0x4f5a38, hat: 'cap', hatC: 0xc41e1c, badge: 0xe0b83a }, // 📘 빨간 반팔 · 빨간 모자 · 선글라스 · 위장 바지
+  '교관': { style: 'inst', top: 0x141416, bottom: 0x4f5a38, hat: 'cap', hatC: 0x141416, badge: 0xe0b83a }, // 📗 검은 반팔(「교관」) · 검은 정모 · 선글라스 · 위장 바지 (조교와 같음)
   '장교': { style: 'officer', top: 0x3d4a2a, bottom: 0x2f3824, hat: 'cap', hatC: 0x3d4a2a, badge: 0xf2c418 }, // 🎖 정복 · 베레모 · 계급장
   '교육사령관': { style: 'tmccmd', top: 0x24502c, bottom: 0x1e2c1c, hat: 'beret', hatC: 0x0f3a1a, badge: 0xf2c418 }, // ⭐ 정복 · 녹색 베레모
   '국군 군사경찰 연합': { style: 'swat', field: 1, vt: 'AFMPC', top: 0x15161a, bottom: 0x101114, hat: 'helmet', hatC: 0x0c0c0e, badge: 0xf59e0b }, // ⚜ 흑색 대테러복 · 방탄조끼(AFMPC)
@@ -159,9 +162,9 @@ const SELL = { // 납품 값 (한 개당 동전)
 //   2등급 「지명수배 ★★」  중범죄   — 경찰 쪽 팀원 폭행 · 불법 무기 소지 (시민이 총을 가짐)                                  → 징역 15분
 //   3등급 「지명수배 ★★★」 중대범죄 — 무단사살 (정당방위 · 경찰이 수배자를 쓰러뜨린 건 빼고) · 대학살 · 무단탈영 (군대) · 무기로 협박 → 징역 30분
 const LAW = ['경찰', '군사경찰', '해병대', '특수임무대', '특수전사령부', '장교', '국군 군사경찰 연합', '사단장', '국무총리', '대통령'];
-const ARMY = ['육군', '공군', '해군', '의무병', '군사경찰', '해병대', '특수임무대', '특수전사령부', '조교', '장교', '교육사령관', '국군 군사경찰 연합', '국군평화단', '사단장', '대통령']; // 군대 (대통령 포함) (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
+const ARMY = ['육군', '공군', '해군', '의무병', '군사경찰', '해병대', '특수임무대', '특수전사령부', '조교', '교관', '장교', '교육사령관', '국군 군사경찰 연합', '국군평화단', '사단장', '대통령']; // 군대 (대통령 포함) (/조직 탈퇴 = 전역 · 군부대 밖으로 나가면 무단탈영)
 // ❤ CLKKY ARMY 체력 구성 (100 = 보통 사람 · 대통령은 무적) · 국군 군사경찰 연합은 표에 없어서 국군평화단과 특전사 사이 400
-const TEAM_HP = { '육군': 100, '해군': 100, '공군': 100, '해병대': 150, '교육사령관': 150, '의무병': 150, '군사경찰': 200, '조교': 200, '특수임무대': 250, '장교': 250, '특수전사령부': 300, '국군 군사경찰 연합': 400, '국군평화단': 500, '사단장': 750, '국무총리': 900, '대통령': 1000 }; // 👑 대통령: 서바이벌 1000 · 크리에이티브 · 관전은 ♾️
+const TEAM_HP = { '육군': 100, '해군': 100, '공군': 100, '해병대': 150, '교육사령관': 150, '의무병': 150, '군사경찰': 200, '조교': 200, '교관': 225, '특수임무대': 250, '장교': 250, '특수전사령부': 300, '국군 군사경찰 연합': 400, '국군평화단': 500, '사단장': 750, '국무총리': 900, '대통령': 1000 }; // 👑 대통령: 서바이벌 1000 · 크리에이티브 · 관전은 ♾️
 if (CB.maxHp) CB.maxHp(() => { if (!CB.players || !CB.players().length) return null; /* 멀티에서만 (혼자 하는 세계에선 보통 하트 · 무적 아님) */ const t = teamOf(me()); if (t === '대통령' && CB.gameMode && CB.gameMode() !== 'survival') return Infinity; return TEAM_HP[t] != null ? TEAM_HP[t] : null; });
 // 🎖 군사계급 (CLKKY ARMY 계급 구성 · 부서와 따로): 군대 팀원마다 하나 · /진급 · /강등 으로 올리고 내림 · 부서 이동은 /team · 전역하면 처음부터
 //   원수(General 5-Star)는 대통령(서버를 만든 사람)만 · 대장(General)은 운영진(국무총리 · 대통령이 진급시킨 사람)만 · 일반 진급은 중장(Lieutenant General)까지
@@ -191,7 +194,7 @@ function cellOf(nick) {
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
 const migM = (m) => { for (const k in m) if (m[k] && m[k].o && !ORGS[m[k].o] && OLDTEAM[m[k].o]) m[k].o = OLDTEAM[m[k].o]; return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국군평화단 등)
-const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
+const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -1421,7 +1424,7 @@ function buildTown(C, G) {
   S.town = { x: C.x, y: G, z: C.z }; S.townV = TOWN_V;
   CB.setSpawn(C.x + 0.5, G + 0.1, C.z + 0.5); // 🏙 스폰 = 도시 한가운데
   const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
-  const B = { '경찰': at(28, 7), '육군': at(-30, 0), '의무병': at(-30, 0), '군사경찰': at(-30, 0), '특수임무대': at(-30, 0), '특수전사령부': at(-30, 0), '장교': at(-39, -10), '조교': at(-39, -10), '국군 군사경찰 연합': at(-39, -10), '국군평화단': at(-39, -10), '교육사령관': at(-39, -10), '사단장': at(-39, -10), '국무총리': at(-39, -10), '대통령': at(-39, -10) };
+  const B = { '경찰': at(28, 7), '육군': at(-30, 0), '의무병': at(-30, 0), '군사경찰': at(-30, 0), '특수임무대': at(-30, 0), '특수전사령부': at(-30, 0), '장교': at(-39, -10), '조교': at(-39, -10), '교관': at(-39, -10), '국군 군사경찰 연합': at(-39, -10), '국군평화단': at(-39, -10), '교육사령관': at(-39, -10), '사단장': at(-39, -10), '국무총리': at(-39, -10), '대통령': at(-39, -10) };
   for (const o in B) if (!S.base[o]) S.base[o] = B[o];
   if (!S.dealerSet) S.dealer = { ...at(-16, -20), dim: 'over' };
   save();
@@ -1692,7 +1695,7 @@ function annexStep(C, G) { // 불러와진 청크 하나씩 지음 (렉이 안 �
   if (!left && S.annex && S.annex.partial) {
     delete S.annex.partial; delete PLANS.annex;
     const at = (dx, dz) => ({ x: C.x + dx + 0.5, y: G, z: C.z + dz + 0.5 });
-    Object.assign(S.base, { '육군': at(-57, -4), '해군': at(-75, -4), '공군': at(-93, -4), '군사경찰': at(-117, -4), '특수임무대': at(-117, -4), '특수전사령부': at(-131, -25), '국군 군사경찰 연합': at(-115, -25), '장교': at(-135, -4), '조교': at(-135, -4), '교육사령관': at(-135, -4), '국군평화단': at(-91, -41), '의무병': at(-57, 4) });
+    Object.assign(S.base, { '육군': at(-57, -4), '해군': at(-75, -4), '공군': at(-93, -4), '군사경찰': at(-117, -4), '특수임무대': at(-117, -4), '특수전사령부': at(-131, -25), '국군 군사경찰 연합': at(-115, -25), '장교': at(-135, -4), '조교': at(-135, -4), '교관': at(-135, -4), '교육사령관': at(-135, -4), '국군평화단': at(-91, -41), '의무병': at(-57, 4) });
     save();
     CB.say(`🪖 ${ARMY_NAME} 기지가 다 지어졌어요! (생활관 · 회의실 · 의료센터 · 군 교도소 · 헬기 · 구급차) · 🚑 🚁 는 엔진을 우클릭하면 타요`);
   }
@@ -1807,6 +1810,79 @@ function cityStep(C, G) { // 🏙 주도 짓기: 짓는 중인 도시 → 청크
   }
   return false;
 }
+// 🛣 고속도로: 수도 ↔ 동서남북 주도 4줄 + 주도 8곳을 잇는 고리 8줄 · 폭 5칸 + 가드레일 · 가로등 · 수도 땅 높이로 평평하게 (산은 터널 · 골짜기 · 물 위는 다리와 기둥) · 도시 가까이에선 그 도시 높이로 천천히 경사
+const HW_RAMP = 100;
+function hwSegs() { // [이름, 점들(수도 기준 dx, dz · 가로세로로만), 시작 주(없으면 수도 높이), 끝 주]
+  const R = CITY_R + 1, F = STATE_W, n = S.navy ? S.navy.s : 0, zN = n === -1 ? NAVY_D1 + 2 : TOWN_Z + 2, zS = n === 1 ? NAVY_D1 + 2 : TOWN_Z + 2;
+  return [
+    ['클키시 ↔ 별빛시', [[0, -zN], [0, -F + R]], null, '한별주'],
+    ['클키시 ↔ 파도시', [[0, zS], [0, F - R]], null, '푸른바다주'],
+    ['클키시 ↔ 해돋이시', [[TOWN_X + 5, 0], [TOWN_X + 5, 18], [BH_X1 + 4, 18], [BH_X1 + 4, 0], [F - R, 0]], null, '해오름주'], // 청와대를 돌아감
+    ['클키시 ↔ 풍차시', [[0, -150], [-F, -150]], null, null], // 북쪽 길에서 갈라져 서쪽 고리 길에 닿음 (수도 서쪽은 군사기지)
+    ['별빛시 ↔ 여명시', [[R, -F], [F - R, -F]], '한별주', '새벽주'], ['여명시 ↔ 해돋이시', [[F, -F + R], [F, -R]], '새벽주', '해오름주'],
+    ['해돋이시 ↔ 산호시', [[F, R], [F, F - R]], '해오름주', '산호주'], ['산호시 ↔ 파도시', [[F - R, F], [R, F]], '산호주', '푸른바다주'],
+    ['파도시 ↔ 석양시', [[-R, F], [-F + R, F]], '푸른바다주', '노을주'], ['석양시 ↔ 풍차시', [[-F, F - R], [-F, R]], '노을주', '바람주'],
+    ['풍차시 ↔ 솔숲시', [[-F, -R], [-F, -F + R]], '바람주', '은빛숲주'], ['솔숲시 ↔ 별빛시', [[-F + R, -F], [-R, -F]], '은빛숲주', '한별주'],
+  ];
+}
+function hwPts(seg) { // → [dx, dz, 축(0: 동서로 감 · 1: 남북으로 감), 거리]
+  const P = seg[1], out = []; let s = 0;
+  for (let i = 0; i + 1 < P.length; i++) { const [x0, z0] = P[i], [x1, z1] = P[i + 1], n = Math.max(Math.abs(x1 - x0), Math.abs(z1 - z0)), ax = x1 !== x0 ? 0 : 1; for (let k = i ? 1 : 0; k <= n; k++) out.push([x0 + Math.sign(x1 - x0) * k, z0 + Math.sign(z1 - z0) * k, ax, s++]); }
+  return out;
+}
+function hwY(T, seg, s, L) { // 그 자리 길 높이
+  const y0 = seg[2] ? S.cities[seg[2]].y : T.y, y1 = seg[3] ? S.cities[seg[3]].y : T.y, r0 = Math.min(HW_RAMP, Math.abs(y0 - T.y) * 3), r1 = Math.min(HW_RAMP, Math.abs(y1 - T.y) * 3);
+  if (r0 + r1 >= L) return Math.round(y0 + (y1 - y0) * s / Math.max(1, L));
+  if (s < r0) return Math.round(y0 + (T.y - y0) * s / r0);
+  if (s > L - r1) return Math.round(y1 + (T.y - y1) * (L - s) / r1);
+  return T.y;
+}
+function hwPlan(T, seg, corners) { // → { groups: 청크별 블록, pil: 청크별 다리 기둥 자리 }
+  const W = new Map(), pil = new Map(), ROAD = BLK('도로', '돌'), BR = BLK('돌벽돌'), LAMPB = BLK('등불'), IRON = BLK('철 블록');
+  const put = (x, y, z, id) => W.set(x + ',' + y + ',' + z, [x, y, z, id]);
+  const pts = hwPts(seg), L = pts.length - 1, road = new Set();
+  for (const [dx, dz, ax] of pts) for (let w = -2; w <= 2; w++) road.add(ax ? (dx + w) + ',' + dz : dx + ',' + (dz + w));
+  const near = (x, z) => corners.some(([a, b]) => Math.abs(a - x) <= 4 && Math.abs(b - z) <= 4); // 꺾이는 곳 · 갈림길엔 가드레일 없음
+  for (const [dx, dz, ax, s] of pts) {
+    const Y = hwY(T, seg, s, L);
+    for (let w = -3; w <= 3; w++) {
+      const cx = ax ? dx + w : dx, cz = ax ? dz : dz + w, X = T.x + cx, Z = T.z + cz, side = Math.abs(w) === 3;
+      if (side && road.has(cx + ',' + cz)) continue;
+      for (let y = Y; y <= Y + 5; y++) put(X, y, Z, 0);
+      put(X, Y - 2, Z, T_CONC);
+      if (!side) put(X, Y - 1, Z, w === 0 && s % 8 < 4 ? T_LINE : ROAD);
+      else { put(X, Y - 1, Z, T_CONC); if (!near(cx, cz)) { put(X, Y, Z, BR); if (s % 24 === 0) { put(X, Y + 1, Z, IRON); put(X, Y + 2, Z, IRON); put(X, Y + 3, Z, LAMPB); } } } // 가드레일 · 가로등
+      if (Math.abs(w) === 2 && s % 12 === 0) { const k = (X >> 4) + ',' + (Z >> 4); (pil.get(k) || pil.set(k, []).get(k)).push([X, Y - 3, Z]); } // 다리 기둥 자리
+    }
+  }
+  const groups = new Map();
+  for (const b of W.values()) { const k = (b[0] >> 4) + ',' + (b[2] >> 4); (groups.get(k) || groups.set(k, []).get(k)).push(b); }
+  return { groups, pil };
+}
+let HW_P = null; const HW_CK = {};
+function hwStep() { // 불러와진 청크 하나만 깔음 → 한 일이 있으면 true
+  const T = S.town; if (!T) return false;
+  const segs = hwSegs(), corners = [], all = S.hw || (S.hw = {});
+  for (const sg of segs) for (const p of sg[1]) corners.push(p);
+  for (const sg of segs) {
+    const nm = sg[0], st = all[nm] || (all[nm] = { d: {} });
+    if (st.fin) continue;
+    if ((sg[2] && !S.cities[sg[2]]) || (sg[3] && !S.cities[sg[3]])) continue; // 도시 높이를 알아야 깔 수 있어요 (그 주에 한 번 가 봐야)
+    const cks = HW_CK[nm] || (HW_CK[nm] = (() => { const s = new Set(); for (const [dx, dz, ax] of hwPts(sg)) for (let w = -3; w <= 3; w++) s.add(((T.x + (ax ? dx + w : dx)) >> 4) + ',' + ((T.z + (ax ? dz : dz + w)) >> 4)); return [...s]; })());
+    let left = 0, pick = null;
+    for (const k of cks) { if (st.d[k]) continue; left++; const [cx, cz] = k.split(',').map(Number); if (!pick && CB.loaded(cx * 16 + 8, cz * 16 + 8)) pick = k; }
+    if (!left) { st.fin = 1; delete st.d; save(); CB.say(`🛣 고속도로 ${nm} 구간이 다 깔렸어요`); return true; }
+    if (!pick) continue;
+    const key = nm + '|' + T.x + ',' + T.z + ',' + T.y + '|' + (sg[2] ? S.cities[sg[2]].y : '') + '|' + (sg[3] ? S.cities[sg[3]].y : '');
+    if (!HW_P || HW_P.key !== key) HW_P = { key, ...hwPlan(T, sg, corners) };
+    const soft = new Set([0, CB.id('물'), CB.id('나뭇잎'), CB.id('원목'), CB.id('용암')].filter((v) => v != null)), L = (HW_P.groups.get(pick) || []).slice();
+    for (const [x, y, z] of HW_P.pil.get(pick) || []) for (let yy = y; yy > y - 40; yy--) { if (!soft.has(CB.getBlock(x, yy, z))) break; L.push([x, yy, z, T_CONC]); } // 땅(바닥)까지 기둥
+    if (L.length) CB.setBlocks(L);
+    st.d[pick] = 1; save();
+    return true;
+  }
+  return false;
+}
 function buildAnnex(C, G) { S.annexDone = {}; delete S.annex; delete PLANS.annex; annexStep(C, G); } // /군사기지 짓기: 처음부터 다시
 if (CB.infiniteMags) CB.infiniteMags(() => ARMY.includes(teamOf(me()))); // 🔫 군대는 장전해도 탄창이 안 줄어요 (16개면 계속 16개)
 // 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술: 의무병(과 OP)만 · 수술은 기지의 군사응급수술센터 · 군사권역외상센터 안에서
@@ -1823,6 +1899,7 @@ function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 �
   if (S.navyUndo) return navyUndoStep(C, G);
   if (!S.bhBlocked && (!S.bh || S.bh.partial) && (S.bh || bhFree(T)) && bhStep(C, G)) return; // 🏛 청와대
   if (cityStep(C, G)) return; // 🏙 주도들
+  if (hwStep()) return; // 🛣 고속도로
   if (!S.annexBlocked && (!S.annex || S.annex.partial) && (S.annex || annexFree(T))) { const n = Object.keys(S.annexDone || {}).length; annexStep(C, G); if (Object.keys(S.annexDone || {}).length !== n) return; } // 처음 한 번은 사람이 지은 게 많은지 확인
   if (S.navy && (S.navy.v || 1) < NAVY_V) return wallUp('navyWall', T, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
   if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) return wallUp('annexWall', T, annexWall, 1, () => { S.annex.v = ANX_V; });
@@ -1832,6 +1909,7 @@ function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 �
 }
 function townTick() { // 방장 게임: 아직 안 지었으면 빈 땅을 찾아 지음 (예전에 지은 도시에 집이 없으면 집만)
   if (!CB.isHost() || !CB.setBlocks || CB.dimNow() !== 'over') return;
+  if (S.base['조교'] && !S.base['교관']) { S.base['교관'] = S.base['조교']; save(); } // 📗 새 팀 교관: 조교와 같은 기지
   if (S.town) {
     if (S.townV >= 2 && S.townV < TOWN_V) { // 예전 도시 → 없는 것만 더하기 (안쪽에 지은 건 그대로 · 땅이 다 불러와지면)
       for (let x = S.town.x - TOWN_X; x <= S.town.x + TOWN_X + 15; x += 16) for (let z = S.town.z - TOWN_Z; z <= S.town.z + TOWN_Z + 15; z += 16) if (!CB.loaded(Math.min(x, S.town.x + TOWN_X), Math.min(z, S.town.z + TOWN_Z))) return;
@@ -2034,7 +2112,7 @@ CB.command('군사기지', '/군사기지 — 기지 상태 · /군사기지 짓
 CB.command('공화국', `/공화국 — 🗺 ${COUNTRY_KO}(${COUNTRY}) 주 · 도시 · 가는 방향`, (a, c) => {
   const T = S.town; if (!T) return c.say('아직 수도가 없어요');
   const p = pos(), dirOf = (x, z) => { const dx = x - p.x, dz = z - p.z, d = Math.round(Math.hypot(dx, dz)); if (d < 20) return '바로 여기'; const ang = Math.atan2(dx, -dz) * 180 / Math.PI, i = ((Math.round(ang / 45) % 8) + 8) % 8; return `${['북', '북동', '동', '남동', '남', '남서', '서', '북서'][i]}쪽 ${d}칸`; };
-  c.say(`🇰 ${COUNTRY_KO} (${COUNTRY}) · 영토 ${STATE_W * 3}×${STATE_W * 3}칸 · 주 ${STATES.length}개`);
+  { const sg = hwSegs(), dn = sg.filter((x) => S.hw[x[0]] && S.hw[x[0]].fin).length; c.say(`🇰 ${COUNTRY_KO} (${COUNTRY}) · 영토 ${STATE_W * 3}×${STATE_W * 3}칸 · 주 ${STATES.length}개 · 🛣 고속도로 ${dn}/${sg.length}구간 완성 (방장이 지나가면 깔려요)`); }
   for (const st of STATES) {
     const cen = !st[1] && !st[2], cc = cen ? { x: T.x, z: T.z } : S.cities[st[0]], x = cen ? T.x : T.x + st[1] * STATE_W, z = cen ? T.z : T.z + st[2] * STATE_W;
     c.say(`🗺 ${st[0]} · ${cen ? '👑 수도 ' : '주도 '}${st[3]} ${cen || (cc && !cc.partial) ? '' : cc ? '(짓는 중)' : '(방장이 가면 지어져요)'} · ${Math.round(x)}, ${Math.round(z)} · ${dirOf(x, z)}`);
