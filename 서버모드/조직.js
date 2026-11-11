@@ -125,11 +125,11 @@ const OUTFITS = {
 const PRES_SUIT = { style: 'pres', top: 0x141a2b, bottom: 0x141a2b, hat: 'none', hatC: 0x141a2b, badge: 0xffd040 }; // 👑 대통령 기본: 남색 정장 · 파란 넥타이 · 금 배지
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
 const tagOf = (o) => (ORGS[o].key === ORGS[o].short ? o : `${o}(${ORGS[o].short})`); // 경찰(CP)
-const COUNTRY = 'Republic of Clkky', COUNTRY_KO = '클키공화국', CITY_NAME = '클키시', ARMY_NAME = 'CLKKY ARMY', POLICE_NAME = 'CLKKY POLICE'; // 🇰 나라 이름 (예전 CLKKY CITY) · 수도 클키시
-// 🗺 클키공화국 영토: 수도(클키시)를 가운데로 3×3 = 주 9개 · 주 하나 800×800칸 → 2400×2400칸 · 주마다 주도(도시) 하나 (방장이 가까이 가면 청크씩 지어짐)
+const COUNTRY = 'Republic of Clkky', COUNTRY_KO = '클키공화국', CITY_NAME = 'CLKKY CITY', ARMY_NAME = 'CLKKY ARMY', POLICE_NAME = 'CLKKY POLICE'; // 🇰 나라 이름 (예전 CLKKY CITY) · 수도 CLKKY CITY
+// 🗺 클키공화국 영토: 수도(CLKKY CITY)를 가운데로 3×3 = 주 9개 · 주 하나 800×800칸 → 2400×2400칸 · 주마다 주도(도시) 하나 (방장이 가까이 가면 청크씩 지어짐)
 const STATE_W = 800;
 const STATES = [ // [주 이름, 동서(sx: -1 서 · 1 동), 남북(sz: -1 북 · 1 남), 주도]
-  ['중앙주', 0, 0, '클키시'], ['한별주', 0, -1, '별빛시'], ['새벽주', 1, -1, '여명시'], ['해오름주', 1, 0, '해돋이시'], ['산호주', 1, 1, '산호시'],
+  ['중앙주', 0, 0, 'CLKKY CITY'], ['한별주', 0, -1, '별빛시'], ['새벽주', 1, -1, '여명시'], ['해오름주', 1, 0, '해돋이시'], ['산호주', 1, 1, '산호시'],
   ['푸른바다주', 0, 1, '파도시'], ['노을주', -1, 1, '석양시'], ['바람주', -1, 0, '풍차시'], ['은빛숲주', -1, -1, '솔숲시'],
 ];
 const stateAt = (dx, dz) => { const sx = Math.round(dx / STATE_W), sz = Math.round(dz / STATE_W); return Math.abs(sx) > 1 || Math.abs(sz) > 1 ? null : STATES.find((s) => s[1] === sx && s[2] === sz); };
@@ -1790,7 +1790,7 @@ function cityPlan(C, G, seed) {
 function cityStep(C, G) { // 🏙 주도 짓기: 짓는 중인 도시 → 청크 하나 · 없으면 방장 가까이 불러와진 주에 새로 시작 → 한 일이 있으면 true
   const all = S.cities || (S.cities = {});
   for (const st of STATES) {
-    if (!st[1] && !st[2]) continue; // 중앙주는 수도 클키시 (이미 있음)
+    if (!st[1] && !st[2]) continue; // 중앙주는 수도 CLKKY CITY (이미 있음)
     const k = st[0], c = all[k];
     if (c && !c.partial) { if (clearStep('city_' + k, c.y, [c.x - CITY_R, c.z - CITY_R, c.x + CITY_R, c.z + CITY_R], (x, z) => Math.abs(x - c.x) <= CITY_R && Math.abs(z - c.z) <= CITY_R)) return true; continue; } // ⛰ 도시 위 산 치우기
     if (!c) { // 자리 정하기: 주 한가운데 땅이 불러와졌으면 그 높이로 (물이면 메워서)
@@ -1815,10 +1815,10 @@ const HW_RAMP = 100;
 function hwSegs() { // [이름, 점들(수도 기준 dx, dz · 가로세로로만), 시작 주(없으면 수도 높이), 끝 주]
   const R = CITY_R + 1, F = STATE_W, n = S.navy ? S.navy.s : 0, zN = n === -1 ? NAVY_D1 + 2 : TOWN_Z + 2, zS = n === 1 ? NAVY_D1 + 2 : TOWN_Z + 2;
   return [
-    ['클키시 ↔ 별빛시', [[0, -zN], [0, -F + R]], null, '한별주'],
-    ['클키시 ↔ 파도시', [[0, zS], [0, F - R]], null, '푸른바다주'],
-    ['클키시 ↔ 해돋이시', [[TOWN_X + 5, 0], [TOWN_X + 5, 18], [BH_X1 + 4, 18], [BH_X1 + 4, 0], [F - R, 0]], null, '해오름주'], // 청와대를 돌아감
-    ['클키시 ↔ 풍차시', [[0, -150], [-F, -150]], null, null], // 북쪽 길에서 갈라져 서쪽 고리 길에 닿음 (수도 서쪽은 군사기지)
+    ['CLKKY CITY ↔ 별빛시', [[0, -zN], [0, -F + R]], null, '한별주'],
+    ['CLKKY CITY ↔ 파도시', [[0, zS], [0, F - R]], null, '푸른바다주'],
+    ['CLKKY CITY ↔ 해돋이시', [[TOWN_X + 5, 0], [TOWN_X + 5, 18], [BH_X1 + 4, 18], [BH_X1 + 4, 0], [F - R, 0]], null, '해오름주'], // 청와대를 돌아감
+    ['CLKKY CITY ↔ 풍차시', [[0, -150], [-F, -150]], null, null], // 북쪽 길에서 갈라져 서쪽 고리 길에 닿음 (수도 서쪽은 군사기지)
     ['별빛시 ↔ 여명시', [[R, -F], [F - R, -F]], '한별주', '새벽주'], ['여명시 ↔ 해돋이시', [[F, -F + R], [F, -R]], '새벽주', '해오름주'],
     ['해돋이시 ↔ 산호시', [[F, R], [F, F - R]], '해오름주', '산호주'], ['산호시 ↔ 파도시', [[F - R, F], [R, F]], '산호주', '푸른바다주'],
     ['파도시 ↔ 석양시', [[-R, F], [-F + R, F]], '푸른바다주', '노을주'], ['석양시 ↔ 풍차시', [[-F, F - R], [-F, R]], '노을주', '바람주'],
