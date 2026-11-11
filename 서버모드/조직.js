@@ -122,7 +122,14 @@ const OUTFITS = {
 const PRES_SUIT = { style: 'pres', top: 0x141a2b, bottom: 0x141a2b, hat: 'none', hatC: 0x141a2b, badge: 0xffd040 }; // 👑 대통령 기본: 남색 정장 · 파란 넥타이 · 금 배지
 const KIT_MAGS = 3; // 총이 있는 장비는 탄창도 3개
 const tagOf = (o) => (ORGS[o].key === ORGS[o].short ? o : `${o}(${ORGS[o].short})`); // 경찰(CP)
-const CITY_NAME = 'CLKKY CITY', ARMY_NAME = 'CLKKY ARMY', POLICE_NAME = 'CLKKY POLICE';
+const COUNTRY = 'Republic of Clkky', COUNTRY_KO = '클키공화국', CITY_NAME = '클키시', ARMY_NAME = 'CLKKY ARMY', POLICE_NAME = 'CLKKY POLICE'; // 🇰 나라 이름 (예전 CLKKY CITY) · 수도 클키시
+// 🗺 클키공화국 영토: 수도(클키시)를 가운데로 3×3 = 주 9개 · 주 하나 800×800칸 → 2400×2400칸 · 주마다 주도(도시) 하나 (방장이 가까이 가면 청크씩 지어짐)
+const STATE_W = 800;
+const STATES = [ // [주 이름, 동서(sx: -1 서 · 1 동), 남북(sz: -1 북 · 1 남), 주도]
+  ['중앙주', 0, 0, '클키시'], ['한별주', 0, -1, '별빛시'], ['새벽주', 1, -1, '여명시'], ['해오름주', 1, 0, '해돋이시'], ['산호주', 1, 1, '산호시'],
+  ['푸른바다주', 0, 1, '파도시'], ['노을주', -1, 1, '석양시'], ['바람주', -1, 0, '풍차시'], ['은빛숲주', -1, -1, '솔숲시'],
+];
+const stateAt = (dx, dz) => { const sx = Math.round(dx / STATE_W), sz = Math.round(dz / STATE_W); return Math.abs(sx) > 1 || Math.abs(sz) > 1 ? null : STATES.find((s) => s[1] === sx && s[2] === sz); };
 const orgNameOf = (o, nick) => (ARMY.includes(o) ? ARMY_NAME + (divOf(nick, o) ? ' ' + divOf(nick, o) : '') : o === '경찰' ? POLICE_NAME : ''); // 그 팀이 속한 조직 이름 (CLKKY ARMY 1사단 · 2사단 · 3사단)
 
 // ── 🏦 화폐 · 💼 직업 ──
@@ -184,7 +191,7 @@ function cellOf(nick) {
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
 const migM = (m) => { for (const k in m) if (m[k] && m[k].o && !ORGS[m[k].o] && OLDTEAM[m[k].o]) m[k].o = OLDTEAM[m[k].o]; return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국군평화단 등)
-const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0 }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
+const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -977,7 +984,8 @@ function npcNear(x, z) { // NPC가 있어야 하나: 방장 게임은 누구든 
 }
 function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서도 보임)
   const T = S.town; if (!T || !CB.bigSign) return;
-  CB.bigSign('org_city', CITY_NAME, T.x + 0.5, T.y + 13, T.z + 0.5, { bg: '#14325a', w: 20 });
+  CB.bigSign('org_city', `${COUNTRY_KO} 수도 ${CITY_NAME}`, T.x + 0.5, T.y + 13, T.z + 0.5, { bg: '#14325a', w: 20 });
+  for (const st of STATES) { const c = S.cities[st[0]]; if (c && !c.partial) CB.bigSign('city_' + st[0], `${st[3]} · ${st[0]}`, c.x + 0.5, c.y + 13, c.z + 0.5, { bg: '#14325a', w: 16 }); } // 🏙 주도 간판
   CB.bigSign('org_army', ARMY_NAME, T.x - 21.5, T.y + 10, T.z + 0.5, { bg: '#3d4a2a', w: 16 });
   CB.bigSign('org_recruit', `${ARMY_NAME} 입대 · 전역 · 휴가`, T.x - 19.5, T.y + 7, T.z + 11.5, { bg: '#3d4a2a', w: 18 });
   CB.bigSign('org_police', `${POLICE_NAME} 경찰서`, T.x + 28.5, T.y + 12, T.z + 11.5, { bg: '#1f3a7a', w: 24 });
@@ -1741,6 +1749,64 @@ function bhStep(C, G) { // 청크 하나씩 · 다 지으면 알림 → 지었�
   if (!left && S.bh && S.bh.partial) { delete S.bh.partial; delete PLANS.bh; save(); CB.say('🏛 동문 밖에 청와대가 생겼어요 · 대통령은 청와대 비서에게 말을 걸면 정장 ↔ 정복을 갈아입어요'); }
   return built > 0;
 }
+// 🏙 주도(도시) 짓기: 64×64칸 · 십자 큰길 · 광장 분수 · 시청(푸른 지붕 · 태극기) · 아파트 · 상가 · 공원 · 가로등 · 층마다 바닥 · 사다리
+const CITY_R = 32;
+function cityPlan(C, G, seed) {
+  const W = new Map(), GRASS = BLK('잔디 블록'), ROAD = BLK('도로', '돌'), BR = BLK('돌벽돌'), GLASS = BLK('유리'), LAMPB = BLK('등불'), IRON = BLK('철 블록'), PLANK = BLK('판자'), FLAG = BLK('태극기', '흰 벽'), WATER = BLK('물'), LOG = BLK('원목', '판자'), LEAF = BLK('나뭇잎', '잔디 블록');
+  const put = (x, y, z, id) => { const X = C.x + x, Y = G + y, Z = C.z + z; W.set(X + ',' + Y + ',' + Z, [X, Y, Z, id]); };
+  const box = (ax, ay, az, bx, by, bz, id) => { for (let x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) for (let y = Math.min(ay, by); y <= Math.max(ay, by); y++) for (let z = Math.min(az, bz); z <= Math.max(az, bz); z++) put(x, y, z, id); };
+  const R = CITY_R, rnd = (i) => { const v = Math.sin(seed * 97.1 + i * 13.7) * 43758.5; return v - Math.floor(v); };
+  box(-R, 0, -R, R, 20, R, 0); box(-R, -1, -R, R, -1, R, GRASS); // 땅 고르기
+  box(-R, -1, -2, R, -1, 2, ROAD); box(-2, -1, -R, 2, -1, R, ROAD); for (let k = -R; k <= R; k++) if (((k % 4) + 4) % 4 < 2 && Math.abs(k) > 5) { put(k, -1, 0, T_LINE); put(0, -1, k, T_LINE); } // 십자 큰길
+  box(-5, -1, -5, 5, -1, 5, BR); box(-2, 0, -2, 2, 0, 2, BR); box(-1, 0, -1, 1, 0, 1, WATER); box(0, 1, 0, 0, 2, 0, BR); // 광장 · 분수
+  for (let k = 8; k <= R - 2; k += 8) for (const s of [-1, 1]) for (const [x, z] of [[k * s, 4], [k * s, -4], [4, k * s], [-4, k * s]]) { box(x, 0, z, x, 2, z, IRON); put(x, 3, z, LAMPB); } // 가로등
+  const bld = (qx, qz, a0, b0, a1, b1, h, wall, roof, hall) => { // 사분면 (qx, qz) 의 건물 · 문은 큰길(가운데) 쪽 · 4칸마다 층 · 사다리
+    for (let a = a0; a <= a1; a++) for (let b = b0; b <= b1; b++) {
+      const x = qx * a, z = qz * b, edge = a === a0 || a === a1 || b === b0 || b === b1, corner = (a === a0 || a === a1) && (b === b0 || b === b1);
+      put(x, -1, z, PLANK);
+      if (edge) for (let y = 0; y < h; y++) put(x, y, z, !corner && (y % 4 === 1 || y % 4 === 2) && (a + b) % 3 !== 0 ? GLASS : wall);
+      else for (let fy = 4; fy < h; fy += 4) if (!(a === a0 + 1 && b === b1 - 1)) put(x, fy - 1, z, PLANK); // 층 바닥 (사다리 자리는 구멍)
+      put(x, h, z, roof);
+    }
+    const mb = (b0 + b1) >> 1; for (let y = 0; y <= 1; y++) put(qx * a0, y, qz * mb, 0); put(qx * a0, 2, qz * mb, LAMPB); // 문 · 문 위 등
+    for (let y = 0; y < h; y++) put(qx * (a0 + 1), y, qz * (b1 - 1), qx > 0 ? LAD_W : LAD_E); // 사다리 (벽에 붙음)
+    if (hall) { box(qx * ((a0 + a1) >> 1), h + 1, qz * mb, qx * ((a0 + a1) >> 1), h + 5, qz * mb, IRON); put(qx * ((a0 + a1) >> 1), h + 6, qz * mb, FLAG); } // 시청 국기
+  };
+  const WALLS = [T_WHITE, T_CONC, BR, T_NAVY, T_AIRF];
+  let i = 0;
+  for (const qx of [-1, 1]) for (const qz of [-1, 1]) {
+    const hall = qx < 0 && qz < 0;
+    bld(qx, qz, 6, 6, 18, 18, hall ? 9 : 13 + Math.floor(rnd(i++) * 3) * 4, hall ? T_WHITE : WALLS[Math.floor(rnd(i++) * WALLS.length)], hall ? T_BTILE : T_CONC, hall); // 시청 · 아파트
+    bld(qx, qz, 21, 6, 30, 18, 5, WALLS[Math.floor(rnd(i++) * WALLS.length)], BR, false); // 상가
+    if ((qx + qz) % 4 === 0) bld(qx, qz, 6, 21, 18, 30, 9 + Math.floor(rnd(i++) * 2) * 4, WALLS[Math.floor(rnd(i++) * WALLS.length)], T_CONC, false); // 아파트
+    else for (const [a, b] of [[9, 24], [15, 27], [25, 25]]) { const x = qx * a, z = qz * b; box(x, 0, z, x, 3, z, LOG); box(x - 1, 3, z - 1, x + 1, 5, z + 1, LEAF); put(x, 4, z, LOG); } // 공원 나무
+    box(qx * 21, -1, qz * 21, qx * 30, -1, qz * 30, GRASS);
+  }
+  return [...W.values()];
+}
+function cityStep(C, G) { // 🏙 주도 짓기: 짓는 중인 도시 → 청크 하나 · 없으면 방장 가까이 불러와진 주에 새로 시작 → 한 일이 있으면 true
+  const all = S.cities || (S.cities = {});
+  for (const st of STATES) {
+    if (!st[1] && !st[2]) continue; // 중앙주는 수도 클키시 (이미 있음)
+    const k = st[0], c = all[k];
+    if (c && !c.partial) { if (clearStep('city_' + k, c.y, [c.x - CITY_R, c.z - CITY_R, c.x + CITY_R, c.z + CITY_R], (x, z) => Math.abs(x - c.x) <= CITY_R && Math.abs(z - c.z) <= CITY_R)) return true; continue; } // ⛰ 도시 위 산 치우기
+    if (!c) { // 자리 정하기: 주 한가운데 땅이 불러와졌으면 그 높이로 (물이면 메워서)
+      const x = C.x + st[1] * STATE_W, z = C.z + st[2] * STATE_W;
+      if (![[0, 0], [-CITY_R, -CITY_R], [CITY_R, CITY_R], [-CITY_R, CITY_R], [CITY_R, -CITY_R]].every(([a, b]) => CB.loaded(x + a, z + b))) continue;
+      const g = groundAt(x, z); if (!g) continue;
+      all[k] = { x, z, y: Math.max(4, Math.min(110, g.y)), partial: 1 }; save();
+      CB.say(`🏙 ${COUNTRY_KO} ${k}에 주도 ${st[3]}를 짓기 시작했어요`);
+      return true;
+    }
+    const P = planGroups('city_' + k, c.x + ',' + c.z + ',' + c.y, () => ({ L: cityPlan({ x: c.x, z: c.z }, c.y, st[1] * 7 + st[2] * 3 + 11), area: [c.x - CITY_R, c.z - CITY_R, c.x + CITY_R, c.z + CITY_R], fill: (x, z) => Math.abs(x - c.x) <= CITY_R && Math.abs(z - c.z) <= CITY_R }));
+    const dn = (S.cityDone || (S.cityDone = {}))[k] || (S.cityDone[k] = {});
+    const [built, left] = chunkStep(P, dn, c.y);
+    if (built) save();
+    if (!left) { delete c.partial; delete S.cityDone[k]; delete PLANS['city_' + k]; save(); CB.say(`🏙 ${COUNTRY_KO} ${k}의 주도 ${st[3]}가 생겼어요!`); return true; }
+    if (built) return true;
+  }
+  return false;
+}
 function buildAnnex(C, G) { S.annexDone = {}; delete S.annex; delete PLANS.annex; annexStep(C, G); } // /군사기지 짓기: 처음부터 다시
 if (CB.infiniteMags) CB.infiniteMags(() => ARMY.includes(teamOf(me()))); // 🔫 군대는 장전해도 탄창이 안 줄어요 (16개면 계속 16개)
 // 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술: 의무병(과 OP)만 · 수술은 기지의 군사응급수술센터 · 군사권역외상센터 안에서
@@ -1756,6 +1822,7 @@ function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 �
   if (S.navy && S.navy.partial) return navyStep(C, G);
   if (S.navyUndo) return navyUndoStep(C, G);
   if (!S.bhBlocked && (!S.bh || S.bh.partial) && (S.bh || bhFree(T)) && bhStep(C, G)) return; // 🏛 청와대
+  if (cityStep(C, G)) return; // 🏙 주도들
   if (!S.annexBlocked && (!S.annex || S.annex.partial) && (S.annex || annexFree(T))) { const n = Object.keys(S.annexDone || {}).length; annexStep(C, G); if (Object.keys(S.annexDone || {}).length !== n) return; } // 처음 한 번은 사람이 지은 게 많은지 확인
   if (S.navy && (S.navy.v || 1) < NAVY_V) return wallUp('navyWall', T, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
   if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) return wallUp('annexWall', T, annexWall, 1, () => { S.annex.v = ANX_V; });
@@ -1964,7 +2031,16 @@ CB.command('군사기지', '/군사기지 — 기지 상태 · /군사기지 짓
   if (S.annex && S.annex.partial) return c.say(`🪖 ${ARMY_NAME} 기지를 짓는 중이에요 · ${Object.keys(S.annexDone || {}).length}청크 지음 · 방장이 서쪽 성벽 밖으로 가면 나머지도 지어져요`);
   c.say(S.annex ? `🪖 ${ARMY_NAME} 기지: 서쪽 성벽 밖 (생활관 · 회의실 · 의료센터 · 군 교도소 · 헬기 · 구급차)` : S.annexBlocked ? '🪖 기지 자리에 사람이 지은 것이 있어서 아직 안 지었어요 · OP가 /군사기지 짓기' : '🪖 기지는 방장이 서쪽 성벽 밖으로 가까이 가면 지어져요');
 }, { everyone: true });
-CB.command('청와대', '/청와대 — 청와대 상태 · /청와대 짓기 (OP · 그 자리에 있는 것을 밀고 지어요)', (a, c) => {
+CB.command('공화국', `/공화국 — 🗺 ${COUNTRY_KO}(${COUNTRY}) 주 · 도시 · 가는 방향`, (a, c) => {
+  const T = S.town; if (!T) return c.say('아직 수도가 없어요');
+  const p = pos(), dirOf = (x, z) => { const dx = x - p.x, dz = z - p.z, d = Math.round(Math.hypot(dx, dz)); if (d < 20) return '바로 여기'; const ang = Math.atan2(dx, -dz) * 180 / Math.PI, i = ((Math.round(ang / 45) % 8) + 8) % 8; return `${['북', '북동', '동', '남동', '남', '남서', '서', '북서'][i]}쪽 ${d}칸`; };
+  c.say(`🇰 ${COUNTRY_KO} (${COUNTRY}) · 영토 ${STATE_W * 3}×${STATE_W * 3}칸 · 주 ${STATES.length}개`);
+  for (const st of STATES) {
+    const cen = !st[1] && !st[2], cc = cen ? { x: T.x, z: T.z } : S.cities[st[0]], x = cen ? T.x : T.x + st[1] * STATE_W, z = cen ? T.z : T.z + st[2] * STATE_W;
+    c.say(`🗺 ${st[0]} · ${cen ? '👑 수도 ' : '주도 '}${st[3]} ${cen || (cc && !cc.partial) ? '' : cc ? '(짓는 중)' : '(방장이 가면 지어져요)'} · ${Math.round(x)}, ${Math.round(z)} · ${dirOf(x, z)}`);
+  }
+}, { everyone: true });
+CB.command('청와대','/청와대 — 청와대 상태 · /청와대 짓기 (OP · 그 자리에 있는 것을 밀고 지어요)', (a, c) => {
   if (a[0] === '짓기') return req('bhbuild');
   c.say(S.bh && !S.bh.partial ? '🏛 청와대: 동문 밖 길 끝 · 대통령은 청와대 비서에게 말을 걸면 정장 ↔ 정복' : S.bh ? `🏛 청와대를 짓는 중이에요 · ${Object.keys(S.bhDone || {}).length}청크 지음` : S.bhBlocked ? '🏛 청와대 자리에 사람이 지은 것이 있어서 아직 안 지었어요 · OP가 /청와대 짓기' : '🏛 청와대는 방장이 동문 밖으로 가까이 가면 지어져요');
 }, { everyone: true });
@@ -1972,7 +2048,7 @@ CB.command('석방', '/석방 @닉 (장교(Officer) 이상 · OP)', (a) => req('
 
 // ── 1초마다: 닉네임표 · 안내판 · 기지 부활 자리 · 체력 훈련 거리 · 수배 · 감옥 ──
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
-let payT = 0, curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '';
+let payT = 0, curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '', lastPlace = '';
 let dcT = 5;
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
@@ -2100,6 +2176,12 @@ CB.onTick((dt) => {
     const rk = rankOf(me());
     h = `<span style="color:${O.color}">${O.ico} <b>${on ? on + ' ' : ''}${esc(tagOf(y.o))}</b></span>${rk ? ` · 🎖 <b>${rk}</b>` : ''} · ${y.p || 0}점`;
     h += `<br>🏦 통장 ${bal(me())}개${jb ? ` · ${JOBS[jb].ico} ${jb}` : ''}`;
+    if (S.town && CB.dimNow() === 'over') { // 🗺 지금 있는 주 · 도시
+      const p = pos(), st = stateAt(p.x - S.town.x, p.z - S.town.z), c = st && (st[1] || st[2] ? S.cities[st[0]] : { x: S.town.x, z: S.town.z }), inC = c && Math.abs(p.x - c.x) <= CITY_R + 16 && Math.abs(p.z - c.z) <= CITY_R + 16;
+      const here = st ? `${COUNTRY_KO} · ${st[0]}${inC ? ' · ' + st[3] : ''}` : `${COUNTRY_KO} 국경 밖`;
+      h += `<br>📍 ${here}`;
+      if (here !== lastPlace) { if (lastPlace) note(st ? (inC ? `🏙 ${st[3]}에 들어왔어요 (${st[0]})` : `🗺 ${st[0]}에 들어왔어요`) : `🚧 ${COUNTRY_KO} 국경 밖으로 나왔어요`); lastPlace = here; }
+    }
     if (DEL) h += `<br>📦 배달: <b>${esc(DEL.n)}</b> (${Math.round(Math.hypot(DEL.x - pos().x, DEL.z - pos().z))}칸)`;
     if (O.lv > 0) for (const mo in S.mission) if (ORGS[mo] && ORGS[mo].lv >= O.lv) h += `<br>📋 임무 (${esc(mo)}): ${esc(S.mission[mo])}`;
     if (S.train && inTrain(me(), S.train) && Date.now() < S.train.until) h += `<br>🎯 훈련(${S.train.kind}) ${Math.ceil((S.train.until - Date.now()) / 1000)}초` + (S.train.kind === '체력' ? ` · ${Math.min(200, ranD | 0)}/200칸` : '');
