@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.275 — 🏙 수도 이름 CLKKY CITY</h4>
+    <h4>🆕 v26.276 — 🛡 군사경찰 행사복 · ⭐ 교육사령부 복장 다듬기</h4>
+    <ul><li>🛡 군사경찰 행사복: 어깨 매듭에서 가슴으로 늘어진 은색 견사줄 고리 두 개 · 끝 장식</li><li>⭐ 교육사령부: 검은 허리띠 · 금 버클</li></ul>
+    <h4>v26.275 — 🏙 수도 이름 CLKKY CITY</h4>
     <ul><li>🏙 클키공화국의 수도(원래 도시) 이름이 <b>CLKKY CITY</b>예요 · 간판 「클키공화국 수도 CLKKY CITY」 · 📍 · /공화국 · 고속도로 이름도</li></ul>
     <h4>v26.274 — 🛣 고속도로 · ✈ 🏎 🚑 🪖 탈것 아이템 · 📗 교관</h4>
     <ul><li>🛣 <b>고속도로</b> 12구간: 수도 클키시 ↔ 동서남북 주도 4줄 + 주도 8곳을 잇는 고리 8줄 · 폭 5칸 · 가운데 줄 · 가드레일 · 가로등 · 평평하게 (산은 터널 · 골짜기 · 물 위는 다리와 기둥) · 도시 가까이에선 그 도시 높이로 천천히 경사 · 방장이 지나가면 조금씩 깔려요 (그 주의 도시가 먼저 정해져야 해요)</li><li>✈ <b>비행기</b> (작업대: 비행기 엔진 1 + 강철 5 + 유리 1) · 🏎 <b>로드스터</b> (자동차 엔진 1 + 바퀴 4 + 강철 3) · 🚑 <b>구급차</b> (자동차 엔진 1 + 바퀴 4 + 강철 4 + 유리 2 · 경광등 · 들것) · 🪖 <b>탱크</b> (자동차 엔진 2 + 바퀴 6 + 강철 10 · 느림 · 타고 클릭(⛏)하면 포를 쏴요 · 2.5초마다)</li><li>헬기처럼 땅에 우클릭하면 나와요 · 우클릭으로 타요 · 3번 치면 다시 아이템</li><li>📗 <b>교관(Instructor)</b> 팀: 조교와 장교 사이 · 체력 225 · 검은 반팔(「교관」) · 검은 정모 · 선글라스 · 위장 바지(조교와 같음) · 기지는 조교와 같아요</li></ul>
@@ -2280,7 +2282,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.275 — 🏙 Capital named CLKKY CITY</h4>
+    <h4>🆕 v26.276 — 🛡 MP dress · ⭐ Training Command uniform polish</h4>
+    <ul><li>🛡 Military police dress: silver aiguillette with a shoulder knot, two loops across the chest and metal tips</li><li>⭐ Training Command: black belt with a gold buckle</li></ul>
+    <h4>v26.275 — 🏙 Capital named CLKKY CITY</h4>
     <ul><li>🏙 The capital of the Republic of Clkky (the original city) is named <b>CLKKY CITY</b> · on its sign, the 📍 HUD, /공화국 and highway names</li></ul>
     <h4>v26.274 — 🛣 Highways · ✈ 🏎 🚑 🪖 Vehicle items · 📗 Instructor</h4>
     <ul><li>🛣 <b>Highways</b>, 12 sections: 4 from the capital to the N/S/E/W state cities plus a ring of 8 linking all state cities · 5 lanes wide with center line, guardrails and street lights · kept level (tunnels through hills, bridges with pillars over valleys and water) · gentle ramps near cities · laid bit by bit as the host travels (the state city must exist first)</li><li>✈ <b>Airplane</b> (bench: plane engine 1 + steel 5 + glass 1) · 🏎 <b>Roadster</b> (car engine 1 + wheels 4 + steel 3) · 🚑 <b>Ambulance</b> (car engine 1 + wheels 4 + steel 4 + glass 2 · sirens · stretcher) · 🪖 <b>Tank</b> (car engine 2 + wheels 6 + steel 10 · slow · click (⛏) while riding to fire, every 2.5 s)</li><li>Right-click the ground to place, like the helicopter · right-click to ride · hit 3 times to fold back into an item</li><li>📗 <b>Instructor</b> team between Assistant and Officer: 225 HP · black short-sleeve shirt (교관), black peaked cap, sunglasses, camo trousers (same as Assistant) · shares the Assistant base</li></ul>
@@ -9609,7 +9613,11 @@ function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,COL=ofDressCol(s),TOP=ofM(
   const st=Math.max(0,Math.min(3,o.stripes|0)),sl=s==='owner'?3:st;
   if(sl||['owner','staff','mpcmd','tmccmd'].includes(s)){const rib=[0xd02020,0x2050c0,0xe0b83a,0x20a050,0xf0f0f0,0xd02020];rib.slice(0,s==='owner'?6:sl>=2?4:2).forEach((c,i)=>add(A.up,.05,.03,.02,ofSolid(c,.6),-.18+(i%3)*.05,.55-Math.floor(i/3)*.035,F(.01)));} // 훈장 리본
   for(const a of A.arms)for(let i=0;i<sl;i++)add(a,.222,.015,.242,GOLD,0,-.42+i*.035,0); // 소매 금줄
-  if(s==='owner'||s==='mp'){const C=s==='owner'?GOLD:WH;add(A.up,.025,.3,.02,C,.2,.5,F(.015));add(A.up,.025,.22,.02,C,.16,.48,F(.015));} // 금줄 (예장) · 흰 견사줄 (군사경찰 행사복)
+  if(s==='owner'){const C=GOLD;add(A.up,.025,.3,.02,C,.2,.5,F(.015));add(A.up,.025,.22,.02,C,.16,.48,F(.015));} // 금줄 (예장)
+  if(s==='mp'){const SC=ofSolid(0xdfe3e8,.3,.75);add(A.up,.06,.035,.2,SC,.2,.705,0); /* 🛡 군사경찰 행사복 은색 견사줄: 어깨 매듭 · 가슴으로 늘어진 두 고리 · 끝 장식 */
+    for(const [w,h,x,y,r] of [[.022,.3,.14,.55,.55],[.022,.38,.11,.5,.78],[.022,.2,.18,.48,.15]]){const c=add(A.up,w,h,.02,SC,x,y,F(.016));c.rotation.z=r;}
+    add(A.up,.035,.06,.025,SILV,.0,.38,F(.02));add(A.up,.035,.06,.025,SILV,.06,.36,F(.02));}
+  if(s==='tmccmd'){add(A.up,.545,.07,.3,ofSolid(0x0e0e10,.4,.3),0,.08,0);add(A.up,.07,.05,.02,GOLD,0,.08,F(.02));} // 교육사령부: 검은 허리띠 · 금 버클
   if(s==='mp')for(const a of A.arms)for(let i=0;i<3;i++)add(a,.224,.022,.244,WH,0,-.17-i*.045,0); // 군사경찰 행사복: 소매 흰 줄 3개
   if(s==='officer'||s==='tmccmd')for(const sd of [-1,1])add(A.up,.05,.05,.01,GOLD,sd*.09,.66,F(.03)); // 옷깃 금색 계급장
   if(s==='swat')add(A.up,.3,.09,.01,ofM('sw',ofText('SWAT','#141517','#f0f0f0',64,18)),0,.5,.155); // 등 SWAT
