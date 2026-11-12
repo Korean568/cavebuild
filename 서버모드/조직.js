@@ -1020,14 +1020,14 @@ function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서�
   CB.bigSign('org_jobs', '💼 직업소개소', T.x + 41.5, T.y + 9, T.z + 17.5, { bg: '#2a6a7a', w: 14 });
   if (S.bh && !S.bh.partial) CB.bigSign('bh', '🏛 청와대', T.x + BH_B0 - 3.5, T.y + 15, T.z + 0.5, { bg: '#1c4fa0', w: 12 }); // 🏛 청와대 간판 (지붕 앞)
   if (S.annex) { // 🪖 기지 간판
-    CB.bigSign('anx_gate', `${ARMY_NAME} 기지`, T.x - 47.5, T.y + 9, T.z + 0.5, { bg: '#3d4a2a', w: 18 });
-    ANX.forEach(([n, ax, az, bx, bz, h, kind], i) => CB.bigSign('anx' + i, n, T.x + ((ax + bx) >> 1) + 1, T.y + h + 3, T.z + ((az + bz) >> 1) + 0.5, { bg: kind === 'med' || kind === 'surg' ? '#b02020' : kind === 'jail' ? '#444' : '#3d4a2a', w: Math.min(18, 6 + n.length) }));
+    CB.bigSign('anx_gate', `${ARMY_NAME} 기지`, T.x - 47.5, T.y + 9, T.z + 0.5, { bg: '#3d4a2a', w: 18, logo: 'ahq' });
+    ANX.forEach(([n, ax, az, bx, bz, h, kind], i) => CB.bigSign('anx' + i, n, T.x + ((ax + bx) >> 1) + 1, T.y + h + 3, T.z + ((az + bz) >> 1) + 0.5, { bg: kind === 'med' || kind === 'surg' ? '#b02020' : kind === 'jail' ? '#444' : '#3d4a2a', w: Math.min(18, 6 + n.length), logo: logoOf(n) }));
     ANX_OPEN.forEach(([n, x, z], i) => CB.bigSign('anxo' + i, n, T.x + x + 0.5, T.y + 6, T.z + z + 0.5, { bg: '#3d4a2a', w: 12 }));
   }
   if (S.navy) { // ⚓ 해군 기지 간판 (예전 마을 음식점 간판은 지움)
     CB.bigSign('org_food2', null); const s = S.navy.s, Z = (d) => T.z + s * d + 0.5;
     CB.bigSign('navy_gate', `⚓ ${ARMY_NAME} 2사단 해군 기지`, T.x + 0.5, T.y + 9, Z(TOWN_Z + 2), { bg: '#1a2238', w: 22 });
-    NAVY.forEach(([n, ax, ad, bx, bd, h, kind], i) => CB.bigSign('navy' + i, n, T.x + ((ax + bx) >> 1) + 1, T.y + h + 3, Z((ad + bd) >> 1), { bg: kind === 'med' ? '#b02020' : '#1a2238', w: Math.min(18, 6 + n.length) }));
+    NAVY.forEach(([n, ax, ad, bx, bd, h, kind], i) => CB.bigSign('navy' + i, n, T.x + ((ax + bx) >> 1) + 1, T.y + h + 3, Z((ad + bd) >> 1), { bg: kind === 'med' ? '#b02020' : '#1a2238', w: Math.min(18, 6 + n.length), logo: logoOf(n) }));
     NAVY_OPEN.forEach(([n, x, d], i) => CB.bigSign('navyo' + i, n, T.x + x + 0.5, T.y + 6, Z(d), { bg: '#1a2238', w: 12 }));
   } else if (S.village) CB.bigSign('org_food2', '음식점', T.x + S.village.fx, T.y + 9, T.z + S.village.s * S.village.fd, { bg: '#a8421a', w: 12 });
 }
@@ -1459,12 +1459,13 @@ const T_NAVY = CB.block({ id: 1916, key: 'army_navy', name: '해군 벽', paint:
 const T_AIRF = CB.block({ id: 1917, key: 'army_airforce', name: '공군 벽', paint: (u, v, x, y) => { const k = 0.93 + 0.07 * Math.sin(x * 6.7 + y * 4.1); return [96 * k, 124 * k, 160 * k]; } });
 const T_REDX = CB.block({ id: 1918, key: 'army_redcross', name: '적십자 표시', paint: (u, v, x, y) => ((x >= 6 && x <= 9 && y >= 2 && y <= 13) || (y >= 6 && y <= 9 && x >= 2 && x <= 13) ? [214, 30, 30] : [244, 244, 244]) });
 const T_SIREN = CB.block({ id: 1919, key: 'army_siren', name: '경광등', glow: true, light: true, paint: (u, v, x, y) => (x < 8 ? [240, 40, 40] : [40, 90, 240]) });
+const logoOf = (n) => (/해병대/.test(n) ? 'mc' : /교육|조교/.test(n) ? 'tdc' : /사령관|고위 간부|육군/.test(n) ? 'ahq' : undefined); // 🎖 간판 왼쪽 부대 마크
 const ANX = [ // [이름, x1, z1, x2, z2, 높이, 종류, 벽] · 북쪽(z<0) 건물은 문이 남쪽(+z) · 남쪽 건물은 문이 북쪽(-z)
   ['🪖 육군 생활관 · 1사단', -64, -20, -50, -6, 6, 'bar', 'camo'], ['⚓ 해군 생활관 · 2사단', -82, -20, -68, -6, 6, 'bar', 'navy'], ['✈ 공군 생활관 · 3사단', -100, -20, -86, -6, 6, 'bar', 'air'],
   ['🛡 군사경찰 생활관', -124, -20, -110, -6, 6, 'bar', 'mp'], ['📘 조교 · 교육부 생활관', -142, -20, -128, -6, 6, 'bar', 'camo'], ['⛓ 군 교도소', -163, -21, -146, -6, 6, 'jail', 'iron'],
   ['⚜ 사령관 회의실', -64, -38, -52, -26, 6, 'meet', 'conc'], ['🎖 고위 간부 회의실', -80, -38, -68, -26, 6, 'meet', 'conc'], ['📋 부사관 회의실', -96, -38, -84, -26, 5, 'meet', 'camo'],
   ['⚜ AFMPC 국군 군사경찰 연합', -122, -38, -110, -26, 6, 'meet', 'mp'], ['🗡 특수전사령부 · 특임대 작전 회의소', -138, -38, -126, -26, 5, 'ops', 'mp'], ['🔫 총기 교체소', -156, -38, -144, -26, 5, 'arms', 'conc'],
-  ['🕊 국군평화주의단 AFPC', -100, -54, -84, -42, 6, 'class', 'camo'],
+  ['🕊 국군평화주의단 AFPG', -100, -54, -84, -42, 6, 'class', 'camo'],
   ['🩹 군사경상의료센터', -64, 6, -50, 20, 6, 'med', 'white'], ['🏥 군사중상의료센터', -82, 6, -68, 20, 7, 'med', 'white'], ['🚑 군사권역외상센터', -100, 6, -86, 20, 8, 'med', 'white'],
   ['🩺 군사응급수술센터', -124, 6, -110, 20, 7, 'surg', 'white'], ['♿ 군사재활치료센터', -142, 6, -128, 20, 6, 'med', 'white'],
   ['🦅 해병대 생활관 · 2사단', -124, 26, -110, 40, 6, 'bar', 'marine'],
