@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.278 — 🕶 교육사령부 보잉 선글라스</h4>
+    <h4>🆕 v26.279 — 🛡 군사경찰 행사복 더 진짜같이</h4>
+    <ul><li>🛡 더 짙은 진녹색 · 깃을 따라 목 쪽으로 가는 은색 견사줄 · 가슴 고리 · 가운데로 늘어진 두 줄과 끝 장식 · 단추 달린 주머니 4개 · 어깨 흰 줄 · 소매 아래쪽 굵은 흰 줄 3개</li></ul>
+    <h4>v26.278 — 🕶 교육사령부 보잉 선글라스</h4>
     <ul><li>🕶 교육사령부 · 군사훈련부 선글라스: 곧은 위 테 · 아래로 좁아지는 갈색 렌즈가 코에서 V자로 만나는 보잉(에비에이터) 모양</li></ul>
     <h4>v26.277 — 🎖 CLKKY ARMY 조직 개편 (20순위) · 👕 /복장</h4>
     <ul><li>🎖 새 순서 (위 → 아래): 대통령 · 국무총리 · 사단장(Commander) · 🎓 군사훈련부(MTD) · 🏥 국군간호사사관학교(AFNA) · ⚖ 국평단 운영부(AOD) · 💂 위병소 관리단(GPMU) · 🕊 국군평화주의단(AFPG) · 국군 군사경찰 연합(AFMPC) · 교육사령부(TDC) · 장교 · 교관 · 조교 · 특전사 · 특임대 · 군사경찰(MP) · 의무병 · 해군(해병대 포함) · 공군 · 육군</li><li>새 팀 4개: 군사훈련부(교육사령부 정복 · 체력 700) · 국군간호사사관학교(의무병 정복 · 650) · 국평단 운영부(국평단 정복: 하늘색 베레모 · UN 패치 · 600) · 위병소 관리단(백색 군사경찰 행사복 · 흰 헬멧 · 550)</li><li>이름 바뀜: 교육사령관 → 교육사령부(TDC) · 국군평화단 → 국군평화주의단(AFPG · 평화복) · 원래 팀원은 그대로 옮겨져요</li><li>🎯 특임대 대테러복: 육군 출신 청색 · 해군 출신 남색 · 공군 출신 하늘색 · ⚜ AFMPC: 남색 대테러복</li><li>👕 /복장: AFMPC 남색 대테러복 ↔ 군사경찰 행사복 · 군사경찰 행사복 ↔ 전투복(헌병 헬멧 · 헌병 완장)</li><li>🦅 해병대는 해군에 포함 (해군과 같은 단계)</li></ul>
@@ -2286,7 +2288,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.278 — 🕶 Training Command aviator sunglasses</h4>
+    <h4>🆕 v26.279 — 🛡 More realistic MP dress</h4>
+    <ul><li>🛡 Darker green · silver aiguillette running along the collar · chest loops · two hanging cords with metal tips · four buttoned pockets · white shoulder piping · three thick white stripes on the lower sleeves</li></ul>
+    <h4>v26.278 — 🕶 Training Command aviator sunglasses</h4>
     <ul><li>🕶 Training Command and MTD now wear aviator sunglasses: a straight top bar and brown lenses that narrow downward and meet in a V at the nose</li></ul>
     <h4>v26.277 — 🎖 CLKKY ARMY reorganization (20 ranks) · 👕 /복장</h4>
     <ul><li>🎖 New order (top → bottom): President, Prime Minister, Commander, 🎓 MTD, 🏥 AFNA, ⚖ AOD, 💂 GPMU, 🕊 AFPG, AFMPC, TDC, Officer, Instructor, Assistant, SWC, SMU, MP, Medic, Navy (incl. Marines), Air Force, Army</li><li>4 new teams: Military Training Department (Training Command dress, 700 HP) · Armed Forces Nursing Academy (medic dress, 650) · Peace Group Operations Department (peace-corps dress with sky-blue beret and UN patch, 600) · Guard Post Management Unit (white MP dress uniform, white helmet, 550)</li><li>Renamed: Training Commander → Training & Doctrine Command (TDC) · Peace Corps → Armed Forces Pacifist Group (AFPG) · members carry over</li><li>🎯 SMU counter-terror suits: blue for Army, navy for Navy, sky blue for Air Force · ⚜ AFMPC: navy counter-terror suit</li><li>👕 /복장: AFMPC navy suit ↔ MP dress · MP dress ↔ combat uniform (MP helmet, 헌병 armband)</li><li>🦅 Marines are part of the Navy (same level)</li></ul>
@@ -9603,7 +9607,7 @@ const ofSolid=(c,r=.8,m=0)=>ofM('s'+c+r+m,null,c,r,m);
 // 🎖 정복 (나무위키 「군복/한국군/육군」): 육군 신형 정복(2017~) 어두운 피콕그린 · 연회색 셔츠 · 소매 금줄 (부사관~위관 1 · 영관 2 · 장성 3) · 정모 밝은 노랑 턱끈 · 군사경찰 행사복은 검정 + 흰 견사줄
 const OF_DRESS=['army','medic','officer','tmc','mpcmd','tmccmd','staff','owner','navy','airforce','mp','swat','marine','pm','ipc'];
 const SW_COL={blue:'#1f4fa8',navyb:'#1a2440',sky:'#6fa8dc'}; // 🎯 색 대테러복: 청색 · 남색 · 하늘색
-const ofDressCol=s=>({navy:'#1a2238',airforce:'#4a6283',mp:'#173a36',swat:'#141416',marine:'#2e3a26',officer:'#1c3b30',staff:'#1c3b30',tmccmd:'#0f1d19',ipc:'#2e302b'})[s]||'#003942'; // 사단장도 장교 정복 // 군사경찰 행사복 진녹색 · 장교 진녹색 · 교육사령부 검녹색
+const ofDressCol=s=>({navy:'#1a2238',airforce:'#4a6283',mp:'#1a2b27',swat:'#141416',marine:'#2e3a26',officer:'#1c3b30',staff:'#1c3b30',tmccmd:'#0f1d19',ipc:'#2e302b'})[s]||'#003942'; // 사단장도 장교 정복 // 군사경찰 행사복 진녹색 · 장교 진녹색 · 교육사령부 검녹색
 const OF_NAVY=['#5d6f86','#3c4c63','#2a3648','#7b8ba0','#1c232e'],OF_AF=['#7d8a96','#5d6c7c','#46566a','#99a6b0','#2f3946']; // 해군 · 공군 전투복 디지털 무늬
 const OF_MAR=['#8a6a44','#6b5236','#4a3a26','#a08860','#2e251a']; // 해병대 전투복 (갈색 디지털 무늬)
 const OF_PEACE=['#5d5e56','#3e3f3a','#2b2c28','#74756c','#1b1c19']; // 🕊 국군평화복: 회흑색 디지털 무늬
@@ -9626,10 +9630,12 @@ function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,wt=!!o.white,COL=wt?'#eceb
   for(const a of A.arms)for(let i=0;i<sl;i++)add(a,.222,.015,.242,GOLD,0,-.42+i*.035,0); // 소매 금줄
   if(s==='owner'){const C=GOLD;add(A.up,.025,.3,.02,C,.2,.5,F(.015));add(A.up,.025,.22,.02,C,.16,.48,F(.015));} // 금줄 (예장)
   if(s==='mp'){const SC=ofSolid(0xdfe3e8,.3,.75);add(A.up,.06,.035,.2,SC,.2,.705,0); /* 🛡 군사경찰 행사복 은색 견사줄: 어깨 매듭 · 가슴으로 늘어진 두 고리 · 끝 장식 */
-    for(const [w,h,x,y,r] of [[.022,.3,.14,.55,.55],[.022,.38,.11,.5,.78],[.022,.2,.18,.48,.15]]){const c=add(A.up,w,h,.02,SC,x,y,F(.016));c.rotation.z=r;}
-    add(A.up,.035,.06,.025,SILV,.0,.38,F(.02));add(A.up,.035,.06,.025,SILV,.06,.36,F(.02));}
+    for(const [w,h,x,y,r] of [[.022,.2,.12,.665,1.25],[.022,.3,.14,.55,.55],[.022,.38,.11,.5,.78],[.022,.2,.18,.48,.15]]){const c=add(A.up,w,h,.02,SC,x,y,F(.016));c.rotation.z=r;} // 깃을 따라 목 쪽으로 · 가슴 고리 셋
+    for(const x of [.0,.04]){add(A.up,.012,.12,.015,SC,x,.43,F(.019));add(A.up,.03,.05,.025,SILV,x,.355,F(.02));} // 가운데로 늘어진 두 줄 · 끝 장식
+    for(const sd of [-1,1])for(const y of [.5,.2]){add(A.up,.15,.13,.012,DARK,sd*.13,y,F(.004));add(A.up,.155,.035,.016,DARK,sd*.13,y+.065,F(.007));add(A.up,.03,.03,.02,SILV,sd*.13,y+.04,F(.01));} // 단추 달린 주머니 4개
+    A.arms.forEach((a,i)=>{const p=add(a,.23,.022,.25,wt?ofSolid(0x1a2440,.6):WH,0,.0,0);p.rotation.z=(i?1:-1)*.4;});} // 어깨 흰 줄 (바깥쪽으로 비스듬히)
   if(s==='tmccmd'){add(A.up,.545,.07,.3,ofSolid(0x0e0e10,.4,.3),0,.08,0);add(A.up,.07,.05,.02,GOLD,0,.08,F(.02));} // 교육사령부: 검은 허리띠 · 금 버클
-  if(s==='mp')for(const a of A.arms)for(let i=0;i<3;i++)add(a,.224,.022,.244,wt?ofSolid(0x1a2440,.6):WH,0,-.17-i*.045,0); // 군사경찰 행사복: 소매 흰 줄 3개 (백색 행사복은 남색 줄)
+  if(s==='mp')for(const a of A.arms)for(let i=0;i<3;i++)add(a,.224,.03,.244,wt?ofSolid(0x1a2440,.6):WH,0,-.27-i*.05,0); // 군사경찰 행사복: 소매 아래쪽 굵은 흰 줄 3개 (백색 행사복은 남색 줄)
   if(s==='officer'||s==='tmccmd')for(const sd of [-1,1])add(A.up,.05,.05,.01,GOLD,sd*.09,.66,F(.03)); // 옷깃 금색 계급장
   if(s==='swat')add(A.up,.3,.09,.01,ofM('sw',ofText('SWAT','#141517','#f0f0f0',64,18)),0,.5,.155); // 등 SWAT
   add(A.arms[1],.226,.11,.246,ofM('tg',ofTaeguk()),0,-.06,0); // 오른팔 태극기
