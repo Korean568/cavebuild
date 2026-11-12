@@ -336,7 +336,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.277 — 🎖 CLKKY ARMY 조직 개편 (20순위) · 👕 /복장</h4>
+    <h4>🆕 v26.278 — 🕶 교육사령부 보잉 선글라스</h4>
+    <ul><li>🕶 교육사령부 · 군사훈련부 선글라스: 곧은 위 테 · 아래로 좁아지는 갈색 렌즈가 코에서 V자로 만나는 보잉(에비에이터) 모양</li></ul>
+    <h4>v26.277 — 🎖 CLKKY ARMY 조직 개편 (20순위) · 👕 /복장</h4>
     <ul><li>🎖 새 순서 (위 → 아래): 대통령 · 국무총리 · 사단장(Commander) · 🎓 군사훈련부(MTD) · 🏥 국군간호사사관학교(AFNA) · ⚖ 국평단 운영부(AOD) · 💂 위병소 관리단(GPMU) · 🕊 국군평화주의단(AFPG) · 국군 군사경찰 연합(AFMPC) · 교육사령부(TDC) · 장교 · 교관 · 조교 · 특전사 · 특임대 · 군사경찰(MP) · 의무병 · 해군(해병대 포함) · 공군 · 육군</li><li>새 팀 4개: 군사훈련부(교육사령부 정복 · 체력 700) · 국군간호사사관학교(의무병 정복 · 650) · 국평단 운영부(국평단 정복: 하늘색 베레모 · UN 패치 · 600) · 위병소 관리단(백색 군사경찰 행사복 · 흰 헬멧 · 550)</li><li>이름 바뀜: 교육사령관 → 교육사령부(TDC) · 국군평화단 → 국군평화주의단(AFPG · 평화복) · 원래 팀원은 그대로 옮겨져요</li><li>🎯 특임대 대테러복: 육군 출신 청색 · 해군 출신 남색 · 공군 출신 하늘색 · ⚜ AFMPC: 남색 대테러복</li><li>👕 /복장: AFMPC 남색 대테러복 ↔ 군사경찰 행사복 · 군사경찰 행사복 ↔ 전투복(헌병 헬멧 · 헌병 완장)</li><li>🦅 해병대는 해군에 포함 (해군과 같은 단계)</li></ul>
     <h4>v26.276 — 🛡 군사경찰 행사복 · ⭐ 교육사령부 복장 다듬기</h4>
     <ul><li>🛡 군사경찰 행사복: 어깨 매듭에서 가슴으로 늘어진 은색 견사줄 고리 두 개 · 끝 장식</li><li>⭐ 교육사령부: 검은 허리띠 · 금 버클</li></ul>
@@ -2282,7 +2284,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.277 — 🎖 CLKKY ARMY reorganization (20 ranks) · 👕 /복장</h4>
+    <h4>🆕 v26.278 — 🕶 Training Command aviator sunglasses</h4>
+    <ul><li>🕶 Training Command and MTD now wear aviator sunglasses: a straight top bar and brown lenses that narrow downward and meet in a V at the nose</li></ul>
+    <h4>v26.277 — 🎖 CLKKY ARMY reorganization (20 ranks) · 👕 /복장</h4>
     <ul><li>🎖 New order (top → bottom): President, Prime Minister, Commander, 🎓 MTD, 🏥 AFNA, ⚖ AOD, 💂 GPMU, 🕊 AFPG, AFMPC, TDC, Officer, Instructor, Assistant, SWC, SMU, MP, Medic, Navy (incl. Marines), Air Force, Army</li><li>4 new teams: Military Training Department (Training Command dress, 700 HP) · Armed Forces Nursing Academy (medic dress, 650) · Peace Group Operations Department (peace-corps dress with sky-blue beret and UN patch, 600) · Guard Post Management Unit (white MP dress uniform, white helmet, 550)</li><li>Renamed: Training Commander → Training & Doctrine Command (TDC) · Peace Corps → Armed Forces Pacifist Group (AFPG) · members carry over</li><li>🎯 SMU counter-terror suits: blue for Army, navy for Navy, sky blue for Air Force · ⚜ AFMPC: navy counter-terror suit</li><li>👕 /복장: AFMPC navy suit ↔ MP dress · MP dress ↔ combat uniform (MP helmet, 헌병 armband)</li><li>🦅 Marines are part of the Navy (same level)</li></ul>
     <h4>v26.276 — 🛡 MP dress · ⭐ Training Command uniform polish</h4>
     <ul><li>🛡 Military police dress: silver aiguillette with a shoulder knot, two loops across the chest and metal tips</li><li>⭐ Training Command: black belt with a gold buckle</li></ul>
@@ -9605,6 +9609,8 @@ const ofFieldTex=s=>s==='ipc'?ofCamo(71,OF_PEACE):s==='navy'?ofCamo(41,OF_NAVY):
 function ofSun(add,A){const L=OF_MAT.sunL||(OF_MAT.sunL=new THREE.MeshStandardMaterial({color:0x0a0c12,roughness:.06,metalness:.85,transparent:true,opacity:.7})), /* 렌즈는 살짝 투명 */F=ofSolid(0x1c1c1f,.25,.85),G=ofSolid(0x6a7a9a,.05,.9); // 🕶 선글라스: 렌즈 두 알 (번쩍이는 검은 유리) · 코받침 · 위 테 · 귀에 거는 다리 · 렌즈 반사
   for(const sd of [-1,1]){add(A.head,.18,.11,.02,L,sd*.112,.255,-.268);add(A.head,.05,.025,.005,G,sd*.112-.04,.285,-.28);}
   add(A.head,.06,.025,.02,F,0,.282,-.27);add(A.head,.47,.025,.022,F,0,.312,-.27);for(const sd of [-1,1])add(A.head,.012,.025,.27,F,sd*.266,.305,-.14);}
+function ofSunAv(add,A){const L=OF_MAT.sunAv||(OF_MAT.sunAv=new THREE.MeshStandardMaterial({color:0x4a4330,roughness:.1,metalness:.6,transparent:true,opacity:.82})),F=ofSolid(0x1a1a1c,.3,.8); // 🕶 교육사령부 보잉(에비에이터) 선글라스: 곧은 위 테 · 아래로 좁아지는 갈색 렌즈 · 코에서 V자로 만남
+  add(A.head,.5,.025,.022,F,0,.315,-.27);for(const sd of [-1,1]){add(A.head,.225,.05,.02,L,sd*.118,.285,-.268);add(A.head,.19,.04,.02,L,sd*.128,.24,-.268);add(A.head,.12,.035,.02,L,sd*.15,.205,-.268);add(A.head,.012,.025,.27,F,sd*.266,.305,-.14);}}
 function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,wt=!!o.white,COL=wt?'#ecebe6':ofDressCol(s),TOP=ofM('dr'+s+(wt?'w':''),ofPlain(COL,21)),DARK=ofM('dk'+s+(wt?'w':''),ofPlain(COL,22),0x9a9a9a); /* wt: 💂 위병소 관리단 백색 행사복 */
   const GOLD=ofSolid(0xe0b83a,.35,.8),SILV=ofSolid(0xd0d4dc,.35,.8),WH=ofSolid(0xf2f2f2,.6),SHOE=ofSolid(0x0e0e10,.2,.3),SHIRT=ofSolid(s==='navy'?0xf2f2f2:0xc9cdd0,.8),TIE=ofSolid(['navy','mp','swat','tmccmd'].includes(s)?0x101012:0x14302f,.6),YEL=ofSolid(0xf2d23a,.35,.7);
   add(A.up,.52,.7,.28,TOP,0,.34,0);for(const a of A.arms)add(a,.215,.5,.235,TOP,0,-.2,0);
@@ -9635,7 +9641,7 @@ function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,wt=!!o.white,COL=wt?'#eceb
   if(s==='ipc'){const B=ofSolid(0x3f8fb5,.95);add(A.head,.55,.1,.55,B,0,.43,0);const b=add(A.head,.56,.07,.5,B,.05,.5,0);b.rotation.z=-.18;add(A.head,.07,.08,.01,GOLD,-.13,.44,-.28);return;} // ⚖ 국평단 정복: 하늘색(UN) 베레모
   if(s==='mp'&&wt){const H=ofSolid(0xf2f2f2,.3,.2);add(A.head,.56,.22,.56,H,0,.46,0);add(A.head,.58,.05,.58,H,0,.355,0);add(A.head,.3,.1,.01,ofM('hbw',ofText('헌병','#f2f2f2','#141416',48,18)),0,.47,-.284);add(A.head,.565,.04,.565,ofSolid(0x1a2440,.6),0,.43,0);SUN();return;} // 💂 위병소 관리단: 흰 헬멧 · 검은 「헌병」 · 남색 띠 · 선글라스
   if(s==='mp'){const H=ofSolid(0x0c0c0e,.25,.3);add(A.head,.56,.22,.56,H,0,.46,0);add(A.head,.58,.05,.58,H,0,.355,0);add(A.head,.3,.1,.01,ofM('hbh',ofText('헌병','#0c0c0e','#f2f2f2',48,18)),0,.47,-.284);for(const sd of [-1,1])add(A.head,.01,.08,.18,ofM('mph',ofText('MP','#0c0c0e','#f2f2f2',48,22)),sd*.284,.47,0);SUN();return;} // 군사경찰 헬멧: 앞 흰 「헌병」 · 옆 MP · 선글라스
-  if(s==='tmccmd'){add(A.head,.55,.1,.55,ofSolid(0x0a0a0b,.6),0,.41,0);add(A.head,.62,.1,.62,ofSolid(0x111314,.8),0,.5,0);add(A.head,.5,.03,.18,ofSolid(0x050505,.15,.4),0,.36,-.34);add(A.head,.11,.11,.01,ofM('tgh',ofTaeguk()),0,.5,-.312);SUN();return;} // 교육사령부: 검은 정모 · 태극 모장 · 선글라스
+  if(s==='tmccmd'){add(A.head,.55,.1,.55,ofSolid(0x0a0a0b,.6),0,.41,0);add(A.head,.62,.1,.62,ofSolid(0x111314,.8),0,.5,0);add(A.head,.5,.03,.18,ofSolid(0x050505,.15,.4),0,.36,-.34);add(A.head,.11,.11,.01,ofM('tgh',ofTaeguk()),0,.5,-.312);ofSunAv(add,A);return;} // 교육사령부: 검은 정모 · 태극 모장 · 갈색 보잉 선글라스
   if(s==='tmc'){const C=ofSolid(0x1c1f17,.9);add(A.head,.55,.15,.55,C,0,.43,0);add(A.head,.5,.03,.17,C,0,.355,-.33);add(A.head,.2,.07,.01,ofM('tc',ofText('조교','#1c1f17','#f2d040',48,18)),0,.44,-.28);ofSun(add,A);return;} // 조교 모자 · 선글라스
   if(s==='swat'||s==='mpcmd'){const c=0x0d0d0f;add(A.head,.55,.1,.55,ofSolid(c,.95),0,.43,0);const b=add(A.head,.56,.07,.5,ofSolid(c,.95),.05,.5,0);b.rotation.z=-.18;add(A.head,.07,.08,.01,GOLD,-.13,.44,-.28);return;} // 베레모 (특임대 · MP사령관 검정 · 교육사령관 녹색)
   if(s==='marine'){const C=ofM('mc',ofCamo(31));add(A.head,.55,.16,.55,C,0,.44,0);const t=add(A.head,.5,.06,.5,C,0,.53,0);t.rotation.y=Math.PI/4;add(A.head,.5,.03,.16,C,0,.37,-.33);add(A.head,.08,.08,.01,GOLD,0,.45,-.28);return;} // 해병대 팔각모 (위장 무늬 · 닻 마크)
