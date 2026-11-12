@@ -336,7 +336,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.281 — 🎖 장교 정복 · 🏴 무법자 복장 · 🎯 특임대 마스크</h4>
+    <h4>🆕 v26.282 — 🦺 방탄복</h4>
+    <ul><li>🦺 육군 · 해군 · 공군 · 특임대 · 특전사는 방탄복(플레이트 캐리어)을 입어요: 앞뒤 방탄판 · 어깨끈 · 옆판 · 탄창 파우치 4개 · 태극기 패치 · 옆구리 무전기와 안테나 (해병대는 안 입어요)</li><li>🎒 특임대 · 특전사는 등에 돌격 배낭(SMU · SWC 글자)도 메고, 방탄복은 대테러복 색이에요</li></ul>
+    <h4>v26.281 — 🎖 장교 정복 · 🏴 무법자 복장 · 🎯 특임대 마스크</h4>
     <ul><li>🎖 장교 정복: 올리브 진녹색 · 소매 금색 잎 수 두 줄 · 흰 명찰(CLKKYA) · 금 흉장 · 주머니 4개 · 정모 금색 수 띠 · 챙 금색 수 · 금 모장 (사단장 정복 색도 같이)</li><li>🏴 무법자 · 배신자: 검은 복면(흰 테 눈 · 입) · 검은 옷 · 가슴 초록 원형 마크 · 흰 멜빵</li><li>🎯 특임대: 방독면(입 · 코 덮개 · 양쪽 필터) · 고글 (복면 · 헬멧 위에)</li></ul>
     <h4>v26.280 — 🎖 부대 마크 · 🪖 전투복 통일 · ROK → CLKKY</h4>
     <ul><li>🎖 부대 마크 3가지: 🦅 해병대 (「클키공화국 해병대 · CLKKY MARINE CORPS」) · ⭐ 교육사령부 · 🔺 육군 본부</li><li>왼팔 바깥쪽 마크: 해병대 → 해병대 마크 · 육군 · 장교 · 사단장 → 육군 본부 마크 · 교육사령부 · 군사훈련부 · 조교 · 교관 → 교육사령부 마크 · 교육사령부 정모 모장도 교육사령부 마크</li><li>기지 간판 왼쪽에도 마크 (기지 정문 · 육군 생활관 · 사령관 · 고위 간부 회의실 → 육군 본부 · 해병대 생활관 → 해병대 · 교육부 건물 → 교육사령부)</li><li>🪖 해군 · 공군 · 해병대 전투복과 방탄모도 육군 전투복 무늬로 통일 (평화복 · 대테러복은 그대로)</li><li>가슴 패치 ROKA · ROKN · ROKAF · ROKMC → CLKKYA · CLKKYN · CLKKYAF · CLKKYMC</li><li>🧩 모드 기능: CB.bigSign 의 logo ('mc' · 'tdc' · 'ahq')</li></ul>
@@ -2290,7 +2292,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.281 — 🎖 Officer dress · 🏴 Outlaw outfit · 🎯 SMU mask</h4>
+    <h4>🆕 v26.282 — 🦺 Body armor</h4>
+    <ul><li>🦺 Army, Navy, Air Force, SMU and SWC wear plate carriers: front and back plates, shoulder straps, side panels, four mag pouches, a taegeuk patch and a radio with antenna (Marines don't)</li><li>🎒 SMU and SWC also carry an assault pack labeled with their unit, and their armor matches their counter-terror suit color</li></ul>
+    <h4>v26.281 — 🎖 Officer dress · 🏴 Outlaw outfit · 🎯 SMU mask</h4>
     <ul><li>🎖 Officer dress: olive dark green · two gold-leaf embroidered sleeve bands · white name plate (CLKKYA) · gold badge · four pockets · peaked cap with gold embroidered band and visor and a gold badge (Commander dress shares the color)</li><li>🏴 Outlaw and Traitor: black balaclava with white-rimmed eyes and mouth · black clothes · green round chest emblem · white sling</li><li>🎯 SMU: respirator (mouth/nose cover, two filters) and goggles over the balaclava and helmet</li></ul>
     <h4>v26.280 — 🎖 Unit emblems · 🪖 Unified combat uniform · ROK → CLKKY</h4>
     <ul><li>🎖 Three unit emblems: 🦅 Marine Corps (“클키공화국 해병대 · CLKKY MARINE CORPS”) · ⭐ Training & Doctrine Command · 🔺 Army Headquarters</li><li>Left-arm emblems: Marines → Marine emblem · Army, Officer, Commander → Army HQ emblem · TDC, MTD, Assistant, Instructor → TDC emblem · the TDC cap badge is the TDC emblem too</li><li>Base signs show emblems on the left (base gate, Army barracks and command rooms → Army HQ · Marine barracks → Marine Corps · education buildings → TDC)</li><li>🪖 Navy, Air Force and Marine combat uniforms and helmets now use the Army camo pattern (peace and counter-terror uniforms unchanged)</li><li>Chest patches ROKA/ROKN/ROKAF/ROKMC → CLKKYA/CLKKYN/CLKKYAF/CLKKYMC</li><li>🧩 Mod API: logo option for CB.bigSign ('mc', 'tdc', 'ahq')</li></ul>
@@ -9630,6 +9634,10 @@ mc:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAgpUlEQV
 function ofLogo(k){const key='um_lg_'+k;if(OF_MAT[key])return OF_MAT[key];const t=new THREE.TextureLoader().load(OF_LOGO[k]);const m=new THREE.MeshStandardMaterial({map:t,roughness:.8,alphaTest:.4});m.userData.ofk=key;return OF_MAT[key]=m;} // 🎖 부대 마크 재질 (투명한 둘레는 안 그림)
 function ofArmLogo(A,add,k,y=-.2,sz=.11){add(A.arms[0],.012,sz,sz,ofLogo(k),-.113,y,0);} // 왼팔 바깥쪽 부대 마크
 function ofGoldLeaf(){return ofTex('gleaf',(g,W,H)=>{g.fillStyle='#b8902a';g.fillRect(0,0,W,H);g.fillStyle='#f0cf5a';for(let x=0;x<W;x+=8){g.beginPath();g.ellipse(x+4,H*.35,3.2,H*.22,.6,0,7);g.fill();g.beginPath();g.ellipse(x+4,H*.68,3.2,H*.22,-.6,0,7);g.fill();}g.fillStyle='#7a5a14';g.fillRect(0,0,W,1);g.fillRect(0,H-1,W,1);},32,8);} // 🎖 금색 잎 수 (장교 소매 · 정모)
+function ofVest(A,add,F,vc){const V=ofM('vest'+vc,ofPlain(vc,12)),P=ofM('vestp'+vc,ofPlain(vc,13),0xc8c8c8),K=ofSolid(0x1a1b1d,.6,.3); // 🦺 방탄복(플레이트 캐리어): 앞뒤 판 · 어깨끈 · 옆판 · 탄창 파우치 4 · 태극기 패치 · 무전기 · 안테나
+  add(A.up,.5,.38,.05,V,0,.42,F(.025));add(A.up,.5,.38,.05,V,0,.42,.165);for(const sd of [-1,1]){add(A.up,.08,.05,.35,V,sd*.17,.665,0);add(A.up,.05,.2,.3,V,sd*.255,.32,0);}
+  for(const x of [-.165,-.055,.055,.165]){add(A.up,.09,.13,.05,P,x,.29,F(.065));add(A.up,.092,.03,.055,K,x,.35,F(.066));}
+  add(A.up,.1,.06,.012,ofM('tgv',ofTaeguk()),-.13,.55,F(.052));add(A.up,.06,.14,.07,K,.3,.37,-.03);add(A.up,.012,.2,.012,K,.3,.54,-.03);add(A.up,.025,.03,.04,ofSolid(0x8cd03a,.4),.3,.43,-.07);}
 function ofSunAv(add,A){const L=OF_MAT.sunAv||(OF_MAT.sunAv=new THREE.MeshStandardMaterial({color:0x4a4330,roughness:.1,metalness:.6,transparent:true,opacity:.82})),F=ofSolid(0x1a1a1c,.3,.8); // 🕶 교육사령부 보잉(에비에이터) 선글라스: 곧은 위 테 · 아래로 좁아지는 갈색 렌즈 · 코에서 V자로 만남
   add(A.head,.5,.025,.022,F,0,.315,-.27);for(const sd of [-1,1]){add(A.head,.225,.05,.02,L,sd*.118,.285,-.268);add(A.head,.19,.04,.02,L,sd*.128,.24,-.268);add(A.head,.12,.035,.02,L,sd*.15,.205,-.268);add(A.head,.012,.025,.27,F,sd*.266,.305,-.14);}}
 function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,wt=!!o.white,COL=wt?'#ecebe6':ofDressCol(s),TOP=ofM('dr'+s+(wt?'w':''),ofPlain(COL,21)),DARK=ofM('dk'+s+(wt?'w':''),ofPlain(COL,22),0x9a9a9a); /* wt: 💂 위병소 관리단 백색 행사복 */
@@ -9678,7 +9686,7 @@ function ofDress(A,o,add){const s=o.style,F=v=>-.14-v,wt=!!o.white,COL=wt?'#eceb
   if(s==='officer'){const GL=ofM('gleaf',ofGoldLeaf());add(A.head,.52,.05,.02,GL,0,.39,-.283);add(A.head,.5,.014,.17,GL,0,.378,-.345);add(A.head,.12,.12,.01,GOLD,0,.46,-.312);add(A.head,.07,.07,.012,ofM('tgh',ofTaeguk()),0,.46,-.318);return;} // 🎖 장교 정모: 금색 수 띠 · 챙 금색 수 · 금 모장(태극)
   add(A.head,.5,.025,.02,Y,0,.38,-.282);add(A.head,.1,.09,.01,Y,0,.44,-.282);if(s==='owner')add(A.head,.46,.025,.02,GOLD,0,.35,-.42);} // 턱끈 · 무궁화 모장 · (장성) 챙 금장
 function ofTopTex(o){const s=o.style;if(s==='mpw')return ofPlain('#ecebe6',21);if(s==='swat'&&SW_COL[o.cam])return ofPlain(SW_COL[o.cam],3);if(s==='tmc')return ofPlain('#c41e1c',25);if(s==='inst')return ofPlain('#141416',26);if(s==='pm'||s==='pres')return ofPlain(s==='pres'?'#141a2b':'#1d2433',23);if(OF_DRESS.includes(s)&&!o.field)return ofPlain(ofDressCol(s),21);if(o.field&&s!=='swat'&&s!=='mp')return ofFieldTex(s);if(s==='swat'&&o.cam)return ofFieldTex(o.cam);return s==='swat'?ofPlain('#1d1e21',3):s==='police'?ofPlain('#2f7d77',4):s==='prisoner'?ofPlain('#e06a1a',5):s==='outlaw'?ofPlain('#26262a',6):s==='owner'?ofPlain('#003942',7):s==='staff'?ofPlain('#2f3d2c',8):ofCamo(11);} // 총사령관: 신형 정복 피콕그린 · 부사령관: 근무복 진녹색 // 웃옷 무늬 (1인칭 소매도)
-function ofBuild(A,o,add0){const s=o.style,F=v=>-.14-v,DECO=new Set(['nm','pol','sw','sw2','pn','pn2','xb','mpb','tb','xh','mph','tc','tg','um','roka','hb','hbh','tgh','tbn','unp','ibn','hbw','nmo','olf','olg']), // 글자 · 그림판은 그림 한 장을 통째로 (게임 상자는 크기만큼 그림을 반복해서 귀퉁이만 보임)
+function ofBuild(A,o,add0){const s=o.style,F=v=>-.14-v,DECO=new Set(['nm','pol','sw','sw2','pn','pn2','xb','mpb','tb','xh','mph','tc','tg','um','roka','hb','hbh','tgh','tbn','unp','ibn','hbw','nmo','olf','olg','tgv']), // 글자 · 그림판은 그림 한 장을 통째로 (게임 상자는 크기만큼 그림을 반복해서 귀퉁이만 보임)
     add=(par,w,h,d,mat,x,y,z)=>{const k=mat.userData.ofk;if(!(DECO.has(k)||(k&&/^(um|roka|sw)/.test(k))))return add0(par,w,h,d,mat,x,y,z);const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);par.add(m);A.outfitParts.push(m);return m;},TOP=ofM('top'+s+(o.cam||''),ofTopTex(o)),POCK=ofM('pk'+s+(o.cam||''),ofTopTex(o),0xb8b8b8);
   if(s==='pm'||s==='pres'){const pr=s==='pres',SU=ofM('suit'+s,ofPlain(pr?'#141a2b':'#1d2433',23)),SH=ofSolid(0xf4f4f4,.7),TI=ofSolid(pr?0x1c4fa0:0xa01c2c,.6),GD=ofSolid(0xe0b83a,.35,.8),SHOE=ofSolid(0x0e0e10,.2,.3); // 🏛 국무총리 · 👑 대통령 정장: 검은(남색) 정장 · 흰 셔츠 · 넥타이 (총리 빨강 · 대통령 파랑) · 금 배지
     add(A.up,.52,.7,.28,SU,0,.34,0);for(const a of A.arms){add(a,.215,.5,.235,SU,0,-.2,0);add(a,.22,.04,.24,SH,0,-.44,0);}for(const l of A.legs){add(l,.255,.77,.265,SU,0,-.375,0);add(l,.265,.12,.275,SHOE,0,-.71,0);}
@@ -9709,8 +9717,12 @@ function ofBuild(A,o,add0){const s=o.style,F=v=>-.14-v,DECO=new Set(['nm','pol',
     for(const l of A.legs)add(l,.2,.14,.03,POCK,0,-.32,-.14);} // 다리 건빵 주머니
   if(s==='police'){add(A.up,.07,.08,.02,GOLD,-.13,.5,F(.01));add(A.up,.12,.03,.01,SILV,.13,.5,F(.01));for(const sd of [-1,1])add(A.up,.13,.025,.18,ofM('bp',ofPlain('#1d2742',2)),sd*.19,.7,0); // 흉장 · 명판 · 견장
     add(A.up,.07,.16,.11,BLK,.29,.0,0);add(A.up,.3,.1,.01,ofM('pol',ofText('POLICE','#1d2742','#f2f2f2',64,16)),0,.45,.15);} // 권총집 · 등 POLICE
-  if(s==='swat'){const VC={army:'#3a4330',navy:'#1e293a',airforce:'#3a4658',marine:'#4a3a26',blue:'#173a7a',navyb:'#101830',sky:'#4f86b8'}[o.cam]||'#141517';add(A.up,.56,.44,.34,ofM('vest'+VC,ofPlain(VC,12)),0,.4,0); /* 헌병 전투복 (o.cam): 그 군의 무늬 · 조끼도 그 군 색 */for(const x of [-.15,0,.15])add(A.up,.11,.12,.05,ofSolid(0x232428,.9),x,.28,-.19); // 방탄조끼 · 탄창 파우치
-    {const vt=o.vt||'SWAT';add(A.up,.3,.09,.01,ofM('sw'+vt,ofText(vt,'#141517','#f0f0f0',64,18)),0,.5,.175);add(A.up,.22,.06,.01,ofM('sw2'+vt,ofText(vt,'#141517','#f0f0f0',64,18)),0,.52,-.176);} // 조끼 글자 (SMU · SWC · AFMPC)
+  const plate=['army','navy','airforce'].includes(s)||(s==='swat'&&(o.vt==='SMU'||o.vt==='SWC')); // 🦺 방탄복: 육군 · 해군 · 공군 · 특임대 · 특전사 (해병대 X)
+  if(plate){const VC=s==='swat'?({blue:'#173a7a',navyb:'#101830',sky:'#4f86b8'}[o.cam]||'#1a1b1e'):'#3f4434';ofVest(A,add,F,VC);
+    if(s==='swat'){const vt=o.vt,V=ofM('vest'+VC,ofPlain(VC,12));add(A.up,.36,.42,.13,V,0,.38,.27);for(const y of [.28,.44])add(A.up,.37,.025,.14,ofSolid(0x5a5c60,.6),0,y,.27);add(A.up,.2,.06,.012,ofM('sw'+vt,ofText(vt,'#141517','#f0f0f0',64,18)),0,.52,.342);add(A.up,.18,.05,.012,ofM('sw2'+vt,ofText(vt,'#141517','#f0f0f0',64,18)),.12,.6,F(.052));}} // 등 돌격 배낭 (부대 이름) · 가슴 부대 이름
+  if(s==='swat'&&!plate){const VC={army:'#3a4330',navy:'#1e293a',airforce:'#3a4658',marine:'#4a3a26',blue:'#173a7a',navyb:'#101830',sky:'#4f86b8'}[o.cam]||'#141517';add(A.up,.56,.44,.34,ofM('vest'+VC,ofPlain(VC,12)),0,.4,0); /* AFMPC 조끼 (그 색) */for(const x of [-.15,0,.15])add(A.up,.11,.12,.05,ofSolid(0x232428,.9),x,.28,-.19); // 방탄조끼 · 탄창 파우치
+    {const vt=o.vt||'SWAT';add(A.up,.3,.09,.01,ofM('sw'+vt,ofText(vt,'#141517','#f0f0f0',64,18)),0,.5,.175);add(A.up,.22,.06,.01,ofM('sw2'+vt,ofText(vt,'#141517','#f0f0f0',64,18)),0,.52,-.176);}} // 조끼 글자 (AFMPC)
+  if(s==='swat'){
     for(const a of A.arms)add(a,.225,.15,.245,BLK,0,-.5,0);} // 등 · 가슴 SWAT · 장갑
   if(s==='owner'||s==='staff'){for(let i=0;i<4;i++)add(A.up,.035,.035,.02,s==='owner'?GOLD:SILV,0,.56-i*.13,F(.01)); // 단추 줄
     add(A.up,.3,.05,.3,TOP,0,.69,0);const rib=[0xd02020,0x2050c0,0xe0b83a,0x20a050,0xf0f0f0,0xd02020];rib.slice(0,s==='owner'?6:3).forEach((c,i)=>add(A.up,.05,.03,.02,ofSolid(c,.6),-.18+(i%3)*.05,.55-Math.floor(i/3)*.035,F(.01))); // 훈장 리본
