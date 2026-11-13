@@ -70,7 +70,7 @@ ORGS['해군'].lv = ORGS['공군'].lv = ORGS['육군'].lv; // 🪖 1사단 육�
 ORGS['사단장'].lv = ORGS['국방부 장관'].lv; ORGS['군사훈련부'].lv = ORGS['국군 사령부'].lv; ORGS['실전 훈련병'].lv = ORGS['연습 훈련병'].lv + 1; // 같은 순위 (3순위 · 5순위)
 const DIVS = { '육군': '1사단', '해군': '2사단', '해병대': '2사단', '공군': '3사단' }; // 교도소는 사단 없음 · 군사경찰 · 특임대는 처음 들어간 군의 사단 (divOf)
 const BR_DIV = { '육군': '1사단', '해군': '2사단', '공군': '3사단' };
-const divOf = (nick, o) => DIVS[o] || (nick && ['군사경찰', '특수임무대', '위병소 관리단', '순찰부대', '대통령 경호대', '대통령 특수경호대', '청와대 경호부대'].includes(o) ? BR_DIV[(S.m[nick] || {}).br] || '1사단' : '');
+const divOf = (nick, o) => DIVS[o] || (nick && ['연습 훈련병', '실전 훈련병', '군사경찰', '특수임무대', '위병소 관리단', '순찰부대', '대통령 경호대', '대통령 특수경호대', '청와대 경호부대'].includes(o) ? BR_DIV[(S.m[nick] || {}).br] || '1사단' : '');
 const OUTLAW = '무법자', PRISONER = '죄수'; // 계급표 밖의 팀 (배정 · 진급 안 됨)
 ORGS[OUTLAW] = { key: OUTLAW, short: OUTLAW, ico: '🏴', color: '#ff4040', lv: 0, full: OUTLAW, special: 1 };
 ORGS[PRISONER] = { key: PRISONER, short: PRISONER, ico: '⛓', color: '#ff9a3a', lv: 0, full: PRISONER, special: 1 };
@@ -714,11 +714,11 @@ function apply(op, a, from, fromOp, fromDiscord) {
       return CB.say(`🏖 ${from} 님이 ${min}분 휴가를 떠나요 (휴가상담소)`);
     }
     case 'enlist': { // 🪖 상담원에게 「네」: 시민 → 군사 · 경찰
-      const o = ['경찰', '해군', '공군'].includes(a.o) ? a.o : '육군';
+      const want = ['경찰', '해군', '공군'].includes(a.o) ? a.o : '육군', o = want === '경찰' ? '경찰' : '연습 훈련병'; // 🔰 군대는 연습 훈련병부터 (고른 군 = 사단은 기억)
       if (Fo !== '시민') return tell(from, `이미 ${tagOf(Fo)}이에요`);
       if (S.w[from]) return tell(from, '지명수배 중에는 입대할 수 없어요');
-      setTeam(from, o); delete S.job[from]; save(); sendKit(from);
-      return CB.say(`${ORGS[o].ico} ${from} 님이 ${orgNameOf(o, from)} ${tagOf(o)}에 ${o === '경찰' ? '임용' : '입대'}했어요!`);
+      setTeam(from, o); if (o !== '경찰') S.m[from].br = want; delete S.job[from]; save(); sendKit(from);
+      return CB.say(`${ORGS[o].ico} ${from} 님이 ${orgNameOf(o, from)} ${tagOf(o)}${o === '경찰' ? '에 임용' : `으로 입대 (${want} 지원)`}했어요!`);
     }
     case 'trespass': { // 🏴 시민이 입대 없이 군부대에 들어옴
       if (Fo !== '시민' || fromOp) return;

@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.283 — 🎖 CLKKY ARMY 조직 개편 (30순위)</h4>
+    <h4>🆕 v26.284 — 🪖 조직 RP 서버는 조직 모드 자동 · 🔰 훈련병 입대</h4>
+    <ul><li>🪖 서버 종류가 <b>조직 RP</b>면 조직 모드(조직.js)를 넣어 두지 않았어도 늘 최신판으로 자동으로 켜져요 (방장 · 들어온 사람 모두)</li><li>🔰 입대하면 고른 군(1사단 육군 · 2사단 해군 · 3사단 공군)의 <b>연습 훈련병</b>부터 시작해요 · 사단은 그대로 기억해요</li></ul>
+    <h4>v26.283 — 🎖 CLKKY ARMY 조직 개편 (30순위)</h4>
     <ul><li>새 팀 12개: 🏢 국방부 장관(사단장과 같은 순위 · 장교 정복) · 🏅 국군 사령부 연합(CAFC) · 🎖 국군 사령부(AFC · 군사훈련부와 같은 순위) · 🕊 국평단 사령부(장교 정복 + 하늘색 베레모) · 📋 장교 지원본부(장교 정복 + 검은 베레모) · 🏛 청와대 경호부대 · 🛡 대통령 특수경호대(전투복색 대테러복 · 방탄복) · 🚨 순찰부대(군사경찰 전투복) · 🕴 대통령 경호대(흑색 군사경찰 행사복) · 🎒 실전 훈련병 · 🔰 연습 훈련병(전투복 · 방탄복 없음)</li><li>국평단 운영부 → 국평단 운영본부(OHAFPG) · 해병대는 해군과 따로 군사경찰 위 순위 · 전투복 + 빨간 팔각모 · 사단장 장교 정복 · 육군 영어 이름 Army</li><li>🎯 특임대 대테러복은 전투복색(육군 전투복 무늬)</li><li>👑 대통령 기본 복장은 대통령 정복 · 청와대 비서에게 정장으로 갈아입을 수 있어요</li><li>탈영선을 넘어도 수배 안 됨: 대통령 · 국무총리 · 국방부 장관 · 사단장 · 국군 사령부 연합 · 국군 사령부</li></ul>
     <h4>v26.282 — 🦺 방탄복</h4>
     <ul><li>🦺 육군 · 해군 · 공군 · 특임대 · 특전사는 방탄복(플레이트 캐리어)을 입어요: 앞뒤 방탄판 · 어깨끈 · 옆판 · 탄창 파우치 4개 · 태극기 패치 · 옆구리 무전기와 안테나 (해병대는 안 입어요)</li><li>🎒 특임대 · 특전사는 등에 돌격 배낭(SMU · SWC 글자)도 메고, 방탄복은 대테러복 색이에요</li></ul>
@@ -2296,7 +2298,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.283 — 🎖 CLKKY ARMY reorganization (30 positions)</h4>
+    <h4>🆕 v26.284 — 🪖 Org mod always on for Org RP servers · 🔰 Trainee enlistment</h4>
+    <ul><li>🪖 On servers of the <b>Org RP</b> kind the organization mod (조직.js) is always turned on, latest version, even if it isn't installed (host and guests)</li><li>🔰 Enlisting now starts as a <b>Trainee Recruit</b> of the chosen branch (1st Army, 2nd Navy, 3rd Air Force) · the division is remembered</li></ul>
+    <h4>v26.283 — 🎖 CLKKY ARMY reorganization (30 positions)</h4>
     <ul><li>12 new teams: 🏢 Minister of Defense (same level as Commander, officer dress) · 🏅 CAFC · 🎖 AFC (same level as MTD) · 🕊 Pacifist Corps HQ (officer dress + sky-blue beret) · 📋 Officer Recruitment HQ (officer dress + black beret) · 🏛 Blue House Security Unit · 🛡 Presidential Security Unit (camo counter-terror suit, body armor) · 🚨 Patrol Unit (MP combat uniform) · 🕴 Presidential Security Service (black MP dress) · 🎒 Trainee in Field Training · 🔰 Trainee Recruit (combat uniform, no armor)</li><li>Pacifist Operations Dept → Operations HQ (OHAFPG) · Marines ranked separately above MP, combat uniform + red octagonal cap · Commander wears officer dress · Army's English name is now Army</li><li>🎯 SMU counter-terror suit uses the combat-uniform camo</li><li>👑 The President now wears the presidential dress uniform by default · the Blue House secretary switches to the suit</li><li>No wanted level for crossing the desertion line: President, Prime Minister, Minister of Defense, Commander, CAFC, AFC</li></ul>
     <h4>v26.282 — 🦺 Body armor</h4>
     <ul><li>🦺 Army, Navy, Air Force, SMU and SWC wear plate carriers: front and back plates, shoulder straps, side panels, four mag pouches, a taegeuk patch and a radio with antenna (Marines don't)</li><li>🎒 SMU and SWC also carry an assault pack labeled with their unit, and their armor matches their counter-terror suit color</li></ul>
@@ -9137,6 +9141,7 @@ function findSpawn(){
 function startWorld(save,onOk){refreshWard();modRespawn=null; // 탈의실에서 고른 캐릭터 · 망토
   if(SPEEDRUN&&!nickNow()){toast('⏱ 스피드런은 <b>로그인</b>해야 할 수 있어요 (랭킹 때문)');openWard();return;}
   $('loading').style.display='flex';
+  {const kd=(save&&save.flags&&save.flags.kind)||(MP.srvPub&&MP.srvPub.kind)||'';if(kd==='rp'&&!ORG_FORCED&&!MOD_RAN.some(m=>/🪖 조직 \(팀/.test(m.code||''))){ORG_FORCED=true;orgLatest({name:'🪖 조직 (조직 RP 서버)',code:''});setTimeout(()=>toast('🪖 조직 RP 서버라서 <b>조직 모드</b>를 켰어요'),1500);}} // 🪖 조직 RP 서버는 조직.js 를 꼭 켬 (안 넣어 뒀어도 · 늘 최신판)
   if(window.ORG_WAIT){window.ORG_WAIT.then(()=>startWorld(save,onOk));return;} // 🪖 조직 모드를 받는 중: 다 받은 뒤 열어야 모드 블록이 돌로 바뀌지 않음
   setTimeout(()=>{
    try{
@@ -9475,6 +9480,7 @@ function modRunAll(){if(!MP_SMODS){const L=modLoad(),K=L.filter(m=>!/const ATW=\
   for(const m of MP_SMODS?MP_SMODS.mods:modLoad()){if(!m.on&&!MP_SMODS)continue;if(m.url){MOD_RAN.push({name:m.name,code:'CB.loadUrl('+JSON.stringify(m.url)+');'});modUrlRun(m);continue;} // 🔗 주소 모드는 늘 최신으로
     MOD_RAN.push({name:m.name,code:m.code});if(/🪖 조직 \(팀/.test(m.code||'')){orgLatest(m);continue;} // 🪖 파일로 넣은 조직 모드도 늘 최신판으로 (받지 못하면 넣어 둔 복사본)
     modCur=m.name;try{new Function('CB',m.code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);}}modCur=null;}
+var ORG_FORCED=false; // 🪖 조직 RP 서버라서 조직 모드를 켰는지 (startWorld 가 먼저 불려도 되게 var)
 function orgLatest(m){window.ORG_LOADING=1;window.ORG_WAIT=fetch('https://korean568.github.io/cavebuild/'+encodeURIComponent('서버모드')+'/'+encodeURIComponent('조직.js'),{cache:'no-store',...(AbortSignal.timeout?{signal:AbortSignal.timeout(6000)}:{})}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(t=>/🪖 조직 \(팀/.test(t)?t:m.code).catch(()=>m.code).then(code=>{const was=modCur;modCur=m.name;try{new Function('CB',code)(CB);m.err=null;}catch(e){m.err=String(e&&e.message||e);console.warn('모드 실패',m.name,e);wdReport('mod',e,'조직 로드');}finally{modCur=was;window.ORG_LOADING=0;window.ORG_WAIT=null;}});}
 function modUrlRun(m){fetch(m.url,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(t=>{ // 🔗 주소(도메인)에 올린 모드: .js 는 그대로, .html 은 HTML 모드로
     if(/const ATW=\d+,ATH=\d+/.test(t)){toast('🎮 그 주소는 케이브빌드 게임 파일이에요 — 🎮 게임 모드에서 골라 주세요');return;}
