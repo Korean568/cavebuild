@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.286 — 🪑 탈것에 제대로 앉기 · 🚁 헬기 · 🚑 구급차 운전석</h4>
+    <h4>🆕 v26.287 — 🪖 탱크 포탄 위치 고침</h4>
+    <ul><li>🪖 탱크 포탄이 포신보다 한 칸 넘게 위 허공에서 나가던 것 고침 · 이제 포신 끝(포구)에서 나가요</li></ul>
+    <h4>v26.286 — 🪑 탈것에 제대로 앉기 · 🚁 헬기 · 🚑 구급차 운전석</h4>
     <ul><li>🪑 탈것을 타면 이제 서 있지 않고 <b>앉아요</b> (다리를 앞으로 굽힘 · 엉덩이가 자리에) · 몸은 탈것 앞쪽을 봐요 · 친구 화면에서도</li><li>자리 높이를 모델에 맞췄어요: 로드스터는 자리에 · 구급차는 운전석 안 · 비행기는 유리 덮개 안 · 헬기는 조종석 안 · 탱크는 해치에서 상반신만</li><li>🚁 헬기를 공 모양에서 진짜 군용 헬기 모양으로: 몸통 · 큰 앞 유리 · 옆 창 · 엔진 덮개 · 조종석</li><li>🚑 구급차 운전석: 앞 · 옆 유리로 운전하는 사람이 보여요 · 지붕을 높여서 머리가 안 튀어나와요</li></ul>
     <h4>v26.285 — 🚗 탈것이 진짜 같은 3D 모델로</h4>
     <ul><li>🚁 헬기: 둥근 몸통 · 큰 앞 유리 · 가는 꼬리 · 받침 · 도는 큰 회전날개 · 도는 꼬리 회전날개</li><li>✈ 비행기: 둥근 동체 · 조종석 유리 덮개 · 넓은 날개(빨간 끝) · 꼬리 날개 · 도는 프로펠러(출력만큼 빨리) · 바퀴 3개</li><li>🏎 로드스터: 낮고 반짝이는 빨간 오픈카 · 기운 앞 유리 · 가죽 자리 · 핸들 · 전조등 · 미등 · 둥근 바퀴(굴러감)</li><li>🚑 구급차: 흰 승합차 · 빨간 줄 · 옆 「구급차」 글씨 · 빨간 십자 · <b>빨강 · 파랑 경광등이 번갈아 깜빡</b></li><li>🪖 탱크: 위장 무늬 차체 · 무한궤도와 바퀴 6쌍 · 포탑 · 긴 포신 · 해치 · 기관총</li><li>부딪히는 자리 · 타는 법은 그대로 · 원래 놓아 둔 탈것도 새 모델로 보여요 (블록으로 직접 만든 탈것은 그대로)</li></ul>
@@ -2302,7 +2304,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.286 — 🪑 Proper seating · 🚁 Helicopter · 🚑 Ambulance cab</h4>
+    <h4>🆕 v26.287 — 🪖 Tank shell origin fixed</h4>
+    <ul><li>🪖 Tank shells came out of thin air over a block above the gun · they now leave from the muzzle</li></ul>
+    <h4>v26.286 — 🪑 Proper seating · 🚁 Helicopter · 🚑 Ambulance cab</h4>
     <ul><li>🪑 Riders now <b>sit</b> instead of standing (legs bent forward, hips on the seat) and face the vehicle's front, also on friends' screens</li><li>Seat heights match each model: roadster seat, ambulance cab, airplane canopy, helicopter cockpit, tank hatch (upper body only)</li><li>🚁 The helicopter is no longer a ball: proper body, big windshield, side windows, engine housing and cockpit</li><li>🚑 Ambulance cab: driver visible through front and side windows · taller roof so heads don't poke out</li></ul>
     <h4>v26.285 — 🚗 Vehicles get real 3D models</h4>
     <ul><li>🚁 Helicopter: rounded body, big windshield, slim tail boom, skids, spinning main and tail rotors</li><li>✈ Airplane: round fuselage, glass canopy, wide wings with red tips, tail, propeller spinning with throttle, three wheels</li><li>🏎 Roadster: low glossy red convertible, raked windshield, leather seat, steering wheel, head/tail lights, rolling round wheels</li><li>🚑 Ambulance: white van, red stripe, 구급차 lettering, red crosses, <b>flashing red/blue light bar</b></li><li>🪖 Tank: camo hull, tracks with six road wheels per side, turret, long gun, hatch, machine gun</li><li>Hitboxes and controls are unchanged · already placed vehicles use the new models too (vehicles you build from blocks stay as blocks)</li></ul>
@@ -8144,7 +8148,7 @@ function placePreVeh(t,id){const P=PREVEH[id];if(!t){toast(P.name+'를 놓을 �
   const d={t:P.t,b,x:t.x+.5,y:t.y+1,z:t.z+.5,yaw,pitch:0,d:world.dim,seat:P.seat.slice(),sit:1,eng:P.eng,wh:b.filter(o=>o[3]===WHEEL).length,pi:id,...(P.tank?{tank:1}:{})};
   (world.vehicles||(world.vehicles=[])).push(d);if(MP.on){d.vid=MP.myId+'.v'+(++MP.gn);mpSend({t:'vi',d});}SFX.place();spawnVeh(d);toast(`${P.name}를 놓았어요 · 우클릭으로 타요 · 3번 치면 다시 아이템${P.tank?' · 타고 클릭(⛏)하면 포를 쏴요':''}`);return true;}
 let tankCD=0;function tankFire(){const v=player.veh;if(!v||!v.d.tank)return;const n=performance.now();if(n<tankCD){toast(`🪖 장전 중… ${Math.ceil((tankCD-n)/1000)}초`);return;}tankCD=n+2500; // 🪖 탱크 포: 포신 끝에서 앞으로 (2.5초마다)
-  const q=v.q,dir=new THREE.Vector3(0,Math.sin(clamp(player.pitch,-.4,.5)),-1).normalize().applyQuaternion(q),o=new THREE.Vector3(0,3.5,-6.6).applyQuaternion(q).add(v.pos);
+  const q=v.q,dir=new THREE.Vector3(0,Math.sin(clamp(player.pitch,-.4,.5)),-1).normalize().applyQuaternion(q),o=new THREE.Vector3(0,2.2,-6.3).applyQuaternion(q).add(v.pos); /* 포구 (포신 끝) */
   shoot('fire',o,dir,45,14,'player','탱크 포에 맞았습니다');SFX.fireball();spawnParticles(o.x,o.y,o.z,new THREE.Color(0xffa040),12,.4,4);}
 function mountVeh(v){player.veh=v;player.boat=null;player.sit=null;if(v.d.t==='heli'){toast(document.body.classList.contains('mobile')?'🚁 헬기에 탔어요 · ⤒ 상승 · ⤓ 하강 · 조이스틱으로 앞뒤 · 회전 · 🚪 내리기':'🚁 헬기에 탔어요 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기');return;}toast(v.d.t==='plane'?'✈ 비행기에 탔어요 · W 출력 올리기 · S 줄이기 · 마우스로 방향 · 스페이스 내리기':v.d.tank?'🪖 탱크에 탔어요 · W/S 앞뒤 · A/D 방향 · 클릭(⛏) 포 쏘기 (2.5초마다) · 스페이스 내리기':'🚗 자동차에 탔어요 · W/S 앞뒤 · A/D 핸들 · 스페이스 내리기');}
 function vehExit(){const v=player.veh,p=player;p.veh=null;if(!v)return;p.pos.set(...v.d.seat).applyQuaternion(v.q).add(v.pos);p.pos.y+=.2;p.vel.set(0,4,0);
