@@ -243,7 +243,7 @@ function cellOf(nick) {
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
 const migM = (m) => { for (const k in m) if (m[k] && m[k].o && !ORGS[m[k].o] && OLDTEAM[m[k].o]) m[k].o = OLDTEAM[m[k].o]; return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국군평화주의단 등)
-const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {}, alt: s.alt || {}, psuit: s.psuit || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
+const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {}, alt: s.alt || {}, psuit: s.psuit || {}, ambCars: s.ambCars || 0, ambNavy: s.ambNavy || 0 }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -1943,6 +1943,10 @@ function hwStep() { // 불러와진 청크 하나만 깔음 → 한 일이 있�
 function buildAnnex(C, G) { S.annexDone = {}; delete S.annex; delete PLANS.annex; annexStep(C, G); } // /군사기지 짓기: 처음부터 다시
 if (CB.infiniteMags) CB.infiniteMags(() => ARMY.includes(teamOf(me()))); // 🔫 군대는 장전해도 탄창이 안 줄어요 (16개면 계속 16개)
 // 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술: 의무병(과 OP)만 · 수술은 기지의 군사응급수술센터 · 군사권역외상센터 안에서
+if (CB.ambulance) CB.ambulance({ // 🚑 AI 구급차가 환자를 내려 줄 병원: 가장 가까운 의무병 NPC 바로 옆 (의무병이 살려 줌)
+  hospital: (x, z) => { const T = S.town; if (!T) return null; const L = []; if (S.annex && !S.annex.partial) L.push([-57, 12], [-93, 12]); if (S.navy && !S.navy.partial) L.push([-13, S.navy.s * 52]);
+    let best = null, bd = 1e9; for (const [dx, dz] of L) { const hx = T.x + dx + 1, hz = T.z + dz, d = Math.hypot(hx - x, hz - z); if (d < bd) { bd = d; best = { x: hx, y: T.y, z: hz }; } } return best; },
+});
 if (CB.downed) CB.downed({
   sec: 60,
   medic: () => teamOf(me()) === '의무병' || CB.isOp(),
@@ -1957,6 +1961,8 @@ function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 �
   if (!S.bhBlocked && (!S.bh || S.bh.partial) && (S.bh || bhFree(T)) && bhStep(C, G)) return; // 🏛 청와대
   if (cityStep(C, G)) return; // 🏙 주도들
   if (hwStep()) return; // 🛣 고속도로
+  if (CB.spawnVehicle && S.annex && !S.annex.partial && !S.ambCars && CB.loaded(T.x - 66, T.z + 23) && CB.loaded(T.x - 96, T.z + 23)) { CB.spawnVehicle('amb', T.x - 66 + 0.5, T.y, T.z + 23.5, Math.PI / 2); CB.spawnVehicle('amb', T.x - 96 + 0.5, T.y, T.z + 23.5, Math.PI / 2); S.ambCars = 1; save(); CB.say('🚑 군사기지 의료센터 옆길에 구급차 2대가 배치됐어요 · 누가 쓰러지면 가장 가까운 구급차가 저절로 출동해요'); return; }
+  if (CB.spawnVehicle && S.navy && !S.navy.partial && !S.ambNavy && CB.loaded(T.x - 13, T.z + S.navy.s * 45)) { CB.spawnVehicle('amb', T.x - 13 + 0.5, T.y, T.z + S.navy.s * 45 + 0.5, Math.PI / 2); S.ambNavy = 1; save(); return; } // ⚓ 해군 의무대 앞
   if (!S.annexBlocked && (!S.annex || S.annex.partial) && (S.annex || annexFree(T))) { const n = Object.keys(S.annexDone || {}).length; annexStep(C, G); if (Object.keys(S.annexDone || {}).length !== n) return; } // 처음 한 번은 사람이 지은 게 많은지 확인
   if (S.navy && (S.navy.v || 1) < NAVY_V) return wallUp('navyWall', T, (put, box) => navyWall(put, box), S.navy.s, () => { S.navy.v = NAVY_V; });
   if (S.annex && !S.annex.partial && (S.annex.v || 1) < ANX_V) return wallUp('annexWall', T, annexWall, 1, () => { S.annex.v = ANX_V; });

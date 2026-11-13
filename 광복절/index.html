@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.287 — 🪖 탱크 포탄 위치 고침</h4>
+    <h4>🆕 v26.288 — 🪖 탱크 조준 · 💥 포탄 폭발 · 🚁 3인용 헬기 · 🚑 환자 싣기 · AI 구급차</h4>
+    <ul><li>🪖 탱크: <b>바라보는 곳으로</b> 포를 쏴요 · 포탑과 포신이 시선을 따라 돌아요 (친구 화면에서도)</li><li>💥 포탄이 맞으면 <b>폭발</b>: 둘레 5칸의 몹 · 플레이어가 다쳐요 · 블록은 부서지지 않아요 · 탱크 안 사람은 안 다쳐요</li><li>🚁 헬기가 1.35배 커지고 <b>3인용</b>: 처음 탄 사람이 조종 · 다음 두 명은 양쪽 문 <b>기관포 사수</b> (누르고 있으면 계속 쏨 · 바깥을 보고 앉음)</li><li>🚑 구급차 3인용 (운전석 + 뒤 두 자리) · 쓰러진 환자를 든 의무병이 구급차에 타면 환자가 <b>들것</b>에 실려요</li><li>🚑 <b>AI 구급차</b>: 누가 쓰러지면 가장 가까운 빈 구급차가 경광등을 켜고 저절로 출동 → 환자를 태움 → 가장 가까운 의무병 NPC 옆 병원에 내려 줘요 (의무병이 살려 줌) · 막히면 건너뛰어서 시간 안에 도착 · 경광등은 출동 · 운전할 때만 깜빡</li><li>🪖 조직 모드: 군사기지 의료센터 옆길에 구급차 2대 · 해군 의무대 앞에 1대가 저절로 배치돼요</li><li>🧩 모드 기능: CB.ambulance({hospital}) · CB.spawnVehicle(종류, x, y, z, 방향)</li></ul>
+    <h4>v26.287 — 🪖 탱크 포탄 위치 고침</h4>
     <ul><li>🪖 탱크 포탄이 포신보다 한 칸 넘게 위 허공에서 나가던 것 고침 · 이제 포신 끝(포구)에서 나가요</li></ul>
     <h4>v26.286 — 🪑 탈것에 제대로 앉기 · 🚁 헬기 · 🚑 구급차 운전석</h4>
     <ul><li>🪑 탈것을 타면 이제 서 있지 않고 <b>앉아요</b> (다리를 앞으로 굽힘 · 엉덩이가 자리에) · 몸은 탈것 앞쪽을 봐요 · 친구 화면에서도</li><li>자리 높이를 모델에 맞췄어요: 로드스터는 자리에 · 구급차는 운전석 안 · 비행기는 유리 덮개 안 · 헬기는 조종석 안 · 탱크는 해치에서 상반신만</li><li>🚁 헬기를 공 모양에서 진짜 군용 헬기 모양으로: 몸통 · 큰 앞 유리 · 옆 창 · 엔진 덮개 · 조종석</li><li>🚑 구급차 운전석: 앞 · 옆 유리로 운전하는 사람이 보여요 · 지붕을 높여서 머리가 안 튀어나와요</li></ul>
@@ -2304,7 +2306,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.287 — 🪖 Tank shell origin fixed</h4>
+    <h4>🆕 v26.288 — 🪖 Tank aiming · 💥 Explosive shells · 🚁 3-seat helicopter · 🚑 Patient loading · AI ambulance</h4>
+    <ul><li>🪖 Tanks fire <b>where you look</b> · the turret and gun follow your view (also on friends' screens)</li><li>💥 Shells <b>explode</b> on impact, hurting mobs and players within 5 blocks · blocks are not destroyed · the tank crew is safe</li><li>🚁 The helicopter is 1.35× bigger and seats <b>three</b>: the first rider flies, the next two man the <b>door machine guns</b> (hold to fire, seated facing out)</li><li>🚑 Ambulances seat three (driver + two in the back) · a medic carrying a downed patient who gets in puts them on the <b>stretcher</b></li><li>🚑 <b>AI ambulance</b>: when someone goes down, the nearest empty ambulance turns on its siren, drives to them, loads them and drops them at the nearest medic NPC (who revives them) · skips ahead if stuck so it arrives in time · lights flash only while dispatched or driven</li><li>🪖 Org mod: 2 ambulances are placed by the base medical centers and 1 at the navy medical unit</li><li>🧩 Mod API: CB.ambulance({hospital}) · CB.spawnVehicle(kind, x, y, z, yaw)</li></ul>
+    <h4>v26.287 — 🪖 Tank shell origin fixed</h4>
     <ul><li>🪖 Tank shells came out of thin air over a block above the gun · they now leave from the muzzle</li></ul>
     <h4>v26.286 — 🪑 Proper seating · 🚁 Helicopter · 🚑 Ambulance cab</h4>
     <ul><li>🪑 Riders now <b>sit</b> instead of standing (legs bent forward, hips on the seat) and face the vehicle's front, also on friends' screens</li><li>Seat heights match each model: roadster seat, ambulance cab, airplane canopy, helicopter cockpit, tank hatch (upper body only)</li><li>🚁 The helicopter is no longer a ball: proper body, big windshield, side windows, engine housing and cockpit</li><li>🚑 Ambulance cab: driver visible through front and side windows · taller roof so heads don't poke out</li></ul>
@@ -6336,7 +6340,7 @@ function updateAvatar(dt){
   // 몸은 걸을 때 바라보는 쪽으로 돌고, 서 있을 땐 고개가 많이 돌아갈 때만 따라 돎
   let d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
   const gk=p.glideK||0,sk=Math.max(p.swimK||0,gk),sv=p.veh&&VEH.includes(p.veh)?(p.veh.model?1:2):0; // 🚗 탈것에 앉음 (1: 모델 · 엉덩이가 자리 · 2: 블록 쿠션)
-  if(sv)A.yaw=p.veh.yaw;else if(sk>.5)A.yaw+=d*Math.min(1,10*dt);else if(hs>.5)A.yaw+=d*Math.min(1,10*dt);else if(Math.abs(d)>.75)A.yaw=p.yaw-Math.sign(d)*.75;
+  if(sv)A.yaw=p.veh.yaw+(vSeat(p.veh)[3]||0);else if(sk>.5)A.yaw+=d*Math.min(1,10*dt);else if(hs>.5)A.yaw+=d*Math.min(1,10*dt);else if(Math.abs(d)>.75)A.yaw=p.yaw-Math.sign(d)*.75;
   d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
   A.g.position.set(p.pos.x+Math.sin(A.yaw)*.9*sk,p.pos.y+(p.gOff||0)-cr*.1+.3*sk-(sv===1?.75:sv===2?.25:0),p.pos.z+Math.cos(A.yaw)*.9*sk);A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0); // 수영: 엎드려 누움
   A.up.rotation.x=-.45*cr;A.head.rotation.set(p.pitch+.45*cr+1.35*sk,d,0);
@@ -6768,7 +6772,7 @@ function touchingBlock(e,id){
 
 // ---------- 발사체 & 폭발 ----------
 const projs=[];
-const PROJ={arrow:{size:[.07,.07,.6],mat:bas(0x9a7a50),grav:8,col:0x9a7a50},shard:{size:[.14,.14,.5],mat:bas(0x5ff3ee),grav:0,col:0x5ff3ee},fire:{size:[.45,.45,.45],mat:bas(0xff6a20),grav:0,col:0xff6a20},void:{size:[.6,.6,.6],mat:bas(0x3ae0d0),grav:0,col:0x3ae0d0}};
+const PROJ={shell:{size:[.22,.22,.7],mat:bas(0x3a3426),grav:4,col:0xffa040},arrow:{size:[.07,.07,.6],mat:bas(0x9a7a50),grav:8,col:0x9a7a50},shard:{size:[.14,.14,.5],mat:bas(0x5ff3ee),grav:0,col:0x5ff3ee},fire:{size:[.45,.45,.45],mat:bas(0xff6a20),grav:0,col:0xff6a20},void:{size:[.6,.6,.6],mat:bas(0x3ae0d0),grav:0,col:0x3ae0d0}};
 function shoot(kind,pos,dir,speed,dmg,owner,cause){if(MP.on&&(owner==='player'||owner==='mob'&&MP.host)){const r=v=>Math.round(v*100)/100;mpSend({t:'sh',k:kind,p:[r(pos.x),r(pos.y),r(pos.z)],v:[r(dir.x*speed),r(dir.y*speed),r(dir.z*speed)]});} // 🌐 쏜 화살을 친구 화면에도 (보이기만 · 피해는 쏜 쪽에서)
   const P=PROJ[kind],mesh=bx(...P.size,P.mat);mesh.position.copy(pos);scene.add(mesh);
   projs.push({kind,mesh,pos:pos.clone(),vel:dir.clone().multiplyScalar(speed),dmg,owner,cause,grav:P.grav,life:4});
@@ -6789,6 +6793,7 @@ function updateProjectiles(dt){
       else for(const m of mpWithDummies(mobs))if(inBox(p.pos,m,.15)){m.byPlayer=performance.now();m.hurt(isHead(m,p.pos.y)?(headshotFx(m),p.dmg*HEAD_MULT):p.dmg,p.vel.x/l*.7,p.vel.z/l*.7);achieve('archer');hit=true;break;}
     }
     p.mesh.position.copy(p.pos);p.mesh.lookAt(p.pos.x+p.vel.x,p.pos.y+p.vel.y,p.pos.z+p.vel.z);
+    if((hit||p.life<=0)&&p.kind==='shell'&&p.owner==='player')blast(p.pos.x,p.pos.y,p.pos.z,5,22,p.cause); // 🪖 탱크 포탄: 터지면 둘레 5칸 (블록은 그대로)
     if(hit||p.life<=0){spawnParticles(p.pos.x,p.pos.y,p.pos.z,new THREE.Color(PROJ[p.kind].col).multiplyScalar(Math.max(.4,light)),5,.15,2);scene.remove(p.mesh);projs.splice(i,1);}
   }
 }
@@ -8066,12 +8071,13 @@ function vehModel(kind){const g=new THREE.Group(),W=[],GL=vm('vglass',{color:0x8
     vbox(g,2.8,2.25,4.6,Wt,0,1.8,.95);vbox(g,2.84,.24,4.64,Rd,0,1.15,.95);vbox(g,2.64,.24,1.84,Rd,0,1.15,-2.5);
     for(const sd of [-1,1]){vbox(g,.02,.9,.9,cr,sd*1.42,2.15,1.9);vbox(g,.02,.36,1.8,tx,sd*1.42,1.5,.3);}vbox(g,.9,.9,.02,cr,0,2.15,3.26);vbox(g,.9,.5,.04,GL,0,2.55,3.26);
     vbox(g,1.6,.16,.45,DK,0,2.99,-1.4);const fr=new THREE.MeshStandardMaterial({color:0xff2020,emissive:0xff2020,emissiveIntensity:1.5}),fb=new THREE.MeshStandardMaterial({color:0x2050ff,emissive:0x2050ff,emissiveIntensity:.1});vbox(g,.6,.2,.4,fr,-.45,3.12,-1.4);vbox(g,.6,.2,.4,fb,.45,3.12,-1.4);R.flash=[fr,fb];
-    for(const sd of [-1,1]){vbox(g,.42,.18,.06,HL,sd*.85,.95,-3.86);vbox(g,.3,.3,.06,TL,sd*1.1,1.0,3.26);}vbox(g,2.6,.18,.12,DK,0,.62,-3.9);R.seat=[0,1.2,-2.3];}
+    for(const sd of [-1,1]){vbox(g,.42,.18,.06,HL,sd*.85,.95,-3.86);vbox(g,.3,.3,.06,TL,sd*1.1,1.0,3.26);}vbox(g,2.6,.18,.12,DK,0,.62,-3.9);R.seat=[0,1.2,-2.3];R.seats=[R.seat,[-.75,1.2,.8,-Math.PI/2],[.75,1.2,.8,Math.PI/2]];R.stretcher=[0,1.25,1.7];} // 🚑 운전석 · 뒤 양쪽 자리 (의무병 · 환자) · 들것
   else if(kind==='tank'){const cam=ofCamo(11).clone();cam.repeat.set(3,3);cam.needsUpdate=true;const Cm=new THREE.MeshStandardMaterial({map:cam,roughness:.9}),Ol=vm('tkOl',{color:0x4a5234,roughness:.85}),Tr=vm('tkTr',{color:0x26282a,roughness:.95}); // 🪖 위장 무늬 탱크 · 무한궤도 · 포탑 · 긴 포신
     for(const sd of [-1,1]){vbox(g,.95,1.0,7.0,Tr,sd*2.0,.52,0);for(let i=0;i<6;i++)vwheel(g,W,.36,.2,sd*2.5,.48,-2.6+i*1.04);vbox(g,1.1,.1,7.3,Ol,sd*1.95,1.1,0);}
     vbox(g,3.2,.85,6.4,Cm,0,1.3,0);vbox(g,3.2,.5,1.1,Cm,0,1.42,-3.3,-.55);vbox(g,3.2,.45,.6,Cm,0,1.35,3.25,.4);
-    vbox(g,2.6,.9,3.0,Cm,0,2.18,.4);vbox(g,2.2,.22,2.5,Cm,0,2.72,.45);vbox(g,1.0,.62,.45,Ol,0,2.18,-1.22);
-    vcyl(g,.12,.15,4.6,DK,0,2.2,-3.65,'z');vcyl(g,.2,.2,.45,DK,0,2.2,-5.95,'z');vcyl(g,.34,.34,.12,Ol,0,2.86,1.0);vcyl(g,.035,.035,.95,DK,.62,3.0,.55,'z');vbox(g,.12,.18,.12,DK,.62,2.88,.95);R.seat=[0,2.95,1.0];} // 해치에서 상반신이 나옴
+    const TU=new THREE.Group();TU.position.set(0,0,.4);g.add(TU);vbox(TU,2.6,.9,3.0,Cm,0,2.18,0);vbox(TU,2.2,.22,2.5,Cm,0,2.72,.05); // 🪖 포탑 (바라보는 쪽으로 돎)
+    const GN=new THREE.Group();GN.position.set(0,2.2,-1.62);TU.add(GN);vbox(GN,1.0,.62,.45,Ol,0,-.02,0);vcyl(GN,.12,.15,4.6,DK,0,0,-2.43,'z');vcyl(GN,.2,.2,.45,DK,0,0,-4.73,'z');const MZ=new THREE.Object3D();MZ.position.set(0,0,-5.05);GN.add(MZ); // 포신 (위아래) · 포구
+    vcyl(TU,.34,.34,.12,Ol,0,2.86,.6);vcyl(TU,.035,.035,.95,DK,.62,3.0,.15,'z');vbox(TU,.12,.18,.12,DK,.62,2.88,.55);R.turret=TU;R.gun=GN;R.muzzle=MZ;R.seat=[0,2.95,1.0];} // 해치에서 상반신이 나옴
   else if(kind==='plane'){const Wt=vm('apW',{color:0xf2f4f6,metalness:.35,roughness:.3}),Rd=vm('apR',{color:0xd01e24,roughness:.4}); // ✈ 흰 비행기 · 빨간 날개 끝 · 꼬리 · 프로펠러 (돎)
     vcyl(g,.55,.55,5.6,Wt,0,1.5,-.6,'z');vcyl(g,.18,.55,3.2,Wt,0,1.58,3.8,'z');vcyl(g,.55,.3,.9,Wt,0,1.5,-3.85,'z');vball(g,.2,DK,0,1.5,-4.35,1,1,1.4);
     vball(g,.56,GL,0,2.08,-1.7,1,.9,1.75);R.seat=[0,1.3,-1.7];vbox(g,12.6,.12,1.9,Wt,0,1.42,-.4);for(const sd of [-1,1])vbox(g,.7,.13,1.92,Rd,sd*5.95,1.42,-.4);vbox(g,1.12,.1,6.6,Rd,0,1.46,-.3);
@@ -8080,20 +8086,22 @@ function vehModel(kind){const g=new THREE.Group(),W=[],GL=vm('vglass',{color:0x8
     for(const sd of [-1,1]){vbox(g,.08,.75,.08,DK,sd*1.0,.78,-1.0);vwheel(g,W,.3,.18,sd*1.0,.3,-1.0);}vbox(g,.06,.5,.06,DK,0,.7,3.8);vwheel(g,W,.2,.12,0,.22,3.8);}
   else if(kind==='heli'){const B=vm('hlBody',{color:0x4a5440,metalness:.3,roughness:.5}),Bd=vm('hlDark',{color:0x3a4232,metalness:.3,roughness:.55}); // 🚁 군용 헬기: 몸통 · 큰 앞 유리 · 옆 창 · 엔진 덮개 · 꼬리 · 받침 · 회전날개 (돎)
     for(const sd of [-1,1]){vcyl(g,.06,.06,4.4,DK,sd*1.1,.12,-.3,'z');for(const z of [-1.2,.6])vbox(g,.07,.62,.07,DK,sd*.98,.45,z,0,0,sd*.2);}
-    vbox(g,2.1,.14,3.0,Bd,0,.78,-.4);for(const sd of [-1,1]){vbox(g,.1,.7,3.0,B,sd*1.0,1.2,-.4);vbox(g,.06,.85,1.5,GL,sd*1.02,1.95,-.85);vbox(g,.1,.85,.8,B,sd*1.0,1.95,.55);vbox(g,.1,1.05,.1,B,sd*1.0,2.0,-1.62,.3);}
+    vbox(g,2.1,.14,3.0,Bd,0,.78,-.4);for(const sd of [-1,1]){vbox(g,.1,.7,3.0,B,sd*1.0,1.2,-.4);vbox(g,.06,.85,1.3,GL,sd*1.02,1.95,-.95);vbox(g,.1,1.15,.1,B,sd*1.0,1.95,-.25);vbox(g,.1,1.05,.1,B,sd*1.0,2.0,-1.62,.3); // 옆판 · 앞 옆 유리 · 문틀 (뒤쪽은 사수용 열린 문)
+      vbox(g,.12,.5,.12,DK,sd*1.08,1.55,.4);vbox(g,.7,.1,.1,DK,sd*1.4,1.78,.4);vbox(g,.18,.16,.22,DK,sd*1.12,1.78,.4);vbox(g,.5,.4,.6,BK,sd*.55,.97,.4);} // 🔫 문 기관포 (양쪽) · 사수 자리
     vbox(g,2.1,.15,2.6,B,0,2.45,-.2);vbox(g,2.1,1.7,.12,B,0,1.6,1.05);vbox(g,2.1,.65,.9,B,0,1.15,-1.9,.35);vbox(g,1.95,1.15,.05,GL,0,2.0,-1.7,.32);vbox(g,1.2,.5,1.8,Bd,0,2.75,.05);vbox(g,.8,.3,.7,BK,0,.97,-.6);vbox(g,.8,.65,.15,BK,0,1.35,-.25); // 바닥 · 옆판 · 옆 유리 · 지붕 · 뒷벽 · 코 · 앞 유리 · 엔진 덮개 · 자리
     vcyl(g,.16,.42,4.0,B,0,1.95,3.0,'z');vbox(g,.08,1.1,.75,B,0,2.5,4.95);vbox(g,1.5,.06,.5,B,0,2.0,4.6);
     vcyl(g,.08,.08,.5,DK,0,3.15,.05);R.seat=[0,1.2,-.7];const ro=new THREE.Group();ro.position.set(0,3.42,.05);vbox(ro,9,.05,.32,BK,0,0,0);vbox(ro,.32,.05,9,BK,0,0,0);vcyl(ro,.18,.18,.14,DK,0,0,0);g.add(ro);R.rotor=ro;
-    const tr=new THREE.Group();tr.position.set(.12,2.55,4.95);vbox(tr,.04,1.1,.12,BK,0,0,0);g.add(tr);R.trot=tr;}
+    const tr=new THREE.Group();tr.position.set(.12,2.55,4.95);vbox(tr,.04,1.1,.12,BK,0,0,0);g.add(tr);R.trot=tr;
+    const SC=1.35;g.scale.setScalar(SC);R.seat=[0,1.2*SC,-.7*SC];R.seats=[R.seat,[-.55*SC,1.2*SC,.4*SC,Math.PI/2],[.55*SC,1.2*SC,.4*SC,-Math.PI/2]];R.guns=[[-1.75*SC,1.78*SC,.4*SC],[1.75*SC,1.78*SC,.4*SC]];} // 🚁 1.35배 · 3인용: 조종 1 · 양쪽 문 기관포 사수 2 (바깥을 봄)
   return R;}
 function spawnVeh(d){
   const g=new THREE.Group();g.rotation.order='YXZ';let R=0;
   const MK=d.t==='heli'?'heli':d.pi===AIRPLANE?'plane':d.pi===ROADSTER?'roadster':d.pi===AMBULANCE?'amb':d.pi===TANK?'tank':null,MD=MK?vehModel(MK):null; // 🚗 진짜 같은 모델
-  if(MD){g.add(MD.g);for(const [x,y,z] of d.b)R=Math.max(R,Math.hypot(x,z),y);if(MD.seat){d.seat=MD.seat.slice();d.sit=1;}} // 자리 = 모델 안 엉덩이 높이
+  if(MD){g.add(MD.g);for(const [x,y,z] of d.b)R=Math.max(R,Math.hypot(x,z),y);if(MD.seat){d.seat=MD.seat.slice();d.sit=1;}if(MD.seats)d.seats=MD.seats.map(s=>s.slice());} // 자리 = 모델 안 엉덩이 높이
   const wheels=MD?MD.wheels:[],steers=[];if(!MD)for(const [x,y,z,id,col] of d.b){const m=id===STEER?steerModel(1):vehMesh(id);if(col&&m.material){const k=id+':'+col;if(!VTINT[k]){const t=m.material.clone();t.color.setHex(col);if(t.emissiveMap)t.emissive.setHex(col);VTINT[k]=t;}m.material=VTINT[k];} /* 🎨 미리 만든 탈것은 블록마다 색 (흰 눈 블록에 칠함) */m.position.set(x,y+.5,z);g.add(m);if(id===WHEEL)wheels.push(m);if(id===STEER){m.rotation.x=-.35;steers.push(m.userData.spin);}R=Math.max(R,Math.hypot(x,z),y);}
   const bottom=d.b.filter(o=>!d.b.some(w=>w[0]===o[0]&&w[2]===o[2]&&w[1]===o[1]-1));
   scene.add(g);const v={d,g,pos:new THREE.Vector3(d.x,d.y,d.z),yaw:d.yaw||0,pitch:d.pitch||0,roll:0,speed:0,thr:0,vy:0,hp:3,hpT:0,R:R+1,bottom,wheels,steers,boosters:d.b.filter(o=>o[3]===BOOSTER),btn:d.b.some(o=>o[3]===BUTTON),boostDir:Math.sign(d.b.reduce((a,o)=>a+(o[3]===BOOSTER?Math.sign(o[2]):0),0)),boost:!!d.boost,q:new THREE.Quaternion(),onGround:false};
-  if(MD){v.model=1;v.rotor=MD.rotor||null;v.prop=MD.prop||null;v.trot=MD.trot||null;v.flash=MD.flash||null;} // 🚁 회전날개 · ✈ 프로펠러 · 🚑 경광등
+  if(MD){v.model=1;v.rotor=MD.rotor||null;v.prop=MD.prop||null;v.trot=MD.trot||null;v.flash=MD.flash||null;v.turret=MD.turret||null;v.gun=MD.gun||null;v.muzzle=MD.muzzle||null;v.guns=MD.guns||null;v.stretcher=MD.stretcher||null;v.amb=MK==='amb';} // 🚁 회전날개 · ✈ 프로펠러 · 🚑 경광등
   else if(d.t==='heli'){const rg=new THREE.Group();for(const m of [...g.children])if(Math.abs(m.position.y-(HELI_ROTOR_Y+.5))<.01){g.remove(m);rg.add(m);}g.add(rg);v.rotor=rg;} // 🚁 회전날개는 따로 돌아감
   VEH.push(v);vehPose(v);return v;}
 function vehPose(v){v.q.setFromEuler(new THREE.Euler(v.pitch,v.yaw,v.roll,'YXZ'));v.g.position.copy(v.pos);v.g.quaternion.copy(v.q);}
@@ -8144,14 +8152,60 @@ const PREVEH={
     for(let z=-2;z<=2;z++)for(let x=-1;x<=1;x++)L.push([x,2,z,W,d]);for(let z=-1;z<=2;z++)for(let x=-1;x<=1;x++)if(!(x===0&&z===1))L.push([x,3,z,W,o]); // 포탑
     L.push([0,3,1,DRIVE_CUSHION]);for(let z=-6;z<=-2;z++)L.push([0,3,z,IRON_BLOCK,k]);return L;}}, // 해치 자리 · 긴 포신
 };
+function makePreVeh(id,x,y,z,yaw){const P=PREVEH[id];if(!P)return null;const b=P.b(); // 미리 만든 탈것을 그 자리에 (모드 · 아이템)
+  const d={t:P.t,b,x,y,z,yaw:yaw||0,pitch:0,d:world.dim,seat:P.seat.slice(),sit:1,eng:P.eng,wh:b.filter(o=>o[3]===WHEEL).length,pi:id,...(P.tank?{tank:1}:{})};
+  (world.vehicles||(world.vehicles=[])).push(d);if(MP.on){d.vid=MP.myId+'.v'+(++MP.gn);mpSend({t:'vi',d});}return spawnVeh(d);}
 function placePreVeh(t,id){const P=PREVEH[id];if(!t){toast(P.name+'를 놓을 땅을 바라보세요');return false;}const yaw=Math.round(player.yaw/(Math.PI/2))*Math.PI/2,b=P.b();
   const d={t:P.t,b,x:t.x+.5,y:t.y+1,z:t.z+.5,yaw,pitch:0,d:world.dim,seat:P.seat.slice(),sit:1,eng:P.eng,wh:b.filter(o=>o[3]===WHEEL).length,pi:id,...(P.tank?{tank:1}:{})};
   (world.vehicles||(world.vehicles=[])).push(d);if(MP.on){d.vid=MP.myId+'.v'+(++MP.gn);mpSend({t:'vi',d});}SFX.place();spawnVeh(d);toast(`${P.name}를 놓았어요 · 우클릭으로 타요 · 3번 치면 다시 아이템${P.tank?' · 타고 클릭(⛏)하면 포를 쏴요':''}`);return true;}
-let tankCD=0;function tankFire(){const v=player.veh;if(!v||!v.d.tank)return;const n=performance.now();if(n<tankCD){toast(`🪖 장전 중… ${Math.ceil((tankCD-n)/1000)}초`);return;}tankCD=n+2500; // 🪖 탱크 포: 포신 끝에서 앞으로 (2.5초마다)
-  const q=v.q,dir=new THREE.Vector3(0,Math.sin(clamp(player.pitch,-.4,.5)),-1).normalize().applyQuaternion(q),o=new THREE.Vector3(0,2.2,-6.3).applyQuaternion(q).add(v.pos); /* 포구 (포신 끝) */
-  shoot('fire',o,dir,45,14,'player','탱크 포에 맞았습니다');SFX.fireball();spawnParticles(o.x,o.y,o.z,new THREE.Color(0xffa040),12,.4,4);}
-function mountVeh(v){player.veh=v;player.boat=null;player.sit=null;if(v.d.t==='heli'){toast(document.body.classList.contains('mobile')?'🚁 헬기에 탔어요 · ⤒ 상승 · ⤓ 하강 · 조이스틱으로 앞뒤 · 회전 · 🚪 내리기':'🚁 헬기에 탔어요 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기');return;}toast(v.d.t==='plane'?'✈ 비행기에 탔어요 · W 출력 올리기 · S 줄이기 · 마우스로 방향 · 스페이스 내리기':v.d.tank?'🪖 탱크에 탔어요 · W/S 앞뒤 · A/D 방향 · 클릭(⛏) 포 쏘기 (2.5초마다) · 스페이스 내리기':'🚗 자동차에 탔어요 · W/S 앞뒤 · A/D 핸들 · 스페이스 내리기');}
-function vehExit(){const v=player.veh,p=player;p.veh=null;if(!v)return;p.pos.set(...v.d.seat).applyQuaternion(v.q).add(v.pos);p.pos.y+=.2;p.vel.set(0,4,0);
+let tankCD=0;function tankFire(){const v=player.veh;if(!v||!v.d.tank||player.vseat)return;const n=performance.now();if(n<tankCD){toast(`🪖 장전 중… ${Math.ceil((tankCD-n)/1000)}초`);return;}tankCD=n+2500; // 🪖 탱크 포: 바라보는 곳으로 (포탑 · 포신이 따라 돎) · 2.5초마다 · 맞으면 폭발
+  const dir=viewDir(),o=new THREE.Vector3();if(v.muzzle){v.g.updateMatrixWorld(true);v.muzzle.getWorldPosition(o);}else o.set(0,2.2,-6.3).applyQuaternion(v.q).add(v.pos);
+  shoot('shell',o,dir,60,0,'player','탱크 포탄에 맞았습니다');SFX.fireball();spawnParticles(o.x,o.y,o.z,new THREE.Color(0xffa040),16,.5,5);shake(.1,.15);}
+function blast(x,y,z,reach,dmg,cause){ // 💥 블록은 안 부수는 폭발: 범위 안의 몹 · 플레이어만 다침 (탱크 포탄)
+  SFX.boom();if(MP.on)mpSend({t:'fx',d:world.dim,x,y,z,r:reach*.6});spawnParticles(x,y,z,new THREE.Color(0x555555),30,reach*.3,6);spawnParticles(x,y,z,new THREE.Color(0xff9a30),24,reach*.22,5);
+  mpBlast(x,y,z,reach,cause);
+  if(!player.veh){const pd=Math.hypot(player.pos.x-x,player.pos.y+.9-y,player.pos.z-z);if(pd<reach){const f=1-pd/reach,l=Math.hypot(player.pos.x-x,player.pos.z-z)||1;hurtPlayer(Math.round(f*dmg*.6),(player.pos.x-x)/l*f*1.6,(player.pos.z-z)/l*f*1.6,cause);}} // 탱크 안(쏜 사람)은 안 다침
+  for(const m of [...mobs]){const md=Math.hypot(m.pos.x-x,m.pos.y+m.h/2-y,m.pos.z-z);if(md<reach){const f=1-md/reach,l=Math.hypot(m.pos.x-x,m.pos.z-z)||1;m.byPlayer=performance.now();m.hurt(Math.round(f*dmg),(m.pos.x-x)/l*f,(m.pos.z-z)/l*f,true);}}}
+let vgCD=0;function vehGunTick(dt){vgCD-=dt;const v=player.veh;if(!v||!player.vseat||!v.guns||!mouseL||invOpen||player.dead||vgCD>0)return;vgCD=.11; // 🔫 헬기 문 기관포 (사수 자리 · 누르고 있으면 계속)
+  const d=viewDir();d.x+=(Math.random()-.5)*.03;d.y+=(Math.random()-.5)*.03;d.z+=(Math.random()-.5)*.03;d.normalize();const o=camera.position.clone(),hit=raycast(o,d,90);let L=hit?hit.dist:90,best=null;
+  for(const m of mpWithDummies(mobs)){if(m.dead)continue;const hw=m.w/2,t=rayAABB(o,d,{x:m.pos.x-hw,y:m.pos.y,z:m.pos.z-hw},{x:m.pos.x+hw,y:m.pos.y+m.h,z:m.pos.z+hw});if(t!==null&&t<L){L=t;best=m;}}
+  if(best){best.byPlayer=performance.now();best.hurt(5,d.x*.3,d.z*.3);}else if(hit)spawnParticles(o.x+d.x*L,o.y+d.y*L,o.z+d.z*L,new THREE.Color(0xc8b090),4,.12,3);
+  const gp=v.guns[(player.vseat-1)%v.guns.length],mz=new THREE.Vector3(gp[0],gp[1],gp[2]).applyQuaternion(v.q).add(v.pos);flashBeam(mz,o.clone().addScaledVector(d,L),0xffe08a,.035,.05);spawnParticles(mz.x,mz.y,mz.z,new THREE.Color(0xffc040),3,.08,2);
+  if(!playSnd('rifle',.45,1.25))SFX.gun();shake(.03,.05);}
+// 🚑 AI 구급차: 누가 쓰러지면 가장 가까운 빈 구급차가 저절로 출동 → 환자를 들것에 태움 → 병원(모드가 정한 의무병 곁 · 없으면 원래 자리)으로 → 내려 줌 (방장 게임이 운전)
+let MOD_AMB=null,ambT=0;
+function ambState(v){const a=v.ai;return a?[a.pt,a.st,Math.round(a.hx||0),Math.round(a.hy||0),Math.round(a.hz||0)].join('|'):'';}
+function ambPatients(){const L=[];if(player.downed&&MP.on)L.push([MP.me.nick,player.pos]);for(const P of MP.peers.values())if(P.t&&P.t.dn&&!P.t.v&&P.t.d===world.dim)L.push([P.nick,{x:P.t.x,y:P.t.y,z:P.t.z}]);return L;}
+function ambGround(x,z,y0){const fx=Math.floor(x),fz=Math.floor(z);for(let y=Math.min(CH-2,Math.floor(y0)+24);y>1;y--)if(SOLID[getBlock(fx,y,fz)]===1&&getBlock(fx,y+1,fz)===AIR)return y+1;return y0;}
+function ambDispatch(dt){if(!MP.on||!MP.host||(ambT-=dt)>0)return;ambT=1;
+  const pts=ambPatients();for(const v of VEH)if(v.ai&&v.ai.st==='go'&&!pts.some(p=>p[0]===v.ai.pt)){v.ai=null;v.speed=0;} // 환자가 일어났거나 죽으면 출동 끝
+  for(const v of VEH){if(!v.ai||getChunk(Math.floor(v.pos.x)>>4,Math.floor(v.pos.z)>>4))continue; // 방장 땅이 안 불러와진 곳의 구급차: 1초에 24칸씩 건너뛰며 감 (물리 없이)
+    const a=v.ai,tg=a.st==='go'?(pts.find(q=>q[0]===a.pt)||[])[1]:a.st==='back'?{x:a.hx,z:a.hz}:null;if(!tg){ambSteer(v,1);continue;}
+    const dx=tg.x-v.pos.x,dz=tg.z-v.pos.z,dist=Math.hypot(dx,dz),step=Math.min(dist-3,24);if(step>0){v.pos.x+=dx/dist*step;v.pos.z+=dz/dist*step;v.pos.y=ambGround(v.pos.x,v.pos.z,v.pos.y);v.yaw=Math.atan2(-dx,-dz);vehPose(v);}else ambSteer(v,1);}
+  const busy=new Set(VEH.filter(v=>v.ai).map(v=>v.ai.pt));
+  for(const [nk,pp] of pts){if(busy.has(nk))continue;let best=null,bd=1e9;
+    for(const v of VEH){if(!v.amb||v.ai||v.d.d!==world.dim||(mpVehFresh(v)&&v.drv)||player.veh===v)continue;const dd=Math.hypot(v.pos.x-pp.x,v.pos.z-pp.z);if(dd<bd&&dd<500){bd=dd;best=v;}}
+    if(best){best.ai={pt:nk,st:'go',t0:performance.now(),lastD:bd,stuck:0,home:{x:best.pos.x,y:best.pos.y,z:best.pos.z}};const m=`🚑 ${nk} 님에게 구급차가 출동해요 (${Math.round(bd)}칸)`;mpSend({t:'c',n:'🚑',m});mpChatShow('🚑',m);}}}
+function ambSteer(v,dt){const a=v.ai,now=performance.now();let tg;
+  if(a.st==='go'){const p=ambPatients().find(q=>q[0]===a.pt);if(!p){v.ai=null;return [0,0];}tg=p[1];}else if(a.st==='back')tg={x:a.hx,z:a.hz};else{if(now-a.t1>5000)v.ai=null;return [0,0];}
+  const dx=tg.x-v.pos.x,dz=tg.z-v.pos.z,dist=Math.hypot(dx,dz);
+  if(dist<(a.st==='go'?4.5:7)){v.speed=0;
+    if(a.st==='go'){let H=null;try{H=MOD_AMB&&MOD_AMB.hospital?MOD_AMB.hospital(v.pos.x,v.pos.z):null;}catch(e){H=null;}H=H&&isFinite(H.x)?H:a.home;a.st='back';a.hx=H.x;a.hy=H.y;a.hz=H.z;a.t0=now;a.lastD=1e9;a.stuck=0;const m=`🚑 ${a.pt} 님을 구급차에 태웠어요 · 병원으로 가요`;mpSend({t:'c',n:'🚑',m});mpChatShow('🚑',m);}
+    else{a.st='done';a.t1=now;}return [0,0];}
+  if(dist<a.lastD-1){a.lastD=dist;a.stuck=0;}else a.stuck+=dt; // 막히면 앞으로 건너뜀 · 25초가 넘으면 바로 옆으로 (쓰러진 60초 안에 꼭 도착)
+  const late=now-a.t0>25000;if(a.stuck>3||late){const step=late?dist-3:Math.min(10,dist-3),nx=v.pos.x+dx/dist*step,nz=v.pos.z+dz/dist*step;v.pos.set(nx,ambGround(nx,nz,v.pos.y),nz);v.speed=0;v.vy=0;a.stuck=0;a.lastD=dist-step;if(late)a.t0=now-15000;vehPose(v);}
+  const ty=Math.atan2(-dx,-dz),e=Math.atan2(Math.sin(ty-v.yaw),Math.cos(ty-v.yaw));return [Math.abs(e)>1.6?.35:1,clamp(-e*1.8,-1,1)];}
+function ambPatientTick(){if(!player.downed)return; // 🩸 쓰러진 나: 구급차가 태우면 들것 위 · 병원에 닿으면 내려 줌
+  const me=MP.me.nick+'|';for(const v of VEH){const s=v.ai?ambState(v):(v.aiS||'');if(!s.startsWith(me))continue;const [,st,hx,hy,hz]=s.split('|');
+    if(st==='back'&&v.stretcher){player.pos.set(v.stretcher[0],v.stretcher[1],v.stretcher[2]).applyQuaternion(v.q).add(v.pos);player.vel.set(0,0,0);}
+    else if(st==='done'&&!player.ambDrop){player.ambDrop=1;player.pos.set(+hx+.5,+hy+.1,+hz+.5);player.vel.set(0,0,0);toast('🚑 병원에 도착했어요 · 의무병이 치료해요');}}}
+// 🪑 여러 자리 탈것 (헬기 3 · 구급차 3): 0 = 운전 · 나머지는 사수 · 동승 (친구 화면에 vid · vs 로 알림)
+const vSeat=v=>{const S=v.d.seats,i=player.veh===v?player.vseat||0:0;return (S&&S[i])||v.d.seat;};
+function vehFreeSeat(v){const n=(v.d.seats||[0]).length,taken=new Set();if(MP.on){for(const P of MP.peers.values())if(P.t&&P.t.vid&&P.t.vid===v.d.vid)taken.add(P.t.vs||0);if(mpVehFresh(v)&&v.drv)taken.add(0);}for(let i=0;i<n;i++)if(!taken.has(i))return i;return -1;}
+function mountVeh(v,seat=0){player.veh=v;player.vseat=seat;player.boat=null;player.sit=null;
+  if(seat>0){toast(v.d.t==='heli'?(document.body.classList.contains('mobile')?'🔫 헬기 기관포 사수 · ⛏ 누르고 있으면 기관포 · 🚪 내리기':'🔫 헬기 기관포 사수 · 클릭을 누르고 있으면 기관포 · X 내리기'):'🚑 구급차 뒤에 탔어요 (환자 · 의무병 자리) · 스페이스 내리기');return;}
+  if(v.d.t==='heli'){toast(document.body.classList.contains('mobile')?'🚁 헬기에 탔어요 · ⤒ 상승 · ⤓ 하강 · 조이스틱으로 앞뒤 · 회전 · 🚪 내리기':'🚁 헬기에 탔어요 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · X 내리기');return;}toast(v.d.t==='plane'?'✈ 비행기에 탔어요 · W 출력 올리기 · S 줄이기 · 마우스로 방향 · 스페이스 내리기':v.d.tank?'🪖 탱크에 탔어요 · W/S 앞뒤 · A/D 방향 · 클릭(⛏) 포 쏘기 (2.5초마다) · 스페이스 내리기':'🚗 자동차에 탔어요 · W/S 앞뒤 · A/D 핸들 · 스페이스 내리기');}
+function vehExit(){const v=player.veh,p=player;if(!v){p.vseat=0;return;}const st=vSeat(v);p.veh=null;p.vseat=0;p.pos.set(st[0],st[1],st[2]).applyQuaternion(v.q).add(v.pos);p.pos.y+=.2;p.vel.set(0,4,0);
   while(entHits(p)&&p.pos.y<CH-2)p.pos.y+=1;p.peakY=p.pos.y;}
 function removeVeh(v){if(MP.on&&!MP.vin&&v.d.vid)mpSend({t:'vr',v:v.d.vid});scene.remove(v.g);const i=VEH.indexOf(v);if(i>=0)VEH.splice(i,1);world.vehicles=(world.vehicles||[]).filter(d=>d!==v.d);if(player.veh===v)player.veh=null;}
 function hitVeh(v){if(player.veh===v)return;swing=1;SFX.dig();v.hp--;v.hpT=2;spawnParticles(v.pos.x,v.pos.y+.5,v.pos.z,new THREE.Color(0x9aa0aa),6,.4,3);
@@ -8171,12 +8225,15 @@ function vehSave(){syncVeh();return world.vehicles||[];}
 function clearVehRuntime(){for(const v of VEH)scene.remove(v.g);VEH.length=0;player.veh=null;}
 function restoreVehicles(){for(const d of world.vehicles||[])if(d.d===world.dim)spawnVeh(d);}
 function updateVehicles(dt){
+  try{vehGunTick(dt);ambDispatch(dt);}catch(e){console.warn(e);}
   for(const v of [...VEH]){
     if(v.d.d!==world.dim||!getChunk(Math.floor(v.pos.x)>>4,Math.floor(v.pos.z)>>4))continue; // 안 불러온 곳에서는 멈춰 있음
-    if(MP.on&&player.veh!==v){if(mpVehFresh(v)){mpVehFollow(v);continue;}if(!MP.host)continue;} // 🌐 남이 운전하는 탈것은 받은 자리로 · 친구 게임은 빈 탈것을 움직이지 않음 (방장이 움직임)
+    if(MP.on&&!(player.veh===v&&!player.vseat)){if(mpVehFresh(v)){mpVehFollow(v);continue;}if(!MP.host)continue;} // 🌐 남이 운전하는 탈것은 받은 자리로 (동승 · 사수 자리도) · 친구 게임은 빈 탈것을 움직이지 않음 (방장이 움직임)
     if((v.hpT-=dt)<=0)v.hp=3;
-    const me=player.veh===v,P=player,plane=v.d.t==='plane',heli=v.d.t==='heli',o={yaw:v.yaw,pitch:v.pitch,roll:v.roll};
+    const me=player.veh===v&&!player.vseat,P=player,plane=v.d.t==='plane',heli=v.d.t==='heli',o={yaw:v.yaw,pitch:v.pitch,roll:v.roll};
     let f=0,sd=0;if(me&&!invOpen){if(keys.KeyW)f+=1;if(keys.KeyS)f-=1;if(keys.KeyA)sd-=1;if(keys.KeyD)sd+=1;if(joy.active){sd=joy.x;f=-joy.y;}}
+    else if(v.ai&&!me&&!heli&&!plane){const a=ambSteer(v,dt);f=a[0];sd=a[1];} // 🚑 AI 구급차 운전
+    if(me&&v.turret){const dy=Math.atan2(Math.sin(P.yaw-v.yaw),Math.cos(P.yaw-v.yaw));v.turret.rotation.y=dy;v.gun.rotation.x=clamp(P.pitch,-.12,.45);} // 🪖 포탑 · 포신이 바라보는 곳으로
     let lift=0;
     if(heli){ // 🚁 헬기: 제자리에서 뜨고 내림 · 스페이스 상승 · C 하강 · W/S 앞뒤 · A/D 회전 · 아무도 안 타면 천천히 내려앉음
       const up=me&&!invOpen&&keys.Space?1:0,dn=me&&!invOpen&&keys.KeyC?1:0;lift=1;
@@ -8215,7 +8272,7 @@ function updateVehicles(dt){
     for(const st of v.steers)st.rotation.z+=(-sd*1.6-st.rotation.z)*Math.min(1,8*dt); // 핸들이 A/D 따라 돎
     if(v.rotor)v.rotor.rotation.y+=dt*(me||!v.onGround?26:2); // 🚁 회전날개
     if(v.trot)v.trot.rotation.x+=dt*(me||!v.onGround?30:2);if(v.prop)v.prop.rotation.z+=dt*(4+v.thr*40); // 꼬리 회전날개 · ✈ 프로펠러
-    if(v.flash){const on=(performance.now()/260|0)%2;v.flash[0].emissiveIntensity=on?1.8:.08;v.flash[1].emissiveIntensity=on?.08:1.8;} // 🚑 경광등 깜빡
+    if(v.flash){const run=v.ai||v.aiS||(v.drv&&mpVehFresh(v))||player.veh===v,on=run&&(performance.now()/260|0)%2;v.flash[0].emissiveIntensity=run?(on?1.8:.08):.15;v.flash[1].emissiveIntensity=run?(on?.08:1.8):.15;} // 🚑 경광등: 출동 · 운전 중에만 깜빡
     vehPose(v);
   }
 }
@@ -8387,7 +8444,7 @@ function updatePlayer(dt){
   {const hm=!!(p.veh&&p.veh.d&&p.veh.d.t==='heli');if(hm!==heliUI){heliUI=hm;document.body.classList.toggle('inheli',hm);}} // 📱 헬기 탈 때만 하강 · 내리기 버튼
   if(p.veh){ // 탈것: 자리에 앉아 감 (스페이스로 내리기)
     const v=p.veh,ex=v&&v.d&&v.d.t==='heli'?keys.KeyX:keys.Space;if(ex||!VEH.includes(v)){keys.Space=false;keys.KeyX=false;vehExit();} // 🚁 헬기는 X 로 내림 (스페이스는 상승)
-    else{p.pos.set(...v.d.seat).applyQuaternion(v.q).add(v.pos);p.vel.set(0,0,0);p.onGround=true;p.inWater=false;p.peakY=p.pos.y;p.gliding=false;p.flying=false;
+    else{const st=vSeat(v);p.pos.set(st[0],st[1],st[2]).applyQuaternion(v.q).add(v.pos);p.vel.set(0,0,0);p.onGround=true;p.inWater=false;p.peakY=p.pos.y;p.gliding=false;p.flying=false;
       camera.position.set(p.pos.x,p.pos.y+(v.model?1.05:v.d.sit?1.2:1.5),p.pos.z);camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();return;}}
   if(p.sit){ // 쿠션에 앉음 (스페이스로 일어나기)
     const t=p.sit,b=getBlock(t.x,t.y,t.z);if(keys.Space||(b!==CUSHION&&b!==DRIVE_CUSHION)){keys.Space=false;p.sit=null;p.pos.set(t.x+.5,t.y+1.01,t.z+.5);p.vel.set(0,3,0);while(entHits(p)&&p.pos.y<CH-2)p.pos.y+=1;p.peakY=p.pos.y;}
@@ -8641,7 +8698,7 @@ function useItem(){
     inv[sel]={id:NET,count:1};SFX.splash();swing=1;invChanged();return;}
   if(s&&s.id===NET){toast('그물을 든 채 <b>오징어</b>에 대고 누르면 잡을 수 있어요');return;}
   if(vehTarget&&!mobTarget&&vehHitId===BUTTON){vehBoost(vehTarget);return;} // 탈것의 버튼을 누름
-  if(vehTarget&&!player.veh&&!mobTarget){if(MP.on&&mpVehFresh(vehTarget)&&vehTarget.drv){toast(mpL('🚗 다른 사람이 운전하고 있어요','🚗 Someone else is driving'));return;}mountVeh(vehTarget);return;}
+  if(vehTarget&&!player.veh&&!mobTarget){const st=vehFreeSeat(vehTarget);if(st<0){toast(mpL(vehTarget.d.seats?'🚗 자리가 다 찼어요':'🚗 다른 사람이 운전하고 있어요','🚗 No free seat'));return;}mountVeh(vehTarget,st);return;} // 🪑 빈자리에 탐 (0 = 운전석)
   if(s&&s.id===GLUE){ // 접착제: 바른 블록은 '직접 놓은 블록'처럼 엔진과 이어져 탈것에 붙음
     if(!target){toast('블록에 대고 눌러 접착제를 발라요');return;}const id=getBlock(target.x,target.y,target.z);
     if(!vehOK(id)){toast('이 블록에는 접착제를 바를 수 없어요');return;}
@@ -9027,6 +9084,7 @@ canvas.addEventListener('mousedown',e=>{
   if(!locked&&!noLock){lockPointer();return;}
   if(paused)return;
   audio();
+  if(e.button===0&&player.veh&&player.vseat&&player.veh.guns){mouseL=true;return;} // 🔫 헬기 사수: 누르고 있으면 기관포
   if(e.button===0&&player.veh&&player.veh.d.tank){tankFire();return;} // 🪖 탱크에 타서 클릭하면 포
   if(e.button===0&&isGun(held())){mouseL=true;fireGun(held());return;}
   if(e.button===0&&held()&&held().id===TASER){fireTaser();return;} // ⚡ 테이저건: 클릭 = 발사 // 🔫 총: 클릭 = 발사 · 우클릭 = 조준
@@ -9070,7 +9128,7 @@ if(MOBILE){
   const btn=(id,down,up)=>{const el=$(id);
     el.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();audio();el.classList.add('on');down();},{passive:false});
     const u=e=>{e.preventDefault();el.classList.remove('on');up&&up();};el.addEventListener('touchend',u);el.addEventListener('touchcancel',u);};
-  btn('bAttack',()=>{if(!running||invOpen||player.dead)return;if(player.veh&&player.veh.d.tank){tankFire();return;}mouseL=true;if(isGun(held())){fireGun(held());return;}if(held()&&held().id===TASER){fireTaser();return;}swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);else if(vehTarget)hitVeh(vehTarget);},()=>{mouseL=false;});
+  btn('bAttack',()=>{if(!running||invOpen||player.dead)return;if(player.veh&&player.vseat&&player.veh.guns){mouseL=true;return;}if(player.veh&&player.veh.d.tank){tankFire();return;}mouseL=true;if(isGun(held())){fireGun(held());return;}if(held()&&held().id===TASER){fireTaser();return;}swing=1;if(mobTarget)attack();else if(boatTarget)hitBoat(boatTarget);else if(vehTarget)hitVeh(vehTarget);},()=>{mouseL=false;});
   btn('bUse',()=>{if(!running||invOpen||player.dead)return;mouseR=true;if(isGun(held()))return;useT=.28;useItem();},()=>{mouseR=false;});
   btn('bJump',()=>{keys.Space=true;spaceTap();},()=>{keys.Space=false;});
   btn('bSprint',()=>{mobileSprint=!mobileSprint;},()=>{$('bSprint').classList.toggle('on',mobileSprint);});
@@ -9473,7 +9531,9 @@ const CB={version:'v26.164',
   infiniteMags:f=>{MOD_INFMAG=typeof f==='function'?f:null;}, // 🧩 f() 가 true 면 장전해도 탄창이 안 줄어요 (탄창이 1개는 있어야 장전)
   downed:o=>{MOD_DN=o&&typeof o==='object'?{medic:typeof o.medic==='function'?o.medic:()=>true,surgery:typeof o.surgery==='function'?o.surgery:()=>false,sec:Math.max(10,Math.min(300,(o.sec|0)||60))}:null;}, // 🧩 🩸 쓰러짐 · 심폐소생술 · 수술 켜기: {medic: ()=>내가 의무병인지, surgery:(x,y,z)=>수술할 수 있는 자리인지, sec: 쓰러져 있는 초} · null 이면 끔
   healFull:()=>{if(player.dead||player.downed)return false;player.hp=maxHp();player.faint=null;renderStats();return true;}, // 🧩 🩺 내 체력을 꽉 채우고 기절도 풂 (의무병 NPC 등)
-  gameMode:()=>world.mode||'survival', // 🧩 지금 게임 모드: 'survival' · 'creative' · 'spectator' …
+  gameMode:()=>world.mode||'survival',
+  ambulance:o=>{MOD_AMB=o&&typeof o==='object'?o:null;}, // 🧩 🚑 AI 구급차 병원: {hospital:(x,z)=>({x,y,z})} 환자를 내려 줄 곳 (없으면 구급차가 있던 자리)
+  spawnVehicle:(k,x,y,z,yaw)=>{const id={amb:AMBULANCE,ambulance:AMBULANCE,tank:TANK,roadster:ROADSTER,plane:AIRPLANE}[k];if(!id||!isFinite(+x)||!isFinite(+y)||!isFinite(+z))return null;const v=makePreVeh(id,+x,+y,+z,+yaw||0);return v?(v.d.vid||true):null;}, // 🧩 미리 만든 탈것 놓기 ('amb' · 'tank' · 'roadster' · 'plane') // 🧩 지금 게임 모드: 'survival' · 'creative' · 'spectator' …
   maxHp:f=>{MOD_HP=typeof f==='function'?f:null;MOD_HPT=-1e9;lastStats='';}, // 🧩 ❤ 내 최대 체력 정하기: f() → 100(기본) · 150 · 750 … · Infinity(무적) · null(기본 하트) · 체력이 숫자 막대로 보여요
   revive:by=>{if(!player.downed)return false;dnEnd('surg',by);return true;}, // 🧩 🩸 쓰러진 나를 살림 (by: 살려 준 이름)
   isDowned:()=>!!player.downed,
@@ -10090,7 +10150,7 @@ function mpTick(dt){if(!MP.on)return;weaponTick(dt);
   if(!MP.host&&(MP.stT=(MP.stT||0)+dt)>20){MP.stT=0;try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}} // 🌍 20초마다 내 가방 · 위치를 방장에게 (방장이 바뀌어도 이어서)
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
-    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,dn:p.downed?1:0,sv:p.veh&&VEH.includes(p.veh)?(p.veh.model?1:2):0,vy:p.veh?r(p.veh.yaw):0,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0),sl:r(p.saluteK||0)};
+    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,dn:p.downed?1:0,sv:p.veh&&VEH.includes(p.veh)?(p.veh.model?1:2):0,vy:p.veh?r(p.veh.yaw+(vSeat(p.veh)[3]||0)):0,vid:p.veh&&p.veh.d.vid||0,vs:p.veh?p.vseat||0:0,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0),sl:r(p.saluteK||0)};
     if(MP.host)o.id='H';mpSend(o);}
   if(player.hp<MP.lhp)MP.redT=.35;MP.lhp=player.hp;MP.redT-=dt; // 다치면 친구 화면에서 빨갛게
   MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();mpWsScan();}
@@ -10170,7 +10230,7 @@ let MOD_DN=null,dnKeyOn=false;var MOD_INFMAG=null;
 function dnStart(cause){player.downed={t:(MOD_DN&&MOD_DN.sec)||60,cause};player.hp=0;player.faint=null;player.carry=null;renderStats();
   const m=MP.me.nick+' 님이 쓰러졌어요 🩸 ('+((MOD_DN&&MOD_DN.sec)||60)+'초 안에 의무병이 심폐소생술 · 수술을 하면 살아나요)';mpSend({t:'c',n:'🩸',m});mpChatShow('🩸',m);modEmit('down',MP.me.nick);
   if(!dnKeyOn){dnKeyOn=true;addEventListener('keydown',e=>{if(player.downed&&e.code==='KeyB'&&!MP.chat)dnEnd('die');});}}
-function dnEnd(how,by){const D=player.downed;if(!D)return;player.downed=null;player.carry=null;const h=document.getElementById('dnHud');if(h)h.remove(); // 죽은 동안엔 틱이 멈춰서 바로 지움
+function dnEnd(how,by){const D=player.downed;if(!D)return;player.downed=null;player.ambDrop=0;player.carry=null;const h=document.getElementById('dnHud');if(h)h.remove(); // 죽은 동안엔 틱이 멈춰서 바로 지움
   if(how==='die'){die(D.cause||'쓰러졌습니다');return;}
   by=mpEsc(String(by||'?').slice(0,16));player.invulnT=2;
   if(how==='surg'){player.hp=maxHp();player.faint=null;toast(`🩺 <b>${by}</b> 님의 수술로 완전히 살아났어요!`,'ach');}
@@ -10181,7 +10241,8 @@ function medIn(d){const by=String(d.by||'?').slice(0,16);
   if(player.downed)dnEnd(d.t==='surg'?'surg':'cpr',by);}
 function medTick(dt){const D=player.downed;let el=document.getElementById('dnHud');
   if(D){D.t-=dt;if(D.t<=0||!MP.on){dnEnd('die');return;}
-    if(player.carry){const P=[...MP.peers.values()].find(q=>q.nick===player.carry);if(P&&P.t&&!P.t.v){player.pos.set(P.t.x,P.t.y+1.15,P.t.z);player.vel.set(0,0,0);}else player.carry=null;} // 들려 가는 중: 든 사람 어깨 위
+    if(player.carry){const P=[...MP.peers.values()].find(q=>q.nick===player.carry);if(P&&P.t&&!P.t.v){const av=P.t.vid&&VEH.find(v=>v.d.vid===P.t.vid&&v.stretcher);if(av)player.pos.set(av.stretcher[0],av.stretcher[1],av.stretcher[2]).applyQuaternion(av.q).add(av.pos);else player.pos.set(P.t.x,P.t.y+1.15,P.t.z);player.vel.set(0,0,0);}else player.carry=null;} // 들려 가는 중: 든 사람 어깨 위 · 🚑 든 사람이 구급차에 타면 들것 위
+    ambPatientTick();
     if(!el){el=document.createElement('div');el.id='dnHud';el.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none;background:radial-gradient(rgba(120,0,0,.2),rgba(50,0,0,.8));display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font:bold 24px sans-serif;text-shadow:0 2px 6px #000';document.body.appendChild(el);}
     el.innerHTML=`🩸 쓰러졌어요 · <b>${Math.ceil(D.t)}</b>초<br><span style="font-size:15px">의무병이 심폐소생술을 하거나, 응급수술센터로 옮겨 수술하면 살아나요${player.carry?' · '+mpEsc(player.carry)+' 님이 옮기는 중':''}<br>B : 포기하고 부활</span>`;return;}
   if(el)el.remove();
@@ -10291,10 +10352,11 @@ function mpBoatsTick(){const r=v=>Math.round(v*100)/100,b=player.boat;if(b&&b.bi
 const mpVehFresh=v=>!!v.rt&&performance.now()-v.rt<700;
 function mpVehIn(d){if(!d||!Array.isArray(d.b)||(world.vehicles||[]).some(q=>q.vid===d.vid))return;(world.vehicles||(world.vehicles=[])).push(d);if(d.d===world.dim)spawnVeh(d);}
 function mpVehDel(id){const v=VEH.find(q=>q.d.vid===id);if(v){MP.vin=1;try{removeVeh(v);}finally{MP.vin=0;}}else world.vehicles=(world.vehicles||[]).filter(d=>d.vid!==id);}
-function mpVehPos(d){const v=VEH.find(q=>q.d.vid===d.v);if(!v||player.veh===v)return;v.rt=performance.now();(v.rtp||(v.rtp=new THREE.Vector3())).set(+d.x,+d.y,+d.z);v.rya=+d.ya||0;v.rpi=+d.pi||0;v.rro=+d.ro||0;v.drv=!!d.dr;}
+function mpVehPos(d){const v=VEH.find(q=>q.d.vid===d.v);if(!v||(player.veh===v&&!player.vseat))return;v.rt=performance.now();(v.rtp||(v.rtp=new THREE.Vector3())).set(+d.x,+d.y,+d.z);v.rya=+d.ya||0;v.rpi=+d.pi||0;v.rro=+d.ro||0;v.drv=!!d.dr;
+  if(v.turret){v.turret.rotation.y=+d.tu||0;v.gun.rotation.x=+d.gp||0;}v.aiS=typeof d.ai==='string'?d.ai.slice(0,80):'';} // 🪖 포탑 방향 · 🚑 AI 구급차 상태
 function mpVehTick(){const r=v=>Math.round(v*1000)/1000;
-  for(const v of VEH){if(v.d.d!==world.dim||!v.d.vid)continue;const mine=player.veh===v;
-    if(mine||MP.host&&!(mpVehFresh(v)&&v.drv)&&(Math.abs(v.speed)>.02||Math.abs(v.vy)>.02||v.boost))mpSend({t:'vp',v:v.d.vid,x:r(v.pos.x),y:r(v.pos.y),z:r(v.pos.z),ya:r(v.yaw),pi:r(v.pitch),ro:r(v.roll),dr:mine?1:0});}}
+  for(const v of VEH){if(v.d.d!==world.dim||!v.d.vid)continue;const mine=player.veh===v&&!player.vseat;
+    if(mine||MP.host&&!(mpVehFresh(v)&&v.drv)&&(Math.abs(v.speed)>.02||Math.abs(v.vy)>.02||v.boost||v.ai))mpSend({t:'vp',v:v.d.vid,x:r(v.pos.x),y:r(v.pos.y),z:r(v.pos.z),ya:r(v.yaw),pi:r(v.pitch),ro:r(v.roll),dr:mine?1:0,...(v.turret?{tu:r(v.turret.rotation.y),gp:r(v.gun.rotation.x)}:{}),...(v.ai?{ai:ambState(v)}:{})});}}
 function mpVehFollow(v){const k=.35,da=(a,b)=>{let d=b-a;return Math.atan2(Math.sin(d),Math.cos(d));};v.pos.lerp(v.rtp,k);v.yaw+=da(v.yaw,v.rya)*k;v.pitch+=da(v.pitch,v.rpi)*k;v.roll+=da(v.roll,v.rro)*k;v.speed=0;v.vy=0;vehPose(v);}
 // 🧩 모드 맞추기: 방장과 켠 모드가 다르면 친구에게 물어보고, 방장 모드로 새로고침해서 다시 들어감
 function mpModSame(L){if(!Array.isArray(L)||L.length!==MOD_RAN.length)return false;return L.every((m,i)=>m&&m.name===MOD_RAN[i].name&&m.code===MOD_RAN[i].code);}
