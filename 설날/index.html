@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.285 — 🚗 탈것이 진짜 같은 3D 모델로</h4>
+    <h4>🆕 v26.286 — 🪑 탈것에 제대로 앉기 · 🚁 헬기 · 🚑 구급차 운전석</h4>
+    <ul><li>🪑 탈것을 타면 이제 서 있지 않고 <b>앉아요</b> (다리를 앞으로 굽힘 · 엉덩이가 자리에) · 몸은 탈것 앞쪽을 봐요 · 친구 화면에서도</li><li>자리 높이를 모델에 맞췄어요: 로드스터는 자리에 · 구급차는 운전석 안 · 비행기는 유리 덮개 안 · 헬기는 조종석 안 · 탱크는 해치에서 상반신만</li><li>🚁 헬기를 공 모양에서 진짜 군용 헬기 모양으로: 몸통 · 큰 앞 유리 · 옆 창 · 엔진 덮개 · 조종석</li><li>🚑 구급차 운전석: 앞 · 옆 유리로 운전하는 사람이 보여요 · 지붕을 높여서 머리가 안 튀어나와요</li></ul>
+    <h4>v26.285 — 🚗 탈것이 진짜 같은 3D 모델로</h4>
     <ul><li>🚁 헬기: 둥근 몸통 · 큰 앞 유리 · 가는 꼬리 · 받침 · 도는 큰 회전날개 · 도는 꼬리 회전날개</li><li>✈ 비행기: 둥근 동체 · 조종석 유리 덮개 · 넓은 날개(빨간 끝) · 꼬리 날개 · 도는 프로펠러(출력만큼 빨리) · 바퀴 3개</li><li>🏎 로드스터: 낮고 반짝이는 빨간 오픈카 · 기운 앞 유리 · 가죽 자리 · 핸들 · 전조등 · 미등 · 둥근 바퀴(굴러감)</li><li>🚑 구급차: 흰 승합차 · 빨간 줄 · 옆 「구급차」 글씨 · 빨간 십자 · <b>빨강 · 파랑 경광등이 번갈아 깜빡</b></li><li>🪖 탱크: 위장 무늬 차체 · 무한궤도와 바퀴 6쌍 · 포탑 · 긴 포신 · 해치 · 기관총</li><li>부딪히는 자리 · 타는 법은 그대로 · 원래 놓아 둔 탈것도 새 모델로 보여요 (블록으로 직접 만든 탈것은 그대로)</li></ul>
     <h4>v26.284 — 🪖 조직 RP 서버는 조직 모드 자동 · 🔰 훈련병 입대</h4>
     <ul><li>🪖 서버 종류가 <b>조직 RP</b>면 조직 모드(조직.js)를 넣어 두지 않았어도 늘 최신판으로 자동으로 켜져요 (방장 · 들어온 사람 모두)</li><li>🔰 입대하면 고른 군(1사단 육군 · 2사단 해군 · 3사단 공군)의 <b>연습 훈련병</b>부터 시작해요 · 사단은 그대로 기억해요</li></ul>
@@ -2300,7 +2302,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.285 — 🚗 Vehicles get real 3D models</h4>
+    <h4>🆕 v26.286 — 🪑 Proper seating · 🚁 Helicopter · 🚑 Ambulance cab</h4>
+    <ul><li>🪑 Riders now <b>sit</b> instead of standing (legs bent forward, hips on the seat) and face the vehicle's front, also on friends' screens</li><li>Seat heights match each model: roadster seat, ambulance cab, airplane canopy, helicopter cockpit, tank hatch (upper body only)</li><li>🚁 The helicopter is no longer a ball: proper body, big windshield, side windows, engine housing and cockpit</li><li>🚑 Ambulance cab: driver visible through front and side windows · taller roof so heads don't poke out</li></ul>
+    <h4>v26.285 — 🚗 Vehicles get real 3D models</h4>
     <ul><li>🚁 Helicopter: rounded body, big windshield, slim tail boom, skids, spinning main and tail rotors</li><li>✈ Airplane: round fuselage, glass canopy, wide wings with red tips, tail, propeller spinning with throttle, three wheels</li><li>🏎 Roadster: low glossy red convertible, raked windshield, leather seat, steering wheel, head/tail lights, rolling round wheels</li><li>🚑 Ambulance: white van, red stripe, 구급차 lettering, red crosses, <b>flashing red/blue light bar</b></li><li>🪖 Tank: camo hull, tracks with six road wheels per side, turret, long gun, hatch, machine gun</li><li>Hitboxes and controls are unchanged · already placed vehicles use the new models too (vehicles you build from blocks stay as blocks)</li></ul>
     <h4>v26.284 — 🪖 Org mod always on for Org RP servers · 🔰 Trainee enlistment</h4>
     <ul><li>🪖 On servers of the <b>Org RP</b> kind the organization mod (조직.js) is always turned on, latest version, even if it isn't installed (host and guests)</li><li>🔰 Enlisting now starts as a <b>Trainee Recruit</b> of the chosen branch (1st Army, 2nd Navy, 3rd Air Force) · the division is remembered</li></ul>
@@ -6327,14 +6331,14 @@ function updateAvatar(dt){
   const hs=p.boat?0:Math.hypot(p.vel.x,p.vel.z),cr=p.crouchK||0;
   // 몸은 걸을 때 바라보는 쪽으로 돌고, 서 있을 땐 고개가 많이 돌아갈 때만 따라 돎
   let d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
-  const gk=p.glideK||0,sk=Math.max(p.swimK||0,gk);
-  if(sk>.5)A.yaw+=d*Math.min(1,10*dt);else if(hs>.5)A.yaw+=d*Math.min(1,10*dt);else if(Math.abs(d)>.75)A.yaw=p.yaw-Math.sign(d)*.75;
+  const gk=p.glideK||0,sk=Math.max(p.swimK||0,gk),sv=p.veh&&VEH.includes(p.veh)?(p.veh.model?1:2):0; // 🚗 탈것에 앉음 (1: 모델 · 엉덩이가 자리 · 2: 블록 쿠션)
+  if(sv)A.yaw=p.veh.yaw;else if(sk>.5)A.yaw+=d*Math.min(1,10*dt);else if(hs>.5)A.yaw+=d*Math.min(1,10*dt);else if(Math.abs(d)>.75)A.yaw=p.yaw-Math.sign(d)*.75;
   d=Math.atan2(Math.sin(p.yaw-A.yaw),Math.cos(p.yaw-A.yaw));
-  A.g.position.set(p.pos.x+Math.sin(A.yaw)*.9*sk,p.pos.y+(p.gOff||0)-cr*.1+.3*sk,p.pos.z+Math.cos(A.yaw)*.9*sk);A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0); // 수영: 엎드려 누움
+  A.g.position.set(p.pos.x+Math.sin(A.yaw)*.9*sk,p.pos.y+(p.gOff||0)-cr*.1+.3*sk-(sv===1?.75:sv===2?.25:0),p.pos.z+Math.cos(A.yaw)*.9*sk);A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0); // 수영: 엎드려 누움
   A.up.rotation.x=-.45*cr;A.head.rotation.set(p.pitch+.45*cr+1.35*sk,d,0);
   if(p.onGround||p.boat)A.walk+=hs*dt*2.6;
   const amp=Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);
-  if(p.boat){for(const l of A.legs){l.rotation.x=1.35;l.rotation.z=0;}}
+  if(p.boat||sv){for(const l of A.legs){l.rotation.x=sv?1.45:1.35;l.rotation.z=0;}}
   else{A.legs[0].rotation.x=sw*amp+.2*cr;A.legs[1].rotation.x=-sw*amp+.2*cr;}
   const s=held(),id=s?s.id:0,sa=Math.sin(swing*Math.PI);
   const bk=p.blockT||0; // 방패 막기: 왼팔을 앞으로 들어 몸 앞을 가림
@@ -8050,39 +8054,42 @@ function vehModel(kind){const g=new THREE.Group(),W=[],GL=vm('vglass',{color:0x8
     vbox(g,2.3,.5,5.9,C,0,.6,-.45);vbox(g,2.25,.32,1.6,C,0,.92,-2.45,.16);vbox(g,2.25,.36,1.7,C,0,.96,1.6,-.06);for(const sd of [-1,1]){vbox(g,.14,.38,2.1,C,sd*1.08,1.02,-.25);vbox(g,.5,.06,.9,C,sd*.95,.86,-2.05);vbox(g,.5,.06,.9,C,sd*.95,.86,1.15);vbox(g,.12,.08,.18,BK,sd*1.2,1.3,-.95);}
     vbox(g,2.2,.62,.05,GL,0,1.38,-1.0,-.55);vbox(g,2.24,.05,.08,DK,0,1.68,-.83,-.55);vbox(g,.9,.28,.75,S,0,.98,.2);vbox(g,.9,.62,.18,S,0,1.3,.62,.15);
     const sw=new THREE.Mesh(new THREE.TorusGeometry(.2,.035,8,20),BK);sw.position.set(0,1.32,-.5);sw.rotation.x=-1.0;g.add(sw);
-    for(const sd of [-1,1]){vbox(g,.45,.14,.06,HL,sd*.72,.78,-3.42);vbox(g,.45,.12,.06,TL,sd*.78,.9,2.46);}vbox(g,1.0,.2,.06,BK,0,.6,-3.42);vbox(g,2.1,.1,.06,DK,0,.38,2.45);}
+    for(const sd of [-1,1]){vbox(g,.45,.14,.06,HL,sd*.72,.78,-3.42);vbox(g,.45,.12,.06,TL,sd*.78,.9,2.46);}vbox(g,1.0,.2,.06,BK,0,.6,-3.42);vbox(g,2.1,.1,.06,DK,0,.38,2.45);R.seat=[0,1.15,.2];}
   else if(kind==='amb'){const Wt=vm('amW',{color:0xf4f4f2,roughness:.45,metalness:.1}),Rd=vm('amR',{color:0xd81e1e,roughness:.5}),cr=vText('✚','#f4f4f2','#d81e1e'),tx=vText('구급차','#f4f4f2','#d81e1e'); // 🚑 흰 구급차 · 빨간 줄 · 십자 · 경광등 (깜빡)
     for(const [x,z] of [[-1.2,-2.1],[1.2,-2.1],[-1.2,2.2],[1.2,2.2]])vwheel(g,W,.5,.42,x,.5,z);
-    vbox(g,2.5,.32,6.8,DK,0,.55,0);vbox(g,2.6,1.6,1.8,Wt,0,1.5,-2.5);vbox(g,2.6,.75,.7,Wt,0,1.07,-3.5);vbox(g,2.3,.72,.05,GL,0,1.88,-3.36,.28);for(const sd of [-1,1])vbox(g,.05,.55,1.0,GL,sd*1.31,1.82,-2.55);
+    vbox(g,2.5,.32,6.8,DK,0,.55,0);vbox(g,2.6,.12,2.0,DK,0,.76,-2.45);vbox(g,2.6,.9,.7,Wt,0,1.15,-3.5);vbox(g,2.6,.14,1.95,Wt,0,2.62,-2.45);vbox(g,2.6,1.95,.12,Wt,0,1.67,-1.5); // 운전석: 바닥 · 앞 덮개 · 지붕 · 뒷벽 (안이 보이게 열린 칸)
+    vbox(g,2.35,1.0,.05,GL,0,2.1,-3.33,.22);for(const sd of [-1,1]){vbox(g,.1,1.05,.1,Wt,sd*1.25,2.1,-3.33,.22);vbox(g,.1,.85,1.95,Wt,sd*1.25,1.2,-2.45);vbox(g,.05,.95,1.75,GL,sd*1.26,2.12,-2.45);}vbox(g,.8,.3,.7,BK,0,.97,-2.3);vbox(g,.8,.6,.15,BK,0,1.3,-1.95); // 앞 · 옆 유리 · 자리
     vbox(g,2.8,2.25,4.6,Wt,0,1.8,.95);vbox(g,2.84,.24,4.64,Rd,0,1.15,.95);vbox(g,2.64,.24,1.84,Rd,0,1.15,-2.5);
     for(const sd of [-1,1]){vbox(g,.02,.9,.9,cr,sd*1.42,2.15,1.9);vbox(g,.02,.36,1.8,tx,sd*1.42,1.5,.3);}vbox(g,.9,.9,.02,cr,0,2.15,3.26);vbox(g,.9,.5,.04,GL,0,2.55,3.26);
     vbox(g,1.6,.16,.45,DK,0,2.99,-1.4);const fr=new THREE.MeshStandardMaterial({color:0xff2020,emissive:0xff2020,emissiveIntensity:1.5}),fb=new THREE.MeshStandardMaterial({color:0x2050ff,emissive:0x2050ff,emissiveIntensity:.1});vbox(g,.6,.2,.4,fr,-.45,3.12,-1.4);vbox(g,.6,.2,.4,fb,.45,3.12,-1.4);R.flash=[fr,fb];
-    for(const sd of [-1,1]){vbox(g,.42,.18,.06,HL,sd*.85,.95,-3.86);vbox(g,.3,.3,.06,TL,sd*1.1,1.0,3.26);}vbox(g,2.6,.18,.12,DK,0,.62,-3.9);}
+    for(const sd of [-1,1]){vbox(g,.42,.18,.06,HL,sd*.85,.95,-3.86);vbox(g,.3,.3,.06,TL,sd*1.1,1.0,3.26);}vbox(g,2.6,.18,.12,DK,0,.62,-3.9);R.seat=[0,1.2,-2.3];}
   else if(kind==='tank'){const cam=ofCamo(11).clone();cam.repeat.set(3,3);cam.needsUpdate=true;const Cm=new THREE.MeshStandardMaterial({map:cam,roughness:.9}),Ol=vm('tkOl',{color:0x4a5234,roughness:.85}),Tr=vm('tkTr',{color:0x26282a,roughness:.95}); // 🪖 위장 무늬 탱크 · 무한궤도 · 포탑 · 긴 포신
     for(const sd of [-1,1]){vbox(g,.95,1.0,7.0,Tr,sd*2.0,.52,0);for(let i=0;i<6;i++)vwheel(g,W,.36,.2,sd*2.5,.48,-2.6+i*1.04);vbox(g,1.1,.1,7.3,Ol,sd*1.95,1.1,0);}
     vbox(g,3.2,.85,6.4,Cm,0,1.3,0);vbox(g,3.2,.5,1.1,Cm,0,1.42,-3.3,-.55);vbox(g,3.2,.45,.6,Cm,0,1.35,3.25,.4);
     vbox(g,2.6,.9,3.0,Cm,0,2.18,.4);vbox(g,2.2,.22,2.5,Cm,0,2.72,.45);vbox(g,1.0,.62,.45,Ol,0,2.18,-1.22);
-    vcyl(g,.12,.15,4.6,DK,0,2.2,-3.65,'z');vcyl(g,.2,.2,.45,DK,0,2.2,-5.95,'z');vcyl(g,.34,.34,.12,Ol,0,2.86,1.0);vcyl(g,.035,.035,.95,DK,.62,3.0,.55,'z');vbox(g,.12,.18,.12,DK,.62,2.88,.95);}
+    vcyl(g,.12,.15,4.6,DK,0,2.2,-3.65,'z');vcyl(g,.2,.2,.45,DK,0,2.2,-5.95,'z');vcyl(g,.34,.34,.12,Ol,0,2.86,1.0);vcyl(g,.035,.035,.95,DK,.62,3.0,.55,'z');vbox(g,.12,.18,.12,DK,.62,2.88,.95);R.seat=[0,2.95,1.0];} // 해치에서 상반신이 나옴
   else if(kind==='plane'){const Wt=vm('apW',{color:0xf2f4f6,metalness:.35,roughness:.3}),Rd=vm('apR',{color:0xd01e24,roughness:.4}); // ✈ 흰 비행기 · 빨간 날개 끝 · 꼬리 · 프로펠러 (돎)
     vcyl(g,.55,.55,5.6,Wt,0,1.5,-.6,'z');vcyl(g,.18,.55,3.2,Wt,0,1.58,3.8,'z');vcyl(g,.55,.3,.9,Wt,0,1.5,-3.85,'z');vball(g,.2,DK,0,1.5,-4.35,1,1,1.4);
-    vball(g,.5,GL,0,2.0,-1.7,1,.72,1.7);vbox(g,12.6,.12,1.9,Wt,0,1.42,-.4);for(const sd of [-1,1])vbox(g,.7,.13,1.92,Rd,sd*5.95,1.42,-.4);vbox(g,1.12,.1,6.6,Rd,0,1.46,-.3);
+    vball(g,.56,GL,0,2.08,-1.7,1,.9,1.75);R.seat=[0,1.3,-1.7];vbox(g,12.6,.12,1.9,Wt,0,1.42,-.4);for(const sd of [-1,1])vbox(g,.7,.13,1.92,Rd,sd*5.95,1.42,-.4);vbox(g,1.12,.1,6.6,Rd,0,1.46,-.3);
     vbox(g,4.2,.1,1.0,Wt,0,1.66,4.4);vbox(g,.1,1.5,1.2,Rd,0,2.42,4.55);
     const pr=new THREE.Group();pr.position.set(0,1.5,-4.55);vbox(pr,.14,2.6,.06,BK,0,0,0);vbox(pr,2.6,.14,.06,BK,0,0,0);g.add(pr);R.prop=pr;
     for(const sd of [-1,1]){vbox(g,.08,.75,.08,DK,sd*1.0,.78,-1.0);vwheel(g,W,.3,.18,sd*1.0,.3,-1.0);}vbox(g,.06,.5,.06,DK,0,.7,3.8);vwheel(g,W,.2,.12,0,.22,3.8);}
-  else if(kind==='heli'){const B=vm('hlBody',{color:0x4a5440,metalness:.3,roughness:.5}); // 🚁 둥근 몸통 · 앞 유리 · 꼬리 · 받침 · 회전날개 (돎)
-    for(const sd of [-1,1]){vcyl(g,.06,.06,4.4,DK,sd*1.05,.12,0,'z');for(const z of [-1,1])vbox(g,.07,.75,.07,DK,sd*.85,.5,z,0,0,sd*.25);}
-    vball(g,1.15,B,0,1.75,-.5,1.05,.9,1.45);vball(g,.92,GL,0,1.95,-1.55,1,.78,.8);vcyl(g,.14,.38,4.2,B,0,2.05,2.9,'z');vbox(g,.08,1.0,.7,B,0,2.55,4.9);vbox(g,1.4,.06,.5,B,0,2.1,4.6);
-    vcyl(g,.08,.08,.7,DK,0,3.0,-.4);const ro=new THREE.Group();ro.position.set(0,3.4,-.4);vbox(ro,9,.05,.32,BK,0,0,0);vbox(ro,.32,.05,9,BK,0,0,0);vcyl(ro,.18,.18,.14,DK,0,0,0);g.add(ro);R.rotor=ro;
+  else if(kind==='heli'){const B=vm('hlBody',{color:0x4a5440,metalness:.3,roughness:.5}),Bd=vm('hlDark',{color:0x3a4232,metalness:.3,roughness:.55}); // 🚁 군용 헬기: 몸통 · 큰 앞 유리 · 옆 창 · 엔진 덮개 · 꼬리 · 받침 · 회전날개 (돎)
+    for(const sd of [-1,1]){vcyl(g,.06,.06,4.4,DK,sd*1.1,.12,-.3,'z');for(const z of [-1.2,.6])vbox(g,.07,.62,.07,DK,sd*.98,.45,z,0,0,sd*.2);}
+    vbox(g,2.1,.14,3.0,Bd,0,.78,-.4);for(const sd of [-1,1]){vbox(g,.1,.7,3.0,B,sd*1.0,1.2,-.4);vbox(g,.06,.85,1.5,GL,sd*1.02,1.95,-.85);vbox(g,.1,.85,.8,B,sd*1.0,1.95,.55);vbox(g,.1,1.05,.1,B,sd*1.0,2.0,-1.62,.3);}
+    vbox(g,2.1,.15,2.6,B,0,2.45,-.2);vbox(g,2.1,1.7,.12,B,0,1.6,1.05);vbox(g,2.1,.65,.9,B,0,1.15,-1.9,.35);vbox(g,1.95,1.15,.05,GL,0,2.0,-1.7,.32);vbox(g,1.2,.5,1.8,Bd,0,2.75,.05);vbox(g,.8,.3,.7,BK,0,.97,-.6);vbox(g,.8,.65,.15,BK,0,1.35,-.25); // 바닥 · 옆판 · 옆 유리 · 지붕 · 뒷벽 · 코 · 앞 유리 · 엔진 덮개 · 자리
+    vcyl(g,.16,.42,4.0,B,0,1.95,3.0,'z');vbox(g,.08,1.1,.75,B,0,2.5,4.95);vbox(g,1.5,.06,.5,B,0,2.0,4.6);
+    vcyl(g,.08,.08,.5,DK,0,3.15,.05);R.seat=[0,1.2,-.7];const ro=new THREE.Group();ro.position.set(0,3.42,.05);vbox(ro,9,.05,.32,BK,0,0,0);vbox(ro,.32,.05,9,BK,0,0,0);vcyl(ro,.18,.18,.14,DK,0,0,0);g.add(ro);R.rotor=ro;
     const tr=new THREE.Group();tr.position.set(.12,2.55,4.95);vbox(tr,.04,1.1,.12,BK,0,0,0);g.add(tr);R.trot=tr;}
   return R;}
 function spawnVeh(d){
   const g=new THREE.Group();g.rotation.order='YXZ';let R=0;
   const MK=d.t==='heli'?'heli':d.pi===AIRPLANE?'plane':d.pi===ROADSTER?'roadster':d.pi===AMBULANCE?'amb':d.pi===TANK?'tank':null,MD=MK?vehModel(MK):null; // 🚗 진짜 같은 모델
-  if(MD){g.add(MD.g);for(const [x,y,z] of d.b)R=Math.max(R,Math.hypot(x,z),y);}
+  if(MD){g.add(MD.g);for(const [x,y,z] of d.b)R=Math.max(R,Math.hypot(x,z),y);if(MD.seat){d.seat=MD.seat.slice();d.sit=1;}} // 자리 = 모델 안 엉덩이 높이
   const wheels=MD?MD.wheels:[],steers=[];if(!MD)for(const [x,y,z,id,col] of d.b){const m=id===STEER?steerModel(1):vehMesh(id);if(col&&m.material){const k=id+':'+col;if(!VTINT[k]){const t=m.material.clone();t.color.setHex(col);if(t.emissiveMap)t.emissive.setHex(col);VTINT[k]=t;}m.material=VTINT[k];} /* 🎨 미리 만든 탈것은 블록마다 색 (흰 눈 블록에 칠함) */m.position.set(x,y+.5,z);g.add(m);if(id===WHEEL)wheels.push(m);if(id===STEER){m.rotation.x=-.35;steers.push(m.userData.spin);}R=Math.max(R,Math.hypot(x,z),y);}
   const bottom=d.b.filter(o=>!d.b.some(w=>w[0]===o[0]&&w[2]===o[2]&&w[1]===o[1]-1));
   scene.add(g);const v={d,g,pos:new THREE.Vector3(d.x,d.y,d.z),yaw:d.yaw||0,pitch:d.pitch||0,roll:0,speed:0,thr:0,vy:0,hp:3,hpT:0,R:R+1,bottom,wheels,steers,boosters:d.b.filter(o=>o[3]===BOOSTER),btn:d.b.some(o=>o[3]===BUTTON),boostDir:Math.sign(d.b.reduce((a,o)=>a+(o[3]===BOOSTER?Math.sign(o[2]):0),0)),boost:!!d.boost,q:new THREE.Quaternion(),onGround:false};
-  if(MD){v.rotor=MD.rotor||null;v.prop=MD.prop||null;v.trot=MD.trot||null;v.flash=MD.flash||null;} // 🚁 회전날개 · ✈ 프로펠러 · 🚑 경광등
+  if(MD){v.model=1;v.rotor=MD.rotor||null;v.prop=MD.prop||null;v.trot=MD.trot||null;v.flash=MD.flash||null;} // 🚁 회전날개 · ✈ 프로펠러 · 🚑 경광등
   else if(d.t==='heli'){const rg=new THREE.Group();for(const m of [...g.children])if(Math.abs(m.position.y-(HELI_ROTOR_Y+.5))<.01){g.remove(m);rg.add(m);}g.add(rg);v.rotor=rg;} // 🚁 회전날개는 따로 돌아감
   VEH.push(v);vehPose(v);return v;}
 function vehPose(v){v.q.setFromEuler(new THREE.Euler(v.pitch,v.yaw,v.roll,'YXZ'));v.g.position.copy(v.pos);v.g.quaternion.copy(v.q);}
@@ -8377,7 +8384,7 @@ function updatePlayer(dt){
   if(p.veh){ // 탈것: 자리에 앉아 감 (스페이스로 내리기)
     const v=p.veh,ex=v&&v.d&&v.d.t==='heli'?keys.KeyX:keys.Space;if(ex||!VEH.includes(v)){keys.Space=false;keys.KeyX=false;vehExit();} // 🚁 헬기는 X 로 내림 (스페이스는 상승)
     else{p.pos.set(...v.d.seat).applyQuaternion(v.q).add(v.pos);p.vel.set(0,0,0);p.onGround=true;p.inWater=false;p.peakY=p.pos.y;p.gliding=false;p.flying=false;
-      camera.position.set(p.pos.x,p.pos.y+(v.d.sit?1.2:1.5),p.pos.z);camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();return;}}
+      camera.position.set(p.pos.x,p.pos.y+(v.model?1.05:v.d.sit?1.2:1.5),p.pos.z);camera.rotation.set(p.pitch,p.yaw,0);camera.updateMatrixWorld();return;}}
   if(p.sit){ // 쿠션에 앉음 (스페이스로 일어나기)
     const t=p.sit,b=getBlock(t.x,t.y,t.z);if(keys.Space||(b!==CUSHION&&b!==DRIVE_CUSHION)){keys.Space=false;p.sit=null;p.pos.set(t.x+.5,t.y+1.01,t.z+.5);p.vel.set(0,3,0);while(entHits(p)&&p.pos.y<CH-2)p.pos.y+=1;p.peakY=p.pos.y;}
     else{p.pos.set(t.x+.5,t.y+.5,t.z+.5);p.vel.set(0,0,0);p.onGround=true;p.inWater=false;p.peakY=p.pos.y;
@@ -10079,7 +10086,7 @@ function mpTick(dt){if(!MP.on)return;weaponTick(dt);
   if(!MP.host&&(MP.stT=(MP.stT||0)+dt)>20){MP.stT=0;try{MP.hc&&MP.hc.open&&MP.hc.send(mpState());}catch(e){}} // 🌍 20초마다 내 가방 · 위치를 방장에게 (방장이 바뀌어도 이어서)
   if(MP.q.length){const L=MP.q;MP.q=[];for(let i=0;i<L.length;i+=4000)mpSend({t:'b',L:L.slice(i,i+4000)});}
   MP.pt+=dt;if(MP.pt>=.1&&running){MP.pt=0;const p=player,r=v=>Math.round(v*100)/100,h=held();
-    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,dn:p.downed?1:0,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0),sl:r(p.saluteK||0)};
+    const o={t:'p',x:r(p.pos.x),y:r(p.pos.y+(p.gOff||0)),z:r(p.pos.z),ya:r(p.yaw),pi:r(p.pitch),d:world.dim,dn:p.downed?1:0,sv:p.veh&&VEH.includes(p.veh)?(p.veh.model?1:2):0,vy:p.veh?r(p.veh.yaw):0,h:h?h.id:0,c:(p.crouchK||0)>.5?1:0,s:(swing>0||wasDigging)?1:0,v:isSpec()||p.dead?1:0,r:MP.redT>0?1:0,ar:armor.slice(0,4).map(a=>a?[a.id,a.col||0,a.ely?1:0]:0),aw:bowAimNow()?r(bowPull())+.01:0,sh:armor[4]?armor[4].id:0,bk:r(p.blockT||0),gk:r(p.glideK||0),wk:r(p.swimK||0),sl:r(p.saluteK||0)};
     if(MP.host)o.id='H';mpSend(o);}
   if(player.hp<MP.lhp)MP.redT=.35;MP.lhp=player.hp;MP.redT-=dt; // 다치면 친구 화면에서 빨갛게
   MP.ctT+=dt;if(MP.ctT>=.4){MP.ctT=0;mpCtScan();mpWsScan();}
@@ -10090,11 +10097,11 @@ function mpTick(dt){if(!MP.on)return;weaponTick(dt);
   for(const P of MP.peers.values()){const A=P.A,t=P.t;const vis=!!t&&running&&t.d===world.dim&&!t.v;A.g.visible=vis;if(!vis)continue; // 친구 캐릭터: 받은 위치로 부드럽게 · 걷기 · 휘두르기
     const k=Math.min(1,dt*12),ox=A.g.position.x,oz=A.g.position.z;
     const gk=t.gk||0,sk=Math.max(t.wk||0,gk,t.dn?1:0); // 활공 · 수영 · 🩸 쓰러짐: 엎드려 누움
-    if(!P.init){P.init=1;A.g.position.set(t.x,t.y,t.z);A.yaw=t.ya;}else A.g.position.lerp(_mpV.set(t.x+Math.sin(A.yaw)*.9*sk,t.y-(t.c?.1:0)+.3*sk,t.z+Math.cos(A.yaw)*.9*sk),k);
+    if(!P.init){P.init=1;A.g.position.set(t.x,t.y,t.z);A.yaw=t.ya;}else A.g.position.lerp(_mpV.set(t.x+Math.sin(A.yaw)*.9*sk,t.y-(t.c?.1:0)+.3*sk-(t.sv===1?.75:t.sv===2?.25:0),t.z+Math.cos(A.yaw)*.9*sk),k); /* 🚗 탈것에 앉은 친구는 엉덩이가 자리에 */
     const hs=Math.min(12,Math.hypot(A.g.position.x-ox,A.g.position.z-oz)/Math.max(dt,1e-3));
-    let d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));if(hs>.5||sk>.5)A.yaw+=d*k;else if(Math.abs(d)>.75)A.yaw=t.ya-Math.sign(d)*.75;d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));
+    let d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));if(t.sv)A.yaw=t.vy||0;else if(hs>.5||sk>.5)A.yaw+=d*k;else if(Math.abs(d)>.75)A.yaw=t.ya-Math.sign(d)*.75;d=Math.atan2(Math.sin(t.ya-A.yaw),Math.cos(t.ya-A.yaw));
     A.g.rotation.order='YXZ';A.g.rotation.set(-Math.PI/2*sk,A.yaw,0);A.up.rotation.x=-.45*(t.c||0);A.head.rotation.set(t.pi+.45*(t.c||0)+1.35*sk,d,0);
-    A.walk+=hs*dt*2.6;const amp=Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);A.legs[0].rotation.x=sw*amp;A.legs[1].rotation.x=-sw*amp;const bk=t.bk||0;A.arms[0].rotation.order='YXZ';A.arms[0].rotation.set(lerp(-sw*amp*.8,1.38,bk),lerp(0,-.5,bk),lerp(-.05,0,bk)); // 방패 막기: 왼팔을 앞으로
+    A.walk+=hs*dt*2.6;const amp=t.sv?0:Math.min(1,hs/4)*.75,sw=Math.sin(A.walk);A.legs[0].rotation.x=t.sv?1.45:sw*amp;A.legs[1].rotation.x=t.sv?1.45:-sw*amp;const bk=t.bk||0;A.arms[0].rotation.order='YXZ';A.arms[0].rotation.set(lerp(-sw*amp*.8,1.38,bk),lerp(0,-.5,bk),lerp(-.05,0,bk)); // 방패 막기: 왼팔을 앞으로
     P.sw=Math.max(0,P.sw-dt*3);const sa=Math.sin(P.sw*Math.PI);A.arms[1].rotation.set((t.h?.3:0)+sw*amp*.8*(t.h?.5:1)+sa*1.5,sa*-.3,.05+sa*.15);
     {const ak=JSON.stringify(t.ar||0);if(ak!==P.ak){P.ak=ak;const sa=armor;armor=[0,1,2,3].map(i=>{const a=t.ar&&t.ar[i];return Array.isArray(a)&&IT[a[0]]?{id:a[0],col:a[1]||undefined,ely:a[2]?1:undefined}:null;}).concat([null]);try{dressAvatar(A);}catch(e){}finally{armor=sa;}}} // 친구 갑옷 · 겉날개 · 망토
     if(gk>.05&&gk>=(t.wk||0)){A.arms.forEach((a,i)=>{a.rotation.order='XYZ';a.rotation.set(lerp(a.rotation.x,.15,gk),0,lerp(a.rotation.z,(i?-1:1)*.35,gk));});A.legs.forEach(l=>{l.rotation.x=lerp(l.rotation.x,0,gk);});} // 활공: 팔을 뒤로 붙임
