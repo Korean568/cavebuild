@@ -336,7 +336,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.288 — 🪖 탱크 조준 · 💥 포탄 폭발 · 🚁 3인용 헬기 · 🚑 환자 싣기 · AI 구급차</h4>
+    <h4>🆕 v26.289 — 🌐 기지 · 도시 지을 때 친구 연결이 끊기던 것 고침</h4>
+    <ul><li>🌐 방장 쪽에서 군사기지 · 해군 기지 · 주도 · 고속도로를 지을 때 친구 게임이 블록 하나마다 청크를 다시 그려서 몇 초씩 멈추다 끊기던 것 고침 · 이제 한 번에 온 블록은 청크마다 한 번만, 다음 프레임들에 나눠서 다시 그려요</li></ul>
+    <h4>v26.288 — 🪖 탱크 조준 · 💥 포탄 폭발 · 🚁 3인용 헬기 · 🚑 환자 싣기 · AI 구급차</h4>
     <ul><li>🪖 탱크: <b>바라보는 곳으로</b> 포를 쏴요 · 포탑과 포신이 시선을 따라 돌아요 (친구 화면에서도)</li><li>💥 포탄이 맞으면 <b>폭발</b>: 둘레 5칸의 몹 · 플레이어가 다쳐요 · 블록은 부서지지 않아요 · 탱크 안 사람은 안 다쳐요</li><li>🚁 헬기가 1.35배 커지고 <b>3인용</b>: 처음 탄 사람이 조종 · 다음 두 명은 양쪽 문 <b>기관포 사수</b> (누르고 있으면 계속 쏨 · 바깥을 보고 앉음)</li><li>🚑 구급차 3인용 (운전석 + 뒤 두 자리) · 쓰러진 환자를 든 의무병이 구급차에 타면 환자가 <b>들것</b>에 실려요</li><li>🚑 <b>AI 구급차</b>: 누가 쓰러지면 가장 가까운 빈 구급차가 경광등을 켜고 저절로 출동 → 환자를 태움 → 가장 가까운 의무병 NPC 옆 병원에 내려 줘요 (의무병이 살려 줌) · 막히면 건너뛰어서 시간 안에 도착 · 경광등은 출동 · 운전할 때만 깜빡</li><li>🪖 조직 모드: 군사기지 의료센터 옆길에 구급차 2대 · 해군 의무대 앞에 1대가 저절로 배치돼요</li><li>🧩 모드 기능: CB.ambulance({hospital}) · CB.spawnVehicle(종류, x, y, z, 방향)</li></ul>
     <h4>v26.287 — 🪖 탱크 포탄 위치 고침</h4>
     <ul><li>🪖 탱크 포탄이 포신보다 한 칸 넘게 위 허공에서 나가던 것 고침 · 이제 포신 끝(포구)에서 나가요</li></ul>
@@ -2304,7 +2306,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.288 — 🪖 Tank aiming · 💥 Explosive shells · 🚁 3-seat helicopter · 🚑 Patient loading · AI ambulance</h4>
+    <h4>🆕 v26.289 — 🌐 Friends no longer disconnect while bases and cities build</h4>
+    <ul><li>🌐 While the host built the bases, state cities or highways, friends' games redrew a chunk for every single block and froze for seconds until they disconnected · now a burst of blocks redraws each chunk once, spread over the next frames</li></ul>
+    <h4>v26.288 — 🪖 Tank aiming · 💥 Explosive shells · 🚁 3-seat helicopter · 🚑 Patient loading · AI ambulance</h4>
     <ul><li>🪖 Tanks fire <b>where you look</b> · the turret and gun follow your view (also on friends' screens)</li><li>💥 Shells <b>explode</b> on impact, hurting mobs and players within 5 blocks · blocks are not destroyed · the tank crew is safe</li><li>🚁 The helicopter is 1.35× bigger and seats <b>three</b>: the first rider flies, the next two man the <b>door machine guns</b> (hold to fire, seated facing out)</li><li>🚑 Ambulances seat three (driver + two in the back) · a medic carrying a downed patient who gets in puts them on the <b>stretcher</b></li><li>🚑 <b>AI ambulance</b>: when someone goes down, the nearest empty ambulance turns on its siren, drives to them, loads them and drops them at the nearest medic NPC (who revives them) · skips ahead if stuck so it arrives in time · lights flash only while dispatched or driven</li><li>🪖 Org mod: 2 ambulances are placed by the base medical centers and 1 at the navy medical unit</li><li>🧩 Mod API: CB.ambulance({hospital}) · CB.spawnVehicle(kind, x, y, z, yaw)</li></ul>
     <h4>v26.287 — 🪖 Tank shell origin fixed</h4>
     <ul><li>🪖 Tank shells came out of thin air over a block above the gun · they now leave from the muzzle</li></ul>
@@ -9916,9 +9920,9 @@ function mpDel(id){const P=MP.peers.get(id);if(!P)return;scene.remove(P.A.g,P.A.
 function mpList(){return [...MP.peers.values()].map(P=>P.nick);}
 function mpPlayersFor(skip){const L=[{id:'H',nick:MP.me.nick,skin:MP.me.skin,cape:MP.me.cape}];for(const c of MP.conns)if(c.P&&c!==skip)L.push({id:c.P.id,nick:c.P.nick,skin:c.P.skin,cape:c.P.cape});return L;}
 function mpSend(o,skip){try{if(MP.host){for(const c of MP.conns)if(c.ready&&c!==skip&&c.open)c.send(o);}else if(MP.hc&&MP.hc.open)MP.hc.send(o);}catch(e){}}
-function mpApply(L){MP.rx=1;try{for(let [d,x,y,z,id] of L){if(id&&!BL[id])id=STONE;if(y<0||y>=CH||(BOMB_BLK[id]&&weaponBan()))continue;const k=ckey(x>>4,z>>4); // 친구가 바꾼 블록: 보이는 청크는 바로 고치고, 아니면 기록만 (나중에 그 청크를 만들 때 반영)
-    if(d===world.dim&&chunks.get(k)){if(getBlock(x,y,z)!==id)setBlock(x,y,z,id);}
-    else{const mm=modsByDim[d]||(modsByDim[d]=new Map());let m=mm.get(k);if(!m){m=new Map();mm.set(k,m);}m.set((y*16+(z&15))*16+(x&15),id);modDirty.add(d+'|'+k);}}}catch(e){console.error(e);}finally{MP.rx=0;}}
+function mpApply(L){MP.rx=1;const batch=new Set();try{for(let [d,x,y,z,id] of L){if(id&&!BL[id])id=STONE;if(y<0||y>=CH||(BOMB_BLK[id]&&weaponBan()))continue;const k=ckey(x>>4,z>>4); // 친구가 바꾼 블록: 보이는 청크는 바로 고치고, 아니면 기록만 (나중에 그 청크를 만들 때 반영)
+    if(d===world.dim&&chunks.get(k)){if(getBlock(x,y,z)!==id)setBlock(x,y,z,id,L.length>8?batch:undefined);} /* 많이 오면 (기지 · 도시 짓기) 청크마다 한 번만 다시 그림 → 친구 게임이 멈춰서 끊기던 것 고침 */
+    else{const mm=modsByDim[d]||(modsByDim[d]=new Map());let m=mm.get(k);if(!m){m=new Map();mm.set(k,m);}m.set((y*16+(z&15))*16+(x&15),id);modDirty.add(d+'|'+k);}}}catch(e){console.error(e);}finally{MP.rx=0;for(const k of batch){const [a,b]=k.split(',').map(Number);if(getChunk(a,b))getChunk(a,b).needsMesh=true;}}} // 다시 그리기는 다음 프레임들에 나눠서
 function mpPos(P,o){P.t=o;if(o.s&&P.sw<=0)P.sw=1;}
 function mpChatShow(n,m){modEmit('chat',n,m);const me=MP.on&&MP.me.nick&&n!==MP.me.nick&&m.toLowerCase().includes('@'+MP.me.nick.toLowerCase());chatAdd(`<b>${mpEsc(n)}</b>: ${mpEsc(m).replace(/@([^\s@<&]+)/g,'<b style="color:#7ab0ff">@$1</b>')}`);if(me){tone(1320,1760,.12,.08);toast(`🔔 <b>${mpEsc(n)}</b> 님이 나를 불렀어요`);}}
 // 방장: 방 열기 → 친구가 들어오면 세계를 통째로 보내 줌
