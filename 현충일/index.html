@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.296 — 🐞 조직 모드 버그 고침 (/계급 진급 · 게임 시간)</h4>
+    <h4>🆕 v26.297 — 🛡 멀티 보안: 어드민 · 운영자 사칭 · 세계 설정 덮어쓰기 막기</h4>
+    <ul><li>🛡 친구가 어드민인지는 이제 <b>중계 서버가 로그인 계정을 확인</b>한 것만 믿어요 (게임을 조작해 「나 어드민」이라고 보내도 OP · 국무총리가 안 돼요 · 로그인 열쇠는 방장에게 안 가요)</li><li>🛡 「운영자」 닉네임은 운영자 계정으로 로그인해야 들어올 수 있어요</li><li>🛡 친구 게임은 조직 상태(팀 · 계급 · 은행 등) · 서버 주인 · OP 명단 · 공식 서버 표시를 못 바꿔요 · 밴 · 게임 모드 · 규칙 · 시간 설정은 OP 친구만</li><li>⭐ 공식 서버에서는 /op 요청도 방장 게임이 받지 않아요</li></ul>
+    <h4>v26.296 — 🐞 조직 모드 버그 고침 (/계급 진급 · 게임 시간)</h4>
     <ul><li>🎖 조교가 /계급 @닉 을 계속 쳐서 순식간에 대장까지 올릴 수 있던 것 고침 · 이제 /계급 으로는 내 군사계급보다 낮은 계급까지만 진급시켜요 (OP · 어드민은 그대로)</li><li>🌐 진급용 게임 시간을 10초마다 저장해서 조직 상태 전체가 친구들에게 10초마다 다시 가던 것 고침 · 이제 1분마다</li></ul>
     <h4>v26.295 — 🍳 취사병 · 🚚 보급 트럭 · 🍱 전투식량 · 🗡 배반자 · 🎖 육 · 해 · 공군참모총장</h4>
     <ul><li>🍳 조직 29순위 <b>취사병(Military Cook)</b>: 전투복 + 흰 셰프 모자 · 군사기지 의료센터 옆길의 <b>🚚 보급 트럭</b>에 타고 <b>/보급</b> 하면 둘레 14칸의 군대 팀원에게 전투식량 2개씩 (1분마다)</li><li>🍱 <b>전투식량</b>: 먹으면 2분 동안 빨라지고 <b>공격력 1.5배</b> (주먹 · 무기 · 총)</li><li>🗡 조직 30순위 <b>배반자(Traitor)</b>: 무죄인 사람을 <b>1명이라도</b> 처치한 군인은 바로 배반자 (무법자복) · 예전 배신자도 배반자로</li><li>🔰 멤버 · 게스트 훈련병 팀은 없어지고, 입대하면 고른 군(육 · 해 · 공군)의 <b>훈련병(계급)</b>부터 · 원래 훈련병들도 고른 군으로 옮겨졌어요</li><li>🎖 참모총장은 처음 고른 군에 따라 <b>육군 · 해군 · 공군참모총장</b> · 해병대 사령관 · 참모총장은 합동참모의장이나 원수만 줄 수 있어요</li></ul>
@@ -2322,7 +2324,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.296 — 🐞 Org mod fixes (/계급 promotions · play time)</h4>
+    <h4>🆕 v26.297 — 🛡 Multiplayer security: admin and operator spoofing, world-setting overwrites</h4>
+    <ul><li>🛡 A friend counts as an admin only when <b>the relay server has verified their login</b> (a modified game claiming admin no longer gets OP or Prime Minister · the login key never goes to the host)</li><li>🛡 The name 운영자 now requires logging in with the operator account</li><li>🛡 Friends' games can no longer change the org state (teams · ranks · bank), the server owner, the OP list or the official-server mark · bans, game mode, rules and time settings only from OP friends</li><li>⭐ On official servers the host also ignores /op requests</li></ul>
+    <h4>v26.296 — 🐞 Org mod fixes (/계급 promotions · play time)</h4>
     <ul><li>🎖 An Assistant could spam /계급 @name to push someone straight to General · /계급 now only promotes up to one rank below your own military rank (OP · admins unchanged)</li><li>🌐 Promotion play time was saved every 10 seconds, re-sending the whole org state to friends each time · now once a minute</li></ul>
     <h4>v26.295 — 🍳 Military Cook · 🚚 Supply truck · 🍱 Combat ration · 🗡 Traitor · 🎖 Army · Navy · Air Force Chief of Staff</h4>
     <ul><li>🍳 Org #29 <b>Military Cook</b>: combat uniform + white chef hat · ride the <b>🚚 supply truck</b> by the base medical center and use <b>/보급</b> to give every soldier within 14 blocks 2 combat rations (once a minute)</li><li>🍱 <b>Combat ration</b>: eating it makes you faster and gives <b>1.5× attack</b> for 2 minutes (fists, weapons, guns)</li><li>🗡 Org #30 <b>Traitor</b>: a soldier who kills <b>even one</b> innocent person instantly becomes a Traitor (outlaw outfit) · old traitors carry over</li><li>🔰 The Member/Guest Recruit teams are gone; enlisting starts you as a <b>Recruit (rank)</b> in your chosen branch · existing recruits moved to their branch</li><li>🎖 Chief of Staff shows as <b>Army · Navy · Air Force Chief of Staff</b> by your first branch · CMC and Chief of Staff can only be given by the CJCS or the Marshal</li></ul>
@@ -10008,6 +10012,8 @@ function mpHost(opt){opt=opt||{};if(!mpOk()||(!opt.re&&(MP.on||MP.ws)))return;if
       else if(d.t==='_saved'){if(MP.onSaved){const f=MP.onSaved;MP.onSaved=null;f();}}
       else if(d.t==='_deleted'){MP.leaving=true;mpOwnSet(code,null);toast(mpL('🗑 공개 서버가 지워졌어요','🗑 The server was deleted'));mpStop();}
       else if(d.t==='_err'){ws.onclose=null;MP.ws=null;if(opt.re&&MP.on){toast(mpL('🌐 방에 다시 붙지 못했어요 — 방이 닫혔어요','🌐 Could not get the room back — closed'));MP.leaving=true;mpStop();return;}if(d.m==='taken'&&!opt.code)mpHost(opt);else if(d.m==='taken'&&opt.resume&&(MP.reN=(MP.reN||0)+1)<6){setTimeout(()=>{MP.carry2=1;mpJoin(code,1);},2000);}else{toast('🌐 '+mpEsc(d.m));renderMP();}}return;}
+    const rm=/^(g\d+)#/.exec(s);if(rm){const c=byId.get(rm[1]);let d=null;try{d=JSON.parse(s.slice(rm[0].length));}catch(e){} // 🛡 중계 서버만 보내는 말 (「#」 · 친구가 보낸 말은 늘 「|」): 어드민 확인
+      if(c&&d&&d.t==='adm'){c.admOk=1;if(c.P&&!c.P.adm){c.P.adm=1;if(mpConnOp(c))c.send({t:'op',on:1});renderMP();}}return;}
     const i=s.indexOf('|'),gid=s.slice(0,i),raw=s.slice(i+1);
     if(raw==='{"t":"_join"}'){const c={id:gid,open:true,B:{},send(o){const w=MP.ws;if(!this.open||!w||w.readyState!==1)return;if(w.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))w.send(gid+'|'+x);},close(){this.open=false;}}; // 친구 한 명 = 가짜 연결 (다시 연결해도 같은 친구)
       byId.set(gid,c);MP.conns.add(c);return;}
@@ -10065,9 +10071,10 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
   if(!MP.on||!running){if(d.t==='hi')c.send({t:'_err',m:'wait'});return;} // 세계를 여는 중: 친구에게 잠시 뒤 다시 오라고 알림 (아무 말 안 하면 친구는 끝까지 기다림)
   if(d.t==='hi'){const nick=String(d.nick||'?').slice(0,16);
     if((world.flags.bans||[]).some(x=>x.toLowerCase()===nick.toLowerCase())){c.send({t:'no',m:mpL('🔨 이 방에서 밴당했어요','🔨 You are banned from this room')});return;}
+    if(nick==='운영자'&&!c.admOk){if(!c.hiW){c.hiW=1;setTimeout(()=>{if(c.open&&!c.P)mpHostRecv(c,d);},3000);return;}c.send({t:'no',m:mpL('「운영자」 닉네임은 운영자 계정으로 로그인해야 쓸 수 있어요','The name 운영자 needs the operator account')});return;} // 🛡 운영자 사칭 막기: 중계 서버의 어드민 확인을 3초 기다림
     if(d.st)for(const x of [...MP.conns])if(x!==c&&x.P&&x.P.nick===nick){MP.conns.delete(x);x.open=false;mpDel(x.P.id);mpSend({t:'leave',id:x.P.id});} // 🔁 다시 들어온 친구: 끊긴 예전 연결을 정리
     if(nick===MP.me.nick||[...MP.conns].some(x=>x.P&&x.P.nick===nick)){c.send({t:'no',m:mpL('같은 닉네임이 이미 방에 있어요','That nickname is already in the room')});return;}
-    const P={id:'g'+(++MP.gid),nick,skin:typeof d.skin==='string'&&d.skin.length<200000?d.skin:'',cape:CAPES[d.cape]?d.cape:'',adm:d.adm?1:0};
+    const P={id:'g'+(++MP.gid),nick,skin:typeof d.skin==='string'&&d.skin.length<200000?d.skin:'',cape:CAPES[d.cape]?d.cape:'',adm:c.admOk?1:0}; // 🛡 어드민은 중계 서버가 확인한 것만 (친구 게임이 보낸 adm 은 안 믿음)
     for(const d of world.vehicles||[])if(!d.vid)d.vid='H.v'+(++MP.gn); // 탈것 번호
     let sn;try{sn=toPortable(saveSnapshot());}catch(e){c.send({t:'no',m:'세계를 보내지 못했어요'});return;}
     const st=(d.st&&typeof d.st==='object'&&Array.isArray(d.st.inv)?d.st:null)||(world.mpp||{})[nick]; // 🔁 다시 들어온 친구는 끊기기 직전 가방 · 위치
@@ -10096,7 +10103,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
   else if(d.t==='gq')mpGq(c,d);
   else if(d.t==='sh'){mpShotIn(d);mpSend(d,c);}
   else if(d.t==='ws'){mpWsIn(d);mpSend(d,c);}
-  else if(d.t==='fl'){if(d.f&&typeof d.f==='object'){delete d.f.noweapon;delete d.f.nomonster;delete d.f.noportal;}mpFlIn(d);mpSend(d,c);} // 서버 규칙은 친구가 못 바꿈
+  else if(d.t==='fl'){if(d.f&&typeof d.f==='object'){for(const k of ['noweapon','nomonster','noportal','mod','owner','offsrv','ops'])delete d.f[k];if(!mpConnOp(c))for(const k of ['bans','banned','srvMode','kind','motd','rules','tfz','tsp','nospawn','pvp'])delete d.f[k];}mpFlIn(d);mpSend(d,c);} // 🛡 서버 규칙 · 모드 상태(조직 팀 · 계급 · 은행) · 주인 · OP 명단은 친구가 못 바꿈 · 밴 · 게임 모드 · 규칙은 OP 친구만
   else if(d.t==='cv'){if(!weaponBan()){mpCarveIn(d);mpSend(d,c);}}
   else if(d.t==='fx'){if(!weaponBan()){mpFxIn(d);mpSend(d,c);}}
   else if(d.t==='bi'){mpBoatIn(d);mpSend(d,c);}
@@ -10109,7 +10116,7 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
   else if(d.t==='banreq'){if(!mpConnOp(c))return;const nk=String(d.n||'').slice(0,16);
     if(nk.toLowerCase()===String(MP.me.nick).toLowerCase()){if(cmdIsAdmin())c.send({t:'c',n:'🔨 서버',m:nk+' 님은 어드민이라 밴할 수 없어요'});else mpBanMe(c.P.nick);return;}
     if(!mpBanNick(nk))c.send({t:'c',n:'🔨 서버',m:nk+' 님은 밴할 수 없어요 (운영자 · 어드민)'});}
-  else if(d.t==='opreq'){if(c.P.nick==='운영자'||c.P.adm||mpConnBoss(c))mpSetOp(String(d.n||'').slice(0,16),!!d.on);} // 🔑 OP 주기 · 빼기는 방장(만든 사람) · 어드민만 (서버가 확인)
+  else if(d.t==='opreq'){if(mpOff())return;if(c.P.nick==='운영자'||c.P.adm||mpConnBoss(c))mpSetOp(String(d.n||'').slice(0,16),!!d.on);} // 🔑 OP 주기 · 빼기는 방장(만든 사람) · 어드민만 (서버가 확인)
   else if(d.t==='cuff'||d.t==='tase'||d.t==='heal'||d.t==='cpr'||d.t==='surg'||d.t==='carry'){d.by=c.P.nick;mpRoute(d);}
   else if(d.t==='give'||d.t==='gmp'){if((!MULTI||c.P.adm||c.P.nick==='운영자')&&mpConnOp(c)){d.by=c.P.nick;mpRoute(d);}} // 🎁 /give @닉 · 🎮 /모드이름 @닉: OP만 (공개 서버는 어드민만 · 서버가 확인)
   else if(d.t==='mod'){d.n=c.P.nick;mpSend(d,c);modEmit('msg',d.k,d.v,d.n);}
@@ -10132,7 +10139,7 @@ function mpJoin(code,retry){code=String(code||'').trim().toUpperCase();MP.op=fal
   MP.hc={get open(){return ws.readyState===1;},send(o){if(ws.readyState!==1)return;if(ws.bufferedAmount>4e6&&o.t==='p')return;for(const x of mpPack(o))ws.send(x);}};
   const tm=setTimeout(()=>fail(mpL('방에 연결하지 못했어요 (잠시 뒤 다시 해 보세요)','Could not reach the room')),40000);
   ws.onmessage=ev=>{wdM(9);const d=mpUnpack(B,ev.data);if(!d||typeof d!=='object')return;
-    if(d.t==='_ok'){MP.gPersist=!!d.persist;const st=MP.carry;MP.carry=null;ws.send(JSON.stringify({t:'hi',...MP.me,adm:cmdIsAdmin()?1:0,mods:MOD_RAN,...(st?{st}:{})}));return;}
+    if(d.t==='_ok'){MP.gPersist=!!d.persist;const st=MP.carry;MP.carry=null;if(cmdIsAdmin()&&accToken())try{ws.send('!adm'+accToken());}catch(e){} /* 🛡 어드민 확인은 중계 서버에게만 (열쇠는 방장에게 안 감) */ws.send(JSON.stringify({t:'hi',...MP.me,adm:cmdIsAdmin()?1:0,mods:MOD_RAN,...(st?{st}:{})}));return;}
     if(d.t==='_promote'||d.t==='_rehost'){clearTimeout(tm);ws.onclose=null;MP.ws=null;MP.hc=null;mpHandoff(code,d.t==='_promote');return;} // 🌍 공개 서버의 방장이 바뀜
     if(d.t==='mods'){clearTimeout(tm);mpModsAsk(code,d);return;}
     if(d.t==='_err'){clearTimeout(tm);if(d.m==='wait'&&(MP.reN=(MP.reN||0)+1)<=12){ws.onclose=null;MP.ws=null;MP.hc=null;toast(mpL('🌍 서버에 다시 연결하는 중… 잠시 뒤 다시 들어가요','🌍 Reconnecting to the server…'));setTimeout(()=>mpJoin(code,1),2500);return;}
