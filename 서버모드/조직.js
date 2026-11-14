@@ -217,12 +217,17 @@ const ARMY = ['연습 훈련병', '실전 훈련병', '육군', '공군', '해�
 const TEAM_HP = { '육군': 100, '해군': 100, '공군': 100, '해병대': 150, '교육사령부': 150, '의무병': 150, '군사경찰': 200, '조교': 200, '교관': 225, '특수임무대': 250, '장교': 250, '특수전사령부': 300, '국군 군사경찰 연합': 400, '국군평화주의단': 500, '대통령 경호대': 510, '대통령 특수경호대': 520, '순찰부대': 525, '위병소 관리단': 550, '청와대 경호부대': 560, '장교 지원본부': 575, '국평단 운영본부': 600, '국평단 사령부': 625, '국군간호사사관학교': 650, '군사훈련부': 700, '국군 사령부': 700, '국군 사령부 연합': 725, '사단장': 750, '국방부 장관': 750, '연습 훈련병': 80, '실전 훈련병': 90, '국무총리': 900, '대통령': 1000 }; // 👑 대통령: 서바이벌 1000 · 크리에이티브 · 관전은 ♾️
 if (CB.maxHp) CB.maxHp(() => { if (!CB.players || !CB.players().length) return null; /* 멀티에서만 (혼자 하는 세계에선 보통 하트 · 무적 아님) */ const t = teamOf(me()); if (t === '대통령' && CB.gameMode && CB.gameMode() !== 'survival') return Infinity; return TEAM_HP[t] != null ? TEAM_HP[t] : null; });
 // 🎖 군사계급 (CLKKY ARMY 계급 구성 · 부서와 따로): 군대 팀원마다 하나 · /진급 · /강등 으로 올리고 내림 · 부서 이동은 /team · 전역하면 처음부터
-//   원수(General 5-Star)는 대통령(서버를 만든 사람)만 · 대장(General)은 운영진(국무총리 · 대통령이 진급시킨 사람)만 · 일반 진급은 중장(Lieutenant General)까지
+//   CLKKY ARMY 계급 25순위 (위 → 아래): 원수 · 합동참모의장 · 참모총장 · 해병대 사령관 · 대장 · 중장 · 소장 · 대령 · 중령 · 소령 · 주임원사 · 대위 · 중위 · 소위 · 원사 · 상사 · 중사 · 하사 · 병장 · 상등병 · 일등병 · 이등병 · 훈련병 · 멤버 · 게스트
+//   원수(Marshal)는 대통령(게임의 창조자)만 · 합동참모의장(CJCS)은 운영진(국무총리 · 어드민)만 · 참모총장(Chief of Staff)이 일반 유저가 오를 수 있는 가장 높은 계급
+//   진급은 대장까지 · 해병대 사령관 · 참모총장은 대통령 · 운영진이 진급시켜요 · 입대하면 훈련병부터
 //   군대가 아닌 사람: 이등병(디스코드 서버 가입자는 무조건) · 멤버(겜벗 공식 커뮤니티 CLKKY CITY 가입) · 게스트(미가입) — /계급 @닉 멤버|게스트 (OP)
-const RANKS = ['이등병', '일등병', '상등병', '병장', '하사', '중사', '상사', '원사', '소위', '중위', '대위', '소령', '중령', '대령', '소장', '중장', '대장', '원수'];
-const RANK_EN = { 이등병: 'Private', 일등병: 'Private First Class', 상등병: 'Corporal', 병장: 'Sergeant', 하사: 'Staff Sergeant', 중사: 'Sergeant First Class', 상사: 'Master Sergeant', 원사: 'Sergeant Major', 소위: 'Second Lieutenant', 중위: 'First Lieutenant', 대위: 'Captain', 소령: 'Major', 중령: 'Lieutenant Colonel', 대령: 'Colonel', 소장: 'Major General', 중장: 'Lieutenant General', 대장: 'General', 원수: 'General (5-Star)', 멤버: 'Member', 게스트: 'Guest' };
+const RANKS = ['훈련병', '이등병', '일등병', '상등병', '병장', '하사', '중사', '상사', '원사', '소위', '중위', '대위', '주임원사', '소령', '중령', '대령', '소장', '중장', '대장', '해병대 사령관', '참모총장', '합동참모의장', '원수'];
+const OLD_RANKS = ['이등병', '일등병', '상등병', '병장', '하사', '중사', '상사', '원사', '소위', '중위', '대위', '소령', '중령', '대령', '소장', '중장', '대장', '원수']; // v26.293 전 계급 번호 (S.m[].mr 옮기기)
+const migR = (s) => { if (!s || s.rv >= 1) return; for (const k in s.m || {}) { const x = s.m[k]; if (x && typeof x.mr === 'number') { const i = RANKS.indexOf(OLD_RANKS[x.mr]); if (i >= 0) x.mr = Math.min(i, RANKS.indexOf('참모총장')); } } s.rv = 1; }; // 저장된 객체를 바로 고침 (한 번만)
+const RANK_EN = { 훈련병: 'Recruit', 주임원사: 'Command Sergeant Major', '해병대 사령관': 'CMC', 참모총장: 'Chief of Staff', 합동참모의장: 'CJCS', 이등병: 'Private', 일등병: 'Private First Class', 상등병: 'Corporal', 병장: 'Sergeant', 하사: 'Staff Sergeant', 중사: 'Sergeant First Class', 상사: 'Master Sergeant', 원사: 'Sergeant Major', 소위: 'Second Lieutenant', 중위: 'First Lieutenant', 대위: 'Captain', 소령: 'Major', 중령: 'Lieutenant Colonel', 대령: 'Colonel', 소장: 'Major General', 중장: 'Lieutenant General', 대장: 'General', 원수: 'Marshal', 멤버: 'Member', 게스트: 'Guest' };
 const STATUS = ['멤버', '게스트']; // OP가 정하는 상태
-const RANK_MAX = RANKS.indexOf('중장'), RANK_STAFF = RANKS.indexOf('대장'); // 일반 진급은 중장까지 · 대장은 운영진만 (대통령이 /진급)
+const PROMO_MIN = 20; // ⏱ 게임을 20분 하면 진급 가능 (지난 진급 뒤부터 · 방장 게임이 셈)
+const RANK_GEN = RANKS.indexOf('대장'), RANK_MAX = RANKS.indexOf('참모총장'), RANK_STAFF = RANKS.indexOf('합동참모의장'); // 진급은 대장까지 · 해병대 사령관 · 참모총장은 대통령 · 운영진이 진급 · 합동참모의장은 운영진(국무총리 · 어드민)
 const GRADE = { 1: '경범죄', 2: '중범죄', 3: '중대범죄' }, WMAX = 3;
 const BADWORDS = ['시발', '씨발', 'ㅅㅂ', 'ㅆㅂ', '병신', 'ㅂㅅ', '개새', '좆', '지랄', '꺼져', '닥쳐', 'fuck', 'shit', 'bitch'];
 const stars = (n) => (n >= 3 ? '지명수배 ★★★' : n === 2 ? '지명수배 ★★' : '수갑대상'); // 머리 위 · 안내판에 뜨는 말
@@ -244,7 +249,7 @@ function cellOf(nick) {
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
 const migM = (m) => { for (const k in m) if (m[k] && m[k].o && !ORGS[m[k].o] && OLDTEAM[m[k].o]) m[k].o = OLDTEAM[m[k].o]; return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국군평화주의단 등)
-const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {}, alt: s.alt || {}, psuit: s.psuit || {}, ambCars: s.ambCars || 0, ambNavy: s.ambNavy || 0, adm: s.adm || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
+const load = () => { const s = CB.load('org') || {}; migR(s); return { rv: 1, m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {}, alt: s.alt || {}, psuit: s.psuit || {}, ambCars: s.ambCars || 0, ambNavy: s.ambNavy || 0, adm: s.adm || {}, pt: s.pt || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -270,15 +275,15 @@ const hasRank = (o) => ARMY.includes(o) || o === '대통령' || o === '국무총
 const MAJOR = RANKS.indexOf('소령'), TMC_LV = TEAMS.findIndex((t) => t.key === '조교'); // 📝 진급 시험은 조교 이상이 열어 줌
 const examOpen = (nick) => { const O = S.exo[nick]; return O && O.t > Date.now() ? O : null; }; // 📝 조교(Assistant) 이상이 열어 준 진급 시험 (10분)
 const canSelf = (nick) => nick === ownerNick() || nick === '운영자' || !!(S.adm && S.adm[nick]) || lvOf(nick) >= OFFICER_LV || mrOf(nick) >= MAJOR || !!(S.m[nick] && S.m[nick].sw);
-function mrOf(nick) { // 군사계급 번호 (-1 = 없음) · 대통령 = 원수 · 국무총리 = 대장 (운영진) · 대장은 대통령이 진급시킨 사람만
+function mrOf(nick) { // 군사계급 번호 (-1 = 없음) · 대통령 = 원수 · 운영진(국무총리 · 어드민) = 합동참모의장 · 일반 유저는 참모총장까지
   const o = teamOf(nick); if (nick && (nick === ownerNick() || nick === '운영자') && (o === '대통령' || ARMY.includes(o))) return RANKS.length - 1;
-  if (o === '국무총리') return RANK_STAFF;
-  if (!hasRank(o)) return -1; const x = S.m[nick]; return Math.max(0, Math.min(RANK_STAFF, (x && x.mr) | 0));
+  if (o === '국무총리' || (S.adm && S.adm[nick] && ARMY.includes(o))) return RANK_STAFF;
+  if (!hasRank(o)) return -1; const x = S.m[nick]; return Math.max(0, Math.min(RANK_MAX, (x && x.mr) | 0));
 }
 function rankOf(nick) { // 머리 위 · 안내판에 뜨는 계급: 군사계급 → 이등병(디스코드) → 멤버 · 게스트
   const st = S.st[nick];
   const i = mrOf(nick); if (i >= 0) return RANKS[i];
-  if (S.dc[nick]) return RANKS[0]; // 💬 디스코드 서버 가입자는 무조건 이등병 (군대가 아니어도)
+  if (S.dc[nick]) return '훈련병'; // 💬 디스코드 서버 가입자는 훈련병부터 (군대가 아니어도)
   return st === '멤버' || S.cm[nick] ? '멤버' : '게스트'; // 🏙 겜벗 공식 커뮤니티 가입 → 멤버 · 아니면 게스트
 }
 function setTeam(nick, o) { if (!ARMY.includes(o)) { delete S.leave[nick]; if (S.m[nick]) delete S.m[nick].mr; } if (S.m[nick]) { delete S.m[nick].sw; delete S.m[nick].self; } const x = S.m[nick]; if (o === '시민') { if (x) { x.o = '시민'; } else return; } else if (x) x.o = o; else S.m[nick] = { o, r: 0, p: 0 }; noteBranch(S.m[nick], o); }
@@ -572,16 +577,19 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (!hasRank(To)) return tell(from, `${who} 님은 ${tagOf(To)}라서 군사계급이 없어요 (군대 팀만) · 부서를 바꾸려면 /team 부서 @${who}`);
       const cur = mrOf(who), nl = cur + (op === 'promote' ? 1 : -1);
       if (nl < 0) return tell(from, `이미 가장 낮은 계급(${RANKS[0]})이에요`);
-      const isOwnerFrom = from === ownerNick() || from === '운영자';
-      if (nl > RANK_STAFF || (nl > RANK_MAX && !isOwnerFrom)) return tell(from, `${RANKS[RANK_MAX]}이(가) 진급으로 오를 수 있는 가장 높은 계급이에요 (대장은 운영진만 · 대통령이 진급시켜요 · 원수는 대통령)`);
-      if (!off) return tell(from, `${op === 'promote' ? '진급' : '강등'}은 장교(Officer) 이상이나 OP만 할 수 있어요`);
+      const isOwnerFrom = from === ownerNick() || from === '운영자' || !!S.adm[from] || teamOf(from) === '국무총리';
+      if (nl > RANK_MAX) return tell(from, `${RANKS[RANK_MAX]}(Chief of Staff)이(가) 일반 유저가 오를 수 있는 가장 높은 계급이에요 (합동참모의장은 운영진 · 원수는 대통령)`);
+      if (nl > RANK_GEN && !isOwnerFrom) return tell(from, `진급은 ${RANKS[RANK_GEN]}까지예요 · 해병대 사령관 · 참모총장은 대통령 · 운영진(국무총리 · 어드민)이 진급시켜요`);
+      const tmc = op === 'promote' && !!a.tmc && (fromOp || lvOf(from) >= TMC_LV); // 🎖 조교(Assistant) 이상의 /계급 @닉 = 바로 진급 (20분 · 시험 없이)
+      if (a.tmc && !tmc) return tell(from, '/계급 @닉 진급은 조교(Assistant) 이상만 할 수 있어요');
+      if (!off && !tmc) return tell(from, `${op === 'promote' ? '진급' : '강등'}은 장교(Officer) 이상이나 OP만 할 수 있어요`);
       const ok = fromOp || lvOf(from) > lvOf(who) || mrOf(from) > Math.max(cur, nl);
       if (!ok) return tell(from, '그 계급으로 바꿀 권한이 없어요 (나보다 아래 부서이거나, 내 군사계급보다 낮게만)');
-      if (op === 'promote' && !fromOp) {
-        const E = S.exam[who];
-        if (ARMY.includes(teamOf(who)) && !(E && E.shoot && E.jump)) { tell(who, '📝 진급하려면 /시험 사격 · /시험 점프 를 통과해야 해요'); return tell(from, `${who} 님은 아직 진급 시험을 통과하지 못했어요 (${E && E.shoot ? '사격 ✅' : '사격 ❌'} · ${E && E.jump ? '점프 ✅' : '점프 ❌'})`); }
+      if (op === 'promote' && !fromOp && !tmc) { // ⏱ 진급 조건: 지난 진급 뒤 게임 20분 · 또는 진급 시험(사격 · 점프) 통과 · 또는 조교 이상의 /계급 @닉
+        const E = S.exam[who], pm = Math.floor((S.pt[who] || 0) / 60);
+        if (ARMY.includes(teamOf(who)) && pm < PROMO_MIN && !(E && E.shoot && E.jump)) { tell(who, `⏱ 진급하려면 게임을 ${PROMO_MIN}분 더 해야 해요 (지금 ${pm}분) · 또는 조교(Assistant) 이상이 /계급 @${who}`); return tell(from, `${who} 님은 아직 진급할 수 없어요 · 게임 ${pm}/${PROMO_MIN}분 · 조교 이상은 /계급 @${who} 로 바로 진급시킬 수 있어요`); }
       }
-      if (op === 'promote') { delete S.exam[who]; delete S.exo[who]; } // 시험은 진급마다 다시 (다시 열어 줘야)
+      if (op === 'promote') { delete S.exam[who]; delete S.exo[who]; delete S.pt[who]; } // 시험 · 20분은 진급마다 다시
       (S.m[who] || (S.m[who] = { o: To, r: 0, p: 0 })).mr = nl; save();
       return CB.say(`${op === 'promote' ? '⬆ 진급' : '⬇ 강등'}: ${who} 님 → 🎖 ${RANKS[nl]} (${ORGS[To].ico} ${tagOf(To)})`);
     }
@@ -2112,15 +2120,17 @@ CB.command('상인', '/상인 — 🕶 불법 거래 상인 위치 · /상인 �
 }, { everyone: true });
 CB.command('진급', '/진급 @닉 — 🎖 군사계급 한 단계 위로 (군대 팀 · 장교(Officer) 이상 · OP) · 부서 이동은 /team', (a) => req('promote', { who: a[0] }), { everyone: true });
 CB.command('강등', '/강등 @닉 — 🎖 군사계급 한 단계 아래로 (군대 팀 · 장교(Officer) 이상 · OP)', (a) => req('demote', { who: a[0] }), { everyone: true });
-CB.command('계급', '/계급 — 🎖 계급표 · 군대 팀원들의 계급 · /계급 @닉 멤버|게스트 (OP)', (a, c) => {
+CB.command('계급', '/계급 — 🎖 계급표 · 군대 팀원들의 계급 · /계급 @닉 = 바로 진급 (조교 이상) · /계급 @닉 멤버|게스트 (OP)', (a, c) => {
   if (a[0] && a[1]) return req('status', { who: a[0], s: a[1] });
+  if (a[0]) return req('promote', { who: a[0], tmc: 1 }); // 🎖 조교(Assistant) 이상: /계급 @닉 → 바로 한 단계 진급
   const en = (r) => `${r}(${RANK_EN[r]})`;
   c.say(`🎖 ${ARMY_NAME} 계급 (위 → 아래): ` + [...RANKS].reverse().map(en).join(' · '));
-  c.say('원수는 대통령만 · 대장은 운영진(국무총리 · 대통령이 진급시킨 사람)만 · 일반 진급은 중장까지 · 군대가 아닌 사람: ' + ['멤버', '게스트'].map(en).join(' · ') + ' · 💬 디스코드 서버 가입자는 무조건 이등병 · 🏙 멤버 = 겜벗 공식 커뮤니티 CLKKY CITY 가입');
+  c.say('원수는 대통령(창조자)만 · 합동참모의장은 운영진(국무총리 · 어드민)만 · 참모총장이 일반 유저의 가장 높은 계급 · 진급은 대장까지 (해병대 사령관 · 참모총장은 대통령 · 운영진이 진급) · 입대하면 훈련병부터 · 군대가 아닌 사람: ' + ['멤버', '게스트'].map(en).join(' · ') + ' · 💬 디스코드 서버 가입자는 훈련병부터 · ⏱ 게임 20분마다 진급 가능 · 조교 이상은 /계급 @닉 으로 바로 진급 · 🏙 멤버 = 겜벗 공식 커뮤니티 CLKKY CITY 가입');
   const L = Object.keys(S.m).filter((n) => ARMY.includes(teamOf(n))).sort((p, q) => mrOf(q) - mrOf(p));
   if (ownerNick()) c.say(`👑 ${ownerNick()} · ${en(RANKS[RANKS.length - 1])} · 대통령`);
   for (const n of L.slice(0, 30)) c.say(`🎖 ${n} · ${en(rankOf(n))} · ${ORGS[teamOf(n)].ico} ${tagOf(teamOf(n))}`);
   if (!L.length) c.say('아직 군대 팀원이 없어요');
+  if (ARMY.includes(teamOf(me()))) { const pm = Math.floor((S.pt[me()] || 0) / 60); c.say(pm >= PROMO_MIN ? `⏱ 게임 ${PROMO_MIN}분을 채웠어요 · 진급할 수 있어요` : `⏱ 진급까지 게임 ${pm}/${PROMO_MIN}분`); }
 }, { everyone: true });
 CB.command('기지', '팀 기지로 이동 · /기지 설정 [팀] (장교(Officer) 이상)', (a, c) => {
   if (a[0] === '설정') return req('base', { ...pos(), o: a.slice(1).join(' ') });
@@ -2195,9 +2205,10 @@ CB.command('석방', '/석방 @닉 (장교(Officer) 이상 · OP)', (a) => req('
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
 let payT = 0, curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '', lastPlace = '';
 let dcT = 5;
-let admT = 1;
+let admT = 1, ptT = 0;
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
+  if (CB.isHost && CB.isHost() && (ptT += dt) >= 10) { const add = Math.min(ptT, 30); ptT = 0; let ch = 0; for (const p of new Set([me(), ...(CB.players ? CB.players() : [])])) { if (!p || !ARMY.includes(teamOf(p))) continue; const was = S.pt[p] || 0, now = was + add; S.pt[p] = Math.min(now, 86400); ch = 1; if (was < PROMO_MIN * 60 && now >= PROMO_MIN * 60 && mrOf(p) < RANK_GEN) tell(p, `⏱ 게임 ${PROMO_MIN}분! 이제 진급할 수 있어요 · 장교(Officer) 이상에게 /진급 @${p} 을 부탁하세요`); } if (ch) save(); } // ⏱ 군대 팀원의 게임 시간 (진급 조건 20분)
   if ((admT -= dt) <= 0) { admT = 3; if (CB.isHost && CB.isHost() && CB.adminOf) { let ch = 0; for (const p of new Set([me(), ...(CB.players ? CB.players() : [])])) { if (!p || p === '운영자' || p === ownerNick()) continue; const a = !!CB.adminOf(p); if (a !== !!S.adm[p]) { if (a) S.adm[p] = 1; else delete S.adm[p]; ch = 1; if (a) CB.say(`🏛 어드민 ${p} 님은 국무총리예요`); } } if (ch) save(); } } // 🛡 운영자가 아닌 어드민은 모두 국무총리 (방장 게임이 확인)
   if ((dcT -= dt) <= 0) { dcT = 60; const n = me(), cm = !!(CB.community && CB.community()), bs = !!(CB.boost && CB.boost()); if (n && (!!S.dc[n] !== !!CB.discord() || !!S.cm[n] !== cm || !!S.vip[n] !== bs)) req('dc', { c: cm ? 1 : 0, b: bs ? 1 : 0 }); } // 🎖 디스코드 서버에 들어와 있으면 멤버 · 아니면 게스트
   const T = S.train, x = mine();
@@ -2251,7 +2262,7 @@ CB.onTick((dt) => {
     const sub = S.jail[n] ? '⛓ 수감 중' : W ? '🚨 ' + stars(W.lv) : '';
     const rk = rankOf(n);
     CB.tag(n, '', y ? ORGS[o].color : '#ffffff', { rank: y ? `${ORGS[o].ico} ${tagOf(o)}${rk ? ' · ' + rk : ''}` : jb ? `${JOBS[jb].ico} ${jb} · ${rk}` : rk, rankColor: y ? ORGS[o].color : jb ? '#ffe9a8' : '#cfcfcf', sub, subColor: '#ff4a4a' });
-    if (CB.outfit) { const O0 = o === '대통령' && S.psuit && S.psuit[n] ? PRES_SUIT : (S.alt && S.alt[n] && ALT_OUTFITS[o]) || OUTFITS[o], O = O0 && o === '특수임무대' ? { ...O0, cam: BR_CAM[(S.m[n] || {}).br] || 'army' } : O0, r = mrOf(n); /* 🎯 특임대 = 군사경찰 소속 헌병 전투복: 처음 들어간 군(육 · 해 · 공) 무늬 대테러복 */ /* 👑 대통령은 정장 (청와대 비서에게 정복으로 갈아입음) */ CB.outfit(n, O ? { ...O, stripes: r >= 14 ? 3 : r >= 11 ? 2 : r >= 4 ? 1 : 0, div: divOf(n, o) } : null); } // 🎖 정복 소매 금줄: 병 0 · 부사관 · 위관 1 · 영관 2 · 장성 3 · 왼팔 사단 마크
+    if (CB.outfit) { const O0 = o === '대통령' && S.psuit && S.psuit[n] ? PRES_SUIT : (S.alt && S.alt[n] && ALT_OUTFITS[o]) || OUTFITS[o], O = O0 && o === '특수임무대' ? { ...O0, cam: BR_CAM[(S.m[n] || {}).br] || 'army' } : O0, r = mrOf(n); /* 🎯 특임대 = 군사경찰 소속 헌병 전투복: 처음 들어간 군(육 · 해 · 공) 무늬 대테러복 */ /* 👑 대통령은 정장 (청와대 비서에게 정복으로 갈아입음) */ CB.outfit(n, O ? { ...O, stripes: r >= RANKS.indexOf('소장') ? 3 : r >= RANKS.indexOf('소령') ? 2 : r >= RANKS.indexOf('하사') ? 1 : 0, div: divOf(n, o) } : null); } // 🎖 정복 소매 금줄: 병 0 · 부사관 · 위관 1 · 영관 2 · 장성 3 · 왼팔 사단 마크
     now.add(n);
   }
   for (const n of tagged) if (!now.has(n)) { CB.tag(n); if (CB.outfit) CB.outfit(n, null); }
