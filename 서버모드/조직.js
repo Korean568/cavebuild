@@ -581,6 +581,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (nl > RANK_GEN && !isOwnerFrom) return tell(from, `진급은 ${RANKS[RANK_GEN]}까지예요 · 해병대 사령관 · 참모총장은 합동참모의장(국무총리 · 어드민)이나 원수(대통령)만 줄 수 있어요`);
       const tmc = op === 'promote' && !!a.tmc && (fromOp || lvOf(from) >= TMC_LV); // 🎖 조교(Assistant) 이상의 /계급 @닉 = 바로 진급 (20분 · 시험 없이)
       if (a.tmc && !tmc) return tell(from, '/계급 @닉 진급은 조교(Assistant) 이상만 할 수 있어요');
+      if (tmc && !fromOp && from !== '운영자' && !S.adm[from] && mrOf(from) <= cur + 1) return tell(from, `/계급 @닉 으로는 내 군사계급(${rankOf(from)})보다 낮은 계급까지만 진급시킬 수 있어요`); // 조교가 /계급 을 계속 쳐서 바로 대장까지 올리지 못하게
       if (!off && !tmc) return tell(from, `${op === 'promote' ? '진급' : '강등'}은 장교(Officer) 이상이나 OP만 할 수 있어요`);
       const ok = fromOp || lvOf(from) > lvOf(who) || mrOf(from) > Math.max(cur, nl);
       if (!ok) return tell(from, '그 계급으로 바꿀 권한이 없어요 (나보다 아래 부서이거나, 내 군사계급보다 낮게만)');
@@ -2219,7 +2220,7 @@ let dcT = 5;
 let admT = 1, ptT = 0;
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
-  if (CB.isHost && CB.isHost() && (ptT += dt) >= 10) { const add = Math.min(ptT, 30); ptT = 0; let ch = 0; for (const p of new Set([me(), ...(CB.players ? CB.players() : [])])) { if (!p || !ARMY.includes(teamOf(p))) continue; const was = S.pt[p] || 0, now = was + add; S.pt[p] = Math.min(now, 86400); ch = 1; if (was < PROMO_MIN * 60 && now >= PROMO_MIN * 60 && mrOf(p) < RANK_GEN) tell(p, `⏱ 게임 ${PROMO_MIN}분! 이제 진급할 수 있어요 · 장교(Officer) 이상에게 /진급 @${p} 을 부탁하세요`); } if (ch) save(); } // ⏱ 군대 팀원의 게임 시간 (진급 조건 20분)
+  if (CB.isHost && CB.isHost() && (ptT += dt) >= 60) { const add = Math.min(ptT, 120); /* 1분마다 (조직 상태가 바뀔 때마다 친구들에게 통째로 가서 자주 저장하지 않음) */ ptT = 0; let ch = 0; for (const p of new Set([me(), ...(CB.players ? CB.players() : [])])) { if (!p || !ARMY.includes(teamOf(p))) continue; const was = S.pt[p] || 0, now = was + add; S.pt[p] = Math.min(now, 86400); ch = 1; if (was < PROMO_MIN * 60 && now >= PROMO_MIN * 60 && mrOf(p) < RANK_GEN) tell(p, `⏱ 게임 ${PROMO_MIN}분! 이제 진급할 수 있어요 · 장교(Officer) 이상에게 /진급 @${p} 을 부탁하세요`); } if (ch) save(); } // ⏱ 군대 팀원의 게임 시간 (진급 조건 20분)
   if ((admT -= dt) <= 0) { admT = 3; if (CB.isHost && CB.isHost() && CB.adminOf) { let ch = 0; for (const p of new Set([me(), ...(CB.players ? CB.players() : [])])) { if (!p || p === '운영자' || p === ownerNick()) continue; const a = !!CB.adminOf(p); if (a !== !!S.adm[p]) { if (a) S.adm[p] = 1; else delete S.adm[p]; ch = 1; if (a) CB.say(`🏛 어드민 ${p} 님은 국무총리예요`); } } if (ch) save(); } } // 🛡 운영자가 아닌 어드민은 모두 국무총리 (방장 게임이 확인)
   if ((dcT -= dt) <= 0) { dcT = 60; const n = me(), cm = !!(CB.community && CB.community()), bs = !!(CB.boost && CB.boost()); if (n && (!!S.dc[n] !== !!CB.discord() || !!S.cm[n] !== cm || !!S.vip[n] !== bs)) req('dc', { c: cm ? 1 : 0, b: bs ? 1 : 0 }); } // 🎖 디스코드 서버에 들어와 있으면 멤버 · 아니면 게스트
   const T = S.train, x = mine();

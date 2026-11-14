@@ -336,7 +336,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.295 — 🍳 취사병 · 🚚 보급 트럭 · 🍱 전투식량 · 🗡 배반자 · 🎖 육 · 해 · 공군참모총장</h4>
+    <h4>🆕 v26.296 — 🐞 조직 모드 버그 고침 (/계급 진급 · 게임 시간)</h4>
+    <ul><li>🎖 조교가 /계급 @닉 을 계속 쳐서 순식간에 대장까지 올릴 수 있던 것 고침 · 이제 /계급 으로는 내 군사계급보다 낮은 계급까지만 진급시켜요 (OP · 어드민은 그대로)</li><li>🌐 진급용 게임 시간을 10초마다 저장해서 조직 상태 전체가 친구들에게 10초마다 다시 가던 것 고침 · 이제 1분마다</li></ul>
+    <h4>v26.295 — 🍳 취사병 · 🚚 보급 트럭 · 🍱 전투식량 · 🗡 배반자 · 🎖 육 · 해 · 공군참모총장</h4>
     <ul><li>🍳 조직 29순위 <b>취사병(Military Cook)</b>: 전투복 + 흰 셰프 모자 · 군사기지 의료센터 옆길의 <b>🚚 보급 트럭</b>에 타고 <b>/보급</b> 하면 둘레 14칸의 군대 팀원에게 전투식량 2개씩 (1분마다)</li><li>🍱 <b>전투식량</b>: 먹으면 2분 동안 빨라지고 <b>공격력 1.5배</b> (주먹 · 무기 · 총)</li><li>🗡 조직 30순위 <b>배반자(Traitor)</b>: 무죄인 사람을 <b>1명이라도</b> 처치한 군인은 바로 배반자 (무법자복) · 예전 배신자도 배반자로</li><li>🔰 멤버 · 게스트 훈련병 팀은 없어지고, 입대하면 고른 군(육 · 해 · 공군)의 <b>훈련병(계급)</b>부터 · 원래 훈련병들도 고른 군으로 옮겨졌어요</li><li>🎖 참모총장은 처음 고른 군에 따라 <b>육군 · 해군 · 공군참모총장</b> · 해병대 사령관 · 참모총장은 합동참모의장이나 원수만 줄 수 있어요</li></ul>
     <h4>v26.294 — 🔰 멤버 훈련병 · 게스트 훈련병 (조직 구성 29 · 30순위)</h4>
     <ul><li>🎒 실전 훈련병 → <b>멤버 훈련병(Member Recruit)</b>: 겜벗 공식 커뮤니티(CLKKY CITY)에 가입한 훈련병</li><li>🔰 연습 훈련병 → <b>게스트 훈련병(Guest Recruit)</b>: 커뮤니티에 가입을 안 한 훈련병</li><li>🪖 입대하면 커뮤니티 가입에 따라 둘 중 하나로 시작하고, 나중에 가입하면 저절로 멤버 훈련병이 돼요 (1분 안에 반영)</li></ul>
@@ -2318,7 +2320,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.295 — 🍳 Military Cook · 🚚 Supply truck · 🍱 Combat ration · 🗡 Traitor · 🎖 Army · Navy · Air Force Chief of Staff</h4>
+    <h4>🆕 v26.296 — 🐞 Org mod fixes (/계급 promotions · play time)</h4>
+    <ul><li>🎖 An Assistant could spam /계급 @name to push someone straight to General · /계급 now only promotes up to one rank below your own military rank (OP · admins unchanged)</li><li>🌐 Promotion play time was saved every 10 seconds, re-sending the whole org state to friends each time · now once a minute</li></ul>
+    <h4>v26.295 — 🍳 Military Cook · 🚚 Supply truck · 🍱 Combat ration · 🗡 Traitor · 🎖 Army · Navy · Air Force Chief of Staff</h4>
     <ul><li>🍳 Org #29 <b>Military Cook</b>: combat uniform + white chef hat · ride the <b>🚚 supply truck</b> by the base medical center and use <b>/보급</b> to give every soldier within 14 blocks 2 combat rations (once a minute)</li><li>🍱 <b>Combat ration</b>: eating it makes you faster and gives <b>1.5× attack</b> for 2 minutes (fists, weapons, guns)</li><li>🗡 Org #30 <b>Traitor</b>: a soldier who kills <b>even one</b> innocent person instantly becomes a Traitor (outlaw outfit) · old traitors carry over</li><li>🔰 The Member/Guest Recruit teams are gone; enlisting starts you as a <b>Recruit (rank)</b> in your chosen branch · existing recruits moved to their branch</li><li>🎖 Chief of Staff shows as <b>Army · Navy · Air Force Chief of Staff</b> by your first branch · CMC and Chief of Staff can only be given by the CJCS or the Marshal</li></ul>
     <h4>v26.294 — 🔰 Member Recruit · Guest Recruit (org chart #29 · #30)</h4>
     <ul><li>🎒 Trainee in Field Training → <b>Member Recruit</b>: a recruit who joined the official community (CLKKY CITY)</li><li>🔰 Trainee Recruit → <b>Guest Recruit</b>: a recruit who hasn't joined the community</li><li>🪖 Enlisting starts you as one of the two based on community membership, and joining later makes you a Member Recruit automatically (within a minute)</li></ul>
