@@ -336,7 +336,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.290 — 🚑 AI 구급차가 같은 환자에게 계속 다시 출동하던 것 고침</h4>
+    <h4>🆕 v26.291 — 🕒 멀티 /day 고침 · 💤 한 명만 자도 아침 · ⭐ 공식 서버는 어드민만 OP</h4>
+    <ul><li>🕒 멀티에서 /day · /night · /time 이 방장의 시간에 덮여 몇 초 만에 원래대로 돌아가던 것 고침 · 이제 모두의 시간이 바뀜</li><li>💤 멀티에서 한 명만 침대에서 자도 모두 아침이 되고 채팅으로 알려 줘요</li><li>⭐ 공식 서버는 <b>어드민만 OP</b> · 어드민이 여러 명이면 모두 OP · 방장 · 서버를 만든 사람 · /op 명단은 OP가 아니고 /op 로 줄 수도 없어요</li></ul>
+    <h4>v26.290 — 🚑 AI 구급차가 같은 환자에게 계속 다시 출동하던 것 고침</h4>
     <ul><li>🚑 병원에 내려 준 환자가 아직 쓰러져 있으면 몇 초마다 구급차가 다시 출동해 들것에 태우고 채팅을 도배하던 것 고침 · 이제 일어나거나 죽을 때까지 다시 안 옴</li><li>🚑 친구 화면에서 출동이 끝난 구급차 경광등이 계속 깜빡이고, 다음에 쓰러지면 예전 병원으로 순간 이동되던 것 고침</li></ul>
     <h4>v26.289 — 🌐 기지 · 도시 지을 때 친구 연결이 끊기던 것 고침</h4>
     <ul><li>🌐 방장 쪽에서 군사기지 · 해군 기지 · 주도 · 고속도로를 지을 때 친구 게임이 블록 하나마다 청크를 다시 그려서 몇 초씩 멈추다 끊기던 것 고침 · 이제 한 번에 온 블록은 청크마다 한 번만, 다음 프레임들에 나눠서 다시 그려요</li></ul>
@@ -2308,7 +2310,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.290 — 🚑 AI ambulances no longer keep re-dispatching to the same patient</h4>
+    <h4>🆕 v26.291 — 🕒 Multiplayer /day fixed · 💤 One sleeper brings morning · ⭐ Only admins are OP on official servers</h4>
+    <ul><li>🕒 In multiplayer, /day · /night · /time were overwritten by the host's clock within seconds · now everyone's time changes</li><li>💤 In multiplayer, one player sleeping in a bed makes it morning for everyone, announced in chat</li><li>⭐ On official servers <b>only admins are OP</b> (every admin) · the host, the server creator and the /op list are not OP, and /op can't grant it</li></ul>
+    <h4>v26.290 — 🚑 AI ambulances no longer keep re-dispatching to the same patient</h4>
     <ul><li>🚑 A patient dropped at the hospital who was still down got picked up again every few seconds with chat spam · now no new ambulance comes until they get up or die</li><li>🚑 On friends' screens a finished ambulance's lights kept flashing, and the next time they went down they were teleported to the old hospital · fixed</li></ul>
     <h4>v26.289 — 🌐 Friends no longer disconnect while bases and cities build</h4>
     <ul><li>🌐 While the host built the bases, state cities or highways, friends' games redrew a chunk for every single block and froze for seconds until they disconnected · now a burst of blocks redraws each chunk once, spread over the next frames</li></ul>
@@ -8821,13 +8825,16 @@ function bedBoom(x,y,z){ // 반경 5칸 폭발 · 주변 생물에게 1000 데�
     for(const m of [...mobs])if(!m.dead&&Math.hypot(m.pos.x-cx,m.pos.y+m.h/2-cy,m.pos.z-cz)<=5)m.hurt(1000,0,0,true);
     if(q.length)setTimeout(step,200);};
   step();}
+function mpTimeSync(){if(MP.on)mpSend({t:'tm',v:world.time});} // 🕒 /day · /night · /time: 친구 게임이면 방장에게 · 방장이면 모두에게 (안 보내면 방장의 5초 시간 동기화가 덮어씀)
+function wakeAll(by){world.time=.02;updateSky(0);for(const m of [...mobs])if(m.def.hostile&&!m.def.boss)m.remove(); // 💤 한 명만 자도 모두 아침 (방장 게임이 정함)
+  if(MP.on&&MP.host){mpSend({t:'tm',v:world.time});const m=`💤 ${by} 님이 자서 아침이 됐어요`;mpSend({t:'c',n:'💤',m});mpChatShow('💤',m);}}
 function sleep(t){
   if(world.dim!=='over'){bedBoom(t.x,t.y,t.z);return;} // 프론티어가 아닌 차원: 침대가 폭발
   world.spawn={x:t.x+.5,y:t.y+1,z:t.z+.5};
   if(!isNight()){toast('스폰 지점이 설정되었습니다. (밤에만 잘 수 있어요)');return;}
   if(mobs.some(m=>m.def.hostile&&m.dist()<(m.def.boss?40:8))){toast('근처에 적이 있어서 잘 수 없습니다!');return;}
   $('fade').style.opacity=1;paused=true;
-  setTimeout(()=>{world.time=.02;for(const m of [...mobs])if(m.def.hostile&&!m.def.boss)m.remove();$('fade').style.opacity=0;paused=!locked&&!invOpen;toast('상쾌한 아침입니다! 스폰 지점이 설정되었습니다.');achieve('bed');},1300);
+  setTimeout(()=>{if(MP.on&&!MP.host){world.time=.02;mpSend({t:'slp'});}else wakeAll(MP.on?MP.me.nick:'');$('fade').style.opacity=0;paused=!locked&&!invOpen;toast('상쾌한 아침입니다! 스폰 지점이 설정되었습니다.');achieve('bed');},1300);
 }
 function attack(){
   if(isSpec()||player.downed)return;if(player.cuffed){toast('⛓ 수갑에 묶여서 공격할 수 없어요');return;}if(player.tased)return;
@@ -9950,8 +9957,8 @@ function mpHost(opt){opt=opt||{};if(!mpOk()||(!opt.re&&(MP.on||MP.ws)))return;if
           if(Array.isArray(d.guests))for(const [gid,c] of [...byId])if(!d.guests.includes(gid)){byId.delete(gid);c.open=false;MP.conns.delete(c);if(c.P){mpDel(c.P.id);mpSend({t:'leave',id:c.P.id});}} // 끊긴 동안 나간 친구
           renderMP();return;}
         if(opt.resume&&!opt.local){renderMP(mpL('🌍 서버를 켜는 중… 세계를 받고 있어요','🌍 Starting the server…'));return;} // 저장된 세계가 _w 로 옴
-        MP.on=MP.host=true;MP.myId='H';if(d.pub&&d.pub.off)world.flags.noweapon=true;mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');if(key)world.flags.owner=MP.me.nick;renderMP();if(MP.persist)mpSaveLoop();
-        if(MP.wantOfficial&&key){MP.wantOfficial=false;world.flags.noweapon=true;fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/official',{method:'POST',body:JSON.stringify({name:pi.name,kind:pi.kind,key,token:accToken()})}).then(r=>r.json()).then(x=>toast(x.error?'⭐ '+mpEsc(x.error):'⭐ <b>공식 서버</b>로 올렸어요 — 목록 맨 위에 항상 있어요')).catch(()=>{});} // ⭐ 어드민: 공식 서버로
+        MP.on=MP.host=true;MP.myId='H';if(d.pub&&d.pub.off)world.flags.noweapon=world.flags.offsrv=true;mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');if(key)world.flags.owner=MP.me.nick;renderMP();if(MP.persist)mpSaveLoop();
+        if(MP.wantOfficial&&key){MP.wantOfficial=false;world.flags.noweapon=world.flags.offsrv=true;fetch(MP_RELAY.replace(/^wss/,'https')+'/room/'+code+'/official',{method:'POST',body:JSON.stringify({name:pi.name,kind:pi.kind,key,token:accToken()})}).then(r=>r.json()).then(x=>toast(x.error?'⭐ '+mpEsc(x.error):'⭐ <b>공식 서버</b>로 올렸어요 — 목록 맨 위에 항상 있어요')).catch(()=>{});} // ⭐ 어드민: 공식 서버로
         toast(MP.persist?mpL(`🌍 <b>공개 서버</b>를 열었어요! 내가 나가도 서버는 계속 열려 있어요 · 코드: <b>${code}</b>`,`🌍 Public server open! It stays up after you leave · Code: <b>${code}</b>`):mpL(`🌐 ${MP.pub?'🌍 <b>공개</b>':'🔒 <b>비공개</b>'} 방을 열었어요! 방 코드: <b>${code}</b>`,`🌐 ${MP.pub?'Public':'Private'} room open! Code: <b>${code}</b>`));}
       else if(d.t==='_w'){wb[d.i]=d.d||'';if(!d.n||wb.filter(x=>x!=null).length===d.n)mpResumeStart(d.n?wb.join(''):'',code);}
       else if(d.t==='_saved'){if(MP.onSaved){const f=MP.onSaved;MP.onSaved=null;f();}}
@@ -9978,7 +9985,7 @@ function mpResumeStart(text,code){let sn=null;try{sn=text?JSON.parse(text):null;
     if(sn.mpHost!==me||carry){const st=carry||M[me],sp=sn.spawn||{x:0,y:80,z:0};sn.inv=st&&st.inv||new Array(36).fill(null);sn.armor=st&&st.armor||[];sn.dim=st&&st.dim||'over';sn.p=st&&st.p||{x:sp.x,y:sp.y,z:sp.z,yaw:0,pitch:0,hp:20,food:20};}
     delete M[me];sn.items=[];sn.sr=null;}
   $('playPanel').classList.remove('show');goFull();
-  startWorld(sn,()=>{CUR=null;MP.on=MP.host=true;MP.myId='H';const sp=MP.srvPub||{};if(sp.off)world.flags.noweapon=true; // ⭐ 공식 서버는 켤 때마다 무기 금지
+  startWorld(sn,()=>{CUR=null;MP.on=MP.host=true;MP.myId='H';const sp=MP.srvPub||{};if(sp.off)world.flags.noweapon=world.flags.offsrv=true; // ⭐ 공식 서버는 켤 때마다 무기 금지
     if((world.flags.bans||[]).some(x=>x.toLowerCase()===String(MP.me.nick).toLowerCase())&&!cmdIsAdmin()){mpEnd(mpL('🔨 이 방에서 밴당했어요','🔨 You are banned from this room'));return;} // 🔨 밴당한 사람은 방장으로도 못 들어옴
     if(world.flags.srvMode&&world.mode!==world.flags.srvMode&&world.mode!=='spectator'){MP.gmOk=1;try{setMode(world.flags.srvMode);}finally{MP.gmOk=0;}}/* 이어서 켠 방장도 방 전체 게임 모드로 */if(!world.flags.kind)world.flags.kind=sp.kind||'survival';if(sp.off&&!world.flags.owner)world.flags.owner='운영자'; // 처음 켜지는 서버: 종류 · (공식이면) 운영자 소유
     mpCtInit();mpWsInit();MP.code=code;document.body.classList.add('mpon');renderMP();mpSaveLoop();
@@ -9999,7 +10006,7 @@ function mpSetHtml(){const C=mpModChoices();
     <button class="btn" id="srvModsOk" style="margin-top:6px">🧩 ${mpL('이 모드로 서버 모드 바꾸기 (모두 잠깐 다시 들어와요)','Apply server mods (everyone rejoins)')}</button>
     <button class="btn" id="srvScript" style="margin-top:6px">📜 ${mpL('서버 스크립트 파일(.js) 넣기','Add a server script (.js)')}</button><input type="file" id="srvScriptF" accept=".js,text/javascript" hidden>
     <div style="font-size:12px;opacity:.7">${mpL('서버 스크립트는 이 서버에만 붙어요 — 내 모드 목록과 상관없이, 들어오는 모두의 게임에서 돌아가요 (CB.isHost() 로 방장 게임에서만 할 일도 정할 수 있어요)','Server scripts belong to this server and run for everyone who joins')}</div></div>`;}
-function mpCanManage(){const n=MP.me?MP.me.nick:'';return cmdIsAdmin()||!!mpOwn()[MP.code]||(world.flags&&world.flags.owner===n)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
+function mpCanManage(){const n=MP.me?MP.me.nick:'';if(cmdIsAdmin())return true;if(mpOff())return false;return!!mpOwn()[MP.code]||(world.flags&&world.flags.owner===n)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
 function mpModChoices(){const L=[],seen=new Set(); // 지금 서버 모드 + 내가 넣어 둔 모드
   for(const m of MOD_RAN)if(!seen.has(m.name)){seen.add(m.name);L.push({name:m.name,code:m.code,on:true});}
   for(const m of modLoad())if(m&&!seen.has(m.name)){seen.add(m.name);L.push({name:m.name,code:m.url?'CB.loadUrl('+JSON.stringify(m.url)+');':m.code,on:false});}return L;}
@@ -10031,6 +10038,8 @@ function mpHostRecv(c,d){if(!d||typeof d!=='object')return;
   else if(d.t==='b'&&Array.isArray(d.L)){mpApply(d.L);mpSend(d,c);}
   else if(d.t==='c'){const m=String(d.m||'').slice(0,80);mpChatShow(c.P.nick,m);mpSend({t:'c',n:c.P.nick,m},c);}
   else if(d.t==='say'){const m=String(d.m||'').slice(0,120);sayShow(c.P.nick,m);mpSend({t:'say',n:c.P.nick,m},c);} // 📢 /say: 방장이 모두에게 전함
+  else if(d.t==='tm'){if(mpConnOp(c)&&typeof d.v==='number'&&isFinite(d.v)){world.time=(d.v%1+1)%1;updateSky(0);mpSend({t:'tm',v:world.time},c);}} // 🕒 OP 친구의 /day · /night · /time
+  else if(d.t==='slp')wakeAll(c.P.nick); // 💤 친구가 침대에서 잠
   else if(d.t==='mh'){const m=mobs.find(o=>o.nid===d.id&&!o.dead);if(m){m.byPlayer=performance.now();m.byNick=c.P.nick;m.hurt(Math.max(0,Math.min(500,+d.dmg||0)),+d.kx||0,+d.kz||0,!!d.s);}}
   else if(d.t==='ms'){if(MOBDEF[d.kind]&&running)try{new Mob(d.kind,+d.x,+d.y,+d.z);}catch(e){}}
   else if(d.t==='hurt'){if(d.pv){const v=d.to==='H'?{P:MP.me}:[...MP.conns].find(x=>x.P&&x.P.id===d.to);if(v&&v.P)modEmit('pvp',c.P.nick,v.P.nick);} // 🧩 누가 누구를 때렸는지 (방장 게임의 모드에게)
@@ -10298,7 +10307,7 @@ function cuffTick(dt){const C=player.cuffed;let el=document.getElementById('cuff
   el.textContent=`⛓ 수갑에 묶였어요 · ${Math.ceil(C.t)}초 (${C.by})`;}
 function NOOP_T(){toast(mpL('🔑 이 서버에서는 <b>OP</b>(또는 어드민)만 바꿀 수 있어요','🔑 Only server OPs (or admins) can change this'));}
 // 🔨 밴: 방장이 명단에 넣고 내보냄 · 다시 들어오려 해도 막힘
-function mpConnOp(c){const n=c&&c.P?c.P.nick:'';return n==='운영자'||!!(c&&c.P&&c.P.adm)||mpConnBoss(c)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
+function mpConnOp(c){const n=c&&c.P?c.P.nick:'';if(mpOff())return n==='운영자'||!!(c&&c.P&&c.P.adm);return n==='운영자'||!!(c&&c.P&&c.P.adm)||mpConnBoss(c)||(world.flags.ops||[]).some(x=>x.toLowerCase()===n.toLowerCase());}
 function mpConnBoss(c){const n=c&&c.P?c.P.nick:'';return !!(MP.persist&&world.flags&&world.flags.owner&&n===world.flags.owner);} // 공개 서버를 만든 사람이 손님으로 들어와 있어도 방장
 function mpBanMe(by){const nk=MP.me.nick,B=world.flags.bans||(world.flags.bans=[]);if(!B.some(x=>x.toLowerCase()===nk.toLowerCase()))B.push(nk); // 🔨 방장이 밴당함: 밴 명단을 세계에 저장하고 방을 나감 (다시 방장으로 들어와도 막힘)
   mpSend({t:'c',n:'🔨 서버',m:nk+' 님이 밴당했어요'});try{mpSaveUp();}catch(e){}setTimeout(()=>mpEnd(mpL('🔨 이 방에서 밴당했어요','🔨 You were banned from this room')),1500);}
@@ -10422,7 +10431,8 @@ function cmdIsAdmin(){return nickNow()==='운영자'||!!(ACC&&accToken()&&ACC.ad
 const MULTI_CMDS=['help','도움말','list','목록','me','rules','규칙','msg','w','tell','귓속말','r','op','deop','ops','kick','내보내기','ban','밴','unban','unben','밴해제','banlist','밴목록','pvp','setrules','규칙정하기','setmotd','환영인사','mobspawn','몹생성','afk','자리비움','coords','좌표','stopwatch','스톱워치','screenshot','스크린샷','mute','음소거','dance','춤','salute','경례','difficulty','난이도'];
 function mpPersistNow(){return MP.host?!!MP.persist:!!MP.gPersist;}
 function mpBossMe(){const me=MP.me?MP.me.nick:'';return mpPersistNow()?!!(world.flags&&world.flags.owner&&world.flags.owner===me):!!MP.host;} // 방장 = 내 세계 방의 방장 · 공개 서버를 만든 사람
-function cmdIsOp(){if(cmdIsAdmin()||!MP.on||mpBossMe())return true;const me=MP.me?MP.me.nick.toLowerCase():'';if(MP.host&&(world.flags.ops||[]).some(x=>x.toLowerCase()===me))return true;return !!MP.op;}
+const mpOff=()=>!!(MP.on&&world.flags&&world.flags.offsrv); // ⭐ 공식 서버: 어드민만 OP (어드민은 모두 OP · 방장 · 만든 사람 · /op 명단은 OP 아님)
+function cmdIsOp(){if(cmdIsAdmin()||!MP.on)return true;if(mpOff())return false;if(mpBossMe())return true;const me=MP.me?MP.me.nick.toLowerCase():'';if(MP.host&&(world.flags.ops||[]).some(x=>x.toLowerCase()===me))return true;return !!MP.op;}
 function mpSetOp(nk,on){const O=world.flags.ops||(world.flags.ops=[]),i=O.findIndex(n=>n.toLowerCase()===nk.toLowerCase());if(on&&i<0)O.push(nk);if(!on&&i>=0)O.splice(i,1);
   const c2=[...MP.conns].find(q=>q.P&&q.P.nick.toLowerCase()===nk.toLowerCase());if(c2)c2.send({t:'op',on:on?1:0});if(MP.me&&nk.toLowerCase()===MP.me.nick.toLowerCase())MP.op=!!on;}
 function runCmd(line){const a=line.slice(1).trim().split(/\s+/),c=(a[0]||'').toLowerCase(); // 💻 /un명령어 는 그 명령어를 되돌림 · 그 밖엔 되돌릴 수 있게 상태를 적어 둠
@@ -10446,7 +10456,7 @@ function cmdUn(x){const S=CMD_LAST[x],P=player.pos;
     case 'effect':case '효과':player.eff={};cmdOut('효과를 모두 지웠어요');break;
     case 'tp':case 'teleport':case '순간이동':case 'home':case '집':case 'spawn':case 'top':case '꼭대기':case 'up':case '위로':case 'tpr':case 'rtp':case '랜덤':case 'wp':case 'back':case '뒤로':back();break;
     case 'gamemode':case 'gm':case '게임모드':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}setMode(S.mode);cmdOut('게임 모드를 되돌렸어요');break;
-    case 'time':case '시간':case 'day':case '낮':case 'night':case '밤':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}world.time=S.time;updateSky(0);cmdOut('시간을 되돌렸어요');break;
+    case 'time':case '시간':case 'day':case '낮':case 'night':case '밤':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}world.time=S.time;updateSky(0);mpTimeSync();cmdOut('시간을 되돌렸어요');break;
     case 'spawnpoint':case '스폰':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}world.spawn=S.spawn;cmdOut('스폰 지점을 되돌렸어요');break;
     case 'difficulty':case '난이도':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}setDiff(S.diff);cmdOut('난이도를 되돌렸어요');break;
     case 'fov':case '시야':case 'zoom':case '확대':if(!S){cmdOut('되돌릴 기록이 없어요',1);break;}camera.fov=S.fov;camera.updateProjectionMatrix();player.zoomFov=0;cmdOut('시야각을 되돌렸어요');break;
@@ -10486,8 +10496,8 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
       if(!m){cmdOut('/gamemode 서바이벌 · 크리에이티브 · 관전',1);break;}MP.gmOk=1;try{setMode(m);}finally{MP.gmOk=0;}
       if(MP.on){if(MP.host)world.flags.srvMode=m==='spectator'?world.flags.srvMode:m;mpSend({t:'gm',m,all:1});} // 🎮 /gamemode: 방 전체 (새로 들어오는 사람도) · 나만 바꾸려면 설정이나 /서바이벌 · /크리에이티브
       cmdOut('게임 모드'+(MP.on?' (방 전체)':'')+': <b>'+(m==='survival'?'서바이벌':m==='creative'?'크리에이티브':'관전')+'</b>');break;}
-    case 'time':case '시간':{if(a[0]==='add'||a[0]==='더하기'){const n=+a[1];if(!isFinite(n)){cmdOut('/time add 1000',1);break;}world.time=((world.time+n/24000)%1+1)%1;updateSky(0);cmdOut('⏩ 시간을 앞으로 돌렸어요');break;}const v=(a[0]==='set'||a[0]==='설정'?a[1]:a[0]||'').toLowerCase(),T={day:.05,'낮':.05,noon:.25,'정오':.25,night:.55,'밤':.55,midnight:.75,'자정':.75,sunrise:0,'아침':0,sunset:.5,'저녁':.5}[v];
-      const t=T!==undefined?T:isFinite(+v)&&v!==''?((+v%24000)+24000)%24000/24000:null;if(t===null){cmdOut('/time set 낮 · 정오 · 밤 · 자정 · 0~24000',1);break;}world.time=t;updateSky(0);cmdOut('시간을 바꿨어요');break;}
+    case 'time':case '시간':{if(a[0]==='add'||a[0]==='더하기'){const n=+a[1];if(!isFinite(n)){cmdOut('/time add 1000',1);break;}world.time=((world.time+n/24000)%1+1)%1;updateSky(0);mpTimeSync();cmdOut('⏩ 시간을 앞으로 돌렸어요');break;}const v=(a[0]==='set'||a[0]==='설정'?a[1]:a[0]||'').toLowerCase(),T={day:.05,'낮':.05,noon:.25,'정오':.25,night:.55,'밤':.55,midnight:.75,'자정':.75,sunrise:0,'아침':0,sunset:.5,'저녁':.5}[v];
+      const t=T!==undefined?T:isFinite(+v)&&v!==''?((+v%24000)+24000)%24000/24000:null;if(t===null){cmdOut('/time set 낮 · 정오 · 밤 · 자정 · 0~24000',1);break;}world.time=t;updateSky(0);mpTimeSync();cmdOut('시간을 바꿨어요');break;}
     case 'tp':case 'teleport':case '순간이동':{cmdMark();if(a.length>=3){const x=num(a[0],P.x),y=num(a[1],P.y),z=num(a[2],P.z);if(![x,y,z].every(isFinite)){cmdOut('/tp x y z',1);break;}player.pos.set(x,Math.max(1,Math.min(CH+40,y)),z);player.vel.set(0,0,0);player.peakY=player.pos.y;loadNear(4);cmdOut(`(${Math.round(x)}, ${Math.round(y)}, ${Math.round(z)}) 로 이동했어요`);}
       else if(a[0]){const T=[...MP.peers.values()].find(q=>q.nick.toLowerCase()===a[0].toLowerCase());const t=T&&T.t;if(!T){cmdOut('그 사람을 찾지 못했어요',1);break;}if(!t){cmdOut('아직 그 사람의 위치를 받지 못했어요 · 잠시 뒤 다시 해 보세요',1);break;}if(t.d!==world.dim){cmdOut('그 사람은 다른 차원에 있어요',1);break;}player.pos.set(t.x,t.y,t.z);player.vel.set(0,0,0);player.peakY=player.pos.y;loadNear(4);cmdOut(`<b>${mpEsc(T.nick)}</b> 님에게 갔어요`);} // 캐릭터 모델은 위치를 받기 전엔 (0,0,0)이라 받은 위치로 이동
       else cmdOut('/tp x y z · /tp 닉네임',1);break;}
@@ -10519,8 +10529,8 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
     case 'speed':case '속도':{const v=+a[0];if(!(v>=.5&&v<=5)){cmdOut('/speed 0.5~5 (1 = 원래대로)',1);break;}player.spdMul=v===1?0:v;cmdOut(`이동 속도 <b>${v}배</b>`);break;}
     case 'god':case '무적':player.god=!player.god;cmdOut(player.god?'🛡 무적 <b>켜짐</b>':'무적 <b>꺼짐</b>');break;
     case 'feed':case '배부르게':player.food=Math.max(player.food,20);renderStats();cmdOut('배고픔을 가득 채웠어요');break;
-    case 'day':case '낮':world.time=.05;updateSky(0);cmdOut('☀ 낮이 됐어요');break;
-    case 'night':case '밤':world.time=.55;updateSky(0);cmdOut('🌙 밤이 됐어요');break;
+    case 'day':case '낮':world.time=.05;updateSky(0);mpTimeSync();cmdOut('☀ 낮이 됐어요');break;
+    case 'night':case '밤':world.time=.55;updateSky(0);mpTimeSync();cmdOut('🌙 밤이 됐어요');break;
     case 'pos':case '좌표':case 'xyz':cmdOut(`📍 X ${P.x.toFixed(1)} · Y ${P.y.toFixed(1)} · Z ${P.z.toFixed(1)} · ${DIM[world.dim].name}`);break;
     case 'spawn':{cmdMark();const sp=world.spawn;if(world.dim!=='over'){travel('over',sp);cmdOut('프론티어 스폰 지점으로 가요');break;}player.pos.set(sp.x,sp.y,sp.z);player.vel.set(0,0,0);player.peakY=sp.y;loadNear(4);cmdOut('스폰 지점으로 이동했어요');break;}
     case 'dim':case 'dimension':case '차원':{const q=(a[0]||'').toLowerCase(),k=Object.keys(DIM).find(d=>d===q||DIM[d].name===a[0]||DIM[d].name.toLowerCase().startsWith(q)&&q);
@@ -10699,6 +10709,7 @@ function runCmd0(line){const a=line.slice(1).trim().split(/\s+/).map((w,i)=>i&&/
     case 'banlist':case '밴목록':cmdOut('🔨 밴 명단: '+((world.flags.bans||[]).map(mpEsc).join(' · ')||'없어요'));break;
     case 'afk':case '자리비움':{const nk=MP.on?MP.me.nick:(nickNow()||'플레이어');toast(`💤 ${mpEsc(nk)}님은 자리를 비웠어요`);if(MP.on)mpSend({t:'c',n:'💤',m:nk+'님은 자리를 비웠어요'});break;}
     case 'op':case 'deop':{if(!MP.on){cmdOut('멀티플레이에서만 쓸 수 있어요',1);break;}const nk=a[0]||'',on=c==='op';if(!nk){cmdOut('/op 닉네임 · /deop 닉네임',1);break;}
+      if(mpOff()){cmdOut('⭐ 공식 서버는 <b>어드민</b>만 OP예요 (어드민은 모두 저절로 OP) · /op 로 줄 수 없어요',1);break;}
       if(!cmdIsAdmin()&&!mpBossMe()){cmdOut('OP는 <b>방장</b>(공개 서버는 서버를 만든 사람)과 <b>어드민</b>만 주고 뺄 수 있어요',1);break;}
       mpOpsSync(nk,on);if(!MP.host){mpSend({t:'opreq',n:nk.slice(0,16),on:on?1:0});cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;} // 방장 자리가 아니어도 서버가 확인하고 처리
       mpSetOp(nk,on);cmdOut(on?`🔑 <b>${mpEsc(nk)}</b> 님에게 OP를 줬어요`:`🔑 <b>${mpEsc(nk)}</b> 님의 OP를 뺐어요`);break;}
