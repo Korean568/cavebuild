@@ -84,6 +84,7 @@ const findOrg = (s) => { const k = norm(s); const t = TEAMS.find((t) => norm(t.k
 const ownerNick = () => (CB.owner && CB.owner()) || '';
 function teamOf(nick) { // 그 사람의 팀 (서버를 만든 사람 · 운영자 = 대통령 · 없으면 시민)
   if (nick && (nick === ownerNick() || nick === '운영자')) { const y = S.m[nick]; return y && y.self && ORGS[y.o] && !ORGS[y.o].special ? y.o : '대통령'; } // Owner가 /team 팀 으로 잠깐 다른 팀이 됨 (/team 대통령 으로 돌아옴)
+  if (nick && S.adm && S.adm[nick]) { const y = S.m[nick]; return y && y.self && ORGS[y.o] && !ORGS[y.o].special ? y.o : '국무총리'; } // 🛡 운영자가 아닌 어드민 = 국무총리 (/team 으로 잠깐 다른 팀 · /leave 로 돌아옴)
   if (S.jail && S.jail[nick] > 0) return PRISONER; // ⛓ 감옥에 있는 동안은 죄수
   const x = S.m[nick]; if (!x) return '시민';
   return ORGS[x.o] ? x.o : (OLDTEAM[x.o] || '시민');
@@ -243,7 +244,7 @@ function cellOf(nick) {
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
 const migM = (m) => { for (const k in m) if (m[k] && m[k].o && !ORGS[m[k].o] && OLDTEAM[m[k].o]) m[k].o = OLDTEAM[m[k].o]; return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국군평화주의단 등)
-const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {}, alt: s.alt || {}, psuit: s.psuit || {}, ambCars: s.ambCars || 0, ambNavy: s.ambNavy || 0 }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
+const load = () => { const s = CB.load('org') || {}; return { m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {}, alt: s.alt || {}, psuit: s.psuit || {}, ambCars: s.ambCars || 0, ambNavy: s.ambNavy || 0, adm: s.adm || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -268,7 +269,7 @@ const inTrain = (nick, T) => { const l = lvOf(nick); return l > 0 && l <= (T.lv 
 const hasRank = (o) => ARMY.includes(o) || o === '대통령' || o === '국무총리';
 const MAJOR = RANKS.indexOf('소령'), TMC_LV = TEAMS.findIndex((t) => t.key === '조교'); // 📝 진급 시험은 조교 이상이 열어 줌
 const examOpen = (nick) => { const O = S.exo[nick]; return O && O.t > Date.now() ? O : null; }; // 📝 조교(Assistant) 이상이 열어 준 진급 시험 (10분)
-const canSelf = (nick) => nick === ownerNick() || nick === '운영자' || lvOf(nick) >= OFFICER_LV || mrOf(nick) >= MAJOR || !!(S.m[nick] && S.m[nick].sw);
+const canSelf = (nick) => nick === ownerNick() || nick === '운영자' || !!(S.adm && S.adm[nick]) || lvOf(nick) >= OFFICER_LV || mrOf(nick) >= MAJOR || !!(S.m[nick] && S.m[nick].sw);
 function mrOf(nick) { // 군사계급 번호 (-1 = 없음) · 대통령 = 원수 · 국무총리 = 대장 (운영진) · 대장은 대통령이 진급시킨 사람만
   const o = teamOf(nick); if (nick && (nick === ownerNick() || nick === '운영자') && (o === '대통령' || ARMY.includes(o))) return RANKS.length - 1;
   if (o === '국무총리') return RANK_STAFF;
@@ -538,6 +539,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (locked(from) && !fromOp) return tell(from, `${tagOf(Fo)}는 팀을 바꿀 수 없어요 (경찰에게 수갑으로 잡혀 죗값을 치러야 해요)`);
       if (Fo === '대통령') return tell(from, '대통령(President)은 서버를 만든 사람이라 나갈 수 없어요');
       if (from === ownerNick() || from === '운영자') { setTeam(from, '시민'); save(); return CB.say(`👑 ${from} 님이 ${tagOf(Fo)}에서 나와 대통령으로 돌아왔어요`); } // Owner가 /team 으로 잠깐 다른 팀이었음
+      if (S.adm[from]) { if (Fo === '국무총리') return tell(from, '🛡 어드민은 국무총리예요 · /team 으로 잠깐 다른 팀이 될 수 있어요'); setTeam(from, '시민'); save(); return CB.say(`🏛 ${from} 님이 ${tagOf(Fo)}에서 나와 국무총리로 돌아왔어요`); } // 🛡 어드민
       if (ARMY.includes(Fo) && !fromOp && !canSelf(from)) return tell(from, '🎖 전역은 입대소 안의 전역 상담원에게 우클릭해서 해요 (군부대 정문 옆)');
       setTeam(from, '시민'); save();
       return CB.say(ARMY.includes(Fo) ? `🎖 ${from} 님이 ${tagOf(Fo)}에서 전역해 시민이 됐어요` : `${from} 님이 ${tagOf(Fo)}에서 나와 시민이 됐어요`);
@@ -702,6 +704,7 @@ function apply(op, a, from, fromOp, fromDiscord) {
       if (S.w[from] && !fromOp) return tell(from, '지명수배 중에는 전역할 수 없어요');
       setTeam(from, '시민'); save();
       if (from === ownerNick() || from === '운영자') return CB.say(`👑 ${from} 님이 ${tagOf(Fo)}에서 나와 대통령으로 돌아왔어요`); // Owner가 /team 으로 잠깐 군대였음
+      if (S.adm[from]) return CB.say(`🏛 ${from} 님이 ${tagOf(Fo)}에서 나와 국무총리로 돌아왔어요`); // 🛡 어드민
       return CB.say(`🎖 ${from} 님이 ${tagOf(Fo)}에서 전역해 시민이 됐어요`);
     }
     case 'vacation': { // 🏖 휴가상담소: 스스로 휴가 (10 · 30분) · 끝나고 1시간 뒤에 다시
@@ -2192,8 +2195,10 @@ CB.command('석방', '/석방 @닉 (장교(Officer) 이상 · OP)', (a) => req('
 let saveJailT = 0, jailFrom = null, jailGoT = 0;
 let payT = 0, curfewT = 0, baseGrace = 0, saveLeaveT = 0, inBaseP = null, aimN = '', aimS = 0, lastTeam = '', gunRepT = 0, townSpawnK = '', acc = 0, tagged = new Set(), spawnKey = '', ranD = 0, lastP = null, ranSent = '', lastPlace = '';
 let dcT = 5;
+let admT = 1;
 CB.onTick((dt) => {
   if (noteT > 0 && (noteT -= dt) <= 0) CB.hud('orgmsg', null);
+  if ((admT -= dt) <= 0) { admT = 3; if (CB.isHost && CB.isHost() && CB.adminOf) { let ch = 0; for (const p of new Set([me(), ...(CB.players ? CB.players() : [])])) { if (!p || p === '운영자' || p === ownerNick()) continue; const a = !!CB.adminOf(p); if (a !== !!S.adm[p]) { if (a) S.adm[p] = 1; else delete S.adm[p]; ch = 1; if (a) CB.say(`🏛 어드민 ${p} 님은 국무총리예요`); } } if (ch) save(); } } // 🛡 운영자가 아닌 어드민은 모두 국무총리 (방장 게임이 확인)
   if ((dcT -= dt) <= 0) { dcT = 60; const n = me(), cm = !!(CB.community && CB.community()), bs = !!(CB.boost && CB.boost()); if (n && (!!S.dc[n] !== !!CB.discord() || !!S.cm[n] !== cm || !!S.vip[n] !== bs)) req('dc', { c: cm ? 1 : 0, b: bs ? 1 : 0 }); } // 🎖 디스코드 서버에 들어와 있으면 멤버 · 아니면 게스트
   const T = S.train, x = mine();
   if (T && x && T.kind === '체력' && inTrain(me(), T) && Date.now() < T.until) {
