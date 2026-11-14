@@ -338,7 +338,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.289 — 🌐 기지 · 도시 지을 때 친구 연결이 끊기던 것 고침</h4>
+    <h4>🆕 v26.290 — 🚑 AI 구급차가 같은 환자에게 계속 다시 출동하던 것 고침</h4>
+    <ul><li>🚑 병원에 내려 준 환자가 아직 쓰러져 있으면 몇 초마다 구급차가 다시 출동해 들것에 태우고 채팅을 도배하던 것 고침 · 이제 일어나거나 죽을 때까지 다시 안 옴</li><li>🚑 친구 화면에서 출동이 끝난 구급차 경광등이 계속 깜빡이고, 다음에 쓰러지면 예전 병원으로 순간 이동되던 것 고침</li></ul>
+    <h4>v26.289 — 🌐 기지 · 도시 지을 때 친구 연결이 끊기던 것 고침</h4>
     <ul><li>🌐 방장 쪽에서 군사기지 · 해군 기지 · 주도 · 고속도로를 지을 때 친구 게임이 블록 하나마다 청크를 다시 그려서 몇 초씩 멈추다 끊기던 것 고침 · 이제 한 번에 온 블록은 청크마다 한 번만, 다음 프레임들에 나눠서 다시 그려요</li></ul>
     <h4>v26.288 — 🪖 탱크 조준 · 💥 포탄 폭발 · 🚁 3인용 헬기 · 🚑 환자 싣기 · AI 구급차</h4>
     <ul><li>🪖 탱크: <b>바라보는 곳으로</b> 포를 쏴요 · 포탑과 포신이 시선을 따라 돌아요 (친구 화면에서도)</li><li>💥 포탄이 맞으면 <b>폭발</b>: 둘레 5칸의 몹 · 플레이어가 다쳐요 · 블록은 부서지지 않아요 · 탱크 안 사람은 안 다쳐요</li><li>🚁 헬기가 1.35배 커지고 <b>3인용</b>: 처음 탄 사람이 조종 · 다음 두 명은 양쪽 문 <b>기관포 사수</b> (누르고 있으면 계속 쏨 · 바깥을 보고 앉음)</li><li>🚑 구급차 3인용 (운전석 + 뒤 두 자리) · 쓰러진 환자를 든 의무병이 구급차에 타면 환자가 <b>들것</b>에 실려요</li><li>🚑 <b>AI 구급차</b>: 누가 쓰러지면 가장 가까운 빈 구급차가 경광등을 켜고 저절로 출동 → 환자를 태움 → 가장 가까운 의무병 NPC 옆 병원에 내려 줘요 (의무병이 살려 줌) · 막히면 건너뛰어서 시간 안에 도착 · 경광등은 출동 · 운전할 때만 깜빡</li><li>🪖 조직 모드: 군사기지 의료센터 옆길에 구급차 2대 · 해군 의무대 앞에 1대가 저절로 배치돼요</li><li>🧩 모드 기능: CB.ambulance({hospital}) · CB.spawnVehicle(종류, x, y, z, 방향)</li></ul>
@@ -2308,7 +2310,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.289 — 🌐 Friends no longer disconnect while bases and cities build</h4>
+    <h4>🆕 v26.290 — 🚑 AI ambulances no longer keep re-dispatching to the same patient</h4>
+    <ul><li>🚑 A patient dropped at the hospital who was still down got picked up again every few seconds with chat spam · now no new ambulance comes until they get up or die</li><li>🚑 On friends' screens a finished ambulance's lights kept flashing, and the next time they went down they were teleported to the old hospital · fixed</li></ul>
+    <h4>v26.289 — 🌐 Friends no longer disconnect while bases and cities build</h4>
     <ul><li>🌐 While the host built the bases, state cities or highways, friends' games redrew a chunk for every single block and froze for seconds until they disconnected · now a burst of blocks redraws each chunk once, spread over the next frames</li></ul>
     <h4>v26.288 — 🪖 Tank aiming · 💥 Explosive shells · 🚁 3-seat helicopter · 🚑 Patient loading · AI ambulance</h4>
     <ul><li>🪖 Tanks fire <b>where you look</b> · the turret and gun follow your view (also on friends' screens)</li><li>💥 Shells <b>explode</b> on impact, hurting mobs and players within 5 blocks · blocks are not destroyed · the tank crew is safe</li><li>🚁 The helicopter is 1.35× bigger and seats <b>three</b>: the first rider flies, the next two man the <b>door machine guns</b> (hold to fire, seated facing out)</li><li>🚑 Ambulances seat three (driver + two in the back) · a medic carrying a downed patient who gets in puts them on the <b>stretcher</b></li><li>🚑 <b>AI ambulance</b>: when someone goes down, the nearest empty ambulance turns on its siren, drives to them, loads them and drops them at the nearest medic NPC (who revives them) · skips ahead if stuck so it arrives in time · lights flash only while dispatched or driven</li><li>🪖 Org mod: 2 ambulances are placed by the base medical centers and 1 at the navy medical unit</li><li>🧩 Mod API: CB.ambulance({hospital}) · CB.spawnVehicle(kind, x, y, z, yaw)</li></ul>
@@ -8177,7 +8181,7 @@ let vgCD=0;function vehGunTick(dt){vgCD-=dt;const v=player.veh;if(!v||!player.vs
   const gp=v.guns[(player.vseat-1)%v.guns.length],mz=new THREE.Vector3(gp[0],gp[1],gp[2]).applyQuaternion(v.q).add(v.pos);flashBeam(mz,o.clone().addScaledVector(d,L),0xffe08a,.035,.05);spawnParticles(mz.x,mz.y,mz.z,new THREE.Color(0xffc040),3,.08,2);
   if(!playSnd('rifle',.45,1.25))SFX.gun();shake(.03,.05);}
 // 🚑 AI 구급차: 누가 쓰러지면 가장 가까운 빈 구급차가 저절로 출동 → 환자를 들것에 태움 → 병원(모드가 정한 의무병 곁 · 없으면 원래 자리)으로 → 내려 줌 (방장 게임이 운전)
-let MOD_AMB=null,ambT=0;
+let MOD_AMB=null,ambT=0;const AMB_DONE=new Set(); // 병원에 내려 준 환자: 일어나거나 죽을 때까지 다시 출동 안 함
 function ambState(v){const a=v.ai;return a?[a.pt,a.st,Math.round(a.hx||0),Math.round(a.hy||0),Math.round(a.hz||0)].join('|'):'';}
 function ambPatients(){const L=[];if(player.downed&&MP.on)L.push([MP.me.nick,player.pos]);for(const P of MP.peers.values())if(P.t&&P.t.dn&&!P.t.v&&P.t.d===world.dim)L.push([P.nick,{x:P.t.x,y:P.t.y,z:P.t.z}]);return L;}
 function ambGround(x,z,y0){const fx=Math.floor(x),fz=Math.floor(z);for(let y=Math.min(CH-2,Math.floor(y0)+24);y>1;y--)if(SOLID[getBlock(fx,y,fz)]===1&&getBlock(fx,y+1,fz)===AIR)return y+1;return y0;}
@@ -8186,8 +8190,9 @@ function ambDispatch(dt){if(!MP.on||!MP.host||(ambT-=dt)>0)return;ambT=1;
   for(const v of VEH){if(!v.ai||getChunk(Math.floor(v.pos.x)>>4,Math.floor(v.pos.z)>>4))continue; // 방장 땅이 안 불러와진 곳의 구급차: 1초에 24칸씩 건너뛰며 감 (물리 없이)
     const a=v.ai,tg=a.st==='go'?(pts.find(q=>q[0]===a.pt)||[])[1]:a.st==='back'?{x:a.hx,z:a.hz}:null;if(!tg){ambSteer(v,1);continue;}
     const dx=tg.x-v.pos.x,dz=tg.z-v.pos.z,dist=Math.hypot(dx,dz),step=Math.min(dist-3,24);if(step>0){v.pos.x+=dx/dist*step;v.pos.z+=dz/dist*step;v.pos.y=ambGround(v.pos.x,v.pos.z,v.pos.y);v.yaw=Math.atan2(-dx,-dz);vehPose(v);}else ambSteer(v,1);}
+  for(const nk of [...AMB_DONE])if(!pts.some(p=>p[0]===nk))AMB_DONE.delete(nk);
   const busy=new Set(VEH.filter(v=>v.ai).map(v=>v.ai.pt));
-  for(const [nk,pp] of pts){if(busy.has(nk))continue;let best=null,bd=1e9;
+  for(const [nk,pp] of pts){if(busy.has(nk)||AMB_DONE.has(nk))continue;let best=null,bd=1e9;
     for(const v of VEH){if(!v.amb||v.ai||v.d.d!==world.dim||(mpVehFresh(v)&&v.drv)||player.veh===v)continue;const dd=Math.hypot(v.pos.x-pp.x,v.pos.z-pp.z);if(dd<bd&&dd<500){bd=dd;best=v;}}
     if(best){best.ai={pt:nk,st:'go',t0:performance.now(),lastD:bd,stuck:0,home:{x:best.pos.x,y:best.pos.y,z:best.pos.z}};const m=`🚑 ${nk} 님에게 구급차가 출동해요 (${Math.round(bd)}칸)`;mpSend({t:'c',n:'🚑',m});mpChatShow('🚑',m);}}}
 function ambSteer(v,dt){const a=v.ai,now=performance.now();let tg;
@@ -8195,12 +8200,12 @@ function ambSteer(v,dt){const a=v.ai,now=performance.now();let tg;
   const dx=tg.x-v.pos.x,dz=tg.z-v.pos.z,dist=Math.hypot(dx,dz);
   if(dist<(a.st==='go'?4.5:7)){v.speed=0;
     if(a.st==='go'){let H=null;try{H=MOD_AMB&&MOD_AMB.hospital?MOD_AMB.hospital(v.pos.x,v.pos.z):null;}catch(e){H=null;}H=H&&isFinite(H.x)?H:a.home;a.st='back';a.hx=H.x;a.hy=H.y;a.hz=H.z;a.t0=now;a.lastD=1e9;a.stuck=0;const m=`🚑 ${a.pt} 님을 구급차에 태웠어요 · 병원으로 가요`;mpSend({t:'c',n:'🚑',m});mpChatShow('🚑',m);}
-    else{a.st='done';a.t1=now;}return [0,0];}
+    else{a.st='done';a.t1=now;AMB_DONE.add(a.pt);}return [0,0];}
   if(dist<a.lastD-1){a.lastD=dist;a.stuck=0;}else a.stuck+=dt; // 막히면 앞으로 건너뜀 · 25초가 넘으면 바로 옆으로 (쓰러진 60초 안에 꼭 도착)
   const late=now-a.t0>25000;if(a.stuck>3||late){const step=late?dist-3:Math.min(10,dist-3),nx=v.pos.x+dx/dist*step,nz=v.pos.z+dz/dist*step;v.pos.set(nx,ambGround(nx,nz,v.pos.y),nz);v.speed=0;v.vy=0;a.stuck=0;a.lastD=dist-step;if(late)a.t0=now-15000;vehPose(v);}
   const ty=Math.atan2(-dx,-dz),e=Math.atan2(Math.sin(ty-v.yaw),Math.cos(ty-v.yaw));return [Math.abs(e)>1.6?.35:1,clamp(-e*1.8,-1,1)];}
 function ambPatientTick(){if(!player.downed)return; // 🩸 쓰러진 나: 구급차가 태우면 들것 위 · 병원에 닿으면 내려 줌
-  const me=MP.me.nick+'|';for(const v of VEH){const s=v.ai?ambState(v):(v.aiS||'');if(!s.startsWith(me))continue;const [,st,hx,hy,hz]=s.split('|');
+  const me=MP.me.nick+'|';for(const v of VEH){const s=v.ai?ambState(v):(mpVehFresh(v)&&v.aiS||'');if(!s.startsWith(me))continue;const [,st,hx,hy,hz]=s.split('|');
     if(st==='back'&&v.stretcher){player.pos.set(v.stretcher[0],v.stretcher[1],v.stretcher[2]).applyQuaternion(v.q).add(v.pos);player.vel.set(0,0,0);}
     else if(st==='done'&&!player.ambDrop){player.ambDrop=1;player.pos.set(+hx+.5,+hy+.1,+hz+.5);player.vel.set(0,0,0);toast('🚑 병원에 도착했어요 · 의무병이 치료해요');}}}
 // 🪑 여러 자리 탈것 (헬기 3 · 구급차 3): 0 = 운전 · 나머지는 사수 · 동승 (친구 화면에 vid · vs 로 알림)
@@ -8276,7 +8281,7 @@ function updateVehicles(dt){
     for(const st of v.steers)st.rotation.z+=(-sd*1.6-st.rotation.z)*Math.min(1,8*dt); // 핸들이 A/D 따라 돎
     if(v.rotor)v.rotor.rotation.y+=dt*(me||!v.onGround?26:2); // 🚁 회전날개
     if(v.trot)v.trot.rotation.x+=dt*(me||!v.onGround?30:2);if(v.prop)v.prop.rotation.z+=dt*(4+v.thr*40); // 꼬리 회전날개 · ✈ 프로펠러
-    if(v.flash){const run=v.ai||v.aiS||(v.drv&&mpVehFresh(v))||player.veh===v,on=run&&(performance.now()/260|0)%2;v.flash[0].emissiveIntensity=run?(on?1.8:.08):.15;v.flash[1].emissiveIntensity=run?(on?.08:1.8):.15;} // 🚑 경광등: 출동 · 운전 중에만 깜빡
+    if(v.flash){const run=v.ai||(v.aiS||v.drv)&&mpVehFresh(v)||player.veh===v,on=run&&(performance.now()/260|0)%2;v.flash[0].emissiveIntensity=run?(on?1.8:.08):.15;v.flash[1].emissiveIntensity=run?(on?.08:1.8):.15;} // 🚑 경광등: 출동 · 운전 중에만 깜빡
     vehPose(v);
   }
 }
