@@ -248,7 +248,7 @@ function cellOf(nick) {
 // ── 저장된 조직 정보 (방장 세계에 저장 · 친구들에게 저절로 맞춰짐) ──
 const migTeams = (o) => { if (o) for (const k in o) if (!ORGS[k] && OLDTEAM[k]) { const n = OLDTEAM[k]; o[n] = typeof o[n] === 'number' && typeof o[k] === 'number' ? o[n] + o[k] : o[n] != null ? o[n] : o[k]; delete o[k]; } return o; }; // 예전 팀 이름(군사 · 교육부 …)으로 저장된 점수 · 기지 · 임무 → 새 이름
 const migM = (m) => { for (const k in m) { const x = m[k]; if (!x || !x.o || ORGS[x.o]) continue; if (RECRUIT_OLD.includes(x.o)) x.o = ['육군', '해군', '공군'].includes(x.br) ? x.br : '육군'; else if (OLDTEAM[x.o]) x.o = OLDTEAM[x.o]; } return m; }; // 예전 팀 이름의 팀원 → 새 팀 (국군 사관 학교 → 국군평화주의단 등)
-const load = () => { const s = CB.load('org') || {}; migR(s); return { rv: 1, m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {}, alt: s.alt || {}, psuit: s.psuit || {}, ambCars: s.ambCars || 0, truckCars: s.truckCars || 0, ambNavy: s.ambNavy || 0, adm: s.adm || {}, pt: s.pt || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
+const load = () => { const s = CB.load('org') || {}; migR(s); return { rv: 1, m: migM(s.m || {}), base: migTeams(s.base) || {}, mission: migTeams(s.mission) || {}, pts: migTeams(s.pts) || {}, train: s.train || null, w: s.w || {}, jail: s.jail || {}, jailPos: s.jailPos || null, owner: s.owner || {}, fine: s.fine || {}, suit: s.suit || [], kitT: s.kitT || {}, dealer: s.dealer || null, dealerSet: !!s.dealerSet, town: s.town || null, townV: s.townV || 0, houses: s.houses || null, leave: s.leave || {}, exam: s.exam || {}, gates: s.gates || {}, dealerDead: !!s.dealerDead, village: s.village || null, bank: s.bank || {}, job: s.job || {}, annex: s.annex || null, annexBlocked: s.annexBlocked || 0, annexDone: s.annexDone || {}, st: s.st || {}, dc: s.dc || {}, cm: s.cm || {}, vacT: s.vacT || {}, tk: s.tk || {}, vip: s.vip || {}, vipAuto: s.vipAuto || {}, exo: s.exo || {}, navy: s.navy || null, navyDone: s.navyDone || {}, wallUp: s.wallUp || {}, clr: s.clr || {}, navyUndo: s.navyUndo || null, navyUndoDone: s.navyUndoDone || {}, dress: s.dress || {}, bh: s.bh || null, bhDone: s.bhDone || {}, bhBlocked: s.bhBlocked || 0, cities: s.cities || {}, cityDone: s.cityDone || {}, hw: s.hw || {}, alt: s.alt || {}, psuit: s.psuit || {}, ambCars: s.ambCars || 0, truckCars: s.truckCars || 0, realVeh: s.realVeh || 0, ambNavy: s.ambNavy || 0, adm: s.adm || {}, pt: s.pt || {} }; }; // ⚠ 새 S.필드는 여기에도 꼭 넣기 (안 넣으면 1초마다 사라짐)
 let S = load();
 const save = () => CB.save('org', S);
 const me = () => CB.me();
@@ -1066,7 +1066,7 @@ function signTick() { // 🪧 큰 글씨 간판 (건물 위에 떠서 멀리서�
   const T = S.town; if (!T || !CB.bigSign) return;
   CB.bigSign('org_city', `${COUNTRY_KO} 수도 ${CITY_NAME}`, T.x + 0.5, T.y + 13, T.z + 0.5, { bg: '#14325a', w: 20 });
   for (const st of STATES) { const c = S.cities[st[0]]; if (c && !c.partial) CB.bigSign('city_' + st[0], `${st[3]} · ${st[0]}`, c.x + 0.5, c.y + 13, c.z + 0.5, { bg: '#14325a', w: 16 }); } // 🏙 주도 간판
-  CB.bigSign('org_army', ARMY_NAME, T.x - 21.5, T.y + 10, T.z + 0.5, { bg: '#3d4a2a', w: 16 });
+  CB.bigSign('org_army', 'CLKKY Military', T.x - 21.5, T.y + 10, T.z + 0.5, { bg: '#3d4a2a', w: 16 });
   CB.bigSign('org_recruit', `${ARMY_NAME} 입대 · 전역 · 휴가`, T.x - 19.5, T.y + 7, T.z + 11.5, { bg: '#3d4a2a', w: 18 });
   CB.bigSign('org_police', `${POLICE_NAME} 경찰서`, T.x + 28.5, T.y + 12, T.z + 11.5, { bg: '#1f3a7a', w: 24 });
   CB.bigSign('org_food', '음식점', T.x + 41.5, T.y + 9, T.z + 8.5, { bg: '#a8421a', w: 12 });
@@ -1609,7 +1609,15 @@ function annexYards(put, box, skip) {
   box(-130, -1, -54, -112, -1, -42, T_CONC); box(-124, -1, -51, -124, -1, -45, T_LINE); box(-118, -1, -51, -118, -1, -45, T_LINE); box(-124, -1, -48, -118, -1, -48, T_LINE);
   box(-64, -1, 26, -50, -1, 38, T_CONC); for (let x = -64; x <= -50; x += 5) box(x, -1, 26, x, -1, 38, T_LINE);
   box(-84, -1, 26, -68, -1, 42, T_CONC); box(-80, -1, 30, -72, -1, 38, T_REDX); box(-79, -1, 31, -73, -1, 37, T_CONC); // 의무 헬기장 (빨간 십자 테)
-  annexVeh(put, skip, -63, 28, 'amb'); annexVeh(put, skip, -58, 33, 'amb'); annexVeh(put, skip, -123, -49, 'heli'); annexVeh(put, skip, -77, 33, 'medheli');
+}
+const ANX_VEH = [[-63, 28, 'amb'], [-58, 33, 'amb'], [-123, -49, 'heli'], [-77, 33, 'medheli']]; // 예전에 블록으로 지었던 탈것 자리 → v26.300부터 진짜 탈것 (구급차 · 헬기)
+function realVehStep(T) { // 🚑 🚁 블록 덩어리 탈것을 지우고 (밑 콘크리트는 메움) 그 자리에 진짜 구급차 · 헬기를 놓음 (한 번)
+  if (!ANX_VEH.every(([x, z]) => CB.loaded(T.x + x, T.z + z) && CB.loaded(T.x + x + 6, T.z + z + 2))) return false;
+  const L = [], put = (x, y, z) => { if (y >= 0) L.push([T.x + x, T.y + y, T.z + z, 0]); }, skip = (x, z) => L.push([T.x + x, T.y - 1, T.z + z, T_CONC]);
+  for (const [x, z, k] of ANX_VEH) annexVeh(put, skip, x, z, k);
+  CB.setBlocks(L);
+  for (const [x, z, k] of ANX_VEH) { if (k === 'amb') CB.spawnVehicle('amb', T.x + x + 3.5, T.y, T.z + z + 1.5, -Math.PI / 2); else CB.spawnVehicle('heli', T.x + x + 2.5, T.y, T.z + z + 1.5, -Math.PI / 2); }
+  S.realVeh = 1; save(); CB.say('🚑 🚁 군사기지 구급차 주차장 · 헬기장의 블록 탈것이 진짜 구급차 · 헬기로 바뀌었어요'); return true;
 }
 // ⚓ CLKKY ARMY 2사단 해군 기지 (예전 마을 자리 · 북문 또는 남문 밖): x -40 ~ 40 · 성벽에서 25 ~ 84칸 (d: 도시에서 멀어지는 쪽) · 해군 · 해병대 · 사령부 · 군사경찰 · 의무대 · 총기 · 교육소 · 집합소 · 군항
 const NAVY_X = 40, NAVY_D0 = TOWN_Z + 1, NAVY_D1 = TOWN_Z + 60;
@@ -1965,8 +1973,8 @@ function buildAnnex(C, G) { S.annexDone = {}; delete S.annex; delete PLANS.annex
 if (CB.infiniteMags) CB.infiniteMags(() => ARMY.includes(teamOf(me()))); // 🔫 군대는 장전해도 탄창이 안 줄어요 (16개면 계속 16개)
 // 🩸 쓰러짐 · 💓 심폐소생술 · 🩺 수술: 의무병(과 OP)만 · 수술은 기지의 군사응급수술센터 · 군사권역외상센터 안에서
 if (CB.ambulance) CB.ambulance({ // 🚑 AI 구급차가 환자를 내려 줄 병원: 가장 가까운 의무병 NPC 바로 옆 (의무병이 살려 줌)
-  hospital: (x, z) => { const T = S.town; if (!T) return null; const L = []; if (S.annex && !S.annex.partial) L.push([-57, 12], [-93, 12]); if (S.navy && !S.navy.partial) L.push([-13, S.navy.s * 52]);
-    let best = null, bd = 1e9; for (const [dx, dz] of L) { const hx = T.x + dx + 1, hz = T.z + dz, d = Math.hypot(hx - x, hz - z); if (d < bd) { bd = d; best = { x: hx, y: T.y, z: hz }; } } return best; },
+  hospital: (x, z) => { const T = S.town; if (!T) return null; const L = []; if (S.annex && !S.annex.partial) L.push([-57, 12, -66, 23.5], [-93, 12, -96, 23.5]); if (S.navy && !S.navy.partial) L.push([-13, S.navy.s * 52, -13, S.navy.s * 45]);
+    let best = null, bd = 1e9; for (const [dx, dz, qx, qz] of L) { const hx = T.x + dx + 1, hz = T.z + dz, d = Math.hypot(hx - x, hz - z); if (d < bd) { bd = d; best = { x: hx, y: T.y, z: hz, px: T.x + qx + 0.5, pz: T.z + qz }; } } return best; }, // px · pz: 구급차를 세울 건물 밖 길 (의무병 곁은 건물 안이라 차가 벽을 박음)
 });
 if (CB.downed) CB.downed({
   sec: 60,
@@ -1982,6 +1990,7 @@ function baseTick() { // 🪖 ⚓ 기지 짓기: 2초에 청크 하나만 (렉 �
   if (!S.bhBlocked && (!S.bh || S.bh.partial) && (S.bh || bhFree(T)) && bhStep(C, G)) return; // 🏛 청와대
   if (cityStep(C, G)) return; // 🏙 주도들
   if (hwStep()) return; // 🛣 고속도로
+  if (CB.spawnVehicle && S.annex && !S.annex.partial && !S.realVeh && realVehStep(T)) return;
   if (CB.spawnVehicle && S.annex && !S.annex.partial && S.ambCars && !S.truckCars && CB.loaded(T.x - 81, T.z + 23)) { CB.spawnVehicle('truck', T.x - 81 + 0.5, T.y, T.z + 23.5, Math.PI / 2); S.truckCars = 1; save(); CB.say('🚚 군사기지 의료센터 옆길에 취사병 보급 트럭이 배치됐어요 · 취사병이 타고 /보급'); return; }
   if (CB.spawnVehicle && S.annex && !S.annex.partial && !S.ambCars && CB.loaded(T.x - 66, T.z + 23) && CB.loaded(T.x - 96, T.z + 23)) { CB.spawnVehicle('amb', T.x - 66 + 0.5, T.y, T.z + 23.5, Math.PI / 2); CB.spawnVehicle('amb', T.x - 96 + 0.5, T.y, T.z + 23.5, Math.PI / 2); S.ambCars = 1; save(); CB.say('🚑 군사기지 의료센터 옆길에 구급차 2대가 배치됐어요 · 누가 쓰러지면 가장 가까운 구급차가 저절로 출동해요'); return; }
   if (CB.spawnVehicle && S.navy && !S.navy.partial && !S.ambNavy && CB.loaded(T.x - 13, T.z + S.navy.s * 45)) { CB.spawnVehicle('amb', T.x - 13 + 0.5, T.y, T.z + S.navy.s * 45 + 0.5, Math.PI / 2); S.ambNavy = 1; save(); return; } // ⚓ 해군 의무대 앞
