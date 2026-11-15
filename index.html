@@ -336,7 +336,9 @@ body.mobile #toasts{top:72px}
   </div>
   <div class="help upd">
     <div style="opacity:.75;font-size:12px">버전 = v연도.업데이트 순서</div>
-    <h4>🆕 v26.298 — 🔒 철문 · 🔑 열쇠 · 🪪 닉네임 사칭 막기 · 📜 자모 블록 번호 고침</h4>
+    <h4>🆕 v26.299 — ⬛ 판 구멍은 네모 · 허공에 뜬 갈색 천 같은 흙 고침</h4>
+    <ul><li>⬛ 땅을 파거나 블록을 놓으면 그 둘레 흙 · 돌은 둥근 곡면이 아니라 <b>네모 블록</b>으로 그려져요 (판 구멍이 네모 · 건물과 땅이 만나는 곳도 칸 모양)</li><li>🟫 허공에 혼자 떠 있는 흙 · 돌 (이웃이 1칸 이하)이 둥글게 구겨진 <b>갈색 천</b>처럼 보이던 버그 고침 · 이제 그냥 네모 블록이라 보이고 캘 수 있어요</li><li>⛰ 손대지 않은 언덕 · 동굴은 예전처럼 매끈한 곡면</li></ul>
+    <h4>v26.298 — 🔒 철문 · 🔑 열쇠 · 🪪 닉네임 사칭 막기 · 📜 자모 블록 번호 고침</h4>
     <ul><li>🔒 <b>철문</b> (작업대: 철 주괴 6): 강철판 · 창살 창 · 놋쇠 자물쇠 · 곡괭이로 캠</li><li>🔑 <b>열쇠</b> (작업대: 금 주괴 1 + 철 주괴 1): 철문을 우클릭하면 <b>잠겨요</b> · 처음 쓴 열쇠에 「🔑 열쇠 #1234」 번호가 붙고 같은 번호 열쇠로만 여닫아요 · <b>웅크리고(C)</b> 맞는 열쇠로 우클릭하면 잠금 풀기 · 잠긴 철문은 부서지지 않아요 (크리에이티브 빼고)</li><li>🪪 멀티에서 닉네임은 <b>로그인한 계정 닉네임</b>(중계 서버가 확인)이나 「손님1234」만 쓸 수 있어요 · 남의 닉네임 · 운영자 사칭 불가 · 대소문자만 다른 닉네임도 같은 방에 못 들어와요</li><li>📜 한글날 자모 블록 ㅎ · ㅜ 가 「EXIT 표지?」 · 방벽과 같은 번호를 써서 다른 블록으로 보이던 것 고침</li></ul>
     <h4>v26.297 — 🛡 멀티 보안: 어드민 · 운영자 사칭 · 세계 설정 덮어쓰기 막기</h4>
     <ul><li>🛡 친구가 어드민인지는 이제 <b>중계 서버가 로그인 계정을 확인</b>한 것만 믿어요 (게임을 조작해 「나 어드민」이라고 보내도 OP · 국무총리가 안 돼요 · 로그인 열쇠는 방장에게 안 가요)</li><li>🛡 「운영자」 닉네임은 운영자 계정으로 로그인해야 들어올 수 있어요</li><li>🛡 친구 게임은 조직 상태(팀 · 계급 · 은행 등) · 서버 주인 · OP 명단 · 공식 서버 표시를 못 바꿔요 · 밴 · 게임 모드 · 규칙 · 시간 설정은 OP 친구만</li><li>⭐ 공식 서버에서는 /op 요청도 방장 게임이 받지 않아요</li></ul>
@@ -1682,12 +1684,18 @@ function meshCore(cx,cz,datas,hms,lamps,caveB,pl){ // pl: 주변 3×3 청크에�
   const leafRound=(vx,vy,vz,o)=>{let sx=0,sy=0,sz=0,n=0; // 꼭짓점을 둘러싼 8칸 중 잎·원목 칸의 중심 쪽으로 이동
     for(let a=-1;a<=0;a++)for(let b=-1;b<=0;b++)for(let c=-1;c<=0;c++){const t=get(vx+a,vy+b,vz+c);if(t===LEAVES||t===LOG){sx+=a+.5;sy+=b+.5;sz+=c+.5;n++;}}
     const k=n?.95/n:0;o[0]=sx*k;o[1]=sy*k;o[2]=sz*k;},_lo=[0,0,0];
-  if(!NATB)natTable();const PLM=(pl||[]).map(a=>{if(!a||!a.length)return null;const m=new Uint8Array(16*16*CH);for(const i of a)m[i]=1;return m;}),
-    placed=(x,y,z)=>{if(y<0||y>=CH)return false;const m=PLM[((z>>4)+1)*3+(x>>4)+1];return !!m&&m[(y*16+(z&15))*16+(x&15)]===1;}; // 직접 놓은 블록인지
+  if(!NATB)natTable();
+  // ⬛ 네모로 그릴 흙·돌 칸: 부수거나 놓은 칸(pl = 3×3 청크의 바뀐 칸 번호) 둘레 1칸 · 흙·돌 이웃이 1개 이하인 외톨이 칸 (둥근 덩어리로 허공에 떠 보이던 것) → 판 구멍은 네모 · 건물 둘레는 칸 모양
+  const BKX=24,BKO=4,BKM=new Uint8Array(BKX*BKX*CH),bki=(x,y,z)=>(y*BKX+z+BKO)*BKX+x+BKO;
+  for(let c=0;c<9;c++){const a=pl&&pl[c];if(!a||!a.length)continue;const bx=(c%3-1)*16,bz=(((c/3)|0)-1)*16;
+    for(const i of a){const x=bx+(i&15),z=bz+(i>>4&15),y=i>>8;if(x<-5||x>20||z<-5||z>20)continue;
+      for(let dy=-1;dy<=1;dy++){const Y=y+dy;if(Y<0||Y>=CH)continue;for(let dz=-1;dz<=1;dz++){const Z=z+dz;if(Z<-BKO||Z>=BKX-BKO)continue;for(let dx=-1;dx<=1;dx++){const X=x+dx;if(X>=-BKO&&X<BKX-BKO)BKM[bki(X,Y,Z)]=1;}}}}}
+  for(let y=0;y<CH;y++)for(let z=-BKO;z<BKX-BKO;z++)for(let x=-BKO;x<BKX-BKO;x++){const k=bki(x,y,z);if(BKM[k]||!NATB[get(x,y,z)])continue;let nb=0;for(let f=0;f<6&&nb<2;f++)if(NATB[get(x+DX6[f],y+DY6[f],z+DZ6[f])])nb++;if(nb<2)BKM[k]=1;}
+  const placed=(x,y,z)=>x>=-BKO&&x<BKX-BKO&&z>=-BKO&&z<BKX-BKO&&y>=0&&y<CH&&BKM[bki(x,y,z)]===1; // 네모로 그릴 칸인지
   const NCN=17*17*(CH+1);if(!NAT_F||NAT_F.length!==NCN){NAT_F=new Uint8Array(NCN);NAT_C=new Float32Array(NCN*3);}else NAT_F.fill(0);
   const natRound=(vx,vy,vz,o)=>{o[0]=o[1]=o[2]=0;if(vx<0||vx>16||vz<0||vz>16||vy<1||vy>=CH)return;const ci=(vy*17+vz)*17+vx; // 지형 꼭짓점: 둘러싼 8칸에서 흙·돌과 빈칸 경계의 중점 평균으로 이동 → 평평한 땅은 그대로, 모서리·턱은 둥글게
     if(NAT_F[ci]){o[0]=NAT_C[ci*3];o[1]=NAT_C[ci*3+1];o[2]=NAT_C[ci*3+2];return;}NAT_F[ci]=1;NAT_C[ci*3]=NAT_C[ci*3+1]=NAT_C[ci*3+2]=0;
-    let m=0,ns=0;for(let i=0;i<8;i++){const t=get(vx+(i&1)-1,vy+(i>>1&1)-1,vz+(i>>2&1)-1);if(NATB[t]){m|=1<<i;ns++;}else if(t&&!LIQ_KIND[t]&&!FLOWER_OF[t]&&t!==SAPLING)return;} // 건물 블록이 닿으면 고정 (틈이 안 생김)
+    let m=0,ns=0;for(let i=0;i<8;i++){const X=vx+(i&1)-1,Y=vy+(i>>1&1)-1,Z=vz+(i>>2&1)-1,t=get(X,Y,Z);if(NATB[t]){if(placed(X,Y,Z))return;m|=1<<i;ns++;}else if(t&&!LIQ_KIND[t]&&!FLOWER_OF[t]&&t!==SAPLING)return;} // 건물 블록 · 네모 칸이 닿으면 고정 (틈이 안 생김)
     if(!ns||ns===8)return;let sx=0,sy=0,sz=0,n=0;
     for(let i=0;i<8;i++)for(let bit=1;bit<8;bit<<=1){if(i&bit)continue;const j=i|bit;if(((m>>i)&1)!==((m>>j)&1)){sx+=((i&1)+(j&1))/2-.5;sy+=((i>>1&1)+(j>>1&1))/2-.5;sz+=((i>>2&1)+(j>>2&1))/2-.5;n++;}}
     const h=Math.imul(vx+ox,73856093)^Math.imul(vy,19349663)^Math.imul(vz+oz,83492791); // 바위처럼 울퉁불퉁 (높이는 안 건드려서 발밑은 평평)
@@ -2327,7 +2335,9 @@ const HELP_EN=`
 `;
 const UPD_EN=`
     <div style="opacity:.75;font-size:12px">Version = v(year).(update number)</div>
-    <h4>🆕 v26.298 — 🔒 Iron door · 🔑 Key · 🪪 Nickname spoofing blocked · 📜 Jamo block IDs fixed</h4>
+    <h4>🆕 v26.299 — ⬛ Dug holes are square · floating "brown cloth" dirt fixed</h4>
+    <ul><li>⬛ Dirt and stone around anything you dig or place are drawn as <b>square blocks</b> instead of a rounded surface (holes are square · buildings meet the ground on the grid)</li><li>🟫 Lone floating dirt or stone (1 neighbor or fewer) showed up as a crumpled <b>brown cloth</b> · it's now a normal block you can see and mine</li><li>⛰ Untouched hills and caves keep their smooth surface</li></ul>
+    <h4>v26.298 — 🔒 Iron door · 🔑 Key · 🪪 Nickname spoofing blocked · 📜 Jamo block IDs fixed</h4>
     <ul><li>🔒 <b>Iron door</b> (bench: 6 iron ingots): steel plate · barred window · brass lock · mined with a pickaxe</li><li>🔑 <b>Key</b> (bench: 1 gold ingot + 1 iron ingot): right-click an iron door to <b>lock</b> it · the first key used gets a number like 「🔑 열쇠 #1234」 and only a key with that number opens it · <b>crouch (C)</b> and right-click with the matching key to unlock · locked iron doors can't be broken (except in creative)</li><li>🪪 In multiplayer, nicknames must be your <b>logged-in account name</b> (checked by the relay) or a 「손님1234」 guest name · no copying someone else's name or the operator's · names differing only in case can't share a room</li><li>📜 The Hangul Day jamo blocks ㅎ · ㅜ shared IDs with 「EXIT 표지?」 and the barricade and showed up as those blocks · fixed</li></ul>
     <h4>v26.297 — 🛡 Multiplayer security: admin and operator spoofing, world-setting overwrites</h4>
     <ul><li>🛡 A friend counts as an admin only when <b>the relay server has verified their login</b> (a modified game claiming admin no longer gets OP or Prime Minister · the login key never goes to the host)</li><li>🛡 The name 운영자 now requires logging in with the operator account</li><li>🛡 Friends' games can no longer change the org state (teams · ranks · bank), the server owner, the OP list or the official-server mark · bans, game mode, rules and time settings only from OP friends</li><li>⭐ On official servers the host also ignores /op requests</li></ul>
@@ -4134,7 +4144,7 @@ diffuseColor.rgb *= max(vColor.r*uDay, vColor.g) * vColor.b;
 const LAMP_R=8.5;
 function lampsNear(ch){const L=[];for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const c=getChunk(ch.cx+dx,ch.cz+dz);if(c)for(const l of c.lamps)L.push(l);}return L;}
 function meshInputs(ch){const datas=[],hms=[],pl=[];if(!NATB)natTable();for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){const c=getChunk(ch.cx+dx,ch.cz+dz);datas.push(c?c.data:null);hms.push(c?c.hm:null);
-  const m=mods.get(ckey(ch.cx+dx,ch.cz+dz));let L=null;if(m)for(const [i,id] of m)if(NATB[id])(L||(L=[])).push(i);pl.push(L);} // 플레이어가 놓은 흙·돌 (네모로 그림)
+  const m=mods.get(ckey(ch.cx+dx,ch.cz+dz));pl.push(m&&m.size?[...m.keys()]:null);} // 바뀐 칸 (부숨 · 놓음 · 건물) → 둘레 흙·돌은 네모로 그림
   return {datas,hms,lamps:lampsNear(ch),pl};}
 function buildMesh(ch){ // 즉시 다시 그림 (블록을 부수거나 놓을 때)
   const q=meshInputs(ch);applyMesh(ch,meshCore(ch.cx,ch.cz,q.datas,q.hms,q.lamps,caveB,q.pl));
